@@ -27,9 +27,12 @@ class Information(
     @Column(name = "height", nullable = false)
     val height: String,
 
-    @Column(name = "filter_info", nullable = false, length = 255)
+    @Column(name = "filter_info", nullable = false)
     val filterInfo: String,
 
-    @Column(name = "distance_info", nullable = false, length = 255)
-    val distanceInfo: String
+    @Column(name = "distance_info", nullable = false)
+    val distanceInfo: String,
+
+    @Column(name = "about_me", nullable = false)
+    val aboutMe: String,
 )
