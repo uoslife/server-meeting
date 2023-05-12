@@ -3,7 +3,7 @@ package uoslife.servermeeting.entities
 import jakarta.persistence.*
 @Entity
 @Table(name = "matches")
-data class Match(
+class Match(
     @Id
     @Column(name = "match_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

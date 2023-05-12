@@ -4,7 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "preferences")
-data class Preference(
+class Preference(
     @Id
     @Column(name = "preference_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

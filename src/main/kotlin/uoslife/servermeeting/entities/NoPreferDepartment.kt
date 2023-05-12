@@ -4,7 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "no_prefer_departments")
-data class NoPreferDepartment(
+class NoPreferDepartment(
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

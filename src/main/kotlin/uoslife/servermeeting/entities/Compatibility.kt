@@ -4,7 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "compatibilities")
-data class Compatibility(
+class Compatibility(
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
