@@ -35,29 +35,29 @@
 
 ### Match
 
-| Key | Logical | Physical | Type | Null Allowed | Default | Comment |
-|-----|---------|----------|------|--------------|---------|---------|
-| FK  | team_male_id | team_male_id | INT  | N  |         |         |
-| FK  | team_female_id | team_female_id | INT  | N  |         |         |
-| PK  | match_id | match_id | INT  | N  |         |         |
-|     | match_date | match_date | DATE  | N  |         |         |
+| Key | Logical        | Physical       | Type | Null Allowed | Default | Comment |
+|-----|----------------|----------------|------|--------------|---------|---------|
+| FK  | team_male_id   | team_male_id   | INT  | N            |         |         |
+| FK  | team_female_id | team_female_id | INT  | N            |         |         |
+| PK  | match_id       | match_id       | INT  | N            |         |         |
+|     | match_date     | match_date     | DATE | N            |         |         |
 
 ### Payment
 
-| Key    | Logical               | Physical              | Type         | Null Allowed | Default | Comment                       |
-|--------|-----------------------|-----------------------|--------------|--------------|---------|-------------------------------|
-| PK, FK | user_id               | user_id               | INT          | N            |         |                               |
-| PK     | payment_id            | payment_id            | INT          | N            |         |                               |
-|        | amount                | amount                | INT          | N            |         |                               |
-|        | payment_date          | payment_date          | DATE         | N            |         |                               |
-|        | payment_identifier    | payment_identifier    | VARCHAR(255) | N            |         |                               |
-|        | payment_status        | payment_status        | VARCHAR(255) | N            |         |                               |
-|        | refund_account_number | refund_account_number | VARCHAR(255) | N            |         |                               |
-|        | refund_account_bank   | refund_account_bank   | VARCHAR(255) | N            |         |                               |
-|        | refund_need           | refund_need           | BOOLEAN      | N            |         |                               |
-|        | admin_memo            | admin_memo            | TEXT         | N            |         |                               |
-|        | admin_check_flag      | admin_check_flag      | TINYINT      | N            |         | Administrator adjustment flag |
-|        | error_flag            | error_flag            | TINYINT      | N            |         | Error flag                    |
+| Key | Logical               | Physical              | Type         | Null Allowed | Default | Comment                       |
+|-----|-----------------------|-----------------------|--------------|--------------|---------|-------------------------------|
+| FK  | user_id               | user_id               | INT          | N            |         |                               |
+| PK  | payment_id            | payment_id            | INT          | N            |         |                               |
+|     | amount                | amount                | INT          | N            |         |                               |
+|     | payment_date          | payment_date          | DATE         | N            |         |                               |
+|     | payment_identifier    | payment_identifier    | VARCHAR(255) | N            |         |                               |
+|     | payment_status        | payment_status        | VARCHAR(255) | N            |         |                               |
+|     | refund_account_number | refund_account_number | VARCHAR(255) | N            |         |                               |
+|     | refund_account_bank   | refund_account_bank   | VARCHAR(255) | N            |         |                               |
+|     | refund_need           | refund_need           | BOOLEAN      | N            |         |                               |
+|     | admin_memo            | admin_memo            | TEXT         | N            |         |                               |
+|     | admin_check_flag      | admin_check_flag      | TINYINT      | N            |         | Administrator adjustment flag |
+|     | error_flag            | error_flag            | TINYINT      | N            |         | Error flag                    |
 
 ### Report
 
@@ -89,11 +89,13 @@
 
 ### Departments
 학부과 정보(대학알림이 이용)
+
 | Key | Logical | Physical | Type | Null Allowed | Default | Comment |
 |-----|---------|----------|------|--------------|---------|---------|
 | PK  | department_id | department_id | INT  | N  |         |         |
 |     | department_name | department_name | VARCHAR(255)  | N  |         |         |
 |     | department_number | department_number | INT  | N  |         |         |
+
 
 ### No_prefer_departments
 기피학과
@@ -123,7 +125,7 @@
 ### Informations
 
 | Key | Logical          | Physical         | Type         | Null Allowed | Default | Comment     |
-|-----|------------------|------------------|--------------|--------------|---------|-------------|
+|:---:|------------------|------------------|--------------|--------------|---------|-------------|
 | PK  | information_id   | information_id   | INT          | N            |         |             |
 | FK  | team_id          | team_id          | INT          | N            |         |             |
 |     | meeting_location | meeting_location | VARCHAR(255) | N            |         |             |
@@ -131,6 +133,7 @@
 |     | age              | age              | STRING       | N            |         | bit이용해서 표기  |
 |     | height           | height           | STRING       | N            |         | bit 이용해서 표기 |
 |     | filter_info      | filter_info      | VARCHAR(255) | N            |         |             |
-|     | distance_info    | distance_info    | VARCHAR(255) | N            |         |             |
+ |     | about_me         | about_me         | TEXT         | N            |         |             |
 
 ## API 명세서
+
