@@ -28,9 +28,9 @@
 |-----|-------------------------|-------------------------|--------------|---------|-----|------------------------------------------------------------------------------------------------------------------|
 | PK  | preference_id           | preference_id           | INT          | N       |     |                                                                                                                  |
 | FK  | team_id                 | team_id                 | INT          | N       |     |                                                                                                                  |
-|     | age_range_preference    | age_range_preference    | BYTE         | N       |     | 현재 년도 - 29가 MSB, 현재 년도 - 19가 LSB                                                                                 |
-|     | height_range_preference | height_range_preference | BYTE         | N       |     | 대한민국 신체 분포표 참고, 남자 165미만이 MSB, 남자 165~170, 남자 171~175, 남자 176~180, 남자 180 ~ 185, 남자 185 이상이 LSB, 총 6bit, 여자는 -10 |
-|     | filter_condition        | filter_condition        | BYTE         | N       |     | 서로 일치 하지 않으면 매칭이 안되는 질문에 대한 답변, bit 이용 ex) MBTI이면 4bit 이용해서 연속해서 기록할 것                                           |
+|     | age_range_preference    | age_range_preference    | STRING       | N       |     | 현재 년도 - 29가 MSB, 현재 년도 - 19가 LSB                                                                                 |
+|     | height_range_preference | height_range_preference | STRING       | N       |     | 대한민국 신체 분포표 참고, 남자 165미만이 MSB, 남자 165~170, 남자 171~175, 남자 176~180, 남자 180 ~ 185, 남자 185 이상이 LSB, 총 6bit, 여자는 -10 |
+|     | filter_condition        | filter_condition        | STRING       | N       |     | 서로 일치 하지 않으면 매칭이 안되는 질문에 대한 답변, bit 이용 ex) MBTI이면 4bit 이용해서 연속해서 기록할 것                                           |
 |     | distance_condition      | distance_condition      | VARCHAR(255) | N       |     | 서로의 차이에 대한 점수, 연속된 정수이용, 만약 각 값이 10 넘을 경우 scale 이용 ex) 3개의 답변 345, 만약 3,10,5 일 경우 10                             |
 
 ### Match
@@ -122,15 +122,15 @@
 
 ### Informations
 
-| Key | Logical | Physical | Type | Null Allowed | Default | Comment     |
-|-----|---------|----------|------|--------------|---------|-------------|
-| PK  | information_id | information_id | INT  | N            |         |             |
-| FK  | team_id | team_id | INT  | N            |         |             |
-|     | meeting_location | meeting_location | VARCHAR(255)  | N            |         |             |
-|     | meeting_time | meeting_time | DATE  | N            |         |             |
-|     | age | age | BYTE  | N            |         | bit이용해서 표기  |
-|     | height | height | BYTE  | N            |         | bit 이용해서 표기 |
-|     | filter_info | filter_info | VARCHAR(255)  | N            |         |             |
-|     | distance_info | distance_info | VARCHAR(255)  | N            |         |             |
+| Key | Logical | Physical | Type         | Null Allowed | Default | Comment     |
+|-----|---------|----------|--------------|--------------|---------|-------------|
+| PK  | information_id | information_id | INT          | N            |         |             |
+| FK  | team_id | team_id | INT          | N            |         |             |
+|     | meeting_location | meeting_location | VARCHAR(255) | N            |         |             |
+|     | meeting_time | meeting_time | DATE         | N            |         |             |
+|     | age | age | STRING       | N            |         | bit이용해서 표기  |
+|     | height | height | STRING       | N            |         | bit 이용해서 표기 |
+|     | filter_info | filter_info | VARCHAR(255) | N            |         |             |
+|     | distance_info | distance_info | VARCHAR(255) | N            |         |             |
 
 ## API 명세서
