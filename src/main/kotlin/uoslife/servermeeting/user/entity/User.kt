@@ -12,8 +12,8 @@ class User(
 
     @Id
     @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    val id: Long = 0,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long,
 
     @OneToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn

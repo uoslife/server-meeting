@@ -10,7 +10,8 @@ class NoPreferDepartment(
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    val id: Long = 0,
+    @Column(name = "id", nullable = false, updatable = false)
+    val id: Long,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
