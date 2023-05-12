@@ -8,7 +8,7 @@ import java.time.LocalDate
 class Information(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "information_id")
+    @Column(name = "information_id", nullable = false, updatable = false)
     val informationId: Long,
 
     @OneToOne(cascade = [CascadeType.ALL])

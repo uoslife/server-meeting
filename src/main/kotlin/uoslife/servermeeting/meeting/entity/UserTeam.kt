@@ -6,8 +6,8 @@ import uoslife.servermeeting.user.entity.User
 @Entity
 @Table(name = "user_teams")
 class UserTeam(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id")
-    val id: Long? = null,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id", nullable = false, updatable = false)
+    val id: Long,
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "team_id", nullable = false)
     val team: MeetingTeam,

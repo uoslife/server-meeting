@@ -7,8 +7,8 @@ import jakarta.persistence.*
 class Preference(
     @Id
     @Column(name = "preference_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    val preferenceId: Int,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val preferenceId: Long,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
