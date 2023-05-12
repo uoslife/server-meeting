@@ -9,7 +9,7 @@ import uoslife.servermeeting.user.entity.User
 @Table(name = "payments")
 class Payment(
     @Id
-    @Column(name = "payment_id")
+    @Column(name = "payment_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val paymentId: Long,
 
