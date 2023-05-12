@@ -15,5 +15,8 @@ class Match(
 
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @PrimaryKeyJoinColumn
-    val femaleTeam: MeetingTeam
+    val femaleTeam: MeetingTeam,
+
+
+    val matchProcess: MatchProcess,
 )
