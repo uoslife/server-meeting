@@ -7,7 +7,7 @@ import jakarta.persistence.*
 data class CompatibilityPriority (
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
     @Column(name = "priority", nullable = false)

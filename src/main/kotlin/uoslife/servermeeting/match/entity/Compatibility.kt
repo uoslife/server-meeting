@@ -9,7 +9,8 @@ import uoslife.servermeeting.meeting.entity.MeetingTeam
 class Compatibility(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     val id: Long,
 
     @OneToOne(fetch = FetchType.LAZY)

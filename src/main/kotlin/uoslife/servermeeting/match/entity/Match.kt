@@ -8,8 +8,8 @@ import uoslife.servermeeting.meeting.entity.MeetingTeam
 class Match(
     @Id
     @Column(name = "match_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    val matchId: Int,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val matchId: Long,
 
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @PrimaryKeyJoinColumn
