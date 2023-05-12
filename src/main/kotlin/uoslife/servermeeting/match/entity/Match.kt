@@ -1,6 +1,8 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.match.entity
 
 import jakarta.persistence.*
+import uoslife.servermeeting.meeting.entity.MeetingTeam
+
 @Entity
 @Table(name = "matches")
 class Match(

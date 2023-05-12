@@ -1,6 +1,9 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.user.entity
 
 import jakarta.persistence.*
+import uoslife.servermeeting.global.entity.BaseEntity
+import uoslife.servermeeting.meeting.entity.UserTeam
+import uoslife.servermeeting.payment.entity.Payment
 import java.util.UUID
 
 @Entity
@@ -46,4 +49,4 @@ class User(
 
 
 
-) : BaseEntity() {}
+    ) : BaseEntity() {}

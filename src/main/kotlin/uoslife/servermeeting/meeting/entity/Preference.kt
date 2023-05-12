@@ -1,4 +1,4 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.meeting.entity
 
 import jakarta.persistence.*
 

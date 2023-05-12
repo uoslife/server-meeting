@@ -1,7 +1,8 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.payment.entity
 
 import jakarta.persistence.*
-
+import uoslife.servermeeting.global.entity.BaseEntity
+import uoslife.servermeeting.user.entity.User
 
 
 @Entity

@@ -1,6 +1,7 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.meeting.entity
 
 import jakarta.persistence.*
+import uoslife.servermeeting.user.entity.User
 
 @Entity
 @Table(name = "user_teams")

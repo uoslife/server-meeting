@@ -1,4 +1,4 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.global.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.EntityListeners

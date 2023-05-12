@@ -1,6 +1,7 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.user.entity
 
 import jakarta.persistence.*
+import uoslife.servermeeting.global.entity.BaseEntity
 
 @Entity
 @Table(name = "reports")
@@ -22,4 +23,4 @@ class Report(
     @Column(name = "admin_response", nullable = true)
     val adminResponse: String? = null,
 
-) : BaseEntity() {}
+    ) : BaseEntity() {}
