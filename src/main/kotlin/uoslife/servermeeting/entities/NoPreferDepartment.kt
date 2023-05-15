@@ -3,19 +3,15 @@ package uoslife.servermeeting.entities
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "no_prefer_departments")
+@Table(name = "no_prefer_department")
 class NoPreferDepartment(
-
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    val id: Long = 0,
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    val user: User,
+    val user: User? = null,
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
-    val department: Department,
-
+    val department: Department? = null,
 )
