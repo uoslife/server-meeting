@@ -8,13 +8,13 @@ class Match(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, unique = true)
-    val id: Long? = null,
+    var id: Long? = null,
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "male_team_id")
-    val maleTeam: MeetingTeam,
+    var maleTeam: MeetingTeam,
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "female_team_id")
-    val femaleTeam: MeetingTeam,
+    var femaleTeam: MeetingTeam,
 ) : BaseEntity()

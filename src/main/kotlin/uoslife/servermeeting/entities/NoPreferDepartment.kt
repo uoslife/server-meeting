@@ -8,10 +8,10 @@ class NoPreferDepartment(
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    val user: User? = null,
+    var user: User? = null,
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
-    val department: Department? = null,
+    var department: Department? = null,
 )

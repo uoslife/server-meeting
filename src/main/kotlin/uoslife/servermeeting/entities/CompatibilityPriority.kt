@@ -9,11 +9,11 @@ class CompatibilityPriority(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, unique = true)
-    val id: Long? = null,
+    var id: Long? = null,
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(nullable = false)
-    val weight: Int,
+    var weight: Int,
 )

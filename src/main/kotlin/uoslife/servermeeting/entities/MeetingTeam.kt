@@ -8,32 +8,32 @@ class MeetingTeam(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, unique = true)
-    val id: Long? = null,
+    var id: Long? = null,
 
     @Column(nullable = false)
-    val season: Int,
+    var season: Int,
 
     @Column(nullable = false)
-    val code: String,
+    var code: String,
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "meetingTeam")
-    val information: Information? = null,
+    var information: Information? = null,
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "maleTeam")
-    val maleCompatibility: Compatibility? = null,
+    var maleCompatibility: Compatibility? = null,
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "femaleTeam")
-    val femaleCompatibility: Compatibility? = null,
+    var femaleCompatibility: Compatibility? = null,
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "maleTeam")
-    val maleMatch: Match? = null,
+    var maleMatch: Match? = null,
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "femaleTeam")
-    val femaleMatch: Match? = null,
+    var femaleMatch: Match? = null,
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
-    val userTeams: List<UserTeam> = mutableListOf(),
+    var userTeams: MutableList<UserTeam> = mutableListOf(),
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "meetingTeam")
-    val preference: List<Preference> = mutableListOf(),
+    var preference: MutableList<Preference> = mutableListOf(),
 )
