@@ -1,35 +1,29 @@
 package uoslife.servermeeting.entities
 
 import jakarta.persistence.*
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Entity
-@Table(name = "informations")
+@Table(name = "information")
 class Information(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "information_id")
-    val informationId: Long,
+    @Column(nullable = false, updatable = false, unique = true)
+    val id: Long? = null,
 
-    @OneToOne(cascade = [CascadeType.ALL])
-    @PrimaryKeyJoinColumn
-    val team: MeetingTeam,
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    val meetingTeam: MeetingTeam? = null,
 
-    @Column(name = "meeting_location", nullable = false)
+    @Column(nullable = false)
     val meetingLocation: String,
 
-    @Column(name = "meeting_time", nullable = false)
-    val meetingTime: LocalDate,
+    @Column(nullable = false)
+    val meetingTime: LocalDateTime,
 
-    @Column(name = "age", nullable = false)
-    val age: String,
-
-    @Column(name = "height", nullable = false)
-    val height: String,
-
-    @Column(name = "filter_info", nullable = false, length = 255)
+    @Column(nullable = false, length = 255)
     val filterInfo: String,
 
-    @Column(name = "distance_info", nullable = false, length = 255)
-    val distanceInfo: String
+    @Column(nullable = false, length = 255)
+    val distanceInfo: String,
 )
