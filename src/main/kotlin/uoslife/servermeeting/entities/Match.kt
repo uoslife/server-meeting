@@ -1,19 +1,20 @@
 package uoslife.servermeeting.entities
 
 import jakarta.persistence.*
+
 @Entity
-@Table(name = "matches")
+@Table(name = "match")
 class Match(
     @Id
-    @Column(name = "match_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    val matchId: Int,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false, unique = true)
+    val id: Long? = null,
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    @PrimaryKeyJoinColumn
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "male_team_id")
     val maleTeam: MeetingTeam,
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    @PrimaryKeyJoinColumn
-    val femaleTeam: MeetingTeam
-)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "female_team_id")
+    val femaleTeam: MeetingTeam,
+) : BaseEntity()
