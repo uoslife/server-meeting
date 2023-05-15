@@ -11,12 +11,12 @@ import java.util.*
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
-abstract class BaseEntity {
+abstract class BaseEntity(
     @CreatedDate
-    @Column(name = "created_date", nullable = false, updatable = false)
-    var createdDate: LocalDateTime = LocalDateTime.now()
+    @Column(name = "created_at", nullable = false, updatable = false)
+    val createdAt: LocalDateTime? = null,
 
     @LastModifiedDate
-    @Column(name = "last_modified_date", nullable = false)
-    var lastModifiedDate: LocalDateTime = LocalDateTime.now()
-}
+    @Column(name = "updated_at", nullable = false)
+    val updatedAt: LocalDateTime? = null,
+)
