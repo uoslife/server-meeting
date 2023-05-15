@@ -3,22 +3,19 @@ package uoslife.servermeeting.entities
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "compatibilities")
+@Table(name = "compatibility")
 class Compatibility(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    val id: Long,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false, unique = true)
+    val id: Long? = null,
 
     @OneToOne(fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn
-    val maleTeam: MeetingTeam,
+    @JoinColumn(name = "male_team_id")
+    val maleTeam: MeetingTeam? = null,
 
     @OneToOne(fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn
-    val femaleTeam: MeetingTeam,
-) : BaseEntity() {
-    override fun toString(): String {
-        return "Compatibility(id=$id, maleTeam=$maleTeam, femaleTeam=$femaleTeam)"
-    }
-}
+    @JoinColumn(name = "female_team_id")
+    val femaleTeam: MeetingTeam? = null,
+) : BaseEntity()
