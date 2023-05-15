@@ -10,30 +10,30 @@ class User(
     // inject by origin db
     @Id
     @Column(nullable = false, unique = true)
-    val id: UUID? = null,
+    var id: UUID? = null,
 
-    val birthYear: Int? = null,
+    var birthYear: Int? = null,
 
-    val gender: GenderType? = null,
+    var gender: GenderType? = null,
 
-    val phoneNumber: String,
+    var phoneNumber: String,
 
-    val profilePicture: String,
+    var profilePicture: String,
 
-    val nickname: String,
+    var nickname: String,
 
-    val name: String,
+    var name: String,
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
-    val department: Department? = null,
+    var department: Department? = null,
 
     @OneToMany(mappedBy = "user")
-    val noPreferDepartments: List<NoPreferDepartment> = mutableListOf(),
+    var noPreferDepartments: MutableList<NoPreferDepartment> = mutableListOf(),
 
     @OneToMany(mappedBy = "user")
-    val userTeams: List<UserTeam> = mutableListOf(),
+    var userTeams: MutableList<UserTeam> = mutableListOf(),
 
     @OneToMany(mappedBy = "user")
-    val reports: List<Report> = mutableListOf(),
+    var reports: MutableList<Report> = mutableListOf(),
 ) : BaseEntity()

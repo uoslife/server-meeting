@@ -9,12 +9,12 @@ class Department(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, unique = true)
-    val id: Long? = null,
+    var id: Long? = null,
 
-    val name: String,
+    var name: String,
 
-    val number: Int,
+    var number: Int,
 
     @OneToOne(mappedBy = "department", fetch = FetchType.LAZY)
-    val user: User? = null,
+    var user: User? = null,
 ) : BaseEntity()

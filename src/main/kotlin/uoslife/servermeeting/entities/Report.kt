@@ -8,17 +8,17 @@ class Report(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, unique = true)
-    val id: Long? = null,
+    var id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    val user: User? = null,
+    var user: User? = null,
 
     @Column(nullable = false, length = 255)
-    val reportCategory: String,
+    var reportCategory: String,
 
     @Column(nullable = false)
-    val reportText: String,
+    var reportText: String,
 
-    val adminResponse: String,
+    var adminResponse: String,
 ) : BaseEntity()
