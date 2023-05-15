@@ -6,20 +6,23 @@ import jakarta.persistence.*
 @Table(name = "preferences")
 class Preference(
     @Id
-    @Column(name = "preference_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    val preferenceId: Int,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false, unique = true)
+    val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
-    val team: MeetingTeam,
+    val meetingTeam: MeetingTeam? = null,
 
-    @Column(name = "age_range_preference", nullable = false)
+    @Column(nullable = false)
     val ageRangePreference: String,
-    @Column(name = "height_range_preference", nullable = false)
+
+    @Column(nullable = false)
     val heightRangePreference: String,
-    @Column(name = "filter_condition", nullable = false)
+
+    @Column(nullable = false)
     val filterCondition: String,
-    @Column(name = "distance_condition", nullable = false)
-    val distanceCondition: String
+
+    @Column(nullable = false)
+    val distanceCondition: String,
 )
