@@ -3,21 +3,18 @@ package uoslife.servermeeting.entities
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "departments")
+@Table(name = "department")
 class Department(
 
     @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    val id: Int,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false, unique = true)
+    val id: Long? = null,
 
     val name: String,
 
-    val number: Number,
+    val number: Int,
 
     @OneToOne(mappedBy = "department", fetch = FetchType.LAZY)
     val user: User? = null,
-
-    @OneToMany(mappedBy = "department", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
-    val noPreferDepartment: MutableList<NoPreferDepartment> = mutableListOf(),
-)
+) : BaseEntity()
