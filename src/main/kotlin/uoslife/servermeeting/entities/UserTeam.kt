@@ -5,19 +5,20 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "user_teams")
 class UserTeam(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id")
-    val id: Long? = null,
-
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "team_id", nullable = false)
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id", nullable = false)
     val team: MeetingTeam,
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "user_id", nullable = false)
-    val user: User,
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    val user: User? = null,
 
-    @Column(name = "is_leader", nullable = false)
+    @Column(nullable = false)
     val isLeader: Boolean,
 
-    @Column(name = "type", nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    val type: TeamType
+    val type: TeamType? = null,
 )
