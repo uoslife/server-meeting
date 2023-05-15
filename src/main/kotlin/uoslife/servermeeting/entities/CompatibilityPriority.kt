@@ -3,16 +3,17 @@ package uoslife.servermeeting.entities
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "compatibility_priorities")
-data class CompatibilityPriority (
+@Table(name = "compatibility_priority")
+class CompatibilityPriority(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    val id: Long,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false, unique = true)
+    val id: Long? = null,
 
-    @Column(name = "priority", nullable = false)
-    val priority: String,
+    @Column(nullable = false)
+    val name: String,
 
-    @Column(name = "weight", nullable = false)
+    @Column(nullable = false)
     val weight: Int,
-){}
+)
