@@ -7,8 +7,8 @@ plugins {
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
     kotlin("plugin.jpa") version "1.7.22"
-    kotlin("kapt") version "1.7.10" //querydsl
-    id("org.jlleitschuh.gradle.ktlint") version "10.3.0" //ktlint
+    kotlin("kapt") version "1.7.10" // querydsl
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0" // ktlint
 }
 
 allOpen {
@@ -46,28 +46,15 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
 
     // swagger
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.15")
-    implementation("org.springdoc:springdoc-openapi-kotlin:1.6.15")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
 
-    // auth0
-//    implementation("com.auth0:auth0-spring-security-api:1.5.2")
-//    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-
-    // jwt
-//    compileOnly("io.jsonwebtoken:jjwt-api:0.11.5")
-//    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
-//    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
-
-    //querydsl
+    // querydsl
     implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
     kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
 
     // spring security
-//    implementation("org.springframework.boot:spring-boot-starter-security")
-//    implementation("org.springframework.security:spring-security-oauth2-resource-server")
-//    implementation("org.springframework.security:spring-security-oauth2-jose")
-//    implementation("org.springframework.security:spring-security-config")
-//    testImplementation("org.springframework.security:spring-security-test")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    testImplementation("org.springframework.security:spring-security-test")
 
     // testcontainers
     testImplementation("org.testcontainers:junit-jupiter")
@@ -76,7 +63,6 @@ dependencies {
     // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:1.3.4")
-    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
 
     // kotest
     testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
@@ -103,9 +89,4 @@ tasks.withType<Test> {
 
 tasks.test {
     outputs.dir(snippetsDir)
-}
-
-tasks.asciidoctor {
-    inputs.dir(snippetsDir)
-    dependsOn(tasks.test)
 }
