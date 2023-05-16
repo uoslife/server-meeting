@@ -26,4 +26,6 @@ class Information(
 
     @Column(nullable = false, length = 255)
     var distanceInfo: String,
+
+    var aboutMe: String,
 )
