@@ -1,10 +1,10 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.domain.user.domain.entity.enums
 
 enum class DepartmentNameType(val college: String, val department: String, val code: Int) {
     ADMINISTRATION("정경대학", "행정학과", 120),
     INTERNATIONAL_RELATIONS("정경대학", "국제관계학과", 150),
     ECONOMICS("정경대학", "경제학부", 280),
-    SOCIAL_WELFARE("정경대학", "사회복지학과", 910),
+    SOCIAL_WELFARE("정경대학", "사회복지 학과", 910),
     TAXATION("정경대학", "세무학과", 830),
     BUSINESS("경영대학", "경영학부", 270),
     CHEMICAL_ENGINEERING("공과대학", "화학공학과", 340),
