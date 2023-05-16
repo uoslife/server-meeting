@@ -1,6 +1,7 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.domain.meeting.domain.entity
 
 import jakarta.persistence.*
+import uoslife.servermeeting.global.common.BaseEntity
 
 @Entity
 @Table(name = "compatibility")

@@ -1,6 +1,8 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.domain.match.domain.entity
 
 import jakarta.persistence.*
+import uoslife.servermeeting.domain.user.domain.entity.User
+import uoslife.servermeeting.global.common.BaseEntity
 
 @Entity
 @Table(name = "report")

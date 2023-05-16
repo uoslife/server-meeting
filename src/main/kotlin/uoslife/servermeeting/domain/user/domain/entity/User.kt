@@ -1,6 +1,11 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.domain.user.domain.entity
 
 import jakarta.persistence.*
+import uoslife.servermeeting.domain.match.domain.entity.Report
+import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
+import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
+import uoslife.servermeeting.entities.*
+import uoslife.servermeeting.global.common.BaseEntity
 import java.util.*
 
 @Entity

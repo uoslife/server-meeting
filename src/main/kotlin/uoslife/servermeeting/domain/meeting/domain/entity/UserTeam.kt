@@ -1,6 +1,8 @@
-package uoslife.servermeeting.entities
+package uoslife.servermeeting.domain.meeting.domain.entity
 
 import jakarta.persistence.*
+import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
+import uoslife.servermeeting.domain.user.domain.entity.User
 
 @Entity
 @Table(name = "user_team")
