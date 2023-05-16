@@ -11,6 +11,8 @@ class Compatibility(
     @Column(nullable = false, updatable = false, unique = true)
     var id: Long? = null,
 
+    var score: Int? = null,
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "male_team_id")
     var maleTeam: MeetingTeam? = null,
