@@ -9,5 +9,4 @@ class ServerMeetingApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }
