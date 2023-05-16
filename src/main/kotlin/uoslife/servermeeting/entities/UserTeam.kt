@@ -3,7 +3,7 @@ package uoslife.servermeeting.entities
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "user_teams")
+@Table(name = "user_team")
 class UserTeam(
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
@@ -20,5 +20,5 @@ class UserTeam(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var type: TeamType? = null,
+    var type: TeamType,
 )
