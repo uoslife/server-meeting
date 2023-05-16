@@ -14,6 +14,7 @@ class User(
 
     var birthYear: Int? = null,
 
+    @Enumerated(EnumType.STRING)
     var gender: GenderType? = null,
 
     var phoneNumber: String,
