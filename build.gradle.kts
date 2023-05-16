@@ -56,13 +56,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     testImplementation("org.springframework.security:spring-security-test")
 
-    // testcontainers
-    testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:postgresql:1.18.0")
-
     // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:1.3.4")
 
     // kotest
     testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
@@ -70,17 +65,15 @@ dependencies {
     testImplementation("io.kotest:kotest-extensions-spring:4.4.3")
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("org.testcontainers:testcontainers-bom:1.18.0")
-    }
-}
-
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
     }
+}
+
+tasks.named<Jar>("jar") {
+    enabled = false
 }
 
 tasks.withType<Test> {
