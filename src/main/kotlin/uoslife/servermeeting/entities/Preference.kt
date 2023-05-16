@@ -3,7 +3,7 @@ package uoslife.servermeeting.entities
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "preferences")
+@Table(name = "preference")
 class Preference(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
