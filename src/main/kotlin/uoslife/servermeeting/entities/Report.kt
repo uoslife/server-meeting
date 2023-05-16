@@ -14,11 +14,10 @@ class Report(
     @JoinColumn(name = "user_id")
     var user: User? = null,
 
-    @Column(nullable = false, length = 255)
-    var reportCategory: String,
+    var category: String,
 
-    @Column(nullable = false)
-    var reportText: String,
+    @Column(nullable = false, length = 255)
+    var text: String,
 
     var adminResponse: String,
 ) : BaseEntity()
