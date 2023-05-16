@@ -2,45 +2,47 @@
 
 시대팅 시즌3 server
 
+swagger url: {base_url}/swagger-ui/index.html
+
 ## ERD
 
 ![시대팅 ERD](docsource/Sidaeting-erd.png)
 
 ### User
 
-| 키   | 논리                 | 물리                 | 타입           | Null 허용 | 기본값 | 코멘트             |
-|-----|--------------------|--------------------|--------------|---------|-----|-----------------|
-| PK  | user_id            | user_id            | INT          | N       |     |                 |
-| FK  | department_id      | department_id      | INT          | N       |     |                 |
-|     | 생년                 | age                | INT          | N       |     | 주민번호앞자리의 첫 두 숫자 |
-|     | gender             | gender             | VARCHAR(255) | N       |     |                 |
-|     | phone_number       | phone_number       | VARCHAR(255) | N       |     |                 |
-|     | profile_picture    | profile_picture    | VARCHAR(255) | N       |     |                 |
-|     | registration_date  | registration_date  | DATE         | N       |     |                 |
-|     | last_modified_date | last_modified_date | DATE         | N       |     |                 |
-|     | 별명                 | nickname           | VARCHAR      | N       |     |                 |
-|     | 이름                 | name               | VARCHAR(255) | N       |     |                 |
-|     | auth_id            | auth_id            | VARCHAR(255) | N       |     | 시대생 서버의 uuid    |
+| 키  | 논리                 | 물리                 | 타입           | Null 허용 | 기본값 | 코멘트             |
+|----|--------------------|--------------------|--------------|---------|-----|-----------------|
+| PK | user_id            | user_id            | INT          | N       |     |                 |
+| FK | department_id      | department_id      | INT          | N       |     |                 |
+|    | 생년                 | age                | INT          | N       |     | 주민번호앞자리의 첫 두 숫자 |
+|    | gender             | gender             | VARCHAR(255) | N       |     |                 |
+|    | phone_number       | phone_number       | VARCHAR(255) | N       |     |                 |
+|    | profile_picture    | profile_picture    | VARCHAR(255) | N       |     |                 |
+|    | registration_date  | registration_date  | DATE         | N       |     |                 |
+|    | last_modified_date | last_modified_date | DATE         | N       |     |                 |
+|    | 별명                 | nickname           | VARCHAR      | N       |     |                 |
+|    | 이름                 | name               | VARCHAR(255) | N       |     |                 |
+|    | auth_id            | auth_id            | VARCHAR(255) | N       |     | 시대생 서버의 uuid    |
 
 ### Preferences
 
-| 키   | 논리                      | 물리                      | 타입           | Null 허용 | 기본값 | 코멘트                                                                                                              |
-|-----|-------------------------|-------------------------|--------------|---------|-----|------------------------------------------------------------------------------------------------------------------|
-| PK  | preference_id           | preference_id           | INT          | N       |     |                                                                                                                  |
-| FK  | team_id                 | team_id                 | INT          | N       |     |                                                                                                                  |
-|     | age_range_preference    | age_range_preference    | STRING       | N       |     | 현재 년도 - 29가 MSB, 현재 년도 - 19가 LSB                                                                                 |
-|     | height_range_preference | height_range_preference | STRING       | N       |     | 대한민국 신체 분포표 참고, 남자 165미만이 MSB, 남자 165~170, 남자 171~175, 남자 176~180, 남자 180 ~ 185, 남자 185 이상이 LSB, 총 6bit, 여자는 -10 |
-|     | filter_condition        | filter_condition        | STRING       | N       |     | 서로 일치 하지 않으면 매칭이 안되는 질문에 대한 답변, bit 이용 ex) MBTI이면 4bit 이용해서 연속해서 기록할 것                                           |
-|     | distance_condition      | distance_condition      | VARCHAR(255) | N       |     | 서로의 차이에 대한 점수, 연속된 정수이용, 만약 각 값이 10 넘을 경우 scale 이용 ex) 3개의 답변 345, 만약 3,10,5 일 경우 10                             |
+| 키  | 논리                      | 물리                      | 타입           | Null 허용 | 기본값 | 코멘트                                                                                                              |
+|----|-------------------------|-------------------------|--------------|---------|-----|------------------------------------------------------------------------------------------------------------------|
+| PK | preference_id           | preference_id           | INT          | N       |     |                                                                                                                  |
+| FK | team_id                 | team_id                 | INT          | N       |     |                                                                                                                  |
+|    | age_range_preference    | age_range_preference    | STRING       | N       |     | 현재 년도 - 29가 MSB, 현재 년도 - 19가 LSB                                                                                 |
+|    | height_range_preference | height_range_preference | STRING       | N       |     | 대한민국 신체 분포표 참고, 남자 165미만이 MSB, 남자 165~170, 남자 171~175, 남자 176~180, 남자 180 ~ 185, 남자 185 이상이 LSB, 총 6bit, 여자는 -10 |
+|    | filter_condition        | filter_condition        | STRING       | N       |     | 서로 일치 하지 않으면 매칭이 안되는 질문에 대한 답변, bit 이용 ex) MBTI이면 4bit 이용해서 연속해서 기록할 것                                           |
+|    | distance_condition      | distance_condition      | VARCHAR(255) | N       |     | 서로의 차이에 대한 점수, 연속된 정수이용, 만약 각 값이 10 넘을 경우 scale 이용 ex) 3개의 답변 345, 만약 3,10,5 일 경우 10                             |
 
 ### Match
 
-| Key | Logical | Physical | Type | Null Allowed | Default | Comment |
-|-----|---------|----------|------|--------------|---------|---------|
-| FK  | team_male_id | team_male_id | INT  | N  |         |         |
-| FK  | team_female_id | team_female_id | INT  | N  |         |         |
-| PK  | match_id | match_id | INT  | N  |         |         |
-|     | match_date | match_date | DATE  | N  |         |         |
+| Key | Logical        | Physical       | Type | Null Allowed | Default | Comment |
+|-----|----------------|----------------|------|--------------|---------|---------|
+| FK  | team_male_id   | team_male_id   | INT  | N            |         |         |
+| FK  | team_female_id | team_female_id | INT  | N            |         |         |
+| PK  | match_id       | match_id       | INT  | N            |         |         |
+|     | match_date     | match_date     | DATE | N            |         |         |
 
 ### Payment
 
@@ -88,14 +90,16 @@
 |     | compatibility_weight | compatibility_weight | INT          | N            |         | Weight of the comparison factor                                 |
 
 ### Departments
+
 학부과 정보(대학알림이 이용)
 | Key | Logical | Physical | Type | Null Allowed | Default | Comment |
 |-----|---------|----------|------|--------------|---------|---------|
-| PK  | department_id | department_id | INT  | N  |         |         |
-|     | department_name | department_name | VARCHAR(255)  | N  |         |         |
-|     | department_number | department_number | INT  | N  |         |         |
+| PK | department_id | department_id | INT | N | | |
+| | department_name | department_name | VARCHAR(255)  | N | | |
+| | department_number | department_number | INT | N | | |
 
 ### No_prefer_departments
+
 기피학과
 
 | Key | Logical       | Physical      | Type | Null Allowed | Default | Comment |
