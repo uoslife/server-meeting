@@ -11,8 +11,11 @@ class Department(
     @Column(nullable = false, updatable = false, unique = true)
     var id: Long? = null,
 
-    var name: String,
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var name: DepartmentNameType,
 
+    @Column(nullable = false)
     var number: Int,
 
     @OneToOne(mappedBy = "department", fetch = FetchType.LAZY)
