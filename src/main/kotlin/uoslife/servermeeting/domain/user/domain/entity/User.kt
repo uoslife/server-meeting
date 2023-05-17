@@ -19,15 +19,15 @@ class User(
     var birthYear: Int? = null,
 
     @Enumerated(EnumType.STRING)
-    var gender: GenderType? = null,
+    var gender: GenderType = GenderType.MALE,
 
-    var phoneNumber: String,
+    var phoneNumber: String?,
 
-    var profilePicture: String,
+    var profilePicture: String?,
 
-    var nickname: String,
+    var nickname: String?,
 
-    var name: String,
+    var name: String?,
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
