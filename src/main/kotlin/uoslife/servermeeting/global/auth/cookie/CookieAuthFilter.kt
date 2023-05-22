@@ -77,7 +77,7 @@ class CookieAuthFilter(private val authProviderService: AuthProviderService) :
         val requestURI = request.requestURI
 
         // List public endpoints
-        return requestURI.startsWith("/swagger-ui/") ||
-            requestURI.startsWith("/api-docs")
+        return requestURI.startsWith("/api/swagger-ui/") ||
+            requestURI.startsWith("/api/api-docs")
     }
 }
