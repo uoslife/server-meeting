@@ -75,11 +75,6 @@ class CookieAuthFilter(private val authProviderService: AuthProviderService) :
 
     private fun isPublicEndpoint(request: HttpServletRequest): Boolean {
         val requestURI = request.requestURI
-        println(requestURI)
-        println(
-            requestURI.contains("/api/swagger-ui/") ||
-                requestURI.contains("/api/api-docs"),
-        )
 
         // List public endpoints
         return requestURI.contains("/api/swagger-ui/") ||
