@@ -29,6 +29,9 @@ class User(
 
     var name: String?,
 
+    @Column(name = "height")
+    var height: Int = 0,
+
     var kakaoTalkId: String? = null,
 
     @Enumerated(EnumType.STRING)

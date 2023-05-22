@@ -11,6 +11,7 @@ ALTER Table "user"
     ADD Column "smoking"        BOOLEAN,
     ADD COLUMN "spirit_animal"  VARCHAR(255),
     ADD COLUMN "mbti"           VARCHAR(255),
-    ADD COLUMN "interest"       VARCHAR(255)
+    ADD COLUMN "interest"       VARCHAR(255),
+    ADD COLUMN "height"         Integer       Default 0;
 
 
