@@ -1,97 +1,110 @@
 name: Deployment
 
 on:
-  push:
-    branches: [ main ]
+    push:
+        branches: [ main ]
 
 permissions:
-  id-token: write
-  contents: read
-
+    id-token: write
+    contents: read
 
 env:
-  AWS_REGION: ap-northeast-2
-  AWS_ROLE: arn:aws:iam::755333364809:role/GithubElasticContainerRegistryRole
-  ECR_REGISTRY: 755333364809.dkr.ecr.ap-northeast-2.amazonaws.com
-  ECR_REPOSITORY: uoslife-v2/meeting-server
-  MANIFEST_PATH: projects/meeting
-  IMAGE_NAME: meeting-server
-  EKS_REPOSITORY_TOKEN: ${{ secrets.EKS_REPOSITORY_TOKEN }}
+    AWS_REGION: ${{ secrets.AWS_REGION }}
+    AWS_ROLE: ${{ secrets.AWS_ROLE }}
+    ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+    ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+    MANIFEST_PATH: ${{ secrets.MANIFEST_PATH }}
+    IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+    EKS_REPOSITORY_TOKEN: ${{ secrets.EKS_REPOSITORY_TOKEN }}
+    PROD_PROPERTIES: ${{ secrets.PROD_PROPERTIES }}
+    TEST_PROPERTIES: ${{ secrets.TEST_PROPERTIES }}
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+    deploy:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Clone Repository
-        uses: actions/checkout@v3
+        steps:
+            -   name: Clone Repository
+                uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ env.AWS_ROLE }}
-          role-session-name: GithubElasticContainerRegistrySession
+            -   name: Configure AWS Credentials
+                uses: aws-actions/configure-aws-credentials@v1
+                with:
+                    aws-region: ${{ env.AWS_REGION }}
+                    role-to-assume: ${{ env.AWS_ROLE }}
+                    role-session-name: GithubElasticContainerRegistrySession
 
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v1
+            -   name: Login to Amazon ECR
+                uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Generate Version Code
-        run: echo "VERSION=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+            -   name: Generate Version Code
+                run: echo "VERSION=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'adopt' # https://github.com/actions/setup-java
+            -   name: Setup Docker Buildx
+                uses: docker/setup-buildx-action@v2
 
-      - name: Gradle Caching
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+            -   name: Set up JDK 17
+                uses: actions/setup-java@v3
+                with:
+                    java-version: '17'
+                    distribution: 'adopt' # https://github.com/actions/setup-java
 
-      - name: Build with Gradle
-        run: ./gradlew clean build
+            -   name: Gradle Caching
+                uses: actions/cache@v3
+                with:
+                    path: |
+                        ~/.gradle/caches
+                        ~/.gradle/wrapper
+                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+                    restore-keys: |
+                        ${{ runner.os }}-gradle-
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v2
+            -   name: Create main-application.yml
+                run: |
+                    mkdir -p ./src/main/resources
+                    echo "${{ env.PROD_PROPERTIES }}" > ./src/main/resources/application.yml
 
-      - name: Build and Push Image to ECR
-        uses: docker/build-push-action@v3
-        with:
-          file: Dockerfile
-          context: .
-          push: true
-          platforms:
-            linux/amd64
-          tags: |
-            ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.VERSION }},
-            ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            -   name: Create test-application.yml
+                run: |
+                    mkdir -p ./src/test/resources
+                    echo "${{ env.TEST_PROPERTIES }}" > ./src/test/resources/application.yml
 
-      - name: Checkout EKS Repository
-        uses: actions/checkout@v3
-        with:
-          repository: uoslife/infra-eks
-          ref: master
-          token: ${{ env.EKS_REPOSITORY_TOKEN }}
-          path: infra-eks
+            -   name: Build with Gradle
+                run: ./gradlew clean build
 
-      - name: Update Image Tag
-        run: |
-          cd infra-eks/${{ env.MANIFEST_PATH }} 
-          kustomize edit set image ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.VERSION }}
-      - name: Apply Image Tag
-        run: |
-          cd infra-eks/${{ env.MANIFEST_PATH }} 
-          git config --global user.email ${{ github.actor }}@users.noreply.github.com
-          git config --global user.name ${{ github.actor }}
-          git add .
-          git commit -am "ci(${{ env.MANIFEST_PATH }}/${{ env.IMAGE_NAME }}): Update image tag to `${{ env.VERSION }}`"
-          git push
+            -   name: Push Image to ECR
+                uses: docker/build-push-action@v3
+                with:
+                    file: Dockerfile
+                    context: .
+                    push: true
+                    target: production
+                    platforms:
+                        linux/amd64
+                    tags: |
+                        ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.VERSION }},
+                        ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+                    cache-from: type=gha
+                    cache-to: type=gha,mode=max
+
+            -   name: Checkout EKS Repository
+                uses: actions/checkout@v3
+                with:
+                    repository: uoslife/infra-eks
+                    ref: master
+                    token: ${{ env.EKS_REPOSITORY_TOKEN }}
+                    path: infra-eks
+
+            -   name: Update Image Tag
+                run: |
+                    cd infra-eks/${{ env.MANIFEST_PATH }} 
+                    kustomize edit set image ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.VERSION }}
+
+            -   name: Apply Image Tag
+                run: |
+                    cd infra-eks/${{ env.MANIFEST_PATH }} 
+                    git config --global user.email ${{ github.actor }}@users.noreply.github.com
+                    git config --global user.name ${{ github.actor }}
+                    git add .
+                    git commit -am "ci(${{ env.MANIFEST_PATH }}/${{ env.IMAGE_NAME }}): Update image tag to `${{ env.VERSION }}`"
+                    git push
