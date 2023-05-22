@@ -78,7 +78,6 @@ jobs:
                     file: Dockerfile
                     context: .
                     push: true
-                    target: production
                     platforms:
                         linux/amd64
                     tags: |
