@@ -2,7 +2,7 @@
 
 시대팅 시즌3 server
 
-swagger url: {base_url}/swagger-ui/index.html
+[swagger](https://meeting.uoslife.com/api/swagger-ui/index.html)
 
 ## ERD
 
