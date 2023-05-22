@@ -81,7 +81,7 @@ class AuthProviderService(
         return uoslife.servermeeting.domain.user.domain.entity.User(
             id = originProfileGetResponse.id,
             name = originProfileGetResponse.name,
-            nickname = originProfileGetResponse.nickname,
+            nickname = "user@" + UUID.randomUUID().toString(),
             phoneNumber = originProfileGetResponse.phone,
             profilePicture = originProfileGetResponse.photo,
         )
