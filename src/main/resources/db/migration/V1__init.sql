@@ -23,13 +23,13 @@ CREATE TYPE "DepartmentNameType" AS ENUM (
 CREATE TABLE "user"
 (
     "id"              UUID PRIMARY KEY,
-    "department_id"   bigint    NOT NULL,
     "birth_year"      INTEGER,
     "gender"          "GenderType",
     "phone_number"    VARCHAR(255),
     "profile_picture" VARCHAR(255),
     "nickname"        VARCHAR(255),
     "name"            VARCHAR(255),
+    "department"      "DepartmentNameType",
     "created_at"      TIMESTAMP NOT NULL,
     "updated_at"      TIMESTAMP NOT NULL
 );
@@ -43,20 +43,11 @@ CREATE TABLE "user_team"
     PRIMARY KEY ("team_id", "user_id")
 );
 
-CREATE TABLE "department"
-(
-    "id"         bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    "name"       "DepartmentNameType" NOT NULL,
-    "number"     INTEGER              NOT NULL,
-    "created_at" TIMESTAMP            NOT NULL,
-    "updated_at" TIMESTAMP            NOT NULL
-);
-
 CREATE TABLE "no_prefer_department"
 (
-    "user_id"       UUID   NOT NULL,
-    "department_id" bigint NOT NULL,
-    PRIMARY KEY ("user_id", "department_id")
+    "id"         bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "user_id"    UUID                 NOT NULL,
+    "department" "DepartmentNameType" NOT NULL
 );
 
 CREATE TABLE "report"
@@ -125,9 +116,6 @@ CREATE TABLE "compatibility_priority"
     "weight" INTEGER      NOT NULL
 );
 
-ALTER TABLE "user"
-    ADD FOREIGN KEY ("department_id") REFERENCES "department" ("id");
-
 ALTER TABLE "user_team"
     ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
 
@@ -136,9 +124,6 @@ ALTER TABLE "user_team"
 
 ALTER TABLE "no_prefer_department"
     ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
-
-ALTER TABLE "no_prefer_department"
-    ADD FOREIGN KEY ("department_id") REFERENCES "department" ("id");
 
 ALTER TABLE "report"
     ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");

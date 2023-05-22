@@ -15,12 +15,6 @@ class Preference(
     var meetingTeam: MeetingTeam? = null,
 
     @Column(nullable = false)
-    var ageRangePreference: String,
-
-    @Column(nullable = false)
-    var heightRangePreference: String,
-
-    @Column(nullable = false)
     var filterCondition: String,
 
     @Column(nullable = false)

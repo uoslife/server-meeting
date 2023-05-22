@@ -1,7 +1,6 @@
 package uoslife.servermeeting.domain.meeting.domain.entity
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
 
 @Entity
 @Table(name = "information")
@@ -16,16 +15,11 @@ class Information(
     var meetingTeam: MeetingTeam? = null,
 
     @Column(nullable = false)
-    var meetingLocation: String,
-
-    @Column(nullable = false)
-    var meetingTime: LocalDateTime,
+    var meetingTime: String? = null,
 
     @Column(nullable = false, length = 255)
     var filterInfo: String,
 
     @Column(nullable = false, length = 255)
     var distanceInfo: String,
-
-    var aboutMe: String,
 )

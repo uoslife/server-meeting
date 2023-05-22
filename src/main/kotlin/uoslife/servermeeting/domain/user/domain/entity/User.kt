@@ -1,9 +1,8 @@
 package uoslife.servermeeting.domain.user.domain.entity
 
 import jakarta.persistence.*
-import uoslife.servermeeting.domain.match.domain.entity.Report
 import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
-import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
+import uoslife.servermeeting.domain.user.domain.entity.enums.*
 import uoslife.servermeeting.global.common.BaseEntity
 import java.util.*
 
@@ -25,20 +24,35 @@ class User(
 
     var profilePicture: String?,
 
-    var nickname: String?,
+    @Column(nullable = false, unique = true)
+    var nickname: String,
 
     var name: String?,
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id")
-    var department: Department? = null,
+    @Column(name = "height")
+    var height: Int = 0,
+
+    var kakaoTalkId: String? = null,
+
+    @Enumerated(EnumType.STRING)
+    var studentType: StudentType? = null,
+
+    @Enumerated(EnumType.STRING)
+    var department: DepartmentNameType? = null,
+
+    var studentNumber: String? = null,
+
+    var smoking: Boolean? = null,
+
+    var spiritAnimal: String? = null,
+
+    var mbti: String? = null,
+
+    var interest: String? = null,
 
     @OneToMany(mappedBy = "user")
     var noPreferDepartments: MutableList<NoPreferDepartment> = mutableListOf(),
 
     @OneToMany(mappedBy = "user")
     var userTeams: MutableList<UserTeam> = mutableListOf(),
-
-    @OneToMany(mappedBy = "user")
-    var reports: MutableList<Report> = mutableListOf(),
 ) : BaseEntity()

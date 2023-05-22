@@ -17,6 +17,8 @@ class MeetingTeam(
     @Column(nullable = false)
     var code: String,
 
+    var name: String? = null,
+
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "meetingTeam")
     var information: Information? = null,
 
