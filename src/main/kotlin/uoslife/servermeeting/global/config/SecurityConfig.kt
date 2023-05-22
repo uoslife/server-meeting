@@ -26,7 +26,8 @@ class SecurityConfig(private val cookieAuthFilter: CookieAuthFilter) {
         configuration.allowedOrigins = listOf(
             "http://localhost:8081",
             "http://localhost:3000",
-            "https://www.uoslife.com",
+            "https://uoslife.com",
+            "https://meeting.uoslife.com",
         )
         configuration.allowedMethods =
             mutableListOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE")
@@ -58,7 +59,7 @@ class SecurityConfig(private val cookieAuthFilter: CookieAuthFilter) {
             .and()
             .authorizeHttpRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // CORS preflight 요청 허용
-            .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll() // Swagger 허용 url
+            .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**").permitAll() // Swagger 허용 url
             .requestMatchers("/api/**").hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
         http

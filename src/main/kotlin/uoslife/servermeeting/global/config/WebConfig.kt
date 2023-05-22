@@ -12,7 +12,8 @@ class WebConfig : WebMvcConfigurer {
             .allowedOrigins(
                 "http://localhost:8081",
                 "http://localhost:3000",
-                "https://www.uoslife.com",
+                "https://uoslife.com",
+                "https://meeting.uoslife.com",
             )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
             .allowCredentials(true)
