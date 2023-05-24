@@ -51,8 +51,5 @@ class User(
     var interest: String? = null,
 
     @OneToMany(mappedBy = "user")
-    var noPreferDepartments: MutableList<NoPreferDepartment> = mutableListOf(),
-
-    @OneToMany(mappedBy = "user")
     var userTeams: MutableList<UserTeam> = mutableListOf(),
 ) : BaseEntity()
