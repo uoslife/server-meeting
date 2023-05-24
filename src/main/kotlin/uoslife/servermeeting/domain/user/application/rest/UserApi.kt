@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -26,6 +27,7 @@ class UserApi(
 ) {
 
     @Operation(summary = "User 정보 조회", description = "세션을 통해서 User의 정보를 조회합니다. row가 없다면 생성합니다.")
+    @GetMapping
     fun getUser(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<UserFindResponseDto>? {
         return userService.findUser(UUID.fromString(userDetails.username))
     }
