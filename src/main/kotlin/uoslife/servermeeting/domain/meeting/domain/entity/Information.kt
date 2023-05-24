@@ -15,7 +15,7 @@ class Information(
     var meetingTeam: MeetingTeam? = null,
 
     @Column(nullable = false)
-    var meetingTime: String? = null,
+    var meetingTime: String,
 
     @Column(nullable = false, length = 255)
     var filterInfo: String,
