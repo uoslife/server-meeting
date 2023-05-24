@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.domain.user.application.request.UserUpdateRequestDto
 import uoslife.servermeeting.domain.user.application.response.UserFindResponseDto
-import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.service.UserService
 import java.util.*
 
@@ -35,5 +34,11 @@ class UserApi(
     fun updateUser(@RequestBody(required = false) requestBody: UserUpdateRequestDto,
                    @PathVariable id: UUID): ResponseEntity<UUID> {
         return userService.updateUser(requestBody, id)
+    }
+
+    @Operation(summary = "Nickname 중복 여부 확인", description = "nickname을 조회합니다.")
+    @GetMapping("/{nickname}")
+    fun getUserByUsername(@PathVariable nickname: String): ResponseEntity<String> {
+        return userService.findUserByNickname(nickname)
     }
 }

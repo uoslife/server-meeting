@@ -11,7 +11,7 @@ data class UserUpdateResponseDto (
     val department: DepartmentNameType?,
     val studentType: StudentType?,
     val smoking: Boolean?,
-    val spirit_animal: String?,
+    val spiritAnimal: String?,
     val mbti: String?,
     val interest: String?,
     val height: Number?,
