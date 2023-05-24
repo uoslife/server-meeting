@@ -43,13 +43,6 @@ CREATE TABLE "user_team"
     PRIMARY KEY ("team_id", "user_id")
 );
 
-CREATE TABLE "no_prefer_department"
-(
-    "id"         bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    "user_id"    UUID                 NOT NULL,
-    "department" "DepartmentNameType" NOT NULL
-);
-
 CREATE TABLE "report"
 (
     "id"             bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -121,9 +114,6 @@ ALTER TABLE "user_team"
 
 ALTER TABLE "user_team"
     ADD FOREIGN KEY ("team_id") REFERENCES "meeting_team" ("id");
-
-ALTER TABLE "no_prefer_department"
-    ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
 
 ALTER TABLE "report"
     ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
