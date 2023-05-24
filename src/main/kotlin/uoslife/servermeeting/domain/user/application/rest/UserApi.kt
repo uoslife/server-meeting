@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.domain.user.application.request.UserUpdateRequestDto
+import uoslife.servermeeting.domain.user.application.response.NicknameCheckResponseDto
 import uoslife.servermeeting.domain.user.application.response.UserFindResponseDto
+import uoslife.servermeeting.domain.user.application.response.UserUpdateResponseDto
 import uoslife.servermeeting.domain.user.domain.service.UserService
 import java.util.*
 
@@ -35,13 +37,13 @@ class UserApi(
     @Operation(summary = "User 정보 업데이트", description = "유저의 정보를 업데이트합니다.")
     @PatchMapping("/{id}")
     fun updateUser(@RequestBody(required = false) requestBody: UserUpdateRequestDto,
-                   @PathVariable id: UUID): ResponseEntity<UUID> {
+                   @PathVariable id: UUID): ResponseEntity<UserUpdateResponseDto> {
         return userService.updateUser(requestBody, id)
     }
 
     @Operation(summary = "Nickname 중복 여부 확인", description = "nickname을 조회합니다.")
     @GetMapping("/{nickname}")
-    fun getUserByUsername(@PathVariable nickname: String): ResponseEntity<String> {
+    fun getUserByUsername(@PathVariable nickname: String): ResponseEntity<NicknameCheckResponseDto> {
         return userService.findUserByNickname(nickname)
     }
 }
