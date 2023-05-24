@@ -21,7 +21,25 @@ class UserService(
         return ResponseEntity.ok(user?.toResponse())
     }
 
-    fun updateUser(body: UserUpdateRequestDto, id: UUID): String {
-        return "updateUser"
+    fun updateUser(requestDto: UserUpdateRequestDto, id: UUID): ResponseEntity<UUID> {
+        val existingUser = userRepository.findByIdOrNull(id)
+
+        existingUser?.let {
+            it.birthYear = requestDto.birthYear
+            it.gender = requestDto.gender!!
+            it.name = requestDto.name
+            it.department = requestDto.department
+            it.studentType = requestDto.studentType
+            it.smoking = requestDto.smoking
+            it.spiritAnimal = requestDto.spirit_animal
+            it.mbti = requestDto.mbti
+            it.interest = requestDto.interest
+            it.height = requestDto.height!!
+            it.nickname = requestDto.nickname!!
+
+            userRepository.save(it)
+        }
+
+        return ResponseEntity.ok(id);
     }
 }

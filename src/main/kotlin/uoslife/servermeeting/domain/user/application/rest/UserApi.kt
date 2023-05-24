@@ -30,10 +30,10 @@ class UserApi(
         return userService.findUser(UUID.fromString(userDetails.username))
     }
 
-    @Operation(summary = "User 정보 업데이트")
+    @Operation(summary = "User 정보 업데이트", description = "Body의 데이터를 통해서 유저의 정보를 업데이트합니다.")
     @PatchMapping("/{id}")
     fun updateUser(@RequestBody(required = false) requestBody: UserUpdateRequestDto,
-                   @PathVariable uuid: UUID): String {
-        return userService.updateUser(requestBody, uuid)
+                   @PathVariable id: UUID): ResponseEntity<UUID> {
+        return userService.updateUser(requestBody, id)
     }
 }

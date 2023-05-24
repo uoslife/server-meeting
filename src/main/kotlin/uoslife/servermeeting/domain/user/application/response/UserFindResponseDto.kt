@@ -4,8 +4,10 @@ import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.entity.enums.StudentType
+import java.util.UUID
 
 data class UserFindResponseDto(
+    val id: UUID?,
     val birthYear: Number?,
     val gender: GenderType?,
     val name: String?,
@@ -20,6 +22,7 @@ data class UserFindResponseDto(
 )
 
 fun User.toResponse() = UserFindResponseDto(
+    id = id,
     birthYear = birthYear,
     gender = gender,
     name = name,
