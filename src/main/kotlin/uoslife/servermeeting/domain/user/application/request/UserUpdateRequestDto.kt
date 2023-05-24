@@ -1,5 +1,6 @@
 package uoslife.servermeeting.domain.user.application.request
 
+import jakarta.validation.constraints.Pattern
 import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.entity.enums.StudentType

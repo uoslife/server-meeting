@@ -21,9 +21,7 @@ class UserService(
 
     fun updateUser(requestDto: UserUpdateRequestDto, id: UUID): ResponseEntity<UUID> {
         val existingUser = userRepository.findByIdOrNull(id)
-
         updateUserData(existingUser, requestDto)
-
         return ResponseEntity.ok(id);
     }
 
@@ -34,7 +32,6 @@ class UserService(
         } else {
             "존재하는 닉네임입니다."
         }
-
         return ResponseEntity.ok(message)
     }
 
@@ -55,7 +52,6 @@ class UserService(
                 requestDto.interest?.let { interest -> it.interest = interest }
                 requestDto.height?.let { height -> it.height = height }
                 requestDto.nickname?.let { nickname -> it.nickname = nickname }
-
                 userRepository.save(it)
             }
         }
