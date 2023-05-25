@@ -47,6 +47,13 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         HttpStatus.BAD_REQUEST.value(),
     ),
     ONLY_TEAM_LEADER_CAN_DELETE_TEAM("M10", "Only Team Leader can Delete Team.", HttpStatus.BAD_REQUEST.value()),
+    TEAM_NAME_LEAST_2_CHARACTER("M11", "Team Name must be at Least 2 Characters.", HttpStatus.BAD_REQUEST.value()),
+    TEAM_CODE_GENERATE_FAILED("M12", "Team Code Generate is Failed.", HttpStatus.INTERNAL_SERVER_ERROR.value()),
+    TEAM_CODE_INVALID_FORMAT("M13", "Team Code is Invalid Format.", HttpStatus.BAD_REQUEST.value()),
+    TEAM_FULL("M14", "Team is Full.", HttpStatus.BAD_REQUEST.value()),
+    USER_NOT_IN_TEAM("M15", "User is not in Team.", HttpStatus.BAD_REQUEST.value()),
+    TEAM_LEADER_NOT_FOUND("M16", "Team Leader is not Found.", HttpStatus.BAD_REQUEST.value()),
+    TEAM_CONSIST_OF_SAME_GENDER("M17", "Team must consist of Same Gender", HttpStatus.BAD_REQUEST.value()),
 
     // External API
     EXTERNAL_API_FAILED("E01", "External API Request is failed.", HttpStatus.INTERNAL_SERVER_ERROR.value()),
