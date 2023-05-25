@@ -1,9 +1,7 @@
 package uoslife.servermeeting.domain.meeting.application.response
 
 data class MeetingTeamUserListGetResponse(
-    val teamLeader: MeetingTeamUser? = null,
-    val teamMate1: MeetingTeamUser? = null,
-    val teamMate2: MeetingTeamUser? = null,
+    val userList: List<MeetingTeamUser>,
 )
 
 data class MeetingTeamUser(
