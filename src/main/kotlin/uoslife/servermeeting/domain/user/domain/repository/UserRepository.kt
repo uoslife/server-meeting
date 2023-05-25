@@ -6,4 +6,6 @@ import java.util.*
 
 interface UserRepository : JpaRepository<User, UUID> {
     fun findUserByNickname(nickname: String): User?
+
+    fun findUserById(id: UUID): User?
 }
