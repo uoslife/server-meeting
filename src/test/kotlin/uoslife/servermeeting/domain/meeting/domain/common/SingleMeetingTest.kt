@@ -21,12 +21,9 @@ import java.util.*
 
 @SpringBootTest
 @Transactional
-abstract class MeetingServiceTest {
+abstract class SingleMeetingTest {
     @Autowired
     protected lateinit var singleMeetingService: SingleMeetingService
-
-    @Autowired
-    protected lateinit var tripleMeetingService: TripleMeetingService
 
     @Autowired
     protected lateinit var userTeamDao: UserTeamDao
