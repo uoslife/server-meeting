@@ -6,9 +6,7 @@ import uoslife.servermeeting.domain.user.domain.entity.enums.StudentType
 
 data class MeetingTeamInformationGetResponse(
     val sex: GenderType,
-    val teamLeader: UserProfile,
-    val teamMate1: UserProfile?,
-    val teamMate2: UserProfile?,
+    val teamUserList: List<UserProfile>,
     val informationFilter: String,
     val informationDistance: String,
     val informationMeetingTime: String,
