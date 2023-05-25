@@ -60,7 +60,7 @@ class SingleMeetingService(
         throw InSingleMeetingTeamNoJoinTeamException()
     }
 
-    override fun getMeetingTeamUserList(userUUID: UUID): MeetingTeamUserListGetResponse {
+    override fun getMeetingTeamUserList(userUUID: UUID, code: String): MeetingTeamUserListGetResponse {
         throw InSingleMeetingTeamOnlyOneUserException()
     }
 
@@ -126,20 +126,20 @@ class SingleMeetingService(
             informationMeetingTime = information.meetingTime,
             preferenceDistance = preference.distanceCondition,
             preferenceFilter = preference.filterCondition,
-            teamLeader = UserProfile(
-                nickname = user.nickname,
-                age = currentYear - userBirthYear + 1,
-                kakaoTalkId = user.kakaoTalkId!!,
-                department = user.department!!,
-                studentType = user.studentType!!,
-                height = user.height,
-                smoking = user.smoking,
-                spiritAnimal = user.spiritAnimal,
-                MBTI = user.mbti!!,
-                interest = user.interest,
+            teamUserList = listOf(
+                UserProfile(
+                    nickname = user.nickname,
+                    age = currentYear - userBirthYear + 1,
+                    kakaoTalkId = user.kakaoTalkId!!,
+                    department = user.department!!,
+                    studentType = user.studentType!!,
+                    height = user.height,
+                    smoking = user.smoking,
+                    spiritAnimal = user.spiritAnimal,
+                    MBTI = user.mbti!!,
+                    interest = user.interest,
+                ),
             ),
-            teamMate1 = null,
-            teamMate2 = null,
         )
     }
 
