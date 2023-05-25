@@ -163,7 +163,7 @@ class TripleMeetingService(
     }
 
     private fun isUserSameGenderWithTeamLeader(user: User, teamLeaderUser: User) {
-        if(user.gender != teamLeaderUser.gender) {
+        if (user.gender != teamLeaderUser.gender) {
             throw TeamConsistOfSameGenderException()
         }
     }
