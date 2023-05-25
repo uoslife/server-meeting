@@ -10,7 +10,6 @@ import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
 import uoslife.servermeeting.domain.meeting.domain.repository.InformationRepository
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
 import uoslife.servermeeting.domain.meeting.domain.repository.PreferenceRepository
-import uoslife.servermeeting.domain.meeting.domain.service.impl.SingleMeetingService
 import uoslife.servermeeting.domain.meeting.domain.service.impl.TripleMeetingService
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
