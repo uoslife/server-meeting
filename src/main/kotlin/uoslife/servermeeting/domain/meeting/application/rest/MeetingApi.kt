@@ -40,17 +40,14 @@ class MeetingApi(
         }
 
         val code = when (teamType) {
-            TeamType.SINGLE -> singleMeetingService.createMeetingTeam(userUUID)
-            TeamType.TRIPLE -> tripleMeetingService.createMeetingTeam(userUUID)
+            TeamType.SINGLE -> singleMeetingService.createMeetingTeam(userUUID, name)
+            TeamType.TRIPLE -> tripleMeetingService.createMeetingTeam(userUUID, name)
         }
 
-        // triple -> if leader -> create meeting team with name and return unique code
-
-        // finally return "" or (triple) code
         return ResponseEntity.status(HttpStatus.CREATED).body(code)
     }
 
-    @Operation(summary = "미팅 팀 참가", description = "1대1의 경우 지원되지 않음. 1대1은 미팅 팀 생성 시 자동으로 참가됨.")
+    @Operation(summary = "미팅 팀 참가", description = "1대1의 경우 지원되지 않음. 1대1은 미팅 팀 생성 시 자동으로 참가됨. 3대3의 경우 팀 코드를 반환")
     @PostMapping("/{teamType}/join/{code}")
     fun joinMeetingTeam(
         @AuthenticationPrincipal userDetails: UserDetails,
@@ -69,9 +66,10 @@ class MeetingApi(
     }
 
     @Operation(summary = "팅 결성 대기 중 간에 미팅 팀 유저 리스트 조회", description = "1대1의 경우 지원되지 않음. 1대1은 팀 유저가 본인 단독")
-    @GetMapping("/{teamType}/user/list")
+    @GetMapping("/{teamType}/{code}/user/list")
     fun getMeetingTeamUserList(
         @AuthenticationPrincipal userDetails: UserDetails,
+        @PathVariable code: String,
         @PathVariable teamType: TeamType,
     ): ResponseEntity<MeetingTeamUserListGetResponse> {
         val userUUID = UUID.fromString(userDetails.username)
@@ -80,9 +78,7 @@ class MeetingApi(
             throw InSingleMeetingTeamOnlyOneUserException()
         }
 
-        val meetingTeamUserListGetResponse = tripleMeetingService.getMeetingTeamUserList(userUUID)
-
-        // triple -> return user list of Meeting Team by user
+        val meetingTeamUserListGetResponse = tripleMeetingService.getMeetingTeamUserList(userUUID, code)
 
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamUserListGetResponse)
     }
