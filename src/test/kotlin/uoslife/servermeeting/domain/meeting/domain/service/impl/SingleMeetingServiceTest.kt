@@ -3,7 +3,7 @@ package uoslife.servermeeting.domain.meeting.domain.service.impl
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import uoslife.servermeeting.domain.meeting.domain.common.MeetingServiceTest
+import uoslife.servermeeting.domain.meeting.domain.common.SingleMeetingTest
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.exception.*
@@ -12,7 +12,7 @@ import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import java.util.*
 
-class SingleMeetingServiceTest : MeetingServiceTest() {
+class SingleMeetingServiceTest : SingleMeetingTest() {
 
     @Test
     fun `존재하지 않는 사용자에 대해서 팀 생성시 오류를 발생`() {
