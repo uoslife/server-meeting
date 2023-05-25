@@ -9,6 +9,7 @@ import uoslife.servermeeting.domain.user.application.response.UserFindResponseDt
 import uoslife.servermeeting.domain.user.application.response.UserUpdateResponseDto
 import uoslife.servermeeting.domain.user.application.response.toResponse
 import uoslife.servermeeting.domain.user.domain.entity.User
+import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundException
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
 import java.util.IllegalFormatException
@@ -24,7 +25,7 @@ class UserService(
     }
 
     fun updateUser(requestDto: UserUpdateRequestDto, id: UUID): ResponseEntity<UserUpdateResponseDto> {
-        val existingUser = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+        val existingUser = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
         updateUserData(existingUser, requestDto)
         return ResponseEntity.ok(UserUpdateResponseDto("성공적으로 변경됐습니다"))
     }
@@ -35,7 +36,7 @@ class UserService(
     }
 
     private fun checkNicknameDuplication(user: User?): NicknameCheckResponseDto {
-        return if (user == null) NicknameCheckResponseDto("존재하지 않는 닉네임입니다." ,false)
+        return if (user?.nickname == null) NicknameCheckResponseDto("존재하지 않는 닉네임입니다." ,false)
         else NicknameCheckResponseDto("존재하는 닉네임입니다.", true)
     }
 
