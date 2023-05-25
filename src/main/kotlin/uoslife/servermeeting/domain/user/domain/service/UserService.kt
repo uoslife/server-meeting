@@ -9,7 +9,9 @@ import uoslife.servermeeting.domain.user.application.response.UserFindResponseDt
 import uoslife.servermeeting.domain.user.application.response.UserUpdateResponseDto
 import uoslife.servermeeting.domain.user.application.response.toResponse
 import uoslife.servermeeting.domain.user.domain.entity.User
+import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
+import java.util.IllegalFormatException
 import java.util.UUID
 
 @Service
@@ -17,12 +19,12 @@ class UserService(
     private val userRepository: UserRepository) {
 
     fun findUser(id: UUID): ResponseEntity<UserFindResponseDto>? {
-        val user = userRepository.findByIdOrNull(id)
-        return ResponseEntity.ok(user?.toResponse())
+        val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+        return ResponseEntity.ok(user.toResponse())
     }
 
     fun updateUser(requestDto: UserUpdateRequestDto, id: UUID): ResponseEntity<UserUpdateResponseDto> {
-        val existingUser = userRepository.findByIdOrNull(id)
+        val existingUser = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
         updateUserData(existingUser, requestDto)
         return ResponseEntity.ok(UserUpdateResponseDto("성공적으로 변경됐습니다"))
     }
