@@ -7,7 +7,7 @@ import java.util.*
 interface BaseMeetingService {
     fun createMeetingTeam(userUUID: UUID, name: String? = null): String?
     fun joinMeetingTeam(userUUID: UUID, code: String)
-    fun getMeetingTeamUserList(userUUID: UUID): MeetingTeamUserListGetResponse
+    fun getMeetingTeamUserList(userUUID: UUID, code: String): MeetingTeamUserListGetResponse
     fun updateMeetingTeamInformation(
         userUUID: UUID,
         informationDistance: String,
