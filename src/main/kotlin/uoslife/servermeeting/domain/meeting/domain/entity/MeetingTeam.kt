@@ -19,7 +19,7 @@ class MeetingTeam(
 
     var name: String? = null,
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "meetingTeam")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "meetingTeam", cascade = [CascadeType.ALL], orphanRemoval = true)
     var information: Information? = null,
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "maleTeam")
@@ -34,9 +34,9 @@ class MeetingTeam(
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "femaleTeam")
     var femaleMatch: Match? = null,
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "team", cascade = [CascadeType.ALL], orphanRemoval = true)
     var userTeams: MutableList<UserTeam> = mutableListOf(),
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "meetingTeam")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "meetingTeam", cascade = [CascadeType.ALL], orphanRemoval = true)
     var preference: MutableList<Preference> = mutableListOf(),
 )
