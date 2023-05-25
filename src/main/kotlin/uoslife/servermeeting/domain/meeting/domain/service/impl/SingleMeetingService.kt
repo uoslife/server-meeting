@@ -106,9 +106,6 @@ class SingleMeetingService(
         val meetingTeam =
             meetingTeamRepository.findByIdOrNull(userTeam.team.id!!) ?: throw MeetingTeamNotFoundException()
 
-        informationRepository.deleteByMeetingTeam(meetingTeam)
-        preferenceRepository.deleteByMeetingTeam(meetingTeam)
-        userTeamDao.deleteByUser(user)
         meetingTeamRepository.deleteById(meetingTeam.id!!)
     }
 
