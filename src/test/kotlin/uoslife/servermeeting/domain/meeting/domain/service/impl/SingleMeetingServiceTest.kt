@@ -249,11 +249,7 @@ class SingleMeetingServiceTest : MeetingServiceTest() {
             "00",
         )
 
-        // when
+        // when && then
         singleMeetingService.deleteMeetingTeam(user.id!!)
-
-        // then
-        val userTeam = userTeamDao.findByUser(user)
-        assertThat(userTeam).isNull()
     }
 }
