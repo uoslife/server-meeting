@@ -41,10 +41,32 @@ class UserTeamDao(
             .fetchOne()
     }
 
-    fun deleteByUser(user: User) {
-        queryFactory.delete(userTeam)
-            .where(userTeam.user.eq(user))
-            .execute()
+    fun findByUserAndTeam(user: User, meetingTeam: MeetingTeam): UserTeam? {
+        return queryFactory.selectFrom(userTeam)
+            .where(userTeam.user.eq(user), userTeam.team.eq(meetingTeam))
+            .fetchOne()
+    }
+
+    fun findByTeam(meetingTeam: MeetingTeam): List<UserTeam> {
+        return queryFactory.selectFrom(userTeam)
+            .join(userTeam.user)
+            .fetchJoin()
+            .where(userTeam.team.eq(meetingTeam))
+            .fetch()
+    }
+
+    fun findByTeamAndisLeader(meetingTeam: MeetingTeam, isLeader: Boolean): UserTeam? {
+        return queryFactory.selectFrom(userTeam)
+            .join(userTeam.user)
+            .fetchJoin()
+            .where(userTeam.team.eq(meetingTeam), userTeam.isLeader.eq(isLeader))
+            .fetchOne()
+    }
+
+    fun countByTeam(meetingTeam: MeetingTeam): Int {
+        return queryFactory.selectFrom(userTeam)
+            .where(userTeam.team.eq(meetingTeam))
+            .fetch().size
     }
 
     fun deleteAll() {

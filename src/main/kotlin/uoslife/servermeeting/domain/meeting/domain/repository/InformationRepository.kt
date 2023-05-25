@@ -6,5 +6,4 @@ import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
 
 interface InformationRepository : JpaRepository<Information, Long> {
     fun findByMeetingTeam(meetingTeam: MeetingTeam): Information?
-    fun deleteByMeetingTeam(meetingTeam: MeetingTeam)
 }

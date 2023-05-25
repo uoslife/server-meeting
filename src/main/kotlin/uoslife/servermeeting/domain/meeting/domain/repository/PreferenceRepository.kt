@@ -6,5 +6,4 @@ import uoslife.servermeeting.domain.meeting.domain.entity.Preference
 
 interface PreferenceRepository : JpaRepository<Preference, Long> {
     fun findByMeetingTeam(meetingTeam: MeetingTeam): Preference?
-    fun deleteByMeetingTeam(meetingTeam: MeetingTeam)
 }
