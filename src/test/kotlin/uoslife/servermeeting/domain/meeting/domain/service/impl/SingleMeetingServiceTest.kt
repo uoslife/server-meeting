@@ -66,7 +66,7 @@ class SingleMeetingServiceTest : MeetingServiceTest() {
         val user = userRepository.findAll().first()
 
         // when & then
-        assertThatThrownBy { singleMeetingService.getMeetingTeamUserList(user.id!!) }
+        assertThatThrownBy { singleMeetingService.getMeetingTeamUserList(user.id!!, "") }
             .isInstanceOf(InSingleMeetingTeamOnlyOneUserException::class.java)
     }
 
@@ -198,12 +198,11 @@ class SingleMeetingServiceTest : MeetingServiceTest() {
         assertThat(information.informationMeetingTime).isEqualTo("0010")
         assertThat(information.preferenceDistance).isEqualTo("10")
         assertThat(information.preferenceFilter).isEqualTo("00")
-        assertThat(information.teamLeader.smoking).isEqualTo(false)
-        assertThat(information.teamLeader.age).isEqualTo(24)
-        assertThat(information.teamLeader.department).isEqualTo(DepartmentNameType.COMPUTER_SCIENCE)
-        assertThat(information.teamLeader.kakaoTalkId).isEqualTo("kakao")
-        assertThat(information.teamMate1).isNull()
-        assertThat(information.teamMate2).isNull()
+        assertThat(information.teamUserList[0].smoking).isEqualTo(false)
+        assertThat(information.teamUserList[0].age).isEqualTo(24)
+        assertThat(information.teamUserList[0].department).isEqualTo(DepartmentNameType.COMPUTER_SCIENCE)
+        assertThat(information.teamUserList[0].kakaoTalkId).isEqualTo("kakao")
+        assertThat(information.teamUserList.size).isEqualTo(1)
     }
 
     @Test
