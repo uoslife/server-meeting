@@ -9,12 +9,10 @@ class MeetingTeamInformationUpdateRequest(
     @NotBlank
     val informationFilter: String,
 
-    @NotBlank
     val informationMeetingTime: String,
 
     @NotBlank
     val preferenceDistance: String,
 
-    @NotBlank
     val preferenceFilter: String,
 )
