@@ -132,7 +132,7 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
         )
 
         // then
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user)
+        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE)
         val information = informationRepository.findByMeetingTeam(meetingTeam) ?: throw InformationNotFoundException()
         val preference = preferenceRepository.findByMeetingTeam(meetingTeam) ?: throw PreferenceNotFoundException()
         assertThat(userTeam).isNotNull
@@ -193,6 +193,7 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
         // then
         assertThat(information).isNotNull
         assertThat(information.sex).isEqualTo(GenderType.FEMALE)
+        assertThat(information.teamType).isEqualTo(TeamType.SINGLE)
         assertThat(information.informationDistance).isEqualTo("0")
         assertThat(information.informationFilter).isEqualTo("1")
         assertThat(information.informationMeetingTime).isEqualTo("0010")

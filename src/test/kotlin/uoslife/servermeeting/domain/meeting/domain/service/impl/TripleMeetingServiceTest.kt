@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.meeting.domain.common.TripleMeetingTest
+import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.exception.*
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
@@ -257,6 +258,8 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
 
         // then
         val meetingInfo = tripleMeetingService.getMeetingTeamInformation(user1.id!!)
+        assertThat(meetingInfo.sex).isEqualTo(GenderType.FEMALE)
+        assertThat(meetingInfo.teamType).isEqualTo(TeamType.TRIPLE)
         assertThat(meetingInfo.informationDistance).isEqualTo("0001")
         assertThat(meetingInfo.informationFilter).isEqualTo("0010")
         assertThat(meetingInfo.informationMeetingTime).isEqualTo("0011")

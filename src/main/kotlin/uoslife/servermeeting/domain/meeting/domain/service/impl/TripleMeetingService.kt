@@ -97,7 +97,7 @@ class TripleMeetingService(
     ) {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user) ?: throw UserTeamNotFoundException()
+        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE) ?: throw UserTeamNotFoundException()
         val meetingTeam =
             meetingTeamRepository.findByIdOrNull(userTeam.team.id!!) ?: throw MeetingTeamNotFoundException()
 
@@ -112,7 +112,7 @@ class TripleMeetingService(
     override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user) ?: throw UserTeamNotFoundException()
+        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE) ?: throw UserTeamNotFoundException()
         val meetingTeam = userTeam.team
         val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
 
@@ -125,7 +125,7 @@ class TripleMeetingService(
     override fun deleteMeetingTeam(userUUID: UUID) {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user) ?: throw UserTeamNotFoundException()
+        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE) ?: throw UserTeamNotFoundException()
         val meetingTeam = userTeam.team
 
         meetingTeamRepository.deleteById(meetingTeam.id!!)
@@ -269,6 +269,7 @@ class TripleMeetingService(
         val currentYear: Int = LocalDate.now().year
 
         return MeetingTeamInformationGetResponse(
+            teamType = TeamType.TRIPLE,
             sex = gender,
             informationDistance = information.distanceInfo,
             informationFilter = information.filterInfo,
