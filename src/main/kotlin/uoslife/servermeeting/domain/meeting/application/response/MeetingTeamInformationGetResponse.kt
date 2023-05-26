@@ -1,10 +1,12 @@
 package uoslife.servermeeting.domain.meeting.application.response
 
+import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.entity.enums.StudentType
 
 data class MeetingTeamInformationGetResponse(
+    val teamType: TeamType,
     val sex: GenderType,
     val teamUserList: List<UserProfile>,
     val informationFilter: String,

@@ -60,7 +60,7 @@ class TripleMeetingService(
         return code
     }
 
-    override fun joinMeetingTeam(userUUID: UUID, code: String) {
+    override fun joinMeetingTeam(userUUID: UUID, code: String, isJoin: Boolean): MeetingTeamUserListGetResponse? {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
         isTeamCodeValid(code)
@@ -72,7 +72,13 @@ class TripleMeetingService(
         isTeamFull(meetingTeam)
         isUserSameGenderWithTeamLeader(user, leaderUserTeam.user!!)
 
-        userTeamDao.saveUserTeam(meetingTeam, user, false, TeamType.TRIPLE)
+        return if (isJoin) {
+            userTeamDao.saveUserTeam(meetingTeam, user, false, TeamType.TRIPLE)
+            null
+        } else {
+            val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
+            toMeetingTeamUserListGetResponse(meetingTeam.name!!, userList)
+        }
     }
 
     override fun getMeetingTeamUserList(userUUID: UUID, code: String): MeetingTeamUserListGetResponse {
@@ -84,7 +90,7 @@ class TripleMeetingService(
         isUserInTeam(user, meetingTeam)
 
         val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
-        return toMeetingTeamUserListGetResponse(userList)
+        return toMeetingTeamUserListGetResponse(meetingTeam.name!!, userList)
     }
 
     override fun updateMeetingTeamInformation(
@@ -97,7 +103,7 @@ class TripleMeetingService(
     ) {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user) ?: throw UserTeamNotFoundException()
+        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE) ?: throw UserTeamNotFoundException()
         val meetingTeam =
             meetingTeamRepository.findByIdOrNull(userTeam.team.id!!) ?: throw MeetingTeamNotFoundException()
 
@@ -112,7 +118,7 @@ class TripleMeetingService(
     override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user) ?: throw UserTeamNotFoundException()
+        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE) ?: throw UserTeamNotFoundException()
         val meetingTeam = userTeam.team
         val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
 
@@ -125,7 +131,7 @@ class TripleMeetingService(
     override fun deleteMeetingTeam(userUUID: UUID) {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user) ?: throw UserTeamNotFoundException()
+        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE) ?: throw UserTeamNotFoundException()
         val meetingTeam = userTeam.team
 
         meetingTeamRepository.deleteById(meetingTeam.id!!)
@@ -196,10 +202,12 @@ class TripleMeetingService(
         return code
     }
 
-    private fun toMeetingTeamUserListGetResponse(userList: List<User>): MeetingTeamUserListGetResponse {
+    private fun toMeetingTeamUserListGetResponse(teamName: String, userList: List<User>):
+        MeetingTeamUserListGetResponse {
         val currentYear: Int = LocalDate.now().year
 
         return MeetingTeamUserListGetResponse(
+            teamName = teamName,
             userList.map {
                 MeetingTeamUser(
                     nickname = it.nickname,
@@ -269,6 +277,7 @@ class TripleMeetingService(
         val currentYear: Int = LocalDate.now().year
 
         return MeetingTeamInformationGetResponse(
+            teamType = TeamType.TRIPLE,
             sex = gender,
             informationDistance = information.distanceInfo,
             informationFilter = information.filterInfo,

@@ -56,7 +56,7 @@ class SingleMeetingService(
         return ""
     }
 
-    override fun joinMeetingTeam(userUUID: UUID, code: String) {
+    override fun joinMeetingTeam(userUUID: UUID, code: String, isJoin: Boolean): MeetingTeamUserListGetResponse? {
         throw InSingleMeetingTeamNoJoinTeamException()
     }
 
@@ -74,7 +74,7 @@ class SingleMeetingService(
     ) {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user) ?: throw UserTeamNotFoundException()
+        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE) ?: throw UserTeamNotFoundException()
         val meetingTeam =
             meetingTeamRepository.findByIdOrNull(userTeam.team.id!!) ?: throw MeetingTeamNotFoundException()
 
@@ -89,7 +89,7 @@ class SingleMeetingService(
     override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user) ?: throw UserTeamNotFoundException()
+        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE) ?: throw UserTeamNotFoundException()
         val meetingTeam =
             meetingTeamRepository.findByIdOrNull(userTeam.team.id!!) ?: throw MeetingTeamNotFoundException()
 
@@ -102,7 +102,7 @@ class SingleMeetingService(
     override fun deleteMeetingTeam(userUUID: UUID) {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user) ?: throw UserTeamNotFoundException()
+        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE) ?: throw UserTeamNotFoundException()
         val meetingTeam =
             meetingTeamRepository.findByIdOrNull(userTeam.team.id!!) ?: throw MeetingTeamNotFoundException()
 
@@ -118,6 +118,7 @@ class SingleMeetingService(
         val userBirthYear: Int = user.birthYear as Int
         return MeetingTeamInformationGetResponse(
             sex = user.gender,
+            teamType = TeamType.SINGLE,
             informationDistance = information.distanceInfo,
             informationFilter = information.filterInfo,
             informationMeetingTime = information.meetingTime,

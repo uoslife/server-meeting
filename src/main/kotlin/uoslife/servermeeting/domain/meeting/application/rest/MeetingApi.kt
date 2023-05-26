@@ -1,6 +1,7 @@
 package uoslife.servermeeting.domain.meeting.application.rest
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Qualifier
@@ -26,6 +27,10 @@ class MeetingApi(
 ) {
 
     @Operation(summary = "미팅 팀 생성", description = "리더만 팀 생성 가능")
+    @ApiResponse(
+        responseCode = "201",
+        description = "1대1의 경우 빈 문자열을 반환, 3대3의 경우 팀 코드(A-Z0-9 4개)(String)를 반환",
+    )
     @PostMapping("/{teamType}/{isTeamLeader}/create")
     fun createMeetingTeam(
         @AuthenticationPrincipal userDetails: UserDetails,
@@ -47,25 +52,30 @@ class MeetingApi(
         return ResponseEntity.status(HttpStatus.CREATED).body(code)
     }
 
-    @Operation(summary = "미팅 팀 참가", description = "1대1의 경우 지원되지 않음. 1대1은 미팅 팀 생성 시 자동으로 참가됨. 3대3의 경우 팀 코드를 반환")
+    @Operation(summary = "미팅 팀 참가", description = "1대1의 경우 지원되지 않음. 1대1은 미팅 팀 생성 시 자동으로 참가됨")
+    @ApiResponse(responseCode = "204", description = "isJoin true일 경우, 팀 참가 및 null 반환, false일 경우, 팀 참가하지 않고 팀 정보 반환")
     @PostMapping("/{teamType}/join/{code}")
     fun joinMeetingTeam(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
         @PathVariable code: String,
-    ): ResponseEntity<Unit> {
+        @RequestParam isJoin: Boolean,
+    ): ResponseEntity<MeetingTeamUserListGetResponse?> {
         val userUUID = UUID.fromString(userDetails.username)
 
         if (teamType == TeamType.SINGLE) {
             throw InSingleMeetingTeamNoJoinTeamException()
         }
 
-        tripleMeetingService.joinMeetingTeam(userUUID, code)
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        val meetingTeamUserListGetResponse = tripleMeetingService.joinMeetingTeam(userUUID, code, isJoin)
+        return ResponseEntity.ok(meetingTeamUserListGetResponse)
     }
 
     @Operation(summary = "팅 결성 대기 중 간에 미팅 팀 유저 리스트 조회", description = "1대1의 경우 지원되지 않음. 1대1은 팀 유저가 본인 단독")
+    @ApiResponse(
+        responseCode = "200",
+        description = "미팅 팀 유저 리스트 및 팀 이름(MeetingTeamUserListGetResponse) 반환",
+    )
     @GetMapping("/{teamType}/{code}/user/list")
     fun getMeetingTeamUserList(
         @AuthenticationPrincipal userDetails: UserDetails,
@@ -83,8 +93,8 @@ class MeetingApi(
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamUserListGetResponse)
     }
 
-    // preference는 상대에 대한 선호, Information은 본인에 대한 정보
     @Operation(summary = "미팅 팀 정보 기입", description = "팀의 정보를 기입함. 리더만 가능")
+    @ApiResponse(responseCode = "204", description = "반환값 없음")
     @PostMapping("/{teamType}/{isTeamLeader}/info")
     fun updateMeetingTeamInformation(
         @AuthenticationPrincipal userDetails: UserDetails,
@@ -122,6 +132,10 @@ class MeetingApi(
     }
 
     @Operation(summary = "미팅 팀 전체 정보 조회")
+    @ApiResponse(
+        responseCode = "200",
+        description = "미팅 팀 전체 정보(MeetingTeamInformationGetResponse) 반환",
+    )
     @GetMapping("/{teamType}/application/info")
     fun getMeetingTeamApplicationInformation(
         @AuthenticationPrincipal userDetails: UserDetails,
@@ -137,6 +151,7 @@ class MeetingApi(
     }
 
     @Operation(summary = "미팅 팀 삭제", description = "리더만 팀 삭제 가능")
+    @ApiResponse(responseCode = "204", description = "반환값 없음")
     @DeleteMapping("/{teamType}/{isTeamLeader}")
     fun deleteMeetingTeam(
         @AuthenticationPrincipal userDetails: UserDetails,

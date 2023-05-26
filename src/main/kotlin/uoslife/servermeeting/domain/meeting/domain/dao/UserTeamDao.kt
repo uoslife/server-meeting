@@ -3,14 +3,14 @@ package uoslife.servermeeting.domain.meeting.domain.dao
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Repository
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.QUserTeam.userTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.user.domain.entity.User
 
-@Service
+@Repository
 @Transactional
 class UserTeamDao(
     private val queryFactory: JPAQueryFactory,
@@ -33,11 +33,12 @@ class UserTeamDao(
             .fetchOne()
     }
 
-    fun findByUserWithMeetingTeam(user: User): UserTeam? {
+    fun findByUserWithMeetingTeam(user: User, teamType: TeamType): UserTeam? {
         return queryFactory.selectFrom(userTeam)
             .join(userTeam.team)
             .fetchJoin()
             .where(userTeam.user.eq(user))
+            .where(userTeam.type.eq(teamType))
             .fetchOne()
     }
 

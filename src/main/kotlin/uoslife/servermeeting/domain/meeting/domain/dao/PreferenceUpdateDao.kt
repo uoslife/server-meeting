@@ -2,11 +2,11 @@ package uoslife.servermeeting.domain.meeting.domain.dao
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.transaction.Transactional
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Repository
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.QPreference.preference
 
-@Service
+@Repository
 @Transactional
 class PreferenceUpdateDao(
     private val queryFactory: JPAQueryFactory,
