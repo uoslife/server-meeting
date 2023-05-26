@@ -9,7 +9,6 @@ import uoslife.servermeeting.domain.meeting.domain.entity.QUserTeam.userTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.user.domain.entity.User
-import java.util.UUID
 
 @Service
 @Transactional
