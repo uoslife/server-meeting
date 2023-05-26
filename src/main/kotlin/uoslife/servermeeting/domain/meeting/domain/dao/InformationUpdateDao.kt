@@ -2,11 +2,11 @@ package uoslife.servermeeting.domain.meeting.domain.dao
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.transaction.Transactional
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Repository
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.QInformation.information
 
-@Service
+@Repository
 @Transactional
 class InformationUpdateDao(private val queryFactory: JPAQueryFactory) {
     fun updateInformationByMeetingTeam(
