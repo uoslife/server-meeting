@@ -25,7 +25,6 @@ import java.util.*
 class MeetingApi(
     @Qualifier("singleMeetingService") private val singleMeetingService: BaseMeetingService,
     @Qualifier("tripleMeetingService") private val tripleMeetingService: BaseMeetingService,
-    private val userTeamDao: UserTeamDao,
 ) {
 
     @Operation(summary = "미팅 팀 생성", description = "리더만 팀 생성 가능")
