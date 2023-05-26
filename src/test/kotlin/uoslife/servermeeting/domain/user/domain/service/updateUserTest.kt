@@ -2,7 +2,7 @@ package uoslife.servermeeting.domain.user.domain.service
 
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
-import uoslife.servermeeting.domain.user.application.request.UserUpdateRequestDto
+import uoslife.servermeeting.domain.user.application.request.UserUpdateRequest
 import uoslife.servermeeting.domain.user.domain.common.UserServiceTest
 import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
@@ -14,7 +14,7 @@ class updateUserTest : UserServiceTest() {
     fun `정상적으로 User 데이터가 update 됐는지 확인한다`() {
         // given
         val userUUID = userRepository.findAll().first().id!!
-        val updateData = UserUpdateRequestDto(
+        val updateData = UserUpdateRequest(
             2000, GenderType.MALE, "name0", DepartmentNameType.BUSINESS, StudentType.GRADUATE,
             false, "chicken", "ENTJ", "coding", 173, "nickname0"
         )

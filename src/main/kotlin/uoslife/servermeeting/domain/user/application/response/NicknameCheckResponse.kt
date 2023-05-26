@@ -1,6 +1,6 @@
 package uoslife.servermeeting.domain.user.application.response
 
-data class NicknameCheckResponseDto (
+data class NicknameCheckResponse (
     val message: String,
     val duplication: Boolean
 )

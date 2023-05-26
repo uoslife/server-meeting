@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uoslife.servermeeting.domain.user.application.request.UserUpdateRequestDto
-import uoslife.servermeeting.domain.user.application.response.NicknameCheckResponseDto
+import uoslife.servermeeting.domain.user.application.request.UserUpdateRequest
+import uoslife.servermeeting.domain.user.application.response.NicknameCheckResponse
 import uoslife.servermeeting.domain.user.application.response.UserFindResponseDto
-import uoslife.servermeeting.domain.user.application.response.UserUpdateResponseDto
+import uoslife.servermeeting.domain.user.application.response.UserUpdateResponse
 import uoslife.servermeeting.domain.user.domain.service.UserService
 import java.util.*
 
@@ -33,14 +33,14 @@ class UserApi(
 
     @Operation(summary = "User 정보 업데이트", description = "유저의 정보를 업데이트합니다.")
     @PatchMapping("/{id}")
-    fun updateUser(@RequestBody(required = false) requestBody: UserUpdateRequestDto,
-                   @PathVariable id: UUID): ResponseEntity<UserUpdateResponseDto> {
+    fun updateUser(@RequestBody(required = false) requestBody: UserUpdateRequest,
+                   @PathVariable id: UUID): ResponseEntity<UserUpdateResponse> {
         return userService.updateUser(requestBody, id)
     }
 
     @Operation(summary = "Nickname 중복 여부 확인", description = "nickname을 조회합니다.")
     @GetMapping("/{nickname}")
-    fun getUserByUsername(@PathVariable nickname: String): ResponseEntity<NicknameCheckResponseDto> {
+    fun getUserByUsername(@PathVariable nickname: String): ResponseEntity<NicknameCheckResponse> {
         return userService.findUserByNickname(nickname)
     }
 }
