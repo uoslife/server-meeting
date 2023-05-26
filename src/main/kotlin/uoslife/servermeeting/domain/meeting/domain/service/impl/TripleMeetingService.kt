@@ -60,7 +60,7 @@ class TripleMeetingService(
         return code
     }
 
-    override fun joinMeetingTeam(userUUID: UUID, code: String) {
+    override fun joinMeetingTeam(userUUID: UUID, code: String, isJoin: Boolean): MeetingTeamUserListGetResponse? {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
         isTeamCodeValid(code)
@@ -72,7 +72,13 @@ class TripleMeetingService(
         isTeamFull(meetingTeam)
         isUserSameGenderWithTeamLeader(user, leaderUserTeam.user!!)
 
-        userTeamDao.saveUserTeam(meetingTeam, user, false, TeamType.TRIPLE)
+        return if (isJoin) {
+            userTeamDao.saveUserTeam(meetingTeam, user, false, TeamType.TRIPLE)
+            null
+        } else {
+            val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
+            toMeetingTeamUserListGetResponse(meetingTeam.name!!, userList)
+        }
     }
 
     override fun getMeetingTeamUserList(userUUID: UUID, code: String): MeetingTeamUserListGetResponse {
