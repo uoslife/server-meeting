@@ -1,12 +1,12 @@
 package uoslife.servermeeting.domain.user.domain.service
 
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.domain.user.application.request.UserUpdateRequest
 import uoslife.servermeeting.domain.user.application.response.NicknameCheckResponse
 import uoslife.servermeeting.domain.user.application.response.UserFindResponseDto
-import uoslife.servermeeting.domain.user.application.response.UserUpdateResponse
 import uoslife.servermeeting.domain.user.application.response.toResponse
 import uoslife.servermeeting.domain.user.domain.dao.UserUpdateDao
 import uoslife.servermeeting.domain.user.domain.entity.User
@@ -25,10 +25,10 @@ class UserService(
         return ResponseEntity.ok(user.toResponse())
     }
 
-    fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<UserUpdateResponse> {
+    fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<Unit> {
         val existingUser = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
-        userUpdateDao.updateUser(existingUser, requestDto)
-        return ResponseEntity.ok(UserUpdateResponse("성공적으로 변경됐습니다"))
+        userUpdateDao.updateUser(requestDto, existingUser)
+        return ResponseEntity.status(HttpStatus.OK).build()
     }
 
     fun findUserByNickname(nickname: String): ResponseEntity<NicknameCheckResponse> {
@@ -37,7 +37,7 @@ class UserService(
     }
 
     private fun checkNicknameDuplication(user: User?): NicknameCheckResponse {
-        return if (user?.nickname == null) NicknameCheckResponse("존재하지 않는 닉네임입니다." ,false)
-        else NicknameCheckResponse("존재하는 닉네임입니다.", true)
+        return if (user?.nickname == null) NicknameCheckResponse(false)
+        else NicknameCheckResponse(true)
     }
 }

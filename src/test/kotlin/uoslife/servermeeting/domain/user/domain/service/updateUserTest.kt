@@ -39,29 +39,4 @@ class updateUserTest : UserServiceTest() {
         assertThat(updatedUser.height).isEqualTo(updateData.height)
         assertThat(updatedUser.nickname).isEqualTo(updateData.nickname)
     }
-
-    @Test
-    fun `정상적으로 null을 체크하여 일부분만 수정할 수 있는 지 확인한다`() {
-        // given
-        val userUUID = userRepository.findAll().first().id!!
-        val updateData = UserUpdateRequest(
-            null, null, "name0", null, null,
-            null, null, null, null, null, "nickname0"
-        )
-
-        // when
-        userService.updateUser(updateData, userUUID)
-        entityManager.flush()
-        entityManager.clear()
-
-        val updatedUser = userRepository.findByIdOrNull(userUUID)!!
-
-        // then
-        assertThat(updatedUser.name).isEqualTo(updateData.name)
-        assertThat(updatedUser.nickname).isEqualTo(updateData.nickname)
-
-
-        assertThat(updatedUser.phoneNumber).isEqualTo(user1.phoneNumber)
-        assertThat(updatedUser.profilePicture).isEqualTo(user1.profilePicture)
-    }
 }

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.domain.user.application.request.UserUpdateRequest
 import uoslife.servermeeting.domain.user.application.response.NicknameCheckResponse
 import uoslife.servermeeting.domain.user.application.response.UserFindResponseDto
-import uoslife.servermeeting.domain.user.application.response.UserUpdateResponse
 import uoslife.servermeeting.domain.user.domain.service.UserService
 import java.util.*
 
@@ -34,7 +33,7 @@ class UserApi(
     @Operation(summary = "User 정보 업데이트", description = "유저의 정보를 업데이트합니다.")
     @PatchMapping
     fun updateUser(@RequestBody(required = false) requestBody: UserUpdateRequest,
-                   @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<UserUpdateResponse> {
+                   @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {
         return userService.updateUser(requestBody, UUID.fromString(userDetails.username))
     }
 

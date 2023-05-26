@@ -12,27 +12,20 @@ import uoslife.servermeeting.domain.user.domain.entity.QUser.user
 class UserUpdateDao(
     private val queryFactory: JPAQueryFactory,
 ) {
-    fun updateUser(existingUser: User, requestDto: UserUpdateRequest) {
-        existingUser.let {
-            if (requestDto.hasChanges()) {
-                val user = user
-                queryFactory.update(user)
-                    .where(user.id.eq(existingUser.id))
-                    .apply {
-                        requestDto.birthYear?.let { set(user.birthYear, it) }
-                        requestDto.gender?.let { set(user.gender, it) }
-                        requestDto.name?.let { set(user.name, it) }
-                        requestDto.department?.let { set(user.department, it) }
-                        requestDto.studentType?.let { set(user.studentType, it) }
-                        requestDto.smoking?.let { set(user.smoking, it) }
-                        requestDto.spiritAnimal?.let { set(user.spiritAnimal, it) }
-                        requestDto.mbti?.let { set(user.mbti, it) }
-                        requestDto.interest?.let { set(user.interest, it) }
-                        requestDto.height?.let { set(user.height, it) }
-                        requestDto.nickname?.let { set(user.nickname, it) }
-                    }
-                    .execute()
-            }
-        }
+    fun updateUser(requestDto: UserUpdateRequest, existingUser: User) {
+        queryFactory.update(user)
+            .where(user.eq(existingUser))
+            .set(user.birthYear, requestDto.birthYear)
+            .set(user.gender, requestDto.gender)
+            .set(user.name, requestDto.name)
+            .set(user.department, requestDto.department)
+            .set(user.studentType, requestDto.studentType)
+            .set(user.smoking, requestDto.smoking)
+            .set(user.spiritAnimal, requestDto.spiritAnimal)
+            .set(user.mbti, requestDto.mbti)
+            .set(user.interest, requestDto.interest)
+            .set(user.height, requestDto.height)
+            .set(user.nickname, requestDto.nickname)
+            .execute()
     }
 }
