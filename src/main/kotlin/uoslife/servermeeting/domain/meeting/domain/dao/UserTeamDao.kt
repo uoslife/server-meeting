@@ -9,6 +9,7 @@ import uoslife.servermeeting.domain.meeting.domain.entity.QUserTeam.userTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.user.domain.entity.User
+import java.util.UUID
 
 @Service
 @Transactional
@@ -33,11 +34,12 @@ class UserTeamDao(
             .fetchOne()
     }
 
-    fun findByUserWithMeetingTeam(user: User): UserTeam? {
+    fun findByUserWithMeetingTeam(user: User, teamType: TeamType): UserTeam? {
         return queryFactory.selectFrom(userTeam)
             .join(userTeam.team)
             .fetchJoin()
             .where(userTeam.user.eq(user))
+            .where(userTeam.type.eq(teamType))
             .fetchOne()
     }
 
@@ -61,6 +63,12 @@ class UserTeamDao(
             .fetchJoin()
             .where(userTeam.team.eq(meetingTeam), userTeam.isLeader.eq(isLeader))
             .fetchOne()
+    }
+
+    fun findUserTeamTypeByUserUUID(userUUID: UUID): TeamType? {
+        return queryFactory.selectFrom(userTeam)
+            .where(userTeam.user.id.eq(userUUID))
+            .fetchOne()?.type
     }
 
     fun countByTeam(meetingTeam: MeetingTeam): Int {
