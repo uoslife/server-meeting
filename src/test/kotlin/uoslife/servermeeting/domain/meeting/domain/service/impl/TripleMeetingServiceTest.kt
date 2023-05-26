@@ -211,6 +211,7 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         teamAgeList.sortedBy { it }
 
         assertThat(teamUserList.userList.size).isEqualTo(3)
+        assertThat(teamUserList.teamName).isEqualTo("abcd")
         assertThat(teamAgeList[1]!! - teamAgeList[0]!!).isLessThan(3)
     }
 
