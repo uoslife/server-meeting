@@ -56,7 +56,7 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
         val code = singleMeetingService.createMeetingTeam(user.id!!, "")
 
         // when & then
-        assertThatThrownBy { singleMeetingService.joinMeetingTeam(user.id!!, code!!) }
+        assertThatThrownBy { singleMeetingService.joinMeetingTeam(user.id!!, code!!, true) }
             .isInstanceOf(InSingleMeetingTeamNoJoinTeamException::class.java)
     }
 
