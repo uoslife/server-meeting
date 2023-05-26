@@ -61,16 +61,16 @@ class MeetingApi(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
         @PathVariable code: String,
-    ): ResponseEntity<Unit> {
+        @RequestParam isJoin: Boolean,
+    ): ResponseEntity<MeetingTeamUserListGetResponse?> {
         val userUUID = UUID.fromString(userDetails.username)
 
         if (teamType == TeamType.SINGLE) {
             throw InSingleMeetingTeamNoJoinTeamException()
         }
 
-        tripleMeetingService.joinMeetingTeam(userUUID, code)
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        val meetingTeamUserListGetResponse = tripleMeetingService.joinMeetingTeam(userUUID, code, isJoin)
+        return ResponseEntity.ok(meetingTeamUserListGetResponse)
     }
 
     @Operation(summary = "팅 결성 대기 중 간에 미팅 팀 유저 리스트 조회", description = "1대1의 경우 지원되지 않음. 1대1은 팀 유저가 본인 단독")
