@@ -14,6 +14,6 @@ class findUserTest : UserServiceTest() {
         val response = userService.findUser(user.id!!)
 
         // then
-        Assertions.assertThat(response?.body?.id).isEqualTo(user.id)
+        Assertions.assertThat(response.body?.id).isEqualTo(user.id)
     }
 }

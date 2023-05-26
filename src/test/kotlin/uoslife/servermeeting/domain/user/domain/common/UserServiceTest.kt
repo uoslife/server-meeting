@@ -16,8 +16,10 @@ import java.util.*
 abstract class UserServiceTest {
     @Autowired
     protected lateinit var userService: UserService
+
     @Autowired
     protected lateinit var userRepository: UserRepository
+
     @Autowired
     protected lateinit var entityManager: EntityManager
 
