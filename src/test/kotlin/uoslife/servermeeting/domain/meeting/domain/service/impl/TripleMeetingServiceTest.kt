@@ -63,7 +63,7 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         val notExistUserId = UUID.randomUUID()
 
         // when & then
-        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(notExistUserId, "") }
+        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(notExistUserId, "", true) }
             .isInstanceOf(UserNotFoundException::class.java)
     }
 
@@ -73,10 +73,10 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         val user = userRepository.findAll().first()
 
         // when & then
-        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(user.id!!, "") }
+        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(user.id!!, "", true) }
             .isInstanceOf(TeamCodeInvalidFormatException::class.java)
 
-        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(user.id!!, "zzzz") }
+        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(user.id!!, "zzzz", true) }
             .isInstanceOf(TeamCodeInvalidFormatException::class.java)
     }
 
@@ -91,7 +91,7 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         tripleMeetingService.createMeetingTeam(user2.id!!, "efgh")
 
         // when & then
-        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!) }
+        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true) }
             .isInstanceOf(UserAlreadyHaveTeamException::class.java)
     }
 
@@ -105,11 +105,11 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         val user4 = userList[3]
 
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
-        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!)
-        tripleMeetingService.joinMeetingTeam(user3.id!!, code1)
+        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true)
+        tripleMeetingService.joinMeetingTeam(user3.id!!, code1, true)
 
         // when & then
-        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(user4.id!!, code1) }
+        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(user4.id!!, code1, true) }
             .isInstanceOf(TeamFullException::class.java)
     }
 
@@ -123,8 +123,30 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         val code1 = tripleMeetingService.createMeetingTeam(maleUser.id!!, "abcd")
 
         // when & then
-        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(femaleUser.id!!, code1!!) }
+        Assertions.assertThatThrownBy { tripleMeetingService.joinMeetingTeam(femaleUser.id!!, code1!!, true) }
             .isInstanceOf(TeamConsistOfSameGenderException::class.java)
+    }
+
+    @Test
+    fun `팀에 참가하기 전에 정상적으로 팀의 정보를 받을 수 있다`() {
+        // given
+        val userList = userRepository.findAll()
+        val user1 = userList[0]
+        val user2 = userList[1]
+        val user3 = userList[2]
+
+        userList.map { it -> it.gender = GenderType.FEMALE }
+
+        // when
+        val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
+        val joinMeetingTeam = tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true)
+        val meetingTeamUserListGetResponse = tripleMeetingService.joinMeetingTeam(user3.id!!, code1, false)
+
+        // then
+        assertThat(joinMeetingTeam).isNull()
+        assertThat(meetingTeamUserListGetResponse).isNotNull
+        assertThat(meetingTeamUserListGetResponse?.teamName).isEqualTo("abcd")
+        assertThat(meetingTeamUserListGetResponse?.userList?.size).isEqualTo(2)
     }
 
     @Test
@@ -139,8 +161,8 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
 
         // when & then
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
-        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!)
-        tripleMeetingService.joinMeetingTeam(user3.id!!, code1)
+        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true)
+        tripleMeetingService.joinMeetingTeam(user3.id!!, code1, true)
     }
 
     @Test
@@ -184,8 +206,8 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
 
         // when
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
-        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!)
-        tripleMeetingService.joinMeetingTeam(user3.id!!, code1)
+        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true)
+        tripleMeetingService.joinMeetingTeam(user3.id!!, code1, true)
 
         // then
         Assertions.assertThatThrownBy { tripleMeetingService.getMeetingTeamUserList(user4.id!!, code1) }
@@ -202,8 +224,8 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
 
         // when
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
-        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!)
-        tripleMeetingService.joinMeetingTeam(user3.id!!, code1)
+        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true)
+        tripleMeetingService.joinMeetingTeam(user3.id!!, code1, true)
 
         // then
         val teamUserList = tripleMeetingService.getMeetingTeamUserList(user1.id!!, code1)
@@ -251,8 +273,8 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
 
         // when
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
-        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!)
-        tripleMeetingService.joinMeetingTeam(user3.id!!, code1)
+        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true)
+        tripleMeetingService.joinMeetingTeam(user3.id!!, code1, true)
 
         tripleMeetingService
             .updateMeetingTeamInformation(user1.id!!, "0001", "0010", "0011", "0100", "0101")
@@ -328,8 +350,8 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
 
         // when
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
-        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!)
-        tripleMeetingService.joinMeetingTeam(user3.id!!, code1)
+        tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true)
+        tripleMeetingService.joinMeetingTeam(user3.id!!, code1, true)
 
         tripleMeetingService
             .updateMeetingTeamInformation(user1.id!!, "0001", "0010", "0011", "0100", "0101")
