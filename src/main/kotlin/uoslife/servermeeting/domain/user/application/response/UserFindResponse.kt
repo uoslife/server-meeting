@@ -7,7 +7,7 @@ import uoslife.servermeeting.domain.user.domain.entity.enums.StudentType
 import java.util.UUID
 
 data class UserFindResponseDto(
-    val id: UUID?,
+    val id: UUID,
     val birthYear: Number?,
     val gender: GenderType?,
     val name: String?,
@@ -18,11 +18,11 @@ data class UserFindResponseDto(
     val mbti: String?,
     val interest: String?,
     val height: Number?,
-    val nickname: String?
+    val nickname: String
 )
 
 fun User.toResponse() = UserFindResponseDto(
-    id = id,
+    id = id!!,
     birthYear = birthYear,
     gender = gender,
     name = name,
