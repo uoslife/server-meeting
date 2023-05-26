@@ -2,6 +2,7 @@ package uoslife.servermeeting.domain.user.domain.service
 
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.springframework.data.repository.findByIdOrNull
 import uoslife.servermeeting.domain.user.application.request.UserUpdateRequest
 import uoslife.servermeeting.domain.user.domain.common.UserServiceTest
 import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
@@ -21,7 +22,10 @@ class updateUserTest : UserServiceTest() {
 
         // when
         userService.updateUser(updateData, userUUID)
-        val updatedUser = userRepository.findUserById(userUUID)!!
+        entityManager.flush()
+        entityManager.clear()
+
+        val updatedUser = userRepository.findByIdOrNull(userUUID)!!
 
         // then
         assertThat(updatedUser.gender).isEqualTo(updateData.gender)
@@ -34,5 +38,30 @@ class updateUserTest : UserServiceTest() {
         assertThat(updatedUser.interest).isEqualTo(updateData.interest)
         assertThat(updatedUser.height).isEqualTo(updateData.height)
         assertThat(updatedUser.nickname).isEqualTo(updateData.nickname)
+    }
+
+    @Test
+    fun `정상적으로 null을 체크하여 일부분만 수정할 수 있는 지 확인한다`() {
+        // given
+        val userUUID = userRepository.findAll().first().id!!
+        val updateData = UserUpdateRequest(
+            null, null, "name0", null, null,
+            null, null, null, null, null, "nickname0"
+        )
+
+        // when
+        userService.updateUser(updateData, userUUID)
+        entityManager.flush()
+        entityManager.clear()
+
+        val updatedUser = userRepository.findByIdOrNull(userUUID)!!
+
+        // then
+        assertThat(updatedUser.name).isEqualTo(updateData.name)
+        assertThat(updatedUser.nickname).isEqualTo(updateData.nickname)
+
+
+        assertThat(updatedUser.phoneNumber).isEqualTo(user1.phoneNumber)
+        assertThat(updatedUser.profilePicture).isEqualTo(user1.profilePicture)
     }
 }

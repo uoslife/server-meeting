@@ -8,6 +8,7 @@ import uoslife.servermeeting.domain.user.application.response.NicknameCheckRespo
 import uoslife.servermeeting.domain.user.application.response.UserFindResponseDto
 import uoslife.servermeeting.domain.user.application.response.UserUpdateResponse
 import uoslife.servermeeting.domain.user.application.response.toResponse
+import uoslife.servermeeting.domain.user.domain.dao.UserUpdateDao
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundException
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
@@ -16,7 +17,8 @@ import java.util.UUID
 
 @Service
 class UserService(
-    private val userRepository: UserRepository) {
+    private val userRepository: UserRepository,
+    private val userUpdateDao: UserUpdateDao) {
 
     fun findUser(id: UUID): ResponseEntity<UserFindResponseDto> {
         val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
@@ -25,7 +27,7 @@ class UserService(
 
     fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<UserUpdateResponse> {
         val existingUser = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
-        updateUserData(existingUser, requestDto)
+        userUpdateDao.updateUser(existingUser, requestDto)
         return ResponseEntity.ok(UserUpdateResponse("성공적으로 변경됐습니다"))
     }
 
@@ -37,27 +39,5 @@ class UserService(
     private fun checkNicknameDuplication(user: User?): NicknameCheckResponse {
         return if (user?.nickname == null) NicknameCheckResponse("존재하지 않는 닉네임입니다." ,false)
         else NicknameCheckResponse("존재하는 닉네임입니다.", true)
-    }
-
-    private fun updateUserData(
-        existingUser: User?,
-        requestDto: UserUpdateRequest
-    ) {
-        existingUser?.let {
-            if (requestDto.hasChanges()) {
-                requestDto.birthYear?.let { birthYear -> it.birthYear = birthYear }
-                requestDto.gender?.let { gender -> it.gender = gender }
-                requestDto.name?.let { name -> it.name = name }
-                requestDto.department?.let { department -> it.department = department }
-                requestDto.studentType?.let { studentType -> it.studentType = studentType }
-                requestDto.smoking?.let { smoking -> it.smoking = smoking }
-                requestDto.spiritAnimal?.let { spiritAnimal -> it.spiritAnimal = spiritAnimal }
-                requestDto.mbti?.let { mbti -> it.mbti = mbti }
-                requestDto.interest?.let { interest -> it.interest = interest }
-                requestDto.height?.let { height -> it.height = height }
-                requestDto.nickname?.let { nickname -> it.nickname = nickname }
-                userRepository.save(it)
-            }
-        }
     }
 }
