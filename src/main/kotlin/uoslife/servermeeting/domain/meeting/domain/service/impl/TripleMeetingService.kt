@@ -202,7 +202,8 @@ class TripleMeetingService(
         return code
     }
 
-    private fun toMeetingTeamUserListGetResponse(teamName: String, userList: List<User>): MeetingTeamUserListGetResponse {
+    private fun toMeetingTeamUserListGetResponse(teamName: String, userList: List<User>):
+        MeetingTeamUserListGetResponse {
         val currentYear: Int = LocalDate.now().year
 
         return MeetingTeamUserListGetResponse(
