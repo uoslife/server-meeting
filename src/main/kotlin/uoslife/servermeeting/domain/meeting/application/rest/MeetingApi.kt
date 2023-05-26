@@ -55,7 +55,7 @@ class MeetingApi(
     }
 
     @Operation(summary = "미팅 팀 참가", description = "1대1의 경우 지원되지 않음. 1대1은 미팅 팀 생성 시 자동으로 참가됨")
-    @ApiResponse(responseCode = "204", description = "반환값 없음")
+    @ApiResponse(responseCode = "204", description = "isJoin true일 경우, 팀 참가 및 null 반환, false일 경우, 팀 참가하지 않고 팀 정보 반환")
     @PostMapping("/{teamType}/join/{code}")
     fun joinMeetingTeam(
         @AuthenticationPrincipal userDetails: UserDetails,
