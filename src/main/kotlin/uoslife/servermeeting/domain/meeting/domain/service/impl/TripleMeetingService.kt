@@ -84,7 +84,7 @@ class TripleMeetingService(
         isUserInTeam(user, meetingTeam)
 
         val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
-        return toMeetingTeamUserListGetResponse(userList)
+        return toMeetingTeamUserListGetResponse(meetingTeam.name!!, userList)
     }
 
     override fun updateMeetingTeamInformation(
@@ -196,10 +196,11 @@ class TripleMeetingService(
         return code
     }
 
-    private fun toMeetingTeamUserListGetResponse(userList: List<User>): MeetingTeamUserListGetResponse {
+    private fun toMeetingTeamUserListGetResponse(teamName: String, userList: List<User>): MeetingTeamUserListGetResponse {
         val currentYear: Int = LocalDate.now().year
 
         return MeetingTeamUserListGetResponse(
+            teamName = teamName,
             userList.map {
                 MeetingTeamUser(
                     nickname = it.nickname,

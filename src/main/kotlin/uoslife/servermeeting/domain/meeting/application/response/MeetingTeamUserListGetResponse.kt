@@ -1,6 +1,7 @@
 package uoslife.servermeeting.domain.meeting.application.response
 
 data class MeetingTeamUserListGetResponse(
+    val teamName: String,
     val userList: List<MeetingTeamUser>,
 )
 
