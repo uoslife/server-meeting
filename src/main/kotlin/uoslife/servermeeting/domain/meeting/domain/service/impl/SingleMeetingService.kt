@@ -56,7 +56,7 @@ class SingleMeetingService(
         return ""
     }
 
-    override fun joinMeetingTeam(userUUID: UUID, code: String) {
+    override fun joinMeetingTeam(userUUID: UUID, code: String, isJoin: Boolean): MeetingTeamUserListGetResponse? {
         throw InSingleMeetingTeamNoJoinTeamException()
     }
 
