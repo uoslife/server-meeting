@@ -19,7 +19,7 @@ import java.util.UUID
 class UserService(
     private val userRepository: UserRepository) {
 
-    fun findUser(id: UUID): ResponseEntity<UserFindResponseDto>? {
+    fun findUser(id: UUID): ResponseEntity<UserFindResponseDto> {
         val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
         return ResponseEntity.ok(user.toResponse())
     }
