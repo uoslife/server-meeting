@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.domain.meeting.application.request.MeetingTeamInformationUpdateRequest
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUserListGetResponse
-import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.exception.*
 import uoslife.servermeeting.domain.meeting.domain.service.BaseMeetingService
