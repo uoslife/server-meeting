@@ -65,12 +65,6 @@ class UserTeamDao(
             .fetchOne()
     }
 
-    fun findUserTeamTypeByUserUUID(userUUID: UUID): TeamType? {
-        return queryFactory.selectFrom(userTeam)
-            .where(userTeam.user.id.eq(userUUID))
-            .fetchOne()?.type
-    }
-
     fun countByTeam(meetingTeam: MeetingTeam): Int {
         return queryFactory.selectFrom(userTeam)
             .where(userTeam.team.eq(meetingTeam))

@@ -141,14 +141,13 @@ class MeetingApi(
     @GetMapping("/{teamType}/application/info")
     fun getMeetingTeamApplicationInformation(
         @AuthenticationPrincipal userDetails: UserDetails,
-        @PathVariable teamType: TeamType?,
+        @PathVariable teamType: TeamType,
     ): ResponseEntity<MeetingTeamInformationGetResponse> {
         val userUUID = UUID.fromString(userDetails.username)
 
         val meetingTeamInformationGetResponse = when (teamType) {
             TeamType.SINGLE -> singleMeetingService.getMeetingTeamInformation(userUUID)
             TeamType.TRIPLE -> tripleMeetingService.getMeetingTeamInformation(userUUID)
-            else -> autoFindTeamTypeAndGetTeamInformation(userUUID)
         }
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamInformationGetResponse)
     }
@@ -173,16 +172,4 @@ class MeetingApi(
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
-
-    private fun autoFindTeamTypeAndGetTeamInformation(userUUID: UUID) =
-        (
-            userTeamDao.findUserTeamTypeByUserUUID(userUUID)
-                ?.let { userTeamType ->
-                    when (userTeamType) {
-                        TeamType.SINGLE -> singleMeetingService.getMeetingTeamInformation(userUUID)
-                        TeamType.TRIPLE -> tripleMeetingService.getMeetingTeamInformation(userUUID)
-                    }
-                }
-                ?: throw UserTeamNotFoundException()
-            )
 }
