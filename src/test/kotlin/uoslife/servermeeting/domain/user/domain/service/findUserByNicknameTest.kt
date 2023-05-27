@@ -12,7 +12,7 @@ class findUserByNicknameTest : UserServiceTest() {
         val parameter = "nickname1"
 
         // when
-        val response = userService.findUserByNickname("nickname1")
+        val response = userService.findUserByNickname(parameter)
 
         // then
         assertThat(response).isNotNull
@@ -25,7 +25,7 @@ class findUserByNicknameTest : UserServiceTest() {
         val parameter = "nickname0"
 
         // when
-        val response = userService.findUserByNickname("nickname0")
+        val response = userService.findUserByNickname(parameter)
 
         // then
         assertThat(response).isNotNull
