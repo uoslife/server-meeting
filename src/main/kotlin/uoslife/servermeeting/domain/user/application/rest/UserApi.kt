@@ -19,7 +19,7 @@ import java.util.*
 
 @Tag(name = "User", description = "User API")
 @RestController
-@RequestMapping("/api/meeting/user")
+@RequestMapping("/api/user")
 class UserApi(
     private val userService: UserService,
 ) {
