@@ -2,19 +2,20 @@ package uoslife.servermeeting.domain.match.domain.service.impl
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
 
 @Service
 @Qualifier("matchingService")
-class MatchingService (
-    ){
+class MatchingService() {
     fun assignProposersToReceivers(
-        receivers: List<Receiver>, proposers: List<Proposer>
+        receivers: List<Receiver>,
+        proposers: List<Proposer>,
     ): List<Pair<Receiver, Proposer>> {
         val matches = mutableListOf<Pair<Receiver, Proposer>>()
 
         do {
-            var receiver = receivers.firstOrNull { it.capacity > it.match.size && it.preferences.any { proposer -> proposer.match == null } }
+            var receiver = receivers.firstOrNull {
+                it.capacity > it.match.size && it.preferences.any { proposer -> proposer.match == null }
+            }
             var proposer = receiver?.preferences?.firstOrNull()
 
             if (receiver == null || proposer == null) {
@@ -28,7 +29,6 @@ class MatchingService (
             // For each successor, `s` to `receiver` in the preference list of `proposer`,
             // delete the pair `(p, s)` from the game.
             proposer.preferences = deletePreferenceOfReceiverBySuccessors(proposer, receiver)
-
         } while (true)
 
         receivers.forEach { receiver ->
@@ -41,7 +41,7 @@ class MatchingService (
 
     private fun makeNewPair(
         proposer: Proposer,
-        receiver: Receiver
+        receiver: Receiver,
     ) {
         proposer.match = receiver
         receiver.match.add(proposer)
@@ -54,7 +54,8 @@ class MatchingService (
 
     fun deletePreferenceOfReceiverBySuccessors(proposer: Proposer, successor: Receiver): MutableList<Receiver> {
         return proposer.preferences.subList(
-            proposer.preferences.indexOf(successor) + 1, proposer.preferences.size
+            proposer.preferences.indexOf(successor) + 1,
+            proposer.preferences.size,
         )
     }
 
@@ -66,6 +67,4 @@ class MatchingService (
     fun makeMeetingTeamToPlayer() {
         // make MeetingTeam to Player
     }
-
-
 }
