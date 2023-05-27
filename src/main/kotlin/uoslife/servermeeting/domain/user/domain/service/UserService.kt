@@ -13,12 +13,13 @@ import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundException
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
-import java.util.UUID
+import java.util.*
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val userUpdateDao: UserUpdateDao) {
+    private val userUpdateDao: UserUpdateDao,
+) {
 
     fun findUser(id: UUID): ResponseEntity<UserFindResponseDto> {
         val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
@@ -37,7 +38,10 @@ class UserService(
     }
 
     private fun checkNicknameDuplication(user: User?): NicknameCheckResponse {
-        return if (user?.nickname == null) NicknameCheckResponse(false)
-        else NicknameCheckResponse(true)
+        return if (user?.nickname == null) {
+            NicknameCheckResponse(false)
+        } else {
+            NicknameCheckResponse(true)
+        }
     }
 }

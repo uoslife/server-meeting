@@ -5,7 +5,6 @@ import jakarta.transaction.Transactional
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import uoslife.servermeeting.domain.user.domain.dao.UserUpdateDao
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
 import uoslife.servermeeting.domain.user.domain.service.UserService
@@ -26,9 +25,9 @@ abstract class UserServiceTest {
     val user1 = User(
         id = UUID.randomUUID(),
         name = "name1",
-        nickname = "nickname1" ,
+        nickname = "nickname1",
         phoneNumber = "01012345678",
-        profilePicture = ""
+        profilePicture = "",
     )
 
     val user2 = User(
@@ -36,7 +35,7 @@ abstract class UserServiceTest {
         name = "name2",
         nickname = "nickname2",
         phoneNumber = "01056781234",
-        profilePicture = ""
+        profilePicture = "",
     )
 
     @BeforeEach
@@ -44,5 +43,4 @@ abstract class UserServiceTest {
         userRepository.save(user1)
         userRepository.save(user2)
     }
-
 }

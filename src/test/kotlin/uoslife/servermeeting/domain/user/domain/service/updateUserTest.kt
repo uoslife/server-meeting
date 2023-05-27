@@ -17,7 +17,7 @@ class updateUserTest : UserServiceTest() {
         val userUUID = userRepository.findAll().first().id!!
         val updateData = UserUpdateRequest(
             2000, GenderType.MALE, "name0", DepartmentNameType.BUSINESS, StudentType.GRADUATE,
-            false, "chicken", "ENTJ", "coding", 173, "nickname0"
+            false, "chicken", "ENTJ", "coding", 173, "nickname0",
         )
 
         // when
