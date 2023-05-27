@@ -28,7 +28,7 @@ class UserService(
     fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<Unit> {
         val existingUser = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
         userUpdateDao.updateUser(requestDto, existingUser)
-        return ResponseEntity.status(HttpStatus.OK).build()
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     fun findUserByNickname(nickname: String): ResponseEntity<NicknameCheckResponse> {
