@@ -16,7 +16,7 @@ class findUserByNicknameTest : UserServiceTest() {
 
         // then
         assertThat(response).isNotNull
-        assertThat(response.body?.duplication).isEqualTo(true)
+        assertThat(response.body?.duplicated).isEqualTo(true)
     }
 
     @Test
@@ -29,6 +29,6 @@ class findUserByNicknameTest : UserServiceTest() {
 
         // then
         assertThat(response).isNotNull
-        assertThat(response.body?.duplication).isEqualTo(false)
+        assertThat(response.body?.duplicated).isEqualTo(false)
     }
 }
