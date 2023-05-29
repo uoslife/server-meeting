@@ -16,7 +16,7 @@ class updateUserTest : UserServiceTest() {
         // given
         val userUUID = userRepository.findAll().first().id!!
         val updateData = UserUpdateRequest(
-            2000, GenderType.MALE, DepartmentNameType.BUSINESS, StudentType.GRADUATE,
+            2000, GenderType.MALE, DepartmentNameType.BUSINESS, "kakao", StudentType.GRADUATE,
             false, "chicken", "ENTJ", "coding", 173, "nickname0",
         )
 
@@ -30,6 +30,7 @@ class updateUserTest : UserServiceTest() {
         // then
         assertThat(updatedUser.gender).isEqualTo(updateData.gender)
         assertThat(updatedUser.department).isEqualTo(updateData.department)
+        assertThat(updatedUser.kakaoTalkId).isEqualTo(updateData.kakaoTalkId)
         assertThat(updatedUser.studentType).isEqualTo(updateData.studentType)
         assertThat(updatedUser.smoking).isEqualTo(updateData.smoking)
         assertThat(updatedUser.spiritAnimal).isEqualTo(updateData.spiritAnimal)

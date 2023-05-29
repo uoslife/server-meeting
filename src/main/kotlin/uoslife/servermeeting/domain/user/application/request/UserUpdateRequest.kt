@@ -16,6 +16,9 @@ data class UserUpdateRequest(
     val department: DepartmentNameType,
 
     @NotBlank
+    val kakaoTalkId: String,
+
+    @NotBlank
     val studentType: StudentType,
 
     @NotBlank
