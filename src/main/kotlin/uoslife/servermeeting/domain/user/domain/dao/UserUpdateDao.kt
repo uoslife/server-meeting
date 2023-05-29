@@ -18,6 +18,7 @@ class UserUpdateDao(
             .set(user.birthYear, requestDto.birthYear)
             .set(user.gender, requestDto.gender)
             .set(user.department, requestDto.department)
+            .set(user.kakaoTalkId, requestDto.kakaoTalkId)
             .set(user.studentType, requestDto.studentType)
             .set(user.smoking, requestDto.smoking)
             .set(user.spiritAnimal, requestDto.spiritAnimal)
