@@ -4,6 +4,9 @@ import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import uoslife.servermeeting.domain.user.domain.common.UserServiceTest
+import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundException
+import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
+import java.util.UUID
 
 class putUserTest : UserServiceTest() {
 
@@ -42,5 +45,15 @@ class putUserTest : UserServiceTest() {
 
         // then
         assertThat(updatedUser.id).isEqualTo(userUUID)
+    }
+
+    @Test
+    fun `존재하지 않는 uuid에 대한 요청에 에러를 반환한다`() {
+        // given
+        val userUUID = UUID.randomUUID()
+
+        // then & when
+        assertThatThrownBy { userService.resetUser(userUUID) }
+            .isInstanceOf(ExistingUserNotFoundException::class.java)
     }
 }
