@@ -17,6 +17,7 @@ class UserPutDao(
             .where(user.eq(existingUser))
             .setNull(user.birthYear)
             .setNull(user.department)
+            .setNull(user.kakaoTalkId)
             .setNull(user.studentType)
             .setNull(user.smoking)
             .setNull(user.spiritAnimal)
