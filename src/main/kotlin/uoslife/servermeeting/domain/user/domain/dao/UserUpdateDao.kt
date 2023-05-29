@@ -17,7 +17,6 @@ class UserUpdateDao(
             .where(user.eq(existingUser))
             .set(user.birthYear, requestDto.birthYear)
             .set(user.gender, requestDto.gender)
-            .set(user.name, requestDto.name)
             .set(user.department, requestDto.department)
             .set(user.studentType, requestDto.studentType)
             .set(user.smoking, requestDto.smoking)

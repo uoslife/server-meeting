@@ -13,9 +13,6 @@ data class UserUpdateRequest(
     val gender: GenderType,
 
     @NotBlank
-    val name: String,
-
-    @NotBlank
     val department: DepartmentNameType,
 
     @NotBlank
