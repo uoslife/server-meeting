@@ -22,6 +22,7 @@ class putUserTest : UserServiceTest() {
 
         // then
         assertThat(updatedUser.department).isNull()
+        assertThat(updatedUser.kakaoTalkId).isNull()
         assertThat(updatedUser.studentType).isNull()
         assertThat(updatedUser.smoking).isNull()
         assertThat(updatedUser.spiritAnimal).isNull()
