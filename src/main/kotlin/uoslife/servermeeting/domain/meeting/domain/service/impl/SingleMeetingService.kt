@@ -119,6 +119,7 @@ class SingleMeetingService(
         return MeetingTeamInformationGetResponse(
             sex = user.gender,
             teamType = TeamType.SINGLE,
+            teamName = null,
             informationDistance = information.distanceInfo,
             informationFilter = information.filterInfo,
             informationMeetingTime = information.meetingTime,
