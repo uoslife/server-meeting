@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import uoslife.servermeeting.domain.user.domain.common.UserServiceTest
 import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundException
-import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import java.util.UUID
 
 class putUserTest : UserServiceTest() {
