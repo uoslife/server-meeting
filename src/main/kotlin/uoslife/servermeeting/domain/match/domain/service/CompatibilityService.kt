@@ -1,24 +1,23 @@
 package uoslife.servermeeting.domain.match.domain.service
 
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
+import java.util.concurrent.ConcurrentHashMap
 
 interface CompatibilityService {
 
-    fun isFilteredOnCompatibility(
+    fun isMatchedOnFilterCompatibility(
         team: MeetingTeam,
-        otherTeam: MeetingTeam,
+        opponentTeam: MeetingTeam,
+        informationFilterDelimiterParams: ConcurrentHashMap<String, List<Int>>,
+        preferenceFilterDelimiterParams: ConcurrentHashMap<String, List<Int>>,
     ): Boolean
+
     fun calculateDistanceCompatibility(
         team: MeetingTeam,
-        otherTeam: MeetingTeam,
+        opponentTeam: MeetingTeam,
+        preferenceDistanceDelimiterParams: ConcurrentHashMap<String, List<Int>>,
+        informationDistanceDelimiterParams: ConcurrentHashMap<String, List<Int>>,
     ): Int
-    fun getCompatibilityScore(
-        team: MeetingTeam,
-        otherTeam: MeetingTeam,
-    ): Int
-    fun saveCompatibilityScore(
-        team: MeetingTeam,
-        otherTeam: MeetingTeam,
-        score: Int,
-    )
+
+    fun saveCompatibilityScore(team: MeetingTeam, opponentTeam: MeetingTeam)
 }

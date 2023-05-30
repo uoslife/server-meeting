@@ -10,6 +10,7 @@ import uoslife.servermeeting.domain.meeting.domain.entity.Preference
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.repository.InformationRepository
 import uoslife.servermeeting.domain.meeting.domain.repository.PreferenceRepository
+import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 
 @Service
@@ -37,5 +38,11 @@ class MeetingTeamService(
     }
     fun getGenderByMeetingTeam(meetingTeam: MeetingTeam): GenderType? {
         return meetingTeamDao.getGenderTypeByMeetingTeam(meetingTeam)
+    }
+    fun getTeamDepartmentByMeetingTeam(meetingTeam: MeetingTeam): List<DepartmentNameType> {
+        return meetingTeamDao.getTeamDepartmentByMeetingTeam(meetingTeam)
+    }
+    fun getTeamAgeByMeetingTeam(meetingTeam: MeetingTeam): List<Int> {
+        return meetingTeamDao.getTeamAgeByMeetingTeam(meetingTeam)
     }
 }
