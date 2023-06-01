@@ -5,5 +5,4 @@ class Proposer(val id: Long) {
     var preferences: MutableList<Receiver> = mutableListOf()
 
     var match: Receiver? = null
-
 }
