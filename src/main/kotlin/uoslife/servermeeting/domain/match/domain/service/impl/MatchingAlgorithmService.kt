@@ -13,10 +13,8 @@ class MatchingAlgorithmService() {
         val matches = mutableListOf<Pair<Receiver, Proposer>>()
 
         do {
-            var receiver = receivers.firstOrNull {
-                it.capacity > it.match.size && it.preferences.any { proposer -> proposer.match == null }
-            }
-            var proposer = receiver?.preferences?.firstOrNull()
+            var receiver = getReceiverOnCondition(receivers)
+            var proposer = getProposerOncondition(receiver)
 
             if (receiver == null || proposer == null) {
                 break
@@ -38,6 +36,14 @@ class MatchingAlgorithmService() {
         }
         return matches
     }
+
+    private fun getProposerOncondition(receiver: Receiver?) =
+        receiver?.preferences?.firstOrNull()
+
+    private fun getReceiverOnCondition(receivers: List<Receiver>) =
+        receivers.firstOrNull {
+            it.capacity > it.match.size && it.preferences.any { proposer -> proposer.match == null }
+        }
 
     private fun makeNewPair(
         proposer: Proposer,
