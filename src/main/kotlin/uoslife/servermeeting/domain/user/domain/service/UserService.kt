@@ -8,6 +8,7 @@ import uoslife.servermeeting.domain.user.application.request.UserUpdateRequest
 import uoslife.servermeeting.domain.user.application.response.NicknameCheckResponse
 import uoslife.servermeeting.domain.user.application.response.UserFindResponseDto
 import uoslife.servermeeting.domain.user.application.response.toResponse
+import uoslife.servermeeting.domain.user.domain.dao.UserPutDao
 import uoslife.servermeeting.domain.user.domain.dao.UserUpdateDao
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundException
@@ -19,6 +20,7 @@ import java.util.*
 class UserService(
     private val userRepository: UserRepository,
     private val userUpdateDao: UserUpdateDao,
+    private val userPutDao: UserPutDao,
 ) {
 
     fun findUser(id: UUID): ResponseEntity<UserFindResponseDto> {
@@ -35,6 +37,11 @@ class UserService(
     fun findUserByNickname(nickname: String): ResponseEntity<NicknameCheckResponse> {
         val user = userRepository.findUserByNickname(nickname)
         return ResponseEntity.ok(checkNicknameDuplication(user))
+    }
+
+    fun resetUser(id: UUID): ResponseEntity<Unit> {
+        val user = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
+        return ResponseEntity.ok(userPutDao.putUser(user))
     }
 
     private fun checkNicknameDuplication(user: User?): NicknameCheckResponse {

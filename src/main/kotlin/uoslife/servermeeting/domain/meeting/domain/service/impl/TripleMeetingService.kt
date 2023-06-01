@@ -125,7 +125,7 @@ class TripleMeetingService(
         val information = informationRepository.findByMeetingTeam(meetingTeam) ?: throw InformationNotFoundException()
         val preference = preferenceRepository.findByMeetingTeam(meetingTeam) ?: throw PreferenceNotFoundException()
 
-        return toMeetingTeamInformationGetResponse(user.gender, userList, information, preference)
+        return toMeetingTeamInformationGetResponse(user.gender, userList, information, preference, meetingTeam.name!!)
     }
 
     override fun deleteMeetingTeam(userUUID: UUID) {
@@ -268,16 +268,18 @@ class TripleMeetingService(
         }
     }
 
-    private fun toMeetingTeamInformationGetResponse(
+    fun toMeetingTeamInformationGetResponse(
         gender: GenderType,
         userList: List<User>,
         information: Information,
         preference: Preference,
+        teamName: String,
     ): MeetingTeamInformationGetResponse {
         val currentYear: Int = LocalDate.now().year
 
         return MeetingTeamInformationGetResponse(
             teamType = TeamType.TRIPLE,
+            teamName = teamName,
             sex = gender,
             informationDistance = information.distanceInfo,
             informationFilter = information.filterInfo,

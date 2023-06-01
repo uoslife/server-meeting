@@ -13,10 +13,10 @@ data class UserUpdateRequest(
     val gender: GenderType,
 
     @NotBlank
-    val name: String,
+    val department: DepartmentNameType,
 
     @NotBlank
-    val department: DepartmentNameType,
+    val kakaoTalkId: String,
 
     @NotBlank
     val studentType: StudentType,

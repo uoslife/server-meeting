@@ -37,11 +37,11 @@ class MatchingService(
             userTeamDao.findByTeam(opponentTeam)
         val opponentUser = opponentUserTeam.first().user ?: throw UserNotFoundException()
         return when (userTeam.type) {
-            SINGLE -> {
+            SINGLE -> {     
                 singleMeetingService.getMeetingTeamInformation(opponentUser.id ?: throw UserNotFoundException())
             }
 
-            TRIPLE -> {
+            TRIPLE -> {                
                 tripleMeetingService.getMeetingTeamInformation(opponentUser.id ?: throw UserNotFoundException())
             }
         }

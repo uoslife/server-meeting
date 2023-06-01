@@ -15,7 +15,6 @@ class MatchingAlgorithmService() {
         do {
             var receiver = getReceiverOnCondition(receivers)
             var proposer = getProposerOncondition(receiver)
-
             if (receiver == null || proposer == null) {
                 break
             }
@@ -36,7 +35,6 @@ class MatchingAlgorithmService() {
         }
         return matches
     }
-
     private fun getProposerOncondition(receiver: Receiver?) =
         receiver?.preferences?.firstOrNull()
 
@@ -44,7 +42,6 @@ class MatchingAlgorithmService() {
         receivers.firstOrNull {
             it.capacity > it.match.size && it.preferences.any { proposer -> proposer.match == null }
         }
-
     private fun makeNewPair(
         proposer: Proposer,
         receiver: Receiver,
