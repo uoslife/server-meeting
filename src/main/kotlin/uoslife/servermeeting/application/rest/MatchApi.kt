@@ -25,7 +25,7 @@ class MatchApi(
         responseCode = "200",
         description = "매칭된 미팅 팀 전체 정보(MeetingTeamInformationGetResponse) 반환",
     )
-    @GetMapping("")
+    @GetMapping
     fun getMatchedMeetingTeamInformation(
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<MeetingTeamInformationGetResponse> {
