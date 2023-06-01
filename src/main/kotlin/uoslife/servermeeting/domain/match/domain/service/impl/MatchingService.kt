@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service
 import uoslife.servermeeting.domain.dao.MatchedDao
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
-import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType.*
+import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType.SINGLE
+import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType.TRIPLE
 import uoslife.servermeeting.domain.meeting.domain.exception.InformationNotFoundException
 import uoslife.servermeeting.domain.meeting.domain.exception.MeetingTeamNotFoundException
 import uoslife.servermeeting.domain.meeting.domain.exception.UserTeamNotFoundException
@@ -32,18 +33,15 @@ class MatchingService(
             meetingTeamRepository.findByIdOrNull(userTeam.team.id!!) ?: throw MeetingTeamNotFoundException()
         val opponentTeam =
             matchedDao.findMatchedTeamByTeamAndGender(meetingTeam, user.gender) ?: throw InformationNotFoundException()
+        val opponentUserTeam =
+            userTeamDao.findByTeam(opponentTeam)
+        val opponentUser = opponentUserTeam.first().user ?: throw UserNotFoundException()
         return when (userTeam.type) {
             SINGLE -> {
-                val opponentUserTeam =
-                    userTeamDao.findByTeam(opponentTeam)
-                val opponentUser = opponentUserTeam.first().user ?: throw UserNotFoundException()
                 singleMeetingService.getMeetingTeamInformation(opponentUser.id ?: throw UserNotFoundException())
             }
 
             TRIPLE -> {
-                val opponentUserTeam =
-                    userTeamDao.findByTeam(opponentTeam)
-                val opponentUser = opponentUserTeam.first().user ?: throw UserNotFoundException()
                 tripleMeetingService.getMeetingTeamInformation(opponentUser.id ?: throw UserNotFoundException())
             }
         }
