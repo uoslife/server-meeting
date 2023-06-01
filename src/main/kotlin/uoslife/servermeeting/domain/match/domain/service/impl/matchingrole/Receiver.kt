@@ -1,4 +1,4 @@
-package uoslife.servermeeting.domain.match.domain.service.impl
+package uoslife.servermeeting.domain.match.domain.service.impl.matchingrole
 
 class Receiver(val id: Long, var capacity: Int = 0) {
 

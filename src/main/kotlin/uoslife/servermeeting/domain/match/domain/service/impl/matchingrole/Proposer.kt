@@ -1,4 +1,4 @@
-package uoslife.servermeeting.domain.match.domain.service.impl
+package uoslife.servermeeting.domain.match.domain.service.impl.matchingrole
 
 class Proposer(val id: Long) {
 
