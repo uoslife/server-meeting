@@ -268,7 +268,7 @@ class TripleMeetingService(
         }
     }
 
-    private fun toMeetingTeamInformationGetResponse(
+    fun toMeetingTeamInformationGetResponse(
         gender: GenderType,
         userList: List<User>,
         information: Information,
