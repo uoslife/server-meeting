@@ -109,7 +109,7 @@ class SingleMeetingService(
         meetingTeamRepository.deleteById(meetingTeam.id!!)
     }
 
-    private fun toMeetingTeamInformationGetResponse(
+    fun toMeetingTeamInformationGetResponse(
         user: User,
         information: Information,
         preference: Preference,

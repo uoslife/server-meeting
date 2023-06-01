@@ -1,6 +1,7 @@
 package uoslife.servermeeting.domain.meeting.domain.entity
 
 import jakarta.persistence.*
+import uoslife.servermeeting.domain.match.domain.entity.Compatibility
 import uoslife.servermeeting.domain.match.domain.entity.Match
 
 @Entity
