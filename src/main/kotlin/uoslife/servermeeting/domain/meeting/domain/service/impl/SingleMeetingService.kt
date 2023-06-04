@@ -90,8 +90,7 @@ class SingleMeetingService(
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
         val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE) ?: throw UserTeamNotFoundException()
-        val meetingTeam =
-            meetingTeamRepository.findByIdOrNull(userTeam.team.id!!) ?: throw MeetingTeamNotFoundException()
+        val meetingTeam = userTeam.team
 
         val information = informationRepository.findByMeetingTeam(meetingTeam) ?: throw InformationNotFoundException()
         val preference = preferenceRepository.findByMeetingTeam(meetingTeam) ?: throw PreferenceNotFoundException()
