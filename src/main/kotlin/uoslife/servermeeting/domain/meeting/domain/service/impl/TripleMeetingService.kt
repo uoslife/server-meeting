@@ -104,8 +104,7 @@ class TripleMeetingService(
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
         val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE) ?: throw UserTeamNotFoundException()
-        val meetingTeam =
-            meetingTeamRepository.findByIdOrNull(userTeam.team.id!!) ?: throw MeetingTeamNotFoundException()
+        val meetingTeam = userTeam.team
 
         // information and preference 는 하나만 존재해야 함 중복 체크
         val information = informationRepository.findByMeetingTeam(meetingTeam)
