@@ -48,7 +48,7 @@ class TripleMeetingService(
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
         validator.isUserAlreadyHaveTeam(user)
-        isTeamNameLeast2Character(name)
+        validator.isTeamNameLeast2Character(name)
 
         val code = uniqueCodeGenerator.getUniqueTeamCode()
 
@@ -67,14 +67,15 @@ class TripleMeetingService(
     override fun joinMeetingTeam(userUUID: UUID, code: String, isJoin: Boolean): MeetingTeamUserListGetResponse? {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        isTeamCodeValid(code)
+        validator.isTeamCodeValid(code)
         validator.isUserAlreadyHaveTeam(user)
 
         val meetingTeam = meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
         val leaderUserTeam = userTeamDao.findByTeamAndisLeader(meetingTeam, true)
             ?: throw TeamLeaderNotFoundException()
-        isTeamFull(meetingTeam)
-        isUserSameGenderWithTeamLeader(user, leaderUserTeam.user!!)
+
+        validator.isTeamFull(meetingTeam)
+        validator.isUserSameGenderWithTeamLeader(user, leaderUserTeam.user!!)
 
         return if (isJoin) {
             userTeamDao.saveUserTeam(meetingTeam, user, false, TeamType.TRIPLE)
@@ -87,11 +88,10 @@ class TripleMeetingService(
 
     override fun getMeetingTeamUserList(userUUID: UUID, code: String): MeetingTeamUserListGetResponse {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
-
-        isTeamCodeValid(code)
+        validator.isTeamCodeValid(code)
 
         val meetingTeam = meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
-        isUserInTeam(user, meetingTeam)
+        validator.isUserInTeam(user, meetingTeam)
 
         val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
         return toMeetingTeamUserListGetResponse(meetingTeam.name!!, userList)
@@ -138,38 +138,6 @@ class TripleMeetingService(
         val meetingTeam = userTeam.team
 
         meetingTeamRepository.deleteById(meetingTeam.id!!)
-    }
-
-
-    private fun isTeamNameLeast2Character(name: String?) {
-        println(name)
-        if (name == null || name.length < 2) {
-            throw TeamNameLeast2CharacterException()
-        }
-    }
-
-    private fun isTeamCodeValid(code: String) {
-        if (code.length != 4 || !code.matches(Regex("[A-Z0-9]{4}"))) {
-            throw TeamCodeInvalidFormatException()
-        }
-    }
-
-    private fun isTeamFull(team: MeetingTeam) {
-        if (userTeamDao.countByTeam(team) >= 3) {
-            throw TeamFullException()
-        }
-    }
-
-    private fun isUserInTeam(user: User, team: MeetingTeam) {
-        if (userTeamDao.findByUserAndTeam(user, team) == null) {
-            throw UserNotInTeamException()
-        }
-    }
-
-    private fun isUserSameGenderWithTeamLeader(user: User, teamLeaderUser: User) {
-        if (user.gender != teamLeaderUser.gender) {
-            throw TeamConsistOfSameGenderException()
-        }
     }
 
     private fun toMeetingTeamUserListGetResponse(teamName: String, userList: List<User>):
