@@ -19,6 +19,7 @@ import uoslife.servermeeting.domain.meeting.domain.repository.InformationReposit
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
 import uoslife.servermeeting.domain.meeting.domain.repository.PreferenceRepository
 import uoslife.servermeeting.domain.meeting.domain.service.BaseMeetingService
+import uoslife.servermeeting.domain.meeting.domain.util.Validator
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
@@ -35,15 +36,13 @@ class SingleMeetingService(
     private val userTeamDao: UserTeamDao,
     private val preferenceUpdateDao: PreferenceUpdateDao,
     private val informationUpdateDao: InformationUpdateDao,
+    private val validator: Validator,
     @Value("\${app.season}")
     private val season: Int,
 ) : BaseMeetingService {
     override fun createMeetingTeam(userUUID: UUID, name: String?): String? {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
-
-        if (userTeamDao.findByUser(user) != null) {
-            throw UserAlreadyHaveTeamException()
-        }
+        validator.isUserAlreadyHaveTeam(user)
 
         val meetingTeam = meetingTeamRepository.save(
             MeetingTeam(

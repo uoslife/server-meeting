@@ -21,6 +21,7 @@ import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamReposit
 import uoslife.servermeeting.domain.meeting.domain.repository.PreferenceRepository
 import uoslife.servermeeting.domain.meeting.domain.service.BaseMeetingService
 import uoslife.servermeeting.domain.meeting.domain.util.UniqueCodeGenerator
+import uoslife.servermeeting.domain.meeting.domain.util.Validator
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
@@ -39,13 +40,14 @@ class TripleMeetingService(
     private val preferenceUpdateDao: PreferenceUpdateDao,
     private val informationUpdateDao: InformationUpdateDao,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
+    private val validator: Validator,
     @Value("\${app.season}")
     private val season: Int,
 ) : BaseMeetingService {
     override fun createMeetingTeam(userUUID: UUID, name: String?): String? {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        isUserHaveOnlyOneTeam(user)
+        validator.isUserAlreadyHaveTeam(user)
         isTeamNameLeast2Character(name)
 
         val code = uniqueCodeGenerator.getUniqueTeamCode()
@@ -66,7 +68,7 @@ class TripleMeetingService(
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
         isTeamCodeValid(code)
-        isUserHaveOnlyOneTeam(user)
+        validator.isUserAlreadyHaveTeam(user)
 
         val meetingTeam = meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
         val leaderUserTeam = userTeamDao.findByTeamAndisLeader(meetingTeam, true)
@@ -138,11 +140,6 @@ class TripleMeetingService(
         meetingTeamRepository.deleteById(meetingTeam.id!!)
     }
 
-    private fun isUserHaveOnlyOneTeam(user: User) {
-        if (userTeamDao.findByUser(user) != null) {
-            throw UserAlreadyHaveTeamException()
-        }
-    }
 
     private fun isTeamNameLeast2Character(name: String?) {
         println(name)
