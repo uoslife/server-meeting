@@ -41,13 +41,7 @@ class SingleMeetingService(
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
         validator.isUserAlreadyHaveTeam(user)
 
-        val meetingTeam = meetingTeamRepository.save(
-            MeetingTeam(
-                season = season,
-                code = "",
-            ),
-        )
-
+        val meetingTeam = saveMeetingTeam()
         userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
         return ""
     }
@@ -106,5 +100,15 @@ class SingleMeetingService(
         val meetingTeam = userTeam.team
 
         meetingTeamRepository.deleteById(meetingTeam.id!!)
+    }
+
+    @Transactional
+    fun saveMeetingTeam(): MeetingTeam {
+        return meetingTeamRepository.save(
+            MeetingTeam(
+                season = season,
+                code = "",
+            ),
+        )
     }
 }

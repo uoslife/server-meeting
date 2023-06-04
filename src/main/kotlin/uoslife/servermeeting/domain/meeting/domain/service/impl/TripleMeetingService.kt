@@ -49,14 +49,7 @@ class TripleMeetingService(
         validator.isTeamNameLeast2Character(name)
 
         val code = uniqueCodeGenerator.getUniqueTeamCode()
-
-        val meetingTeam = meetingTeamRepository.save(
-            MeetingTeam(
-                season = season,
-                name = name,
-                code = code,
-            ),
-        )
+        val meetingTeam = saveMeetingTeam(name, code)
 
         userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.TRIPLE)
         return code
@@ -130,8 +123,10 @@ class TripleMeetingService(
         val preference = preferenceRepository.findByMeetingTeam(meetingTeam) ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils
-            .toMeetingTeamInformationGetResponse(user.gender, TeamType.TRIPLE,
-                userList, information, preference, meetingTeam.name)
+            .toMeetingTeamInformationGetResponse(
+                user.gender, TeamType.TRIPLE,
+                userList, information, preference, meetingTeam.name
+            )
     }
 
     @Transactional
@@ -142,6 +137,17 @@ class TripleMeetingService(
         val meetingTeam = userTeam.team
 
         meetingTeamRepository.deleteById(meetingTeam.id!!)
+    }
+
+    @Transactional
+    fun saveMeetingTeam(name: String?, code: String): MeetingTeam {
+        return meetingTeamRepository.save(
+            MeetingTeam(
+                season = season,
+                name = name,
+                code = code,
+            ),
+        )
     }
 
     private fun toMeetingTeamUserListGetResponse(teamName: String, userList: List<User>):
