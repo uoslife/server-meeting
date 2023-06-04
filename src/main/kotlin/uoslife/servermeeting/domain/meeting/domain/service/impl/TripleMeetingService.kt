@@ -8,23 +8,18 @@ import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUser
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUserListGetResponse
-import uoslife.servermeeting.domain.meeting.application.response.UserProfile
-import uoslife.servermeeting.domain.meeting.domain.dao.InformationUpdateDao
-import uoslife.servermeeting.domain.meeting.domain.dao.PreferenceUpdateDao
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
-import uoslife.servermeeting.domain.meeting.domain.entity.Information
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
-import uoslife.servermeeting.domain.meeting.domain.entity.Preference
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.exception.*
 import uoslife.servermeeting.domain.meeting.domain.repository.InformationRepository
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
 import uoslife.servermeeting.domain.meeting.domain.repository.PreferenceRepository
 import uoslife.servermeeting.domain.meeting.domain.service.BaseMeetingService
+import uoslife.servermeeting.domain.meeting.domain.service.util.MeetingServiceUtils
 import uoslife.servermeeting.domain.meeting.domain.util.UniqueCodeGenerator
 import uoslife.servermeeting.domain.meeting.domain.util.Validator
 import uoslife.servermeeting.domain.user.domain.entity.User
-import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
 import java.time.LocalDate
@@ -39,10 +34,9 @@ class TripleMeetingService(
     private val informationRepository: InformationRepository,
     private val preferenceRepository: PreferenceRepository,
     private val userTeamDao: UserTeamDao,
-    private val preferenceUpdateDao: PreferenceUpdateDao,
-    private val informationUpdateDao: InformationUpdateDao,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val validator: Validator,
+    private val meetingServiceUtils: MeetingServiceUtils,
     @Value("\${app.season}")
     private val season: Int,
 ) : BaseMeetingService {
@@ -120,8 +114,9 @@ class TripleMeetingService(
         val information = informationRepository.findByMeetingTeam(meetingTeam)
         val preference = preferenceRepository.findByMeetingTeam(meetingTeam)
 
-        informationUpSert(information, meetingTeam, informationDistance, informationFilter, informationMeetingTime)
-        preferenceUpSert(preference, meetingTeam, preferenceDistance, preferenceFilter)
+        meetingServiceUtils
+            .informationUpSert(information, meetingTeam, informationDistance, informationFilter, informationMeetingTime)
+        meetingServiceUtils.preferenceUpSert(preference, meetingTeam, preferenceDistance, preferenceFilter)
     }
 
     override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
@@ -134,7 +129,9 @@ class TripleMeetingService(
         val information = informationRepository.findByMeetingTeam(meetingTeam) ?: throw InformationNotFoundException()
         val preference = preferenceRepository.findByMeetingTeam(meetingTeam) ?: throw PreferenceNotFoundException()
 
-        return toMeetingTeamInformationGetResponse(user.gender, userList, information, preference, meetingTeam.name!!)
+        return meetingServiceUtils
+            .toMeetingTeamInformationGetResponse(user.gender, TeamType.TRIPLE,
+                userList, information, preference, meetingTeam.name)
     }
 
     @Transactional
@@ -157,92 +154,6 @@ class TripleMeetingService(
                 MeetingTeamUser(
                     nickname = it.nickname,
                     age = currentYear - it.birthYear!! + 1,
-                )
-            },
-        )
-    }
-
-    // information 이 없으면 생성, 있으면 수정
-    private fun informationUpSert(
-        information: Information?,
-        meetingTeam: MeetingTeam,
-        informationDistance: String,
-        informationFilter: String,
-        informationMeetingTime: String,
-    ) {
-        if (information == null) {
-            informationRepository.save(
-                Information(
-                    meetingTeam = meetingTeam,
-                    filterInfo = informationFilter,
-                    distanceInfo = informationDistance,
-                    meetingTime = informationMeetingTime,
-                ),
-            )
-        } else {
-            informationUpdateDao.updateInformationByMeetingTeam(
-                meetingTeam,
-                informationDistance,
-                informationFilter,
-                informationMeetingTime,
-            )
-        }
-    }
-
-    // preference 가 없으면 생성, 있으면 수정
-    private fun preferenceUpSert(
-        preference: Preference?,
-        meetingTeam: MeetingTeam,
-        preferenceDistance: String,
-        preferenceFilter: String,
-    ) {
-        if (preference == null) {
-            preferenceRepository.save(
-                Preference(
-                    meetingTeam = meetingTeam,
-                    filterCondition = preferenceFilter,
-                    distanceCondition = preferenceDistance,
-                ),
-            )
-        } else {
-            preferenceUpdateDao.updatePreferenceByMeetingTeam(
-                meetingTeam,
-                preferenceFilter,
-                preferenceDistance,
-            )
-        }
-    }
-
-    fun toMeetingTeamInformationGetResponse(
-        gender: GenderType,
-        userList: List<User>,
-        information: Information,
-        preference: Preference,
-        teamName: String,
-    ): MeetingTeamInformationGetResponse {
-        val currentYear: Int = LocalDate.now().year
-
-        return MeetingTeamInformationGetResponse(
-            teamType = TeamType.TRIPLE,
-            teamName = teamName,
-            sex = gender,
-            informationDistance = information.distanceInfo,
-            informationFilter = information.filterInfo,
-            informationMeetingTime = information.meetingTime,
-            preferenceDistance = preference.distanceCondition,
-            preferenceFilter = preference.filterCondition,
-            teamUserList = userList.map {
-                UserProfile(
-                    nickname = it.nickname,
-                    age = currentYear - it.birthYear!! + 1,
-                    kakaoTalkId = it.kakaoTalkId!!,
-                    department = it.department!!,
-                    studentType = it.studentType!!,
-                    height = it.height,
-                    smoking = it.smoking,
-                    spiritAnimal = it.spiritAnimal,
-                    MBTI = it.mbti!!,
-                    interest = it.interest,
                 )
             },
         )
