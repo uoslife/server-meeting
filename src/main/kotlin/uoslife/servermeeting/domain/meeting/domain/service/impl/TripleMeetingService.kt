@@ -20,6 +20,7 @@ import uoslife.servermeeting.domain.meeting.domain.repository.InformationReposit
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
 import uoslife.servermeeting.domain.meeting.domain.repository.PreferenceRepository
 import uoslife.servermeeting.domain.meeting.domain.service.BaseMeetingService
+import uoslife.servermeeting.domain.meeting.domain.util.UniqueCodeGenerator
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
@@ -37,6 +38,7 @@ class TripleMeetingService(
     private val userTeamDao: UserTeamDao,
     private val preferenceUpdateDao: PreferenceUpdateDao,
     private val informationUpdateDao: InformationUpdateDao,
+    private val uniqueCodeGenerator: UniqueCodeGenerator,
     @Value("\${app.season}")
     private val season: Int,
 ) : BaseMeetingService {
@@ -46,7 +48,7 @@ class TripleMeetingService(
         isUserHaveOnlyOneTeam(user)
         isTeamNameLeast2Character(name)
 
-        val code = getUniqueTeamCode()
+        val code = uniqueCodeGenerator.getUniqueTeamCode()
 
         val meetingTeam = meetingTeamRepository.save(
             MeetingTeam(
@@ -171,34 +173,6 @@ class TripleMeetingService(
         if (user.gender != teamLeaderUser.gender) {
             throw TeamConsistOfSameGenderException()
         }
-    }
-
-    private fun getUniqueTeamCode(): String {
-        val characters = ('A'..'Z') + ('0'..'9') // A-Z, 0-9 문자열 리스트
-        val random = Random()
-
-        var code: String
-        var attempts = 0
-        var isDuplicate: Boolean = true
-        do {
-            // 난수 생성
-            code = (1..4)
-                .map { characters[random.nextInt(characters.size)] } // 리스트에서 임의로 선택
-                .joinToString("") // 선택된 문자들을 연결하여 문자열 생성
-
-            // DB 내 코드의 중복 체크
-            isDuplicate = meetingTeamRepository.existsByCode(code)
-
-            if (isDuplicate) {
-                attempts++
-            }
-        } while (isDuplicate && attempts < 3) // 중복일 경우 최대 3번까지 재생성 및 검증
-
-        if (isDuplicate) {
-            throw TeamCodeGenerateFailedException()
-        }
-
-        return code
     }
 
     private fun toMeetingTeamUserListGetResponse(teamName: String, userList: List<User>):
