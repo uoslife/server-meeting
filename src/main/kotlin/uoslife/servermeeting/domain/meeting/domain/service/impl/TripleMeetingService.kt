@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUser
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUserListGetResponse
@@ -30,6 +31,7 @@ import java.time.LocalDate
 import java.util.*
 
 @Service
+@Transactional(readOnly = true)
 @Qualifier("tripleMeetingService")
 class TripleMeetingService(
     private val userRepository: UserRepository,
@@ -44,6 +46,8 @@ class TripleMeetingService(
     @Value("\${app.season}")
     private val season: Int,
 ) : BaseMeetingService {
+
+    @Transactional
     override fun createMeetingTeam(userUUID: UUID, name: String?): String? {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
@@ -64,6 +68,7 @@ class TripleMeetingService(
         return code
     }
 
+    @Transactional
     override fun joinMeetingTeam(userUUID: UUID, code: String, isJoin: Boolean): MeetingTeamUserListGetResponse? {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
@@ -97,6 +102,7 @@ class TripleMeetingService(
         return toMeetingTeamUserListGetResponse(meetingTeam.name!!, userList)
     }
 
+    @Transactional
     override fun updateMeetingTeamInformation(
         userUUID: UUID,
         informationDistance: String,
@@ -131,6 +137,7 @@ class TripleMeetingService(
         return toMeetingTeamInformationGetResponse(user.gender, userList, information, preference, meetingTeam.name!!)
     }
 
+    @Transactional
     override fun deleteMeetingTeam(userUUID: UUID) {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 

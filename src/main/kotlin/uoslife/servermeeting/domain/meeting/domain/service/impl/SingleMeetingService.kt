@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.domain.meeting.application.response.UserProfile
@@ -27,6 +28,7 @@ import java.time.LocalDate
 import java.util.*
 
 @Service
+@Transactional(readOnly = true)
 @Qualifier("singleMeetingService")
 class SingleMeetingService(
     private val userRepository: UserRepository,
@@ -40,6 +42,8 @@ class SingleMeetingService(
     @Value("\${app.season}")
     private val season: Int,
 ) : BaseMeetingService {
+
+    @Transactional
     override fun createMeetingTeam(userUUID: UUID, name: String?): String? {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
         validator.isUserAlreadyHaveTeam(user)
@@ -63,6 +67,7 @@ class SingleMeetingService(
         throw InSingleMeetingTeamOnlyOneUserException()
     }
 
+    @Transactional
     override fun updateMeetingTeamInformation(
         userUUID: UUID,
         informationDistance: String,
@@ -96,6 +101,7 @@ class SingleMeetingService(
         return toMeetingTeamInformationGetResponse(user, information, preference)
     }
 
+    @Transactional
     override fun deleteMeetingTeam(userUUID: UUID) {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
