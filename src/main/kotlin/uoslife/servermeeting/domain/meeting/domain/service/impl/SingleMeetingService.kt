@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUserListGetResponse
-import uoslife.servermeeting.domain.meeting.domain.dao.InformationUpdateDao
-import uoslife.servermeeting.domain.meeting.domain.dao.PreferenceUpdateDao
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
@@ -32,8 +30,6 @@ class SingleMeetingService(
     private val informationRepository: InformationRepository,
     private val preferenceRepository: PreferenceRepository,
     private val userTeamDao: UserTeamDao,
-    private val preferenceUpdateDao: PreferenceUpdateDao,
-    private val informationUpdateDao: InformationUpdateDao,
     private val meetingServiceUtils: MeetingServiceUtils,
     private val validator: Validator,
     @Value("\${app.season}")
