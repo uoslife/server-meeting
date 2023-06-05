@@ -4,6 +4,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.domain.user.application.request.UserUpdateRequest
 import uoslife.servermeeting.domain.user.application.response.NicknameCheckResponse
 import uoslife.servermeeting.domain.user.application.response.UserFindResponseDto
@@ -17,6 +18,7 @@ import uoslife.servermeeting.domain.user.domain.repository.UserRepository
 import java.util.*
 
 @Service
+@Transactional(readOnly = true)
 class UserService(
     private val userRepository: UserRepository,
     private val userUpdateDao: UserUpdateDao,
@@ -28,6 +30,7 @@ class UserService(
         return ResponseEntity.ok(user.toResponse())
     }
 
+    @Transactional
     fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<Unit> {
         val existingUser = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
         userUpdateDao.updateUser(requestDto, existingUser)
@@ -39,6 +42,7 @@ class UserService(
         return ResponseEntity.ok(checkNicknameDuplication(user))
     }
 
+    @Transactional
     fun resetUser(id: UUID): ResponseEntity<Unit> {
         val user = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
         return ResponseEntity.ok(userPutDao.putUser(user))
