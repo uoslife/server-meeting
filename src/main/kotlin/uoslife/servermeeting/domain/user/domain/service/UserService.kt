@@ -30,16 +30,16 @@ class UserService(
         return ResponseEntity.ok(user.toResponse())
     }
 
+    fun findUserByNickname(nickname: String): ResponseEntity<NicknameCheckResponse> {
+        val user = userRepository.findUserByNickname(nickname)
+        return ResponseEntity.ok(checkNicknameDuplication(user))
+    }
+
     @Transactional
     fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<Unit> {
         val existingUser = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
         userUpdateDao.updateUser(requestDto, existingUser)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-    }
-
-    fun findUserByNickname(nickname: String): ResponseEntity<NicknameCheckResponse> {
-        val user = userRepository.findUserByNickname(nickname)
-        return ResponseEntity.ok(checkNicknameDuplication(user))
     }
 
     @Transactional
