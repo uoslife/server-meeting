@@ -50,7 +50,7 @@ jobs:
 
             ## Test with Gradle
             -   name: Test with Gradle
-                run: ./gradlew build jacocoTestReport
+                run: ./gradlew build
 
             ## Report to CodeCov
             -   name: Report to CodeCov
