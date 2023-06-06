@@ -2,3 +2,6 @@
 
 시대팅 시즌 server
 
+## ERD
+
+![시대팅 ERD](docsource/Sidaeting-erd.png)
