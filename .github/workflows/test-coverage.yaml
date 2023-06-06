@@ -48,9 +48,12 @@ jobs:
                     mkdir -p ./src/test/resources
                     echo "${{ env.TEST_PROPERTIES }}" > ./src/test/resources/application.yml
 
+            -   name: Grant execute permission for gradlew
+                run: chmod +x gradlew
+
             ## Test with Gradle
             -   name: Test with Gradle
-                run: ./gradlew build
+                run: ./gradlew clean build
 
             ## Report to CodeCov
             -   name: Report to CodeCov
