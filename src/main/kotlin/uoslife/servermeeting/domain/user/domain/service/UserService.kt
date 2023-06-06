@@ -15,6 +15,7 @@ import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundException
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
+import uoslife.servermeeting.domain.user.domain.util.UserValidator
 import java.util.*
 
 @Service
@@ -23,6 +24,7 @@ class UserService(
     private val userRepository: UserRepository,
     private val userUpdateDao: UserUpdateDao,
     private val userPutDao: UserPutDao,
+    private val userValidator: UserValidator,
 ) {
 
     fun findUser(id: UUID): ResponseEntity<UserFindResponseDto> {
@@ -45,6 +47,7 @@ class UserService(
     @Transactional
     fun resetUser(id: UUID): ResponseEntity<Unit> {
         val user = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
+        userValidator.alreadyResetUser(user)
         return ResponseEntity.ok(userPutDao.putUser(user))
     }
 
