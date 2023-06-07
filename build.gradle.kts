@@ -9,6 +9,7 @@ plugins {
     kotlin("plugin.jpa") version "1.7.22"
     kotlin("kapt") version "1.7.10" // querydsl
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0" // ktlint
+    id("jacoco") // jacoco 플러그인 추가
 }
 
 allOpen {
@@ -83,6 +84,17 @@ tasks.named<Jar>("jar") {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy("jacocoTestReport")
+}
+
+tasks.jacocoTestReport {
+    executionData(fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec"))
+
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+        csv.required.set(false)
+    }
 }
 
 tasks.test {
