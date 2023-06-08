@@ -2,7 +2,7 @@ package uoslife.servermeeting.domain.match.domain.service.impl
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import uoslife.servermeeting.domain.dao.MatchedDao
+import uoslife.servermeeting.domain.match.domain.dao.MatchedDao
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType.*
