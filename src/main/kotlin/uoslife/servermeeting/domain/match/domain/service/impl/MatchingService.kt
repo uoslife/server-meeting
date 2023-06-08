@@ -2,6 +2,7 @@ package uoslife.servermeeting.domain.match.domain.service.impl
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.domain.match.domain.dao.MatchedDao
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
@@ -17,6 +18,7 @@ import uoslife.servermeeting.domain.user.domain.repository.UserRepository
 import java.util.*
 
 @Service
+@Transactional(readOnly = true)
 class MatchingService(
     private val userRepository: UserRepository,
     private val userTeamDao: UserTeamDao,
@@ -25,6 +27,7 @@ class MatchingService(
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
 ) {
+    @Transactional
     fun getMatchedMeetingTeam(userUUID: UUID): MeetingTeamInformationGetResponse {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
         val userTeam = userTeamDao.findByUser(user) ?: throw UserTeamNotFoundException()
