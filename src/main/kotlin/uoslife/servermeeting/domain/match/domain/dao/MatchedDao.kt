@@ -1,4 +1,4 @@
-package uoslife.servermeeting.domain.dao
+package uoslife.servermeeting.domain.match.domain.dao
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.transaction.Transactional

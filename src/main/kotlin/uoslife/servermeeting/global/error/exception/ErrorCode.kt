@@ -56,6 +56,9 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     TEAM_LEADER_NOT_FOUND("M16", "Team Leader is not Found.", HttpStatus.BAD_REQUEST.value()),
     TEAM_CONSIST_OF_SAME_GENDER("M17", "Team must consist of Same Gender", HttpStatus.BAD_REQUEST.value()),
 
+    // Match
+    MATCH_NOT_FOUND("MT01", "Match is not Found.", HttpStatus.BAD_REQUEST.value()),
+
     // External API
     EXTERNAL_API_FAILED("E01", "External API Request is failed.", HttpStatus.INTERNAL_SERVER_ERROR.value()),
 }
