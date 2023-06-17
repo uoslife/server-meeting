@@ -13,18 +13,34 @@
 - Springboot 3.0.5
 
 ### installation
+
+**설치**
+
 ```bash
-# installation
 $ git clone https://github.com/uoslife/server-meeting
-$ cd server-meeting
+```
 
-# application file
-$ touch src/main/resources/application.yml
+**운영 파일 추가**
+```bash
+$ cd server-meeting && touch src/main/resources/application.yml
+```
 
-# build
-$ ./gradlew build
+**빌드**
+
+```bash
+$ ./gradlew build testClasses -x test
+```
+
+**실행**
+```bash
+$ java -jar build/libs/server-meeting-0.0.1-SNAPSHOT.jar
 ```
 
 ### ERD
 
 ![시대팅 ERD](docsource/Sidaeting-erd-2.png)
+
+## Infrastructure
+
+- Produce application.yml 파일은 notion에서 관리합니다.
+- Produce Database에 접근하기 위해서는 VPN을 사용해야 합니다.
