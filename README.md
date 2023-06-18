@@ -42,5 +42,6 @@ $ java -jar build/libs/server-meeting-0.0.1-SNAPSHOT.jar
 
 ## Infrastructure
 
-- Produce application.yml 파일은 notion에서 관리합니다.
-- Produce Database에 접근하기 위해서는 VPN을 사용해야 합니다.
+- application.yml 파일은 notion에서 관리합니다.
+- season 값은 application.yml에서 관리합니다.
+- Production Database에 접근하기 위해서는 VPN을 사용해야 합니다.
