@@ -1,4 +1,4 @@
-package uoslife.servermeeting.domain.match.rest
+package uoslife.servermeeting.domain.match.application.rest
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
