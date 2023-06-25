@@ -23,4 +23,15 @@ class UserTeam(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var type: TeamType,
-)
+) {
+    companion object {
+        fun createUserTeam(meetingTeam: MeetingTeam, user: User, isLeader: Boolean, teamType: TeamType): UserTeam {
+            return UserTeam(
+                team = meetingTeam,
+                user = user,
+                isLeader = isLeader,
+                type = teamType
+            )
+        }
+    }
+}

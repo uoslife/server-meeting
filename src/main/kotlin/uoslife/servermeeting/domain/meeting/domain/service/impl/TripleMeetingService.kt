@@ -9,6 +9,7 @@ import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInfo
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
+import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.exception.*
 import uoslife.servermeeting.domain.meeting.domain.repository.InformationRepository
@@ -49,7 +50,8 @@ class TripleMeetingService(
         val code = uniqueCodeGenerator.getUniqueTeamCode()
         val meetingTeam = saveMeetingTeam(name, code)
 
-        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.TRIPLE)
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.TRIPLE)
+        userTeamDao.saveUserTeam(newUserTeam)
         return code
     }
 
@@ -68,7 +70,8 @@ class TripleMeetingService(
         validator.isUserSameGenderWithTeamLeader(user, leaderUserTeam.user!!)
 
         return if (isJoin) {
-            userTeamDao.saveUserTeam(meetingTeam, user, false, TeamType.TRIPLE)
+            val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, false, TeamType.TRIPLE)
+            userTeamDao.saveUserTeam(newUserTeam)
             null
         } else {
             val meetingTeamUsers = MeetingTeamUsers(userTeamDao.findByTeam(meetingTeam).map { it.user!! })

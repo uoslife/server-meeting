@@ -9,6 +9,7 @@ import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInfo
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
+import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.exception.*
 import uoslife.servermeeting.domain.meeting.domain.repository.InformationRepository
@@ -42,7 +43,8 @@ class SingleMeetingService(
         validator.isUserAlreadyHaveTeam(user)
 
         val meetingTeam = createDefaultMeetingTeam()
-        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        userTeamDao.saveUserTeam(newUserTeam)
         return ""
     }
 

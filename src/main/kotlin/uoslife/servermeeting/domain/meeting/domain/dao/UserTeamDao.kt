@@ -16,14 +16,9 @@ class UserTeamDao(
     private val queryFactory: JPAQueryFactory,
     private val entityManager: EntityManager,
 ) {
-    fun saveUserTeam(meetingTeam: MeetingTeam, user: User, isLeader: Boolean, teamType: TeamType) {
+    fun saveUserTeam(userTeam: UserTeam) {
         entityManager.persist(
-            UserTeam(
-                team = meetingTeam,
-                user = user,
-                isLeader = isLeader,
-                type = teamType,
-            ),
+            userTeam
         )
     }
 
