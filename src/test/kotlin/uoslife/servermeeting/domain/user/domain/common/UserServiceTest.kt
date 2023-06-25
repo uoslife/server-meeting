@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import uoslife.servermeeting.domain.user.domain.dao.UserUpdateDao
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
 import uoslife.servermeeting.domain.user.domain.service.UserService
@@ -18,6 +19,9 @@ abstract class UserServiceTest {
 
     @Autowired
     protected lateinit var userRepository: UserRepository
+
+    @Autowired
+    protected lateinit var userUpdateDao: UserUpdateDao
 
     @Autowired
     protected lateinit var entityManager: EntityManager

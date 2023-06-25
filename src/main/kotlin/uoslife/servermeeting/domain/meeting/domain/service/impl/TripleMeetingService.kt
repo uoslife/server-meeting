@@ -20,6 +20,7 @@ import uoslife.servermeeting.domain.meeting.domain.service.util.MeetingServiceUt
 import uoslife.servermeeting.domain.meeting.domain.util.UniqueCodeGenerator
 import uoslife.servermeeting.domain.meeting.domain.util.Validator
 import uoslife.servermeeting.domain.meeting.domain.vo.MeetingTeamUsers
+import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
 import java.util.*

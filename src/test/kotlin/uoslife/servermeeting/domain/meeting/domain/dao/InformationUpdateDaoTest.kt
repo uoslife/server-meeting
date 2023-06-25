@@ -67,4 +67,52 @@ class InformationUpdateDaoTest : InformationTest() {
         assertThat(fixedMeetingTeam?.distanceInfo).isEqualTo("1111101")
         assertThat(fixedMeetingTeam?.meetingTime).isEqualTo("1111111")
     }
+
+    @Test
+    fun `upSert를 통해서 정상적으로 information이 없을 때 생성할 수 있다`() {
+        // given
+        val user = userRepository.findAll().first()
+        val meetingTeam = meetingTeamRepository.findAll().first()
+
+        // when
+        val information = informationRepository.findByMeetingTeam(meetingTeam)
+        meetingServiceUtils.informationUpSert(information, meetingTeam, "0010000", "0000000", "1000000")
+        entityManager.flush()
+        entityManager.clear()
+
+        // then
+        val informationFindByMeetingTeam = informationRepository.findByMeetingTeam(meetingTeam)
+        assertThat(informationFindByMeetingTeam).isNotNull
+        assertThat(informationFindByMeetingTeam?.filterInfo).isEqualTo("0000000")
+        assertThat(informationFindByMeetingTeam?.distanceInfo).isEqualTo("0010000")
+        assertThat(informationFindByMeetingTeam?.meetingTime).isEqualTo("1000000")
+    }
+
+    @Test
+    fun `upSert를 통해서 정상적으로 information이 있을 때 업데이트할 수 있다`() {
+        // given
+        val user = userRepository.findAll().first()
+        val meetingTeam = meetingTeamRepository.findAll().first()
+
+        // when
+        informationRepository.save(
+            Information(
+                meetingTeam = meetingTeam,
+                meetingTime = "0000000",
+                filterInfo = "11111111",
+                distanceInfo = "000111100",
+            ),
+        )
+        val information = informationRepository.findByMeetingTeam(meetingTeam)
+        meetingServiceUtils.informationUpSert(information, meetingTeam, "0010000", "0000000", "1000000")
+        entityManager.flush()
+        entityManager.clear()
+
+        // then
+        val informationFindByMeetingTeam = informationRepository.findByMeetingTeam(meetingTeam)
+        assertThat(informationFindByMeetingTeam).isNotNull
+        assertThat(informationFindByMeetingTeam?.filterInfo).isEqualTo("0000000")
+        assertThat(informationFindByMeetingTeam?.distanceInfo).isEqualTo("0010000")
+        assertThat(informationFindByMeetingTeam?.meetingTime).isEqualTo("1000000")
+    }
 }

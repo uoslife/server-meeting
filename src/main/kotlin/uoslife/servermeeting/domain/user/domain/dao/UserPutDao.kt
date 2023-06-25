@@ -1,14 +1,12 @@
 package uoslife.servermeeting.domain.user.domain.dao
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Repository
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.entity.QUser.user
 import java.util.*
 
 @Repository
-@Transactional
 class UserPutDao(
     private val queryFactory: JPAQueryFactory,
 ) {

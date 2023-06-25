@@ -168,6 +168,64 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
     }
 
     @Test
+    fun `Information이 존재하지 않는 경우 팀 정보를 조회 요청 시에 오류 발생`() {
+        // given
+        val user = userRepository.findAll().first()
+        val meetingTeam = meetingTeamRepository.save(
+            MeetingTeam(
+                code = "",
+                name = "",
+                season = season,
+            ),
+        )
+        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+
+        // when
+        singleMeetingService.updateMeetingTeamInformation(
+            user.id!!,
+            "0",
+            "1",
+            "0010",
+            "10",
+            "00",
+        )
+        informationRepository.deleteAll()
+
+        // then
+        assertThatThrownBy { singleMeetingService.getMeetingTeamInformation(user.id!!) }
+            .isInstanceOf(InformationNotFoundException::class.java)
+    }
+
+    @Test
+    fun `Preference가 존재하지 않는 경우 팀 정보를 조회 요청 시에 오류 발생`() {
+        // given
+        val user = userRepository.findAll().first()
+        val meetingTeam = meetingTeamRepository.save(
+            MeetingTeam(
+                code = "",
+                name = "",
+                season = season,
+            ),
+        )
+        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+
+        // when
+        singleMeetingService.updateMeetingTeamInformation(
+            user.id!!,
+            "0",
+            "1",
+            "0010",
+            "10",
+            "00",
+        )
+        preferenceRepository.deleteAll()
+
+        // then
+        assertThatThrownBy { singleMeetingService.getMeetingTeamInformation(user.id!!) }
+            .isInstanceOf(PreferenceNotFoundException::class.java)
+    }
+
+    @Test
     fun `정상적으로 팀 및 신청 정보를 조회할 수 있다`() {
         // given
         val user = userRepository.findAll().first()

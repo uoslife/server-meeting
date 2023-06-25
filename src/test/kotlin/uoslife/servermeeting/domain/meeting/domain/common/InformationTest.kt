@@ -13,6 +13,7 @@ import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.repository.InformationRepository
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
+import uoslife.servermeeting.domain.meeting.domain.service.util.MeetingServiceUtils
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
 import java.util.*
@@ -34,6 +35,9 @@ abstract class InformationTest {
 
     @Autowired
     protected lateinit var informationUpdateDao: InformationUpdateDao
+
+    @Autowired
+    protected lateinit var meetingServiceUtils: MeetingServiceUtils
 
     @Autowired
     protected lateinit var entityManager: EntityManager

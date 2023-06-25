@@ -15,6 +15,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     USER_NOT_FOUND("U02", "User is not Found.", HttpStatus.BAD_REQUEST.value()),
     EMAIL_DUPLICATION("U03", "Email is Duplicated.", HttpStatus.BAD_REQUEST.value()),
     NICKNAME_DUPLICATION("U04", "Nickname is Duplicated.", HttpStatus.BAD_REQUEST.value()),
+    USER_ALREADY_RESET("U05", "User data is already reset.", HttpStatus.BAD_REQUEST.value()),
 
     // User - Cookie
     SESSION_COOKIE_EXPIRED("AT01", "Access Token is Expired", HttpStatus.UNAUTHORIZED.value()),
@@ -54,6 +55,9 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     USER_NOT_IN_TEAM("M15", "User is not in Team.", HttpStatus.BAD_REQUEST.value()),
     TEAM_LEADER_NOT_FOUND("M16", "Team Leader is not Found.", HttpStatus.BAD_REQUEST.value()),
     TEAM_CONSIST_OF_SAME_GENDER("M17", "Team must consist of Same Gender", HttpStatus.BAD_REQUEST.value()),
+
+    // Match
+    MATCH_NOT_FOUND("MT01", "Match is not Found.", HttpStatus.BAD_REQUEST.value()),
 
     // External API
     EXTERNAL_API_FAILED("E01", "External API Request is failed.", HttpStatus.INTERNAL_SERVER_ERROR.value()),
