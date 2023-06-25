@@ -43,14 +43,15 @@ class MeetingServiceUtils(
                     meetingTime = informationMeetingTime,
                 ),
             )
-        } else {
-            informationUpdateDao.updateInformationByMeetingTeam(
-                meetingTeam,
-                informationDistance,
-                informationFilter,
-                informationMeetingTime,
-            )
+            return
         }
+
+        informationUpdateDao.updateInformationByMeetingTeam(
+            meetingTeam,
+            informationDistance,
+            informationFilter,
+            informationMeetingTime,
+        )
     }
 
     // preference 가 없으면 생성, 있으면 수정
@@ -69,13 +70,14 @@ class MeetingServiceUtils(
                     distanceCondition = preferenceDistance,
                 ),
             )
-        } else {
-            preferenceUpdateDao.updatePreferenceByMeetingTeam(
-                meetingTeam,
-                preferenceFilter,
-                preferenceDistance,
-            )
+            return
         }
+
+        preferenceUpdateDao.updatePreferenceByMeetingTeam(
+            meetingTeam,
+            preferenceFilter,
+            preferenceDistance,
+        )
     }
 
     fun toMeetingTeamInformationGetResponse(
