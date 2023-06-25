@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import uoslife.servermeeting.domain.meeting.domain.dao.PreferenceUpdateDao
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
+import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
 import uoslife.servermeeting.domain.meeting.domain.repository.PreferenceRepository
@@ -65,6 +66,7 @@ abstract class PreferenceTest {
             ),
         )
 
-        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        userTeamDao.saveUserTeam(newUserTeam)
     }
 }

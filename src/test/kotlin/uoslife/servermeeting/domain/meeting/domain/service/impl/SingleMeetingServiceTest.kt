@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.meeting.domain.common.SingleMeetingTest
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
+import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.exception.*
 import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
@@ -119,7 +120,8 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
                 season = season,
             ),
         )
-        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        userTeamDao.saveUserTeam(newUserTeam)
 
         // when
         singleMeetingService.updateMeetingTeamInformation(
@@ -176,7 +178,8 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
                 season = season,
             ),
         )
-        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        userTeamDao.saveUserTeam(newUserTeam)
 
         // when
         singleMeetingService.updateMeetingTeamInformation(
@@ -239,7 +242,8 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
                 season = season,
             ),
         )
-        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        userTeamDao.saveUserTeam(newUserTeam)
 
         singleMeetingService.updateMeetingTeamInformation(
             user.id!!,

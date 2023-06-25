@@ -3,6 +3,7 @@ package uoslife.servermeeting.domain.meeting.domain.dao
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.meeting.domain.common.UserTeamTest
+import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.exception.UserTeamNotFoundException
 
@@ -15,7 +16,8 @@ class UserTeamDaoTest : UserTeamTest() {
         val meetingTeam = meetingTeamRepository.findAll().first()
 
         // when
-        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        userTeamDao.saveUserTeam(newUserTeam)
         entityManager.flush()
         entityManager.clear()
 
