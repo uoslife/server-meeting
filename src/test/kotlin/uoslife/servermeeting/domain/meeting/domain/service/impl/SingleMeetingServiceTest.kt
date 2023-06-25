@@ -178,7 +178,8 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
                 season = season,
             ),
         )
-        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        userTeamDao.saveUserTeam(newUserTeam)
 
         // when
         singleMeetingService.updateMeetingTeamInformation(
@@ -207,7 +208,8 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
                 season = season,
             ),
         )
-        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        userTeamDao.saveUserTeam(newUserTeam)
 
         // when
         singleMeetingService.updateMeetingTeamInformation(
