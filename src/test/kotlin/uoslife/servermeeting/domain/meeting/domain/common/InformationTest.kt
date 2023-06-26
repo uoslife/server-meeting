@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import uoslife.servermeeting.domain.meeting.domain.dao.InformationUpdateDao
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
+import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.repository.InformationRepository
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
@@ -69,6 +70,7 @@ abstract class InformationTest {
             ),
         )
 
-        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+        userTeamDao.saveUserTeam(newUserTeam)
     }
 }

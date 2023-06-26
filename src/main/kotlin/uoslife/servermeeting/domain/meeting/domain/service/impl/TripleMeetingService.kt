@@ -6,10 +6,10 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
-import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUser
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
+import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.exception.*
 import uoslife.servermeeting.domain.meeting.domain.repository.InformationRepository
@@ -19,10 +19,9 @@ import uoslife.servermeeting.domain.meeting.domain.service.BaseMeetingService
 import uoslife.servermeeting.domain.meeting.domain.service.util.MeetingServiceUtils
 import uoslife.servermeeting.domain.meeting.domain.util.UniqueCodeGenerator
 import uoslife.servermeeting.domain.meeting.domain.util.Validator
-import uoslife.servermeeting.domain.user.domain.entity.User
+import uoslife.servermeeting.domain.meeting.domain.vo.MeetingTeamUsers
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
-import java.time.LocalDate
 import java.util.*
 
 @Service
@@ -51,7 +50,8 @@ class TripleMeetingService(
         val code = uniqueCodeGenerator.getUniqueTeamCode()
         val meetingTeam = saveMeetingTeam(name, code)
 
-        userTeamDao.saveUserTeam(meetingTeam, user, true, TeamType.TRIPLE)
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.TRIPLE)
+        userTeamDao.saveUserTeam(newUserTeam)
         return code
     }
 
@@ -70,11 +70,12 @@ class TripleMeetingService(
         validator.isUserSameGenderWithTeamLeader(user, leaderUserTeam.user!!)
 
         return if (isJoin) {
-            userTeamDao.saveUserTeam(meetingTeam, user, false, TeamType.TRIPLE)
+            val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, false, TeamType.TRIPLE)
+            userTeamDao.saveUserTeam(newUserTeam)
             null
         } else {
-            val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
-            toMeetingTeamUserListGetResponse(meetingTeam.name!!, userList)
+            val meetingTeamUsers = MeetingTeamUsers(userTeamDao.findByTeam(meetingTeam).map { it.user!! })
+            meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
         }
     }
 
@@ -85,8 +86,8 @@ class TripleMeetingService(
         val meetingTeam = meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
         validator.isUserInTeam(user, meetingTeam)
 
-        val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
-        return toMeetingTeamUserListGetResponse(meetingTeam.name!!, userList)
+        val meetingTeamUsers = MeetingTeamUsers(userTeamDao.findByTeam(meetingTeam).map { it.user!! })
+        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
     }
 
     @Transactional
@@ -147,21 +148,6 @@ class TripleMeetingService(
                 name = name,
                 code = code,
             ),
-        )
-    }
-
-    private fun toMeetingTeamUserListGetResponse(teamName: String, userList: List<User>):
-        MeetingTeamUserListGetResponse {
-        val currentYear: Int = LocalDate.now().year
-
-        return MeetingTeamUserListGetResponse(
-            teamName = teamName,
-            userList.map {
-                MeetingTeamUser(
-                    nickname = it.nickname,
-                    age = currentYear - it.birthYear!! + 1,
-                )
-            },
         )
     }
 }
