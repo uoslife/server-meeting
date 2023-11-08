@@ -1,6 +1,8 @@
 package uoslife.servermeeting.domain.meeting.domain.entity
 
+import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.*
+import org.hibernate.annotations.Type
 import uoslife.servermeeting.domain.match.domain.entity.Compatibility
 import uoslife.servermeeting.domain.match.domain.entity.Match
 
@@ -20,7 +22,8 @@ class MeetingTeam(
 
     var name: String? = null,
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "meetingTeam", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @Type(JsonType::class)
+    @Column(columnDefinition = "jsonb")
     var information: Information? = null,
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "maleTeam")
@@ -38,6 +41,7 @@ class MeetingTeam(
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "team", cascade = [CascadeType.ALL], orphanRemoval = true)
     var userTeams: MutableList<UserTeam> = mutableListOf(),
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "meetingTeam", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var preference: MutableList<Preference> = mutableListOf(),
+    @Type(JsonType::class)
+    @Column(columnDefinition = "jsonb")
+    var preference: Preference? = null,
 )
