@@ -6,17 +6,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import uoslife.servermeeting.domain.meeting.domain.dao.PreferenceUpdateDao
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
-import uoslife.servermeeting.domain.meeting.domain.repository.PreferenceRepository
 import uoslife.servermeeting.domain.meeting.domain.service.util.MeetingServiceUtils
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
-import java.util.*
+import java.util.UUID
 
 @SpringBootTest
 @Transactional
@@ -29,12 +27,6 @@ abstract class PreferenceTest {
 
     @Autowired
     protected lateinit var meetingTeamRepository: MeetingTeamRepository
-
-    @Autowired
-    protected lateinit var preferenceRepository: PreferenceRepository
-
-    @Autowired
-    protected lateinit var preferenceUpdateDao: PreferenceUpdateDao
 
     @Autowired
     protected lateinit var meetingServiceUtils: MeetingServiceUtils
@@ -50,7 +42,6 @@ abstract class PreferenceTest {
         userTeamDao.deleteAll()
         meetingTeamRepository.deleteAll()
         userRepository.deleteAll()
-        preferenceRepository.deleteAll()
 
         val user = userRepository.save(
             User(

@@ -7,16 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
-import uoslife.servermeeting.domain.meeting.domain.repository.InformationRepository
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
-import uoslife.servermeeting.domain.meeting.domain.repository.PreferenceRepository
 import uoslife.servermeeting.domain.meeting.domain.service.impl.TripleMeetingService
 import uoslife.servermeeting.domain.user.domain.entity.User
+import uoslife.servermeeting.domain.user.domain.entity.UserPersonalInformation
 import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.entity.enums.StudentType
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
-import java.util.*
+import java.util.UUID
 
 @SpringBootTest
 @Transactional
@@ -35,12 +34,6 @@ abstract class TripleMeetingTest {
     protected lateinit var meetingTeamRepository: MeetingTeamRepository
 
     @Autowired
-    protected lateinit var informationRepository: InformationRepository
-
-    @Autowired
-    protected lateinit var preferenceRepository: PreferenceRepository
-
-    @Autowired
     protected lateinit var entityManager: EntityManager
 
     @Value("\${app.season}")
@@ -52,76 +45,96 @@ abstract class TripleMeetingTest {
         meetingTeamRepository.deleteAll()
         userRepository.deleteAll()
 
+        val userPersonalInformation = UserPersonalInformation(
+            birthYear = 2000,
+            studentType = StudentType.UNDERGRADUATE,
+            department = DepartmentNameType.COMPUTER_SCIENCE,
+            smoking = false,
+            kakaoTalkId = "kakao",
+            mbti = "00101",
+            interest = "00101010",
+            gender = GenderType.FEMALE,
+        )
+
         userRepository.save(
             User(
                 id = UUID.randomUUID(),
                 name = "name1",
-                birthYear = 2000,
-                studentType = StudentType.UNDERGRADUATE,
                 nickname = "user@" + UUID.randomUUID().toString(),
                 phoneNumber = "01012345678",
                 profilePicture = "",
-                department = DepartmentNameType.COMPUTER_SCIENCE,
-                smoking = false,
-                kakaoTalkId = "kakao",
-                mbti = "00101",
-                interest = "00101010",
-                gender = GenderType.FEMALE,
-            ),
+                userPersonalInformation = userPersonalInformation,
+            )
         )
 
+        val userPersonalInformation1 = UserPersonalInformation(
+            department = DepartmentNameType.COMPUTER_SCIENCE,
+            smoking = false,
+            kakaoTalkId = "kakao",
+            mbti = "00101",
+            interest = "00101010",
+            gender = GenderType.FEMALE,
+            birthYear = 1999,
+            studentType = StudentType.UNDERGRADUATE,
+        )
         userRepository.save(
             User(
                 id = UUID.randomUUID(),
                 name = "name2",
-                birthYear = 1999,
-                studentType = StudentType.UNDERGRADUATE,
+
                 nickname = "user@" + UUID.randomUUID().toString(),
                 phoneNumber = "01012345678",
                 profilePicture = "",
-                department = DepartmentNameType.COMPUTER_SCIENCE,
-                smoking = false,
-                kakaoTalkId = "kakao",
-                mbti = "00101",
-                interest = "00101010",
-                gender = GenderType.FEMALE,
-            ),
+                userPersonalInformation = userPersonalInformation1,
+
+                ),
+        )
+
+        val userPersonalInformation2 = UserPersonalInformation(
+            birthYear = 2001,
+            studentType = StudentType.UNDERGRADUATE,
+            department = DepartmentNameType.COMPUTER_SCIENCE,
+            smoking = false,
+            kakaoTalkId = "kakao",
+            mbti = "00101",
+            interest = "00101010",
+            gender = GenderType.FEMALE,
         )
 
         userRepository.save(
             User(
                 id = UUID.randomUUID(),
                 name = "name3",
-                birthYear = 2001,
-                studentType = StudentType.UNDERGRADUATE,
+
                 nickname = "user@" + UUID.randomUUID().toString(),
                 phoneNumber = "01012345678",
                 profilePicture = "",
-                department = DepartmentNameType.COMPUTER_SCIENCE,
-                smoking = false,
-                kakaoTalkId = "kakao",
-                mbti = "00101",
-                interest = "00101010",
-                gender = GenderType.FEMALE,
-            ),
+                userPersonalInformation = userPersonalInformation2,
+
+                ),
+        )
+
+        val userPersonalInformation3 = UserPersonalInformation(
+            birthYear = 2001,
+            studentType = StudentType.UNDERGRADUATE,
+            department = DepartmentNameType.COMPUTER_SCIENCE,
+            smoking = false,
+            kakaoTalkId = "kakao",
+            mbti = "00101",
+            interest = "00101010",
+            gender = GenderType.MALE,
         )
 
         userRepository.save(
             User(
                 id = UUID.randomUUID(),
                 name = "name3",
-                birthYear = 2001,
-                studentType = StudentType.UNDERGRADUATE,
                 nickname = "user@" + UUID.randomUUID().toString(),
                 phoneNumber = "01012345678",
                 profilePicture = "",
-                department = DepartmentNameType.COMPUTER_SCIENCE,
-                smoking = false,
-                kakaoTalkId = "kakao",
-                mbti = "00101",
-                interest = "00101010",
-                gender = GenderType.MALE,
-            ),
+                userPersonalInformation = userPersonalInformation3,
+
+                ),
         )
     }
 }

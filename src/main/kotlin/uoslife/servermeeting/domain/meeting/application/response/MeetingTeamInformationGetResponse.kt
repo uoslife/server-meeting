@@ -10,11 +10,6 @@ data class MeetingTeamInformationGetResponse(
     val teamName: String?,
     val sex: GenderType,
     val teamUserList: List<UserProfile>,
-    val informationFilter: String,
-    val informationDistance: String,
-    val informationMeetingTime: String,
-    val preferenceFilter: String,
-    val preferenceDistance: String,
 )
 
 data class UserProfile(

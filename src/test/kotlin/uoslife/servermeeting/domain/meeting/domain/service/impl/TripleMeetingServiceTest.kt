@@ -2,14 +2,22 @@ package uoslife.servermeeting.domain.meeting.domain.service.impl
 
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.meeting.domain.common.TripleMeetingTest
+import uoslife.servermeeting.domain.meeting.domain.entity.Information
+import uoslife.servermeeting.domain.meeting.domain.entity.Preference
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
-import uoslife.servermeeting.domain.meeting.domain.exception.*
+import uoslife.servermeeting.domain.meeting.domain.exception.MeetingTeamNotFoundException
+import uoslife.servermeeting.domain.meeting.domain.exception.TeamCodeInvalidFormatException
+import uoslife.servermeeting.domain.meeting.domain.exception.TeamConsistOfSameGenderException
+import uoslife.servermeeting.domain.meeting.domain.exception.TeamFullException
+import uoslife.servermeeting.domain.meeting.domain.exception.TeamNameLeast2CharacterException
+import uoslife.servermeeting.domain.meeting.domain.exception.UserAlreadyHaveTeamException
+import uoslife.servermeeting.domain.meeting.domain.exception.UserNotInTeamException
+import uoslife.servermeeting.domain.meeting.domain.exception.UserTeamNotFoundException
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
-import java.util.*
+import java.util.UUID
 
 class TripleMeetingServiceTest : TripleMeetingTest() {
 
@@ -117,8 +125,10 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
     fun `리더와 다른 성별의 참가자가 참가 신청 시 오류를 발생`() {
         // given
         val userList = userRepository.findAll()
-        val maleUser = userList.find { it -> it.gender == GenderType.MALE } ?: throw UserNotFoundException()
-        val femaleUser = userList.find { it -> it.gender == GenderType.FEMALE } ?: throw UserNotFoundException()
+        val maleUser = userList.find { it -> it.userPersonalInformation.gender == GenderType.MALE }
+            ?: throw UserNotFoundException()
+        val femaleUser = userList.find { it -> it.userPersonalInformation.gender == GenderType.FEMALE }
+            ?: throw UserNotFoundException()
 
         val code1 = tripleMeetingService.createMeetingTeam(maleUser.id!!, "abcd")
 
@@ -135,7 +145,7 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         val user2 = userList[1]
         val user3 = userList[2]
 
-        userList.map { it -> it.gender = GenderType.FEMALE }
+        userList.map { it -> it.userPersonalInformation.gender = GenderType.FEMALE }
 
         // when
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
@@ -157,7 +167,7 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         val user2 = userList[1]
         val user3 = userList[2]
 
-        userList.map { it -> it.gender = GenderType.FEMALE }
+        userList.map { it -> it.userPersonalInformation.gender = GenderType.FEMALE }
 
         // when & then
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
@@ -196,7 +206,7 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
     }
 
     @Test
-    fun`본인이 속하지 않은 팀에 대해서 유저 리스트 조회 시 오류를 발생`() {
+    fun `본인이 속하지 않은 팀에 대해서 유저 리스트 조회 시 오류를 발생`() {
         // given
         val userList = userRepository.findAll()
         val user1 = userList[0]
@@ -241,10 +251,13 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
     fun `존재하지 않는 사용자에 대해 팀 정보 기입시 오류 발생`() {
         // given
         val notExistUserId = UUID.randomUUID()
+        val information = Information("0001", "0001", "0001")
+
+        val preference = Preference("0010", "0011")
 
         // when & then
         Assertions.assertThatThrownBy {
-            tripleMeetingService.updateMeetingTeamInformation(notExistUserId, "", "", "", "", "")
+            tripleMeetingService.updateMeetingTeamInformation(notExistUserId, information, preference)
         }
             .isInstanceOf(UserNotFoundException::class.java)
     }
@@ -253,10 +266,13 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
     fun `팀에 속하지 않은 사용자가 팀 정보 기입시 오류 발생`() {
         // given
         val user = userRepository.findAll().first()
+        val information = Information("0001", "0001", "0001")
+
+        val preference = Preference("0010", "0011")
 
         // when & then
         Assertions.assertThatThrownBy {
-            tripleMeetingService.updateMeetingTeamInformation(user.id!!, "", "", "", "", "")
+            tripleMeetingService.updateMeetingTeamInformation(user.id!!, information, preference)
         }
             .isInstanceOf(UserTeamNotFoundException::class.java)
     }
@@ -269,15 +285,16 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         val user2 = userList[1]
         val user3 = userList[2]
 
-        userList.map { it -> it.gender = GenderType.FEMALE }
+        userList.map { it -> it.userPersonalInformation.gender = GenderType.FEMALE }
 
         // when
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
         tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true)
         tripleMeetingService.joinMeetingTeam(user3.id!!, code1, true)
-
+        val information = Information("0001", "0001", "0001")
+        val preference = Preference("0010", "0011")
         tripleMeetingService
-            .updateMeetingTeamInformation(user1.id!!, "0001", "0010", "0011", "0100", "0101")
+            .updateMeetingTeamInformation(user1.id!!, information, preference)
 
         // then
         val meetingInfo = tripleMeetingService.getMeetingTeamInformation(user1.id!!)
@@ -346,15 +363,18 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         val user2 = userList[1]
         val user3 = userList[2]
 
-        userList.map { it -> it.gender = GenderType.FEMALE }
+        userList.map { it -> it.userPersonalInformation.gender = GenderType.FEMALE }
 
         // when
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
         tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true)
         tripleMeetingService.joinMeetingTeam(user3.id!!, code1, true)
+        val information = Information("0001", "0001", "0001")
+
+        val preference = Preference("0010", "0011")
 
         tripleMeetingService
-            .updateMeetingTeamInformation(user1.id!!, "0001", "0010", "0011", "0100", "0101")
+            .updateMeetingTeamInformation(user1.id!!, information, preference)
 
         // then
         tripleMeetingService.deleteMeetingTeam(user1.id!!)

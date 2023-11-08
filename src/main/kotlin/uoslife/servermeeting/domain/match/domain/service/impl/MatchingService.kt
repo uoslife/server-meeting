@@ -34,7 +34,7 @@ class MatchingService(
         val meetingTeam =
             meetingTeamRepository.findByIdOrNull(userTeam.team.id!!) ?: throw MeetingTeamNotFoundException()
         val opponentTeam =
-            matchedDao.findMatchedTeamByTeamAndGender(meetingTeam, user.gender) ?: throw MatchNotFoundException()
+            matchedDao.findMatchedTeamByTeamAndGender(meetingTeam, user.userPersonalInformation.gender) ?: throw MatchNotFoundException()
         return when (userTeam.type) {
             SINGLE -> {
                 val opponentUserTeam =

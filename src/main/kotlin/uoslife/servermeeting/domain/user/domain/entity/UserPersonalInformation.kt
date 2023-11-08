@@ -4,7 +4,7 @@ import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.entity.enums.StudentType
 
-data class UserProfile(
+data class UserPersonalInformation(
 
     var birthYear: Int? = null,
 

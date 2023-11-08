@@ -18,7 +18,7 @@ class MeetingTeamUsers(
             users.map {
                 MeetingTeamUser(
                     nickname = it.nickname,
-                    age = currentYear - it.birthYear!! + 1,
+                    age = currentYear,
                 )
             },
         )

@@ -33,15 +33,15 @@ class putUserTest : UserServiceTest() {
         val updatedUser = userRepository.findByIdOrNull(user.id)!!
 
         // then
-        assertThat(updatedUser.department).isNull()
-        assertThat(updatedUser.kakaoTalkId).isNull()
-        assertThat(updatedUser.studentType).isNull()
-        assertThat(updatedUser.smoking).isNull()
-        assertThat(updatedUser.spiritAnimal).isNull()
-        assertThat(updatedUser.mbti).isNull()
-        assertThat(updatedUser.interest).isNull()
+        assertThat(updatedUser.userPersonalInformation.department).isNull()
+        assertThat(updatedUser.userPersonalInformation.kakaoTalkId).isNull()
+        assertThat(updatedUser.userPersonalInformation.studentType).isNull()
+        assertThat(updatedUser.userPersonalInformation.smoking).isNull()
+        assertThat(updatedUser.userPersonalInformation.spiritAnimal).isNull()
+        assertThat(updatedUser.userPersonalInformation.mbti).isNull()
+        assertThat(updatedUser.userPersonalInformation.interest).isNull()
         assertThat(updatedUser.nickname).isNotNull()
-        assertThat(updatedUser.height).isEqualTo(0)
+        assertThat(updatedUser.userPersonalInformation.height).isEqualTo(0)
     }
 
     @Test

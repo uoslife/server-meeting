@@ -27,7 +27,7 @@ class User(
 
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
-    var userProfile: UserProfile? = null,
+    var userPersonalInformation: UserPersonalInformation = UserPersonalInformation(),
 
     @OneToMany(mappedBy = "user")
     var userTeams: MutableList<UserTeam> = mutableListOf(),

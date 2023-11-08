@@ -13,15 +13,6 @@ class UserPutDao(
     fun putUser(existingUser: User) {
         queryFactory.update(user)
             .where(user.eq(existingUser))
-            .setNull(user.birthYear)
-            .setNull(user.department)
-            .setNull(user.kakaoTalkId)
-            .setNull(user.studentType)
-            .setNull(user.smoking)
-            .setNull(user.spiritAnimal)
-            .setNull(user.mbti)
-            .setNull(user.interest)
-            .set(user.height, 0)
             .set(user.nickname, "user@" + UUID.randomUUID().toString())
             .execute()
     }

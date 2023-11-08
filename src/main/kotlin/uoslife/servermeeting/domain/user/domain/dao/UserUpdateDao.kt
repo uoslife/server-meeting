@@ -13,16 +13,6 @@ class UserUpdateDao(
     fun updateUser(requestDto: UserUpdateRequest, existingUser: User) {
         queryFactory.update(user)
             .where(user.eq(existingUser))
-            .set(user.birthYear, requestDto.birthYear)
-            .set(user.gender, requestDto.gender)
-            .set(user.department, requestDto.department)
-            .set(user.kakaoTalkId, requestDto.kakaoTalkId)
-            .set(user.studentType, requestDto.studentType)
-            .set(user.smoking, requestDto.smoking)
-            .set(user.spiritAnimal, requestDto.spiritAnimal)
-            .set(user.mbti, requestDto.mbti)
-            .set(user.interest, requestDto.interest)
-            .set(user.height, requestDto.height)
             .set(user.nickname, requestDto.nickname)
             .execute()
     }

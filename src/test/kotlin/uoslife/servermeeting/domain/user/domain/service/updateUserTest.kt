@@ -28,15 +28,15 @@ class updateUserTest : UserServiceTest() {
         val updatedUser = userRepository.findByIdOrNull(userUUID)!!
 
         // then
-        assertThat(updatedUser.gender).isEqualTo(updateData.gender)
-        assertThat(updatedUser.department).isEqualTo(updateData.department)
-        assertThat(updatedUser.kakaoTalkId).isEqualTo(updateData.kakaoTalkId)
-        assertThat(updatedUser.studentType).isEqualTo(updateData.studentType)
-        assertThat(updatedUser.smoking).isEqualTo(updateData.smoking)
-        assertThat(updatedUser.spiritAnimal).isEqualTo(updateData.spiritAnimal)
-        assertThat(updatedUser.mbti).isEqualTo(updateData.mbti)
-        assertThat(updatedUser.interest).isEqualTo(updateData.interest)
-        assertThat(updatedUser.height).isEqualTo(updateData.height)
+        assertThat(updatedUser.userPersonalInformation.gender).isEqualTo(updateData.gender)
+        assertThat(updatedUser.userPersonalInformation.department).isEqualTo(updateData.department)
+        assertThat(updatedUser.userPersonalInformation.kakaoTalkId).isEqualTo(updateData.kakaoTalkId)
+        assertThat(updatedUser.userPersonalInformation.studentType).isEqualTo(updateData.studentType)
+        assertThat(updatedUser.userPersonalInformation.smoking).isEqualTo(updateData.smoking)
+        assertThat(updatedUser.userPersonalInformation.spiritAnimal).isEqualTo(updateData.spiritAnimal)
+        assertThat(updatedUser.userPersonalInformation.mbti).isEqualTo(updateData.mbti)
+        assertThat(updatedUser.userPersonalInformation.interest).isEqualTo(updateData.interest)
+        assertThat(updatedUser.userPersonalInformation.height).isEqualTo(updateData.height)
         assertThat(updatedUser.nickname).isEqualTo(updateData.nickname)
     }
 }

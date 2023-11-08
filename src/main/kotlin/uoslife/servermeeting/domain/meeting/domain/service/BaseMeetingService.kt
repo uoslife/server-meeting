@@ -2,6 +2,8 @@ package uoslife.servermeeting.domain.meeting.domain.service
 
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUserListGetResponse
+import uoslife.servermeeting.domain.meeting.domain.entity.Information
+import uoslife.servermeeting.domain.meeting.domain.entity.Preference
 import java.util.*
 
 interface BaseMeetingService {
@@ -10,11 +12,8 @@ interface BaseMeetingService {
     fun getMeetingTeamUserList(userUUID: UUID, code: String): MeetingTeamUserListGetResponse
     fun updateMeetingTeamInformation(
         userUUID: UUID,
-        informationDistance: String,
-        informationFilter: String,
-        informationMeetingTime: String,
-        preferenceDistance: String,
-        preferenceFilter: String,
+        information: Information,
+        preference: Preference,
     )
 
     fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse

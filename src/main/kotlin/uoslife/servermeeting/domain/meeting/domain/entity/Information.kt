@@ -2,9 +2,9 @@ package uoslife.servermeeting.domain.meeting.domain.entity
 
 data class Information(
 
-    var meetingTime: String,
+    var meetingTime: String? = null,
 
-    var filterInfo: String,
+    var filterInfo: String? = null,
 
-    var distanceInfo: String,
+    var distanceInfo: String? = null,
 )
