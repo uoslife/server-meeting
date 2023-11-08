@@ -40,6 +40,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
 
     // validation
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -69,6 +70,9 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:5.5.5")
     testImplementation("io.kotest:kotest-extensions-spring:4.4.3")
     testImplementation("io.mockk:mockk:1.13.5")
+
+    // hibernate annotation
+    implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
 }
 
 tasks.withType<KotlinCompile> {
