@@ -5,7 +5,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.meeting.domain.common.TripleMeetingTest
 import uoslife.servermeeting.domain.meeting.domain.entity.Information
-import uoslife.servermeeting.domain.meeting.domain.entity.Preference
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.exception.MeetingTeamNotFoundException
 import uoslife.servermeeting.domain.meeting.domain.exception.TeamCodeInvalidFormatException
@@ -251,13 +250,15 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
     fun `존재하지 않는 사용자에 대해 팀 정보 기입시 오류 발생`() {
         // given
         val notExistUserId = UUID.randomUUID()
-        val information = Information("0001", "0001", "0001")
-
-        val preference = Preference("0010", "0011")
+        val questions: Map<String, String> = mapOf(
+            "love" to "0001",
+            "hate" to "0001",
+        )
+        val information = Information("0001", "0001", questions)
 
         // when & then
         Assertions.assertThatThrownBy {
-            tripleMeetingService.updateMeetingTeamInformation(notExistUserId, information, preference)
+            tripleMeetingService.updateMeetingTeamInformation(notExistUserId, information)
         }
             .isInstanceOf(UserNotFoundException::class.java)
     }
@@ -266,13 +267,15 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
     fun `팀에 속하지 않은 사용자가 팀 정보 기입시 오류 발생`() {
         // given
         val user = userRepository.findAll().first()
-        val information = Information("0001", "0001", "0001")
-
-        val preference = Preference("0010", "0011")
+        val questions: Map<String, String> = mapOf(
+            "love" to "0001",
+            "hate" to "0001",
+        )
+        val information = Information("0001", "0001", questions)
 
         // when & then
         Assertions.assertThatThrownBy {
-            tripleMeetingService.updateMeetingTeamInformation(user.id!!, information, preference)
+            tripleMeetingService.updateMeetingTeamInformation(user.id!!, information)
         }
             .isInstanceOf(UserTeamNotFoundException::class.java)
     }
@@ -291,20 +294,19 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
         tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true)
         tripleMeetingService.joinMeetingTeam(user3.id!!, code1, true)
-        val information = Information("0001", "0001", "0001")
-        val preference = Preference("0010", "0011")
+        val questions: Map<String, String> = mapOf(
+            "love" to "0001",
+            "hate" to "0001",
+        )
+        val information = Information("0001", "0001", questions)
+
         tripleMeetingService
-            .updateMeetingTeamInformation(user1.id!!, information, preference)
+            .updateMeetingTeamInformation(user1.id!!, information)
 
         // then
         val meetingInfo = tripleMeetingService.getMeetingTeamInformation(user1.id!!)
         assertThat(meetingInfo.sex).isEqualTo(GenderType.FEMALE)
         assertThat(meetingInfo.teamType).isEqualTo(TeamType.TRIPLE)
-        assertThat(meetingInfo.informationDistance).isEqualTo("0001")
-        assertThat(meetingInfo.informationFilter).isEqualTo("0010")
-        assertThat(meetingInfo.informationMeetingTime).isEqualTo("0011")
-        assertThat(meetingInfo.preferenceDistance).isEqualTo("0100")
-        assertThat(meetingInfo.preferenceFilter).isEqualTo("0101")
     }
 
     @Test
@@ -369,12 +371,14 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
         val code1 = tripleMeetingService.createMeetingTeam(user1.id!!, "abcd")
         tripleMeetingService.joinMeetingTeam(user2.id!!, code1!!, true)
         tripleMeetingService.joinMeetingTeam(user3.id!!, code1, true)
-        val information = Information("0001", "0001", "0001")
-
-        val preference = Preference("0010", "0011")
+        val questions: Map<String, String> = mapOf(
+            "love" to "0001",
+            "hate" to "0001",
+        )
+        val information = Information("0001", "0001", questions)
 
         tripleMeetingService
-            .updateMeetingTeamInformation(user1.id!!, information, preference)
+            .updateMeetingTeamInformation(user1.id!!, information)
 
         // then
         tripleMeetingService.deleteMeetingTeam(user1.id!!)

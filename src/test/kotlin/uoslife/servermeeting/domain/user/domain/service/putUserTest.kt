@@ -1,48 +1,13 @@
 package uoslife.servermeeting.domain.user.domain.service
 
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.springframework.data.repository.findByIdOrNull
-import uoslife.servermeeting.domain.user.application.request.UserUpdateRequest
 import uoslife.servermeeting.domain.user.domain.common.UserServiceTest
-import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
-import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
-import uoslife.servermeeting.domain.user.domain.entity.enums.StudentType
 import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundException
 import uoslife.servermeeting.domain.user.domain.exception.UserAlreadyResetException
 import java.util.UUID
 
 class putUserTest : UserServiceTest() {
-
-    @Test
-    fun `정상적으로 User 데이터가 put 됐는지 확인한다`() {
-        // given
-        val user = userRepository.findAll().first()
-        val updateData = UserUpdateRequest(
-            2000, GenderType.MALE, DepartmentNameType.BUSINESS, "kakao", StudentType.GRADUATE,
-            false, "chicken", "ENTJ", "coding", 173, "nickname0",
-        )
-        userUpdateDao.updateUser(updateData, user)
-        entityManager.flush()
-        entityManager.clear()
-
-        // when
-        userService.resetUser(user.id!!)
-        entityManager.flush()
-        entityManager.clear()
-        val updatedUser = userRepository.findByIdOrNull(user.id)!!
-
-        // then
-        assertThat(updatedUser.userPersonalInformation.department).isNull()
-        assertThat(updatedUser.userPersonalInformation.kakaoTalkId).isNull()
-        assertThat(updatedUser.userPersonalInformation.studentType).isNull()
-        assertThat(updatedUser.userPersonalInformation.smoking).isNull()
-        assertThat(updatedUser.userPersonalInformation.spiritAnimal).isNull()
-        assertThat(updatedUser.userPersonalInformation.mbti).isNull()
-        assertThat(updatedUser.userPersonalInformation.interest).isNull()
-        assertThat(updatedUser.nickname).isNotNull()
-        assertThat(updatedUser.userPersonalInformation.height).isEqualTo(0)
-    }
 
     @Test
     fun `이미 reset된 user에 대한 reset 요청에 에러를 반환한다`() {

@@ -30,4 +30,4 @@ data class UserPersonalInformation(
 
     var interest: String? = null,
 
-    )
+)

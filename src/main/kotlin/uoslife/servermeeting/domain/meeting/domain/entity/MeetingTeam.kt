@@ -14,8 +14,7 @@ class MeetingTeam(
     @Column(nullable = false, updatable = false, unique = true)
     var id: Long? = null,
 
-    @Column(nullable = false)
-    var season: Int,
+    var season: Int? = null,
 
     @Column(nullable = false)
     var code: String,
@@ -40,8 +39,4 @@ class MeetingTeam(
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "team", cascade = [CascadeType.ALL], orphanRemoval = true)
     var userTeams: MutableList<UserTeam> = mutableListOf(),
-
-    @Type(JsonType::class)
-    @Column(columnDefinition = "jsonb")
-    var preference: Preference? = null,
 )

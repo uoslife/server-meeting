@@ -62,8 +62,7 @@ abstract class SingleMeetingTest {
                 phoneNumber = "01012345678",
                 profilePicture = "",
                 userPersonalInformation = userPersonalInformation,
-
-                ),
+            ),
         )
     }
 }

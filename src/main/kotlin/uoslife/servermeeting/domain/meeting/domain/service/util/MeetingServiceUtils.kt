@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.domain.meeting.application.response.UserProfile
 import uoslife.servermeeting.domain.meeting.domain.entity.Information
-import uoslife.servermeeting.domain.meeting.domain.entity.Preference
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
@@ -20,7 +19,6 @@ class MeetingServiceUtils {
         teamType: TeamType,
         userList: List<User>,
         information: Information,
-        preference: Preference,
         teamName: String?,
     ): MeetingTeamInformationGetResponse {
         val currentYear: Int = LocalDate.now().year

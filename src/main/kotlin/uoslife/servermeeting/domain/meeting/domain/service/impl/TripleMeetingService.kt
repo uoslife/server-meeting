@@ -10,12 +10,10 @@ import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamUser
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
 import uoslife.servermeeting.domain.meeting.domain.entity.Information
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
-import uoslife.servermeeting.domain.meeting.domain.entity.Preference
 import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.meeting.domain.exception.InformationNotFoundException
 import uoslife.servermeeting.domain.meeting.domain.exception.MeetingTeamNotFoundException
-import uoslife.servermeeting.domain.meeting.domain.exception.PreferenceNotFoundException
 import uoslife.servermeeting.domain.meeting.domain.exception.TeamLeaderNotFoundException
 import uoslife.servermeeting.domain.meeting.domain.exception.UserTeamNotFoundException
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
@@ -97,7 +95,6 @@ class TripleMeetingService(
     override fun updateMeetingTeamInformation(
         userUUID: UUID,
         information: Information,
-        preference: Preference,
     ) {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
@@ -105,7 +102,6 @@ class TripleMeetingService(
         val meetingTeam = userTeam.team
 
         meetingTeam.information = information
-        meetingTeam.preference = preference
     }
 
     override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
@@ -116,12 +112,11 @@ class TripleMeetingService(
         val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
 
         val information = meetingTeam.information ?: throw InformationNotFoundException()
-        val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils
             .toMeetingTeamInformationGetResponse(
                 user.userPersonalInformation?.gender ?: GenderType.MALE, TeamType.TRIPLE,
-                userList, information, preference, meetingTeam.name
+                userList, information, meetingTeam.name
             )
     }
 

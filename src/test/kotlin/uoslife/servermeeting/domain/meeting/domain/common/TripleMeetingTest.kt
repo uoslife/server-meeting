@@ -87,7 +87,7 @@ abstract class TripleMeetingTest {
                 profilePicture = "",
                 userPersonalInformation = userPersonalInformation1,
 
-                ),
+            ),
         )
 
         val userPersonalInformation2 = UserPersonalInformation(
@@ -111,7 +111,7 @@ abstract class TripleMeetingTest {
                 profilePicture = "",
                 userPersonalInformation = userPersonalInformation2,
 
-                ),
+            ),
         )
 
         val userPersonalInformation3 = UserPersonalInformation(
@@ -133,8 +133,7 @@ abstract class TripleMeetingTest {
                 phoneNumber = "01012345678",
                 profilePicture = "",
                 userPersonalInformation = userPersonalInformation3,
-
-                ),
+            ),
         )
     }
 }

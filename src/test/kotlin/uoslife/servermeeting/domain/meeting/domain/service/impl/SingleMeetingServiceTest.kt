@@ -6,14 +6,17 @@ import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.meeting.domain.common.SingleMeetingTest
 import uoslife.servermeeting.domain.meeting.domain.entity.Information
 import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
-import uoslife.servermeeting.domain.meeting.domain.entity.Preference
 import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
-import uoslife.servermeeting.domain.meeting.domain.exception.*
+import uoslife.servermeeting.domain.meeting.domain.exception.InSingleMeetingTeamNoJoinTeamException
+import uoslife.servermeeting.domain.meeting.domain.exception.InSingleMeetingTeamOnlyOneUserException
+import uoslife.servermeeting.domain.meeting.domain.exception.InformationNotFoundException
+import uoslife.servermeeting.domain.meeting.domain.exception.UserAlreadyHaveTeamException
+import uoslife.servermeeting.domain.meeting.domain.exception.UserTeamNotFoundException
 import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
-import java.util.*
+import java.util.UUID
 
 class SingleMeetingServiceTest : SingleMeetingTest() {
 
@@ -77,22 +80,13 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
     fun `팀 선호 및 정보 입력 시에 없는 User라면 오류 발생`() {
         // given
         val notExistUserId = UUID.randomUUID()
-        val information = Information(
-            distanceInfo = "",
-            filterInfo = "",
-            meetingTime = "",
-        )
-        val preference = Preference(
-            distanceCondition = "",
-            filterCondition = "",
-        )
+        val information = Information()
 
         // when & then
         assertThatThrownBy {
             singleMeetingService.updateMeetingTeamInformation(
                 notExistUserId,
                 information,
-                preference,
             )
         }
             .isInstanceOf(UserNotFoundException::class.java)
@@ -102,22 +96,13 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
     fun `User Team이 존재하지 않는 User에 대해 팀 정보를 입력 시에 오류 발생`() {
         // given
         val user = userRepository.findAll().first()
-        val information = Information(
-            distanceInfo = "",
-            filterInfo = "",
-            meetingTime = "",
-        )
-        val preference = Preference(
-            distanceCondition = "",
-            filterCondition = "",
-        )
+        val information = Information()
 
         // when & then
         assertThatThrownBy {
             singleMeetingService.updateMeetingTeamInformation(
                 user.id!!,
                 information,
-                preference,
 
             )
         }
@@ -138,33 +123,18 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
         val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
         userTeamDao.saveUserTeam(newUserTeam)
 
-        val updatedInformation = Information(
-            distanceInfo = "",
-            filterInfo = "",
-            meetingTime = "",
-        )
-        val updatedPreference = Preference(
-            distanceCondition = "",
-            filterCondition = "",
-        )
+        val updatedInformation = Information()
 
         // when
         singleMeetingService.updateMeetingTeamInformation(
             user.id!!,
             updatedInformation,
-            updatedPreference,
         )
 
         // then
         val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE)
         val information = meetingTeam.information ?: throw InformationNotFoundException()
-        val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
         assertThat(userTeam).isNotNull
-        assertThat(information.distanceInfo).isEqualTo("0")
-        assertThat(information.filterInfo).isEqualTo("1")
-        assertThat(information.meetingTime).isEqualTo("0010")
-        assertThat(preference.distanceCondition).isEqualTo("10")
-        assertThat(preference.filterCondition).isEqualTo("00")
     }
 
     @Test
@@ -202,21 +172,12 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
         )
         val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
         userTeamDao.saveUserTeam(newUserTeam)
-        val information = Information(
-            distanceInfo = "",
-            filterInfo = "",
-            meetingTime = "",
-        )
-        val preference = Preference(
-            distanceCondition = "",
-            filterCondition = "",
-        )
+        val information = Information()
 
         // when
         singleMeetingService.updateMeetingTeamInformation(
             user.id!!,
             information,
-            preference,
 
         )
         meetingTeam.information = null
@@ -224,42 +185,6 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
         // then
         assertThatThrownBy { singleMeetingService.getMeetingTeamInformation(user.id!!) }
             .isInstanceOf(InformationNotFoundException::class.java)
-    }
-
-    @Test
-    fun `Preference가 존재하지 않는 경우 팀 정보를 조회 요청 시에 오류 발생`() {
-        // given
-        val user = userRepository.findAll().first()
-        val meetingTeam = meetingTeamRepository.save(
-            MeetingTeam(
-                code = "",
-                name = "",
-                season = season,
-            ),
-        )
-        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
-        userTeamDao.saveUserTeam(newUserTeam)
-        val information = Information(
-            distanceInfo = "",
-            filterInfo = "",
-            meetingTime = "",
-        )
-        val preference = Preference(
-            distanceCondition = "",
-            filterCondition = "",
-        )
-
-        // when
-        singleMeetingService.updateMeetingTeamInformation(
-            user.id!!,
-            information,
-            preference,
-        )
-        meetingTeam.preference = null
-
-        // then
-        assertThatThrownBy { singleMeetingService.getMeetingTeamInformation(user.id!!) }
-            .isInstanceOf(PreferenceNotFoundException::class.java)
     }
 
     @Test
@@ -275,20 +200,12 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
         )
         val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
         userTeamDao.saveUserTeam(newUserTeam)
-        val updatedInformation = Information(
-            distanceInfo = "",
-            filterInfo = "",
-            meetingTime = "",
-        )
-        val updatedPreference = Preference(
-            distanceCondition = "",
-            filterCondition = "",
-        )
+        val updatedInformation = Information()
+
         // when
         singleMeetingService.updateMeetingTeamInformation(
             user.id!!,
             updatedInformation,
-            updatedPreference,
         )
 
         val information = singleMeetingService.getMeetingTeamInformation(user.id!!)
@@ -297,11 +214,6 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
         assertThat(information).isNotNull
         assertThat(information.sex).isEqualTo(GenderType.FEMALE)
         assertThat(information.teamType).isEqualTo(TeamType.SINGLE)
-        assertThat(information.informationDistance).isEqualTo("0")
-        assertThat(information.informationFilter).isEqualTo("1")
-        assertThat(information.informationMeetingTime).isEqualTo("0010")
-        assertThat(information.preferenceDistance).isEqualTo("10")
-        assertThat(information.preferenceFilter).isEqualTo("00")
         assertThat(information.teamUserList[0].smoking).isEqualTo(false)
         assertThat(information.teamUserList[0].age).isEqualTo(24)
         assertThat(information.teamUserList[0].department).isEqualTo(DepartmentNameType.COMPUTER_SCIENCE)
@@ -344,19 +256,10 @@ class SingleMeetingServiceTest : SingleMeetingTest() {
         )
         val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
         userTeamDao.saveUserTeam(newUserTeam)
-        val updatedInformation = Information(
-            distanceInfo = "",
-            filterInfo = "",
-            meetingTime = "",
-        )
-        val updatedPreference = Preference(
-            distanceCondition = "",
-            filterCondition = "",
-        )
+        val updatedInformation = Information()
         singleMeetingService.updateMeetingTeamInformation(
             user.id!!,
             updatedInformation,
-            updatedPreference,
         )
 
         // when && then

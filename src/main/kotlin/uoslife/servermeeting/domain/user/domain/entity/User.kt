@@ -25,6 +25,8 @@ class User(
 
     var name: String?,
 
+    var email: String? = null,
+
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var userPersonalInformation: UserPersonalInformation = UserPersonalInformation(),

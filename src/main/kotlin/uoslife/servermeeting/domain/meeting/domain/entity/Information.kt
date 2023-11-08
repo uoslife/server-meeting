@@ -1,10 +1,18 @@
 package uoslife.servermeeting.domain.meeting.domain.entity
 
-data class Information(
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import java.io.Serializable
 
-    var meetingTime: String? = null,
+class Information(
+    meetingTime: String? = null,
+    meetingPlace: String? = null,
+    gender: String? = null,
+    questions: Map<String, Any>? = null,
+) : Serializable {
 
-    var filterInfo: String? = null,
-
-    var distanceInfo: String? = null,
-)
+    var questions: Map<String, Any> = LinkedHashMap()
+        @JsonAnySetter
+        set(value) {
+            field.plus(value)
+        }
+}
