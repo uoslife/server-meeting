@@ -11,7 +11,6 @@ import java.util.*
 @Table(name = "`user`")
 class User(
 
-    // inject by origin db
     @Id
     @Column(nullable = false, unique = true)
     var id: UUID? = null,
@@ -26,6 +25,8 @@ class User(
     var name: String?,
 
     var email: String? = null,
+
+    var emailVerified: Boolean = false,
 
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
