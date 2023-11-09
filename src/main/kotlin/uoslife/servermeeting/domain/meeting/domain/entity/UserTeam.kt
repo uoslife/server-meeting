@@ -23,6 +23,9 @@ class UserTeam(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var type: TeamType,
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "userTeam")
+    var payment: Payment? = null,
 ) {
     companion object {
         fun createUserTeam(meetingTeam: MeetingTeam, user: User, isLeader: Boolean, teamType: TeamType): UserTeam {
