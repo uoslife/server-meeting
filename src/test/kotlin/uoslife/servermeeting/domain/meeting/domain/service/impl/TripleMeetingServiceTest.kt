@@ -254,8 +254,12 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
             "love" to "0001",
             "hate" to "0001",
         )
-        val information = Information("0001", "0001", questions)
-
+        val information = Information(
+            "0001",
+            "0001",
+            "male",
+            questions
+        )
         // when & then
         Assertions.assertThatThrownBy {
             tripleMeetingService.updateMeetingTeamInformation(notExistUserId, information)
@@ -271,8 +275,12 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
             "love" to "0001",
             "hate" to "0001",
         )
-        val information = Information("0001", "0001", questions)
-
+        val information = Information(
+            "0001",
+            "0001",
+            "male",
+            questions
+        )
         // when & then
         Assertions.assertThatThrownBy {
             tripleMeetingService.updateMeetingTeamInformation(user.id!!, information)
@@ -298,8 +306,12 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
             "love" to "0001",
             "hate" to "0001",
         )
-        val information = Information("0001", "0001", questions)
-
+        val information = Information(
+            "0001",
+            "0001",
+            "male",
+            questions
+        )
         tripleMeetingService
             .updateMeetingTeamInformation(user1.id!!, information)
 
@@ -375,7 +387,12 @@ class TripleMeetingServiceTest : TripleMeetingTest() {
             "love" to "0001",
             "hate" to "0001",
         )
-        val information = Information("0001", "0001", questions)
+        val information = Information(
+            "0001",
+            "0001",
+            "male",
+            questions
+        )
 
         tripleMeetingService
             .updateMeetingTeamInformation(user1.id!!, information)
