@@ -7,12 +7,15 @@ import uoslife.servermeeting.domain.user.domain.entity.User
 @Entity
 @Table(name = "user_team")
 class UserTeam(
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = false)
     var team: MeetingTeam,
 
-    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     var user: User? = null,
@@ -24,7 +27,8 @@ class UserTeam(
     @Enumerated(EnumType.STRING)
     var type: TeamType,
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "userTeam")
+    @OneToOne(mappedBy = "userTeam")
+    @PrimaryKeyJoinColumn
     var payment: Payment? = null,
 ) {
     companion object {

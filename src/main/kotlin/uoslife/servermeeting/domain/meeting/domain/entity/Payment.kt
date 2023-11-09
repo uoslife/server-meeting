@@ -7,12 +7,16 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.MapsId
 import jakarta.persistence.OneToOne
+import jakarta.persistence.Table
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.PaymentStatus
 import uoslife.servermeeting.global.common.BaseEntity
 import java.time.LocalDateTime
 
 @Entity
+@Table(name = "payment")
 class Payment(
 
     @Id
@@ -20,7 +24,9 @@ class Payment(
     @Column(name = "id", nullable = false)
     var id: Long? = null,
 
-    @OneToOne(mappedBy = "payment", optional = false, orphanRemoval = true)
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "payment_id")
     var userTeam: UserTeam? = null,
 
     var date: LocalDateTime? = null,

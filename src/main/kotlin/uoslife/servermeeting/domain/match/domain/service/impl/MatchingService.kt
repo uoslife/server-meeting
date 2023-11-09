@@ -7,7 +7,8 @@ import uoslife.servermeeting.domain.match.domain.dao.MatchedDao
 import uoslife.servermeeting.domain.match.domain.exception.MatchNotFoundException
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
-import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType.*
+import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType.SINGLE
+import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType.TRIPLE
 import uoslife.servermeeting.domain.meeting.domain.exception.MeetingTeamNotFoundException
 import uoslife.servermeeting.domain.meeting.domain.exception.UserTeamNotFoundException
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
@@ -15,7 +16,7 @@ import uoslife.servermeeting.domain.meeting.domain.service.impl.SingleMeetingSer
 import uoslife.servermeeting.domain.meeting.domain.service.impl.TripleMeetingService
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
-import java.util.*
+import java.util.UUID
 
 @Service
 @Transactional(readOnly = true)
@@ -34,7 +35,8 @@ class MatchingService(
         val meetingTeam =
             meetingTeamRepository.findByIdOrNull(userTeam.team.id!!) ?: throw MeetingTeamNotFoundException()
         val opponentTeam =
-            matchedDao.findMatchedTeamByTeamAndGender(meetingTeam, user.userPersonalInformation.gender) ?: throw MatchNotFoundException()
+            matchedDao.findMatchedTeamByTeamAndGender(meetingTeam, user.userPersonalInformation.gender)
+                ?: throw MatchNotFoundException()
         return when (userTeam.type) {
             SINGLE -> {
                 val opponentUserTeam =
