@@ -9,13 +9,11 @@ import uoslife.servermeeting.domain.user.domain.entity.User
 class UserTeam(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = false)
     var team: MeetingTeam,
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     var user: User? = null,
@@ -26,10 +24,6 @@ class UserTeam(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var type: TeamType,
-
-    @OneToOne(mappedBy = "userTeam")
-    @PrimaryKeyJoinColumn
-    var payment: Payment? = null,
 ) {
     companion object {
         fun createUserTeam(meetingTeam: MeetingTeam, user: User, isLeader: Boolean, teamType: TeamType): UserTeam {
