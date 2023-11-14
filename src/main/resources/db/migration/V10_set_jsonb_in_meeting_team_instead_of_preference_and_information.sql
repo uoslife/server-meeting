@@ -27,3 +27,16 @@ DROP TABLE IF EXISTS "preference";
 -- end loop;
 -- end
 -- $$;
+
+-- used this scripts to migrate data from preference and information to jsonb
+
+-- ALTER TABLE "meeting_team"
+--     ADD COLUMN "new_information" JSONB;
+-- -- Step 2: Update the new column with the modified JSONB data
+-- UPDATE "meeting_team"
+-- SET "new_information" = "information" -> 0
+-- ;
+-- ALTER TABLE "meeting_team"
+-- DROP COLUMN "information";
+-- ALTER TABLE "meeting_team"
+--     rename COLUMN "new_information" TO "information";
