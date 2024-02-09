@@ -6,10 +6,10 @@ import uoslife.servermeeting.domain.meeting.domain.entity.Information
 
 class MappingTest {
 
-  @Test
-  fun `mapping test`() {
-    val response =
-        """
+    @Test
+    fun `mapping test`() {
+        val response =
+            """
                 { "meetingTime": "2021-10-09T14:00:00", 
                     "meetingPlace": "seoul",
                     "gender": "female",
@@ -20,8 +20,9 @@ class MappingTest {
                         "kakaoTalkId": "kakao"
                     }
                 }
-            """.trimIndent()
-    val information = jacksonObjectMapper().readValue(response, Information::class.java)
-    println(information.questions?.keys)
-  }
+            """.trimIndent(
+            )
+        val information = jacksonObjectMapper().readValue(response, Information::class.java)
+        println(information.questions?.keys)
+    }
 }

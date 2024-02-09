@@ -7,11 +7,11 @@ data class ErrorResponse(
     val status: Int,
     val code: String,
 ) {
-  constructor(
-      errorCode: ErrorCode
-  ) : this(
-      message = errorCode.message,
-      status = errorCode.status,
-      code = errorCode.code,
-  )
+    constructor(
+        errorCode: ErrorCode
+    ) : this(
+        message = errorCode.message,
+        status = errorCode.status,
+        code = errorCode.code,
+    )
 }

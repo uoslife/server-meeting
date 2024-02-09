@@ -6,9 +6,9 @@ import uoslife.servermeeting.domain.user.domain.exception.UserAlreadyResetExcept
 
 @Component(value = "userValidator")
 class Validator {
-  fun isUserDefault(user: User) {
-    if (user.userPersonalInformation.kakaoTalkId == null) {
-      throw UserAlreadyResetException()
+    fun isUserDefault(user: User) {
+        if (user.userPersonalInformation.kakaoTalkId == null) {
+            throw UserAlreadyResetException()
+        }
     }
-  }
 }

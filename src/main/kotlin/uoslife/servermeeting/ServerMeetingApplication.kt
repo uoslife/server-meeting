@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 @SpringBootApplication @EnableJpaAuditing class ServerMeetingApplication
 
 fun main(args: Array<String>) {
-  runApplication<ServerMeetingApplication>(*args)
+    runApplication<ServerMeetingApplication>(*args)
 }

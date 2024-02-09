@@ -13,23 +13,23 @@ import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType.MALE
 @Transactional
 class MatchedDao(private val queryFactory: JPAQueryFactory) {
 
-  fun findMatchedTeamByTeamAndGender(
-      meetingTeam: MeetingTeam,
-      gender: GenderType,
-  ): MeetingTeam? {
-    return when (gender) {
-      MALE ->
-          queryFactory
-              .selectFrom(match)
-              .where(match.maleTeam.eq(meetingTeam))
-              .fetchOne()
-              ?.femaleTeam
-      FEMALE ->
-          queryFactory
-              .selectFrom(match)
-              .where(match.femaleTeam.eq(meetingTeam))
-              .fetchOne()
-              ?.maleTeam
+    fun findMatchedTeamByTeamAndGender(
+        meetingTeam: MeetingTeam,
+        gender: GenderType,
+    ): MeetingTeam? {
+        return when (gender) {
+            MALE ->
+                queryFactory
+                    .selectFrom(match)
+                    .where(match.maleTeam.eq(meetingTeam))
+                    .fetchOne()
+                    ?.femaleTeam
+            FEMALE ->
+                queryFactory
+                    .selectFrom(match)
+                    .where(match.femaleTeam.eq(meetingTeam))
+                    .fetchOne()
+                    ?.maleTeam
+        }
     }
-  }
 }

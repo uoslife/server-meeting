@@ -1,7 +1,16 @@
 package uoslife.servermeeting.domain.meeting.domain.entity
 
 import com.vladmihalcea.hibernate.type.json.JsonType
-import jakarta.persistence.*
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
+import jakarta.persistence.OneToOne
+import jakarta.persistence.Table
 import org.hibernate.annotations.Type
 import uoslife.servermeeting.domain.match.domain.entity.Match
 
@@ -25,7 +34,8 @@ class MeetingTeam(
         fetch = FetchType.LAZY,
         mappedBy = "team",
         cascade = [CascadeType.ALL],
-        orphanRemoval = true)
+        orphanRemoval = true
+    )
     var userTeams: MutableList<UserTeam> = mutableListOf(),
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "meetingTeam") var payment: Payment? = null,
 )

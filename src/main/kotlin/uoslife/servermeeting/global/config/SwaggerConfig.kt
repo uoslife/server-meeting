@@ -11,25 +11,25 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class SwaggerConfig {
 
-  @Bean
-  fun openAPI(): OpenAPI {
-    val info: Info =
-        Info()
-            .title("UOSLIFE Meeting API")
-            .description("UOSLIFE Meeting API Documentation")
-            .version("v0.0.1")
+    @Bean
+    fun openAPI(): OpenAPI {
+        val info: Info =
+            Info()
+                .title("UOSLIFE Meeting API")
+                .description("UOSLIFE Meeting API Documentation")
+                .version("v0.0.1")
 
-    val jwtSchemeName = "Session Cookie"
-    val auth =
-        SecurityScheme()
-            .type(SecurityScheme.Type.APIKEY)
-            .`in`(SecurityScheme.In.COOKIE)
-            .name("session")
-    val securityRequirement = SecurityRequirement().addList(jwtSchemeName)
+        val jwtSchemeName = "Session Cookie"
+        val auth =
+            SecurityScheme()
+                .type(SecurityScheme.Type.APIKEY)
+                .`in`(SecurityScheme.In.COOKIE)
+                .name("session")
+        val securityRequirement = SecurityRequirement().addList(jwtSchemeName)
 
-    return OpenAPI()
-        .components(Components().addSecuritySchemes(jwtSchemeName, auth))
-        .addSecurityItem(securityRequirement)
-        .info(info)
-  }
+        return OpenAPI()
+            .components(Components().addSecuritySchemes(jwtSchemeName, auth))
+            .addSecurityItem(securityRequirement)
+            .info(info)
+    }
 }

@@ -10,11 +10,11 @@ import uoslife.servermeeting.domain.user.domain.entity.User
 class UserUpdateDao(
     private val queryFactory: JPAQueryFactory,
 ) {
-  fun updateUser(requestDto: UserUpdateRequest, existingUser: User) {
-    queryFactory
-        .update(user)
-        .where(user.eq(existingUser))
-        .set(user.nickname, requestDto.nickname)
-        .execute()
-  }
+    fun updateUser(requestDto: UserUpdateRequest, existingUser: User) {
+        queryFactory
+            .update(user)
+            .where(user.eq(existingUser))
+            .set(user.nickname, requestDto.nickname)
+            .execute()
+    }
 }
