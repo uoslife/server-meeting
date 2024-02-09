@@ -2,6 +2,7 @@ package uoslife.servermeeting.domain.user.application.rest
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -16,7 +17,6 @@ import uoslife.servermeeting.domain.user.application.request.UserUpdateRequest
 import uoslife.servermeeting.domain.user.application.response.NicknameCheckResponse
 import uoslife.servermeeting.domain.user.application.response.UserFindResponseDto
 import uoslife.servermeeting.domain.user.domain.service.UserService
-import java.util.UUID
 
 @Tag(name = "User", description = "User API")
 @RestController

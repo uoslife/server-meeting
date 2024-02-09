@@ -3,6 +3,7 @@ package uoslife.servermeeting.domain.match.application.rest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import java.util.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.domain.match.domain.service.impl.MatchingService
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
-import java.util.UUID
 
 @RestController
 @RequestMapping("/api/match")

@@ -1,5 +1,6 @@
 package uoslife.servermeeting.global.util
 
+import java.net.URI
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.RequestEntity
@@ -9,7 +10,6 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
-import java.net.URI
 
 @Component
 class RestTemplateRequester {

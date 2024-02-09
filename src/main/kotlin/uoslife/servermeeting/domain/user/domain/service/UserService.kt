@@ -1,5 +1,6 @@
 package uoslife.servermeeting.domain.user.domain.service
 
+import java.util.UUID
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,7 +17,6 @@ import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundEx
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
 import uoslife.servermeeting.domain.user.domain.util.Validator
-import java.util.UUID
 
 @Service
 @Transactional(readOnly = true)

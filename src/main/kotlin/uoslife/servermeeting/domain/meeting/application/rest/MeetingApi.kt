@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import java.util.UUID
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -27,7 +28,6 @@ import uoslife.servermeeting.domain.meeting.domain.exception.OnlyTeamLeaderCanCr
 import uoslife.servermeeting.domain.meeting.domain.exception.OnlyTeamLeaderCanDeleteTeamException
 import uoslife.servermeeting.domain.meeting.domain.exception.OnlyTeamLeaderCanUpdateTeamInformationException
 import uoslife.servermeeting.domain.meeting.domain.service.BaseMeetingService
-import java.util.UUID
 
 @RestController
 @RequestMapping("/api/meeting")

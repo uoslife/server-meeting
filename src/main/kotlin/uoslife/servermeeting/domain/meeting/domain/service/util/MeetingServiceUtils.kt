@@ -1,5 +1,6 @@
 package uoslife.servermeeting.domain.meeting.domain.service.util
 
+import java.time.LocalDate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.domain.meeting.application.response.MeetingTeamInformationGetResponse
@@ -8,7 +9,6 @@ import uoslife.servermeeting.domain.meeting.domain.entity.Information
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
-import java.time.LocalDate
 
 @Service
 @Transactional(readOnly = true)

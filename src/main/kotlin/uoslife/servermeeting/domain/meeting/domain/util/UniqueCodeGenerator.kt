@@ -1,9 +1,9 @@
 package uoslife.servermeeting.domain.meeting.domain.util
 
+import java.util.Random
 import org.springframework.stereotype.Component
 import uoslife.servermeeting.domain.meeting.domain.exception.TeamCodeGenerateFailedException
 import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
-import java.util.Random
 
 @Component
 class UniqueCodeGenerator(

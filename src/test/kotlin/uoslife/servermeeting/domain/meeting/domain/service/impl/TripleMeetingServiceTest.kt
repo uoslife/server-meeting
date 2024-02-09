@@ -1,5 +1,6 @@
 package uoslife.servermeeting.domain.meeting.domain.service.impl
 
+import java.util.UUID
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -16,7 +17,6 @@ import uoslife.servermeeting.domain.meeting.domain.exception.UserNotInTeamExcept
 import uoslife.servermeeting.domain.meeting.domain.exception.UserTeamNotFoundException
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
-import java.util.UUID
 
 class TripleMeetingServiceTest : TripleMeetingTest() {
 

@@ -2,6 +2,7 @@ package uoslife.servermeeting.domain.user.domain.common
 
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
+import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -9,7 +10,6 @@ import uoslife.servermeeting.domain.user.domain.dao.UserUpdateDao
 import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
 import uoslife.servermeeting.domain.user.domain.service.UserService
-import java.util.UUID
 
 @SpringBootTest
 @Transactional

@@ -1,11 +1,11 @@
 package uoslife.servermeeting.global.error
 
+import java.io.IOException
 import org.slf4j.LoggerFactory
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.web.client.ResponseErrorHandler
 import uoslife.servermeeting.global.error.exception.BusinessException
 import uoslife.servermeeting.global.error.exception.ErrorCode
-import java.io.IOException
 
 class RestTemplateErrorHandler : ResponseErrorHandler {
     private val logger = LoggerFactory.getLogger(RestTemplateErrorHandler::class.java)

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.io.IOException
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
@@ -16,7 +17,6 @@ import uoslife.servermeeting.global.auth.exception.SessionCookieInvalidException
 import uoslife.servermeeting.global.auth.exception.SessionCookieNotFoundException
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.global.error.exception.ErrorCode
-import java.io.IOException
 
 @Component
 class CookieAuthFilter(private val authProviderService: AuthProviderService) :

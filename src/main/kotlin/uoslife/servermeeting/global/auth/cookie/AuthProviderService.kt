@@ -1,6 +1,7 @@
 package uoslife.servermeeting.global.auth.cookie
 
 import jakarta.servlet.http.HttpServletRequest
+import java.util.UUID
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -15,7 +16,6 @@ import uoslife.servermeeting.global.auth.exception.SessionCookieInvalidException
 import uoslife.servermeeting.global.auth.exception.SessionCookieNotFoundException
 import uoslife.servermeeting.global.util.CookieParser
 import uoslife.servermeeting.global.util.RestTemplateRequester
-import java.util.UUID
 
 @Service
 class AuthProviderService(

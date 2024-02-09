@@ -1,5 +1,6 @@
 package uoslife.servermeeting.domain.match.domain.service.impl
 
+import java.util.UUID
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,7 +17,6 @@ import uoslife.servermeeting.domain.meeting.domain.service.impl.SingleMeetingSer
 import uoslife.servermeeting.domain.meeting.domain.service.impl.TripleMeetingService
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
-import java.util.UUID
 
 @Service
 @Transactional(readOnly = true)

@@ -1,11 +1,11 @@
 package uoslife.servermeeting.domain.user.domain.service
 
+import java.util.UUID
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.user.domain.common.UserServiceTest
 import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundException
 import uoslife.servermeeting.domain.user.domain.exception.UserAlreadyResetException
-import java.util.UUID
 
 class putUserTest : UserServiceTest() {
 

@@ -2,6 +2,7 @@ package uoslife.servermeeting.domain.meeting.domain.common
 
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
+import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -15,7 +16,6 @@ import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.entity.enums.StudentType
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
-import java.util.UUID
 
 @SpringBootTest
 @Transactional
