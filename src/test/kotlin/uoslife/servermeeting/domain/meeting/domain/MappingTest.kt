@@ -20,7 +20,7 @@ class MappingTest {
                         "kakaoTalkId": "kakao"
                     }
                 }
-    """.trimIndent()
+            """.trimIndent()
         val information =
             jacksonObjectMapper().readValue(response, Information::class.java)
         println(information.questions?.keys)
