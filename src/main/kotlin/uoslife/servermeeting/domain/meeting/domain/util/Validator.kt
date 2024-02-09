@@ -11,39 +11,39 @@ class Validator(
     private val userTeamDao: UserTeamDao,
 ) {
 
-    fun isUserAlreadyHaveTeam(user: User) {
-        if (userTeamDao.findByUser(user) != null) {
-            throw UserAlreadyHaveTeamException()
-        }
+  fun isUserAlreadyHaveTeam(user: User) {
+    if (userTeamDao.findByUser(user) != null) {
+      throw UserAlreadyHaveTeamException()
     }
+  }
 
-    fun isTeamNameLeast2Character(name: String?) {
-        if (name == null || name.length < 2) {
-            throw TeamNameLeast2CharacterException()
-        }
+  fun isTeamNameLeast2Character(name: String?) {
+    if (name == null || name.length < 2) {
+      throw TeamNameLeast2CharacterException()
     }
+  }
 
-    fun isTeamCodeValid(code: String) {
-        if (code.length != 4 || !code.matches(Regex("[A-Z0-9]{4}"))) {
-            throw TeamCodeInvalidFormatException()
-        }
+  fun isTeamCodeValid(code: String) {
+    if (code.length != 4 || !code.matches(Regex("[A-Z0-9]{4}"))) {
+      throw TeamCodeInvalidFormatException()
     }
+  }
 
-    fun isTeamFull(team: MeetingTeam) {
-        if (userTeamDao.countByTeam(team) >= 3) {
-            throw TeamFullException()
-        }
+  fun isTeamFull(team: MeetingTeam) {
+    if (userTeamDao.countByTeam(team) >= 3) {
+      throw TeamFullException()
     }
+  }
 
-    fun isUserSameGenderWithTeamLeader(user: User, teamLeaderUser: User) {
-        if (user.userPersonalInformation.gender != teamLeaderUser.userPersonalInformation.gender) {
-            throw TeamConsistOfSameGenderException()
-        }
+  fun isUserSameGenderWithTeamLeader(user: User, teamLeaderUser: User) {
+    if (user.userPersonalInformation.gender != teamLeaderUser.userPersonalInformation.gender) {
+      throw TeamConsistOfSameGenderException()
     }
+  }
 
-    fun isUserInTeam(user: User, team: MeetingTeam) {
-        if (userTeamDao.findByUserAndTeam(user, team) == null) {
-            throw UserNotInTeamException()
-        }
+  fun isUserInTeam(user: User, team: MeetingTeam) {
+    if (userTeamDao.findByUserAndTeam(user, team) == null) {
+      throw UserNotInTeamException()
     }
+  }
 }

@@ -8,9 +8,9 @@ class Compatibility(
     score: Map<String, Int> = mapOf(),
 ) : Serializable {
 
-    var score: Map<String, Int> = LinkedHashMap()
-        @JsonAnySetter
-        set(value) {
-            field.plus(value)
-        }
+  var score: Map<String, Int> = LinkedHashMap()
+    @JsonAnySetter
+    set(value) {
+      field.plus(value)
+    }
 }

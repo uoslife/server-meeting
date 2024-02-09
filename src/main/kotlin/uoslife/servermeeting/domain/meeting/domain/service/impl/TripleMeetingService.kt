@@ -1,5 +1,6 @@
 package uoslife.servermeeting.domain.meeting.domain.service.impl
 
+import java.util.UUID
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
@@ -25,7 +26,6 @@ import uoslife.servermeeting.domain.meeting.domain.vo.MeetingTeamUsers
 import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
-import java.util.UUID
 
 @Service
 @Transactional(readOnly = true)
@@ -37,107 +37,120 @@ class TripleMeetingService(
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val validator: Validator,
     private val meetingServiceUtils: MeetingServiceUtils,
-    @Value("\${app.season}")
-    private val season: Int,
+    @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
 
-    @Transactional
-    override fun createMeetingTeam(userUUID: UUID, name: String?): String? {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+  @Transactional
+  override fun createMeetingTeam(userUUID: UUID, name: String?): String? {
+    val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        validator.isUserAlreadyHaveTeam(user)
-        validator.isTeamNameLeast2Character(name)
+    validator.isUserAlreadyHaveTeam(user)
+    validator.isTeamNameLeast2Character(name)
 
-        val code = uniqueCodeGenerator.getUniqueTeamCode()
-        val meetingTeam = saveMeetingTeam(name, code)
+    val code = uniqueCodeGenerator.getUniqueTeamCode()
+    val meetingTeam = saveMeetingTeam(name, code)
 
-        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.TRIPLE)
-        userTeamDao.saveUserTeam(newUserTeam)
-        return code
+    val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.TRIPLE)
+    userTeamDao.saveUserTeam(newUserTeam)
+    return code
+  }
+
+  @Transactional
+  override fun joinMeetingTeam(
+      userUUID: UUID,
+      code: String,
+      isJoin: Boolean
+  ): MeetingTeamUserListGetResponse? {
+    val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+
+    validator.isTeamCodeValid(code)
+    validator.isUserAlreadyHaveTeam(user)
+
+    val meetingTeam = meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
+    val leaderUserTeam =
+        userTeamDao.findByTeamAndisLeader(meetingTeam, true) ?: throw TeamLeaderNotFoundException()
+
+    validator.isTeamFull(meetingTeam)
+    validator.isUserSameGenderWithTeamLeader(user, leaderUserTeam.user!!)
+
+    return if (isJoin) {
+      val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, false, TeamType.TRIPLE)
+      userTeamDao.saveUserTeam(newUserTeam)
+      null
+    } else {
+      val meetingTeamUsers = MeetingTeamUsers(userTeamDao.findByTeam(meetingTeam).map { it.user!! })
+      meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
     }
+  }
 
-    @Transactional
-    override fun joinMeetingTeam(userUUID: UUID, code: String, isJoin: Boolean): MeetingTeamUserListGetResponse? {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+  override fun getMeetingTeamUserList(
+      userUUID: UUID,
+      code: String
+  ): MeetingTeamUserListGetResponse {
+    val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+    validator.isTeamCodeValid(code)
 
-        validator.isTeamCodeValid(code)
-        validator.isUserAlreadyHaveTeam(user)
+    val meetingTeam = meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
+    validator.isUserInTeam(user, meetingTeam)
 
-        val meetingTeam = meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
-        val leaderUserTeam = userTeamDao.findByTeamAndisLeader(meetingTeam, true)
-            ?: throw TeamLeaderNotFoundException()
+    val meetingTeamUsers = MeetingTeamUsers(userTeamDao.findByTeam(meetingTeam).map { it.user!! })
+    return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
+  }
 
-        validator.isTeamFull(meetingTeam)
-        validator.isUserSameGenderWithTeamLeader(user, leaderUserTeam.user!!)
+  @Transactional
+  override fun updateMeetingTeamInformation(
+      userUUID: UUID,
+      information: Information,
+  ) {
+    val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        return if (isJoin) {
-            val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, false, TeamType.TRIPLE)
-            userTeamDao.saveUserTeam(newUserTeam)
-            null
-        } else {
-            val meetingTeamUsers = MeetingTeamUsers(userTeamDao.findByTeam(meetingTeam).map { it.user!! })
-            meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
-        }
-    }
+    val userTeam =
+        userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE)
+            ?: throw UserTeamNotFoundException()
+    val meetingTeam = userTeam.team
 
-    override fun getMeetingTeamUserList(userUUID: UUID, code: String): MeetingTeamUserListGetResponse {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
-        validator.isTeamCodeValid(code)
+    meetingTeam.information = information
+  }
 
-        val meetingTeam = meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
-        validator.isUserInTeam(user, meetingTeam)
+  override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
+    val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-        val meetingTeamUsers = MeetingTeamUsers(userTeamDao.findByTeam(meetingTeam).map { it.user!! })
-        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
-    }
+    val userTeam =
+        userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE)
+            ?: throw UserTeamNotFoundException()
+    val meetingTeam = userTeam.team
+    val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
 
-    @Transactional
-    override fun updateMeetingTeamInformation(
-        userUUID: UUID,
-        information: Information,
-    ) {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+    val information = meetingTeam.information ?: throw InformationNotFoundException()
 
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE) ?: throw UserTeamNotFoundException()
-        val meetingTeam = userTeam.team
+    return meetingServiceUtils.toMeetingTeamInformationGetResponse(
+        user.userPersonalInformation?.gender ?: GenderType.MALE,
+        TeamType.TRIPLE,
+        userList,
+        information,
+        meetingTeam.name)
+  }
 
-        meetingTeam.information = information
-    }
+  @Transactional
+  override fun deleteMeetingTeam(userUUID: UUID) {
+    val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
-    override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+    val userTeam =
+        userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE)
+            ?: throw UserTeamNotFoundException()
+    val meetingTeam = userTeam.team
 
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE) ?: throw UserTeamNotFoundException()
-        val meetingTeam = userTeam.team
-        val userList = userTeamDao.findByTeam(meetingTeam).map { it.user!! }
+    meetingTeamRepository.deleteById(meetingTeam.id!!)
+  }
 
-        val information = meetingTeam.information ?: throw InformationNotFoundException()
-
-        return meetingServiceUtils
-            .toMeetingTeamInformationGetResponse(
-                user.userPersonalInformation?.gender ?: GenderType.MALE, TeamType.TRIPLE,
-                userList, information, meetingTeam.name
-            )
-    }
-
-    @Transactional
-    override fun deleteMeetingTeam(userUUID: UUID) {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
-
-        val userTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE) ?: throw UserTeamNotFoundException()
-        val meetingTeam = userTeam.team
-
-        meetingTeamRepository.deleteById(meetingTeam.id!!)
-    }
-
-    @Transactional
-    fun saveMeetingTeam(name: String?, code: String): MeetingTeam {
-        return meetingTeamRepository.save(
-            MeetingTeam(
-                season = season,
-                name = name,
-                code = code,
-            ),
-        )
-    }
+  @Transactional
+  fun saveMeetingTeam(name: String?, code: String): MeetingTeam {
+    return meetingTeamRepository.save(
+        MeetingTeam(
+            season = season,
+            name = name,
+            code = code,
+        ),
+    )
+  }
 }

@@ -1,5 +1,6 @@
 package uoslife.servermeeting.domain.user.domain.service
 
+import java.util.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,7 +17,6 @@ import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundEx
 import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
 import uoslife.servermeeting.domain.user.domain.repository.UserRepository
 import uoslife.servermeeting.domain.user.domain.util.Validator
-import java.util.*
 
 @Service
 @Transactional(readOnly = true)
@@ -27,35 +27,35 @@ class UserService(
     private val validator: Validator,
 ) {
 
-    fun findUser(id: UUID): ResponseEntity<UserFindResponseDto> {
-        val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
-        return ResponseEntity.ok(user.toResponse())
-    }
+  fun findUser(id: UUID): ResponseEntity<UserFindResponseDto> {
+    val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+    return ResponseEntity.ok(user.toResponse())
+  }
 
-    fun findUserByNickname(nickname: String): ResponseEntity<NicknameCheckResponse> {
-        val user = userRepository.findUserByNickname(nickname)
-        return ResponseEntity.ok(checkNicknameDuplication(user))
-    }
+  fun findUserByNickname(nickname: String): ResponseEntity<NicknameCheckResponse> {
+    val user = userRepository.findUserByNickname(nickname)
+    return ResponseEntity.ok(checkNicknameDuplication(user))
+  }
 
-    @Transactional
-    fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<Unit> {
-        val existingUser = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
-        userUpdateDao.updateUser(requestDto, existingUser)
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-    }
+  @Transactional
+  fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<Unit> {
+    val existingUser = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
+    userUpdateDao.updateUser(requestDto, existingUser)
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+  }
 
-    @Transactional
-    fun resetUser(id: UUID): ResponseEntity<Unit> {
-        val user = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
-        validator.isUserDefault(user)
-        return ResponseEntity.ok(userPutDao.putUser(user))
-    }
+  @Transactional
+  fun resetUser(id: UUID): ResponseEntity<Unit> {
+    val user = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
+    validator.isUserDefault(user)
+    return ResponseEntity.ok(userPutDao.putUser(user))
+  }
 
-    private fun checkNicknameDuplication(user: User?): NicknameCheckResponse {
-        return if (user?.nickname == null) {
-            NicknameCheckResponse(false)
-        } else {
-            NicknameCheckResponse(true)
-        }
+  private fun checkNicknameDuplication(user: User?): NicknameCheckResponse {
+    return if (user?.nickname == null) {
+      NicknameCheckResponse(false)
+    } else {
+      NicknameCheckResponse(true)
     }
+  }
 }

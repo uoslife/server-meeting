@@ -19,57 +19,66 @@ import uoslife.servermeeting.global.auth.cookie.CookieAuthFilter
 @EnableWebSecurity
 class SecurityConfig(private val cookieAuthFilter: CookieAuthFilter) {
 
-    @Bean
-    fun configurationSource(): CorsConfigurationSource? {
-        val configuration = CorsConfiguration()
+  @Bean
+  fun configurationSource(): CorsConfigurationSource? {
+    val configuration = CorsConfiguration()
 
-        configuration.allowedOrigins = listOf(
+    configuration.allowedOrigins =
+        listOf(
             "http://localhost:8081",
             "http://localhost:3000",
             "https://uoslife.com",
             "https://meeting.uoslife.com",
         )
-        configuration.allowedMethods =
-            mutableListOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE")
-        configuration.addAllowedHeader("*")
-        configuration.allowCredentials = true
+    configuration.allowedMethods = mutableListOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE")
+    configuration.addAllowedHeader("*")
+    configuration.allowCredentials = true
 
-        val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", configuration)
+    val source = UrlBasedCorsConfigurationSource()
+    source.registerCorsConfiguration("/**", configuration)
 
-        return source
-    }
+    return source
+  }
 
-    @Bean
-    @Throws(Exception::class)
-    fun filterChain(http: HttpSecurity): SecurityFilterChain? {
-        http.cors().configurationSource(configurationSource())
+  @Bean
+  @Throws(Exception::class)
+  fun filterChain(http: HttpSecurity): SecurityFilterChain? {
+    http.cors().configurationSource(configurationSource())
 
-        http.httpBasic().disable()
-            .csrf().disable()
-            .formLogin().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .headers().frameOptions().disable()
-            .and()
-            .exceptionHandling()
-            .authenticationEntryPoint(
-                RestAuthenticationEntryPoint(),
-            ) // 인증, 인가가 되지 않은 요청 발생시
-            .and()
-            .authorizeHttpRequests()
-            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // CORS preflight 요청 허용
-            .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**").permitAll() // Swagger 허용 url
-            .requestMatchers("/api/**").hasRole("USER") // 모든 api 요청에 대해 권한 필요
+    http
+        .httpBasic()
+        .disable()
+        .csrf()
+        .disable()
+        .formLogin()
+        .disable()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .headers()
+        .frameOptions()
+        .disable()
+        .and()
+        .exceptionHandling()
+        .authenticationEntryPoint(
+            RestAuthenticationEntryPoint(),
+        ) // 인증, 인가가 되지 않은 요청 발생시
+        .and()
+        .authorizeHttpRequests()
+        .requestMatchers(CorsUtils::isPreFlightRequest)
+        .permitAll() // CORS preflight 요청 허용
+        .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**")
+        .permitAll() // Swagger 허용 url
+        .requestMatchers("/api/**")
+        .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
-        http
-            .addFilterBefore(cookieAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
+    http.addFilterBefore(cookieAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
 
-        return http.build()
-    }
+    return http.build()
+  }
 
-    @Bean
-    fun bCryptPasswordEncoder(): BCryptPasswordEncoder? {
-        return BCryptPasswordEncoder()
-    }
+  @Bean
+  fun bCryptPasswordEncoder(): BCryptPasswordEncoder? {
+    return BCryptPasswordEncoder()
+  }
 }

@@ -6,7 +6,7 @@ data class Resident(
     val name: String,
     var preferredHospitals: MutableList<Hospital> = mutableListOf()
 ) : Serializable {
-    class ResidentBuilder {
-        var preferredHospitals: MutableList<Hospital> = mutableListOf()
-    }
+  class ResidentBuilder {
+    var preferredHospitals: MutableList<Hospital> = mutableListOf()
+  }
 }

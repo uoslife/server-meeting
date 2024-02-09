@@ -9,25 +9,25 @@ import uoslife.servermeeting.domain.meeting.domain.exception.UserTeamNotFoundExc
 
 class UserTeamDaoTest : UserTeamTest() {
 
-    @Test
-    fun `정상적으로 UserTeam Entity를 저장하고 조회한다`() {
-        // given
-        val user = userRepository.findAll().first()
-        val meetingTeam = meetingTeamRepository.findAll().first()
+  @Test
+  fun `정상적으로 UserTeam Entity를 저장하고 조회한다`() {
+    // given
+    val user = userRepository.findAll().first()
+    val meetingTeam = meetingTeamRepository.findAll().first()
 
-        // when
-        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
-        userTeamDao.saveUserTeam(newUserTeam)
-        entityManager.flush()
-        entityManager.clear()
+    // when
+    val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true, TeamType.SINGLE)
+    userTeamDao.saveUserTeam(newUserTeam)
+    entityManager.flush()
+    entityManager.clear()
 
-        val findByUser = userTeamDao.findByUser(user) ?: throw UserTeamNotFoundException()
+    val findByUser = userTeamDao.findByUser(user) ?: throw UserTeamNotFoundException()
 
-        // then
-        assertThat(findByUser.isLeader).isEqualTo(true)
-        assertThat(findByUser.type).isEqualTo(TeamType.SINGLE)
-        assertThat(findByUser.team.name).isEqualTo("name")
-        assertThat(findByUser.user?.name).isEqualTo("name")
-        assertThat(findByUser.team.season).isEqualTo(3)
-    }
+    // then
+    assertThat(findByUser.isLeader).isEqualTo(true)
+    assertThat(findByUser.type).isEqualTo(TeamType.SINGLE)
+    assertThat(findByUser.team.name).isEqualTo("name")
+    assertThat(findByUser.user?.name).isEqualTo("name")
+    assertThat(findByUser.team.season).isEqualTo(3)
+  }
 }
