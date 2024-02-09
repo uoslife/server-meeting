@@ -4,11 +4,11 @@ plugins {
     id("org.springframework.boot") version "3.0.5"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.asciidoctor.convert") version "2.4.0"
+    id("com.diffplug.spotless") version "6.11.0"
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
     kotlin("plugin.jpa") version "1.7.22"
     kotlin("kapt") version "1.7.10" // querydsl
-    id("org.jlleitschuh.gradle.ktlint") version "10.3.0" // ktlint
     id("jacoco") // jacoco 플러그인 추가
 }
 
@@ -89,6 +89,21 @@ tasks.named<Jar>("jar") {
 tasks.withType<Test> {
     useJUnitPlatform()
     finalizedBy("jacocoTestReport")
+}
+
+spotless {
+    kotlin {
+        ktfmt()
+    }
+}
+
+
+task("addPreCommitGitHookOnBuild") {
+    println("⚈ ⚈ ⚈ Running Add Pre Commit Git Hook Script on Build ⚈ ⚈ ⚈")
+    exec {
+        commandLine("cp", "./.scripts/pre-commit", "./.git/hooks")
+    }
+    println("✅ Added Pre Commit Git Hook Script.")
 }
 
 tasks.jacocoTestReport {
