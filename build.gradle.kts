@@ -93,7 +93,7 @@ tasks.withType<Test> {
 
 spotless {
     kotlin {
-        ktfmt()
+        ktfmt().kotlinlangStyle()
     }
 }
 
