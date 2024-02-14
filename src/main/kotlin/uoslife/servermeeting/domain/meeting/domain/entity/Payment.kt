@@ -13,6 +13,7 @@ import jakarta.persistence.Table
 import java.time.LocalDateTime
 import java.util.UUID
 import uoslife.servermeeting.domain.meeting.domain.entity.enums.PaymentStatus
+import uoslife.servermeeting.domain.user.domain.entity.User
 import uoslife.servermeeting.global.common.BaseEntity
 
 @Entity
@@ -20,8 +21,8 @@ import uoslife.servermeeting.global.common.BaseEntity
 class Payment(
     @Id @Column(name = "id", nullable = false) var id: UUID? = null,
     @OneToOne
-    @JoinColumn(name = "meeting_team_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    var meetingTeam: MeetingTeam? = null,
+    @JoinColumn(name = "payment_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    var user: User? = null,
     var date: LocalDateTime? = null,
     var amount: Int? = null,
     var address: String? = null,
