@@ -2,7 +2,7 @@ package uoslife.servermeeting.domain.meeting.domain
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.Test
-import uoslife.servermeeting.domain.meeting.domain.entity.Information
+import uoslife.servermeeting.meetingteam.entity.Information
 
 class MappingTest {
 

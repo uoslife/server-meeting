@@ -6,10 +6,10 @@ import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import uoslife.servermeeting.domain.user.domain.dao.UserUpdateDao
-import uoslife.servermeeting.domain.user.domain.entity.User
-import uoslife.servermeeting.domain.user.domain.repository.UserRepository
-import uoslife.servermeeting.domain.user.domain.service.UserService
+import uoslife.servermeeting.user.dao.UserUpdateDao
+import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.repository.UserRepository
+import uoslife.servermeeting.user.service.UserService
 
 @SpringBootTest
 @Transactional

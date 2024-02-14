@@ -4,8 +4,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.meeting.domain.common.UserTeamTest
 import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
-import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
-import uoslife.servermeeting.domain.meeting.domain.exception.UserTeamNotFoundException
+import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.meetingteam.exception.UserTeamNotFoundException
 
 class UserTeamDaoTest : UserTeamTest() {
 

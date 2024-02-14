@@ -5,18 +5,18 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.meeting.domain.common.SingleMeetingTest
-import uoslife.servermeeting.domain.meeting.domain.entity.Information
-import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
+import uoslife.servermeeting.meetingteam.entity.Information
+import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
-import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
-import uoslife.servermeeting.domain.meeting.domain.exception.InSingleMeetingTeamNoJoinTeamException
-import uoslife.servermeeting.domain.meeting.domain.exception.InSingleMeetingTeamOnlyOneUserException
-import uoslife.servermeeting.domain.meeting.domain.exception.InformationNotFoundException
-import uoslife.servermeeting.domain.meeting.domain.exception.UserAlreadyHaveTeamException
-import uoslife.servermeeting.domain.meeting.domain.exception.UserTeamNotFoundException
-import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
-import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
-import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
+import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamNoJoinTeamException
+import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamOnlyOneUserException
+import uoslife.servermeeting.meetingteam.exception.InformationNotFoundException
+import uoslife.servermeeting.meetingteam.exception.UserAlreadyHaveTeamException
+import uoslife.servermeeting.meetingteam.exception.UserTeamNotFoundException
+import uoslife.servermeeting.user.entity.enums.DepartmentNameType
+import uoslife.servermeeting.user.entity.enums.GenderType
+import uoslife.servermeeting.user.exception.UserNotFoundException
 
 class SingleMeetingServiceTest : SingleMeetingTest() {
 

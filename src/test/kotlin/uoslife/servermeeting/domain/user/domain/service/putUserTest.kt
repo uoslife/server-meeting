@@ -4,8 +4,8 @@ import java.util.UUID
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.user.domain.common.UserServiceTest
-import uoslife.servermeeting.domain.user.domain.exception.ExistingUserNotFoundException
-import uoslife.servermeeting.domain.user.domain.exception.UserAlreadyResetException
+import uoslife.servermeeting.user.exception.ExistingUserNotFoundException
+import uoslife.servermeeting.user.exception.UserAlreadyResetException
 
 class putUserTest : UserServiceTest() {
 

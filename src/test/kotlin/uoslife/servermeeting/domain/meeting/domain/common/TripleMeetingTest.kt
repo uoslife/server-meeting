@@ -7,15 +7,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
-import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
-import uoslife.servermeeting.domain.meeting.domain.service.impl.TripleMeetingService
-import uoslife.servermeeting.domain.user.domain.entity.User
-import uoslife.servermeeting.domain.user.domain.entity.UserPersonalInformation
-import uoslife.servermeeting.domain.user.domain.entity.enums.DepartmentNameType
-import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
-import uoslife.servermeeting.domain.user.domain.entity.enums.StudentType
-import uoslife.servermeeting.domain.user.domain.repository.UserRepository
+import uoslife.servermeeting.meetingteam.dao.UserTeamDao
+import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
+import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
+import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.entity.UserPersonalInformation
+import uoslife.servermeeting.user.entity.enums.DepartmentNameType
+import uoslife.servermeeting.user.entity.enums.GenderType
+import uoslife.servermeeting.user.entity.enums.StudentType
+import uoslife.servermeeting.user.repository.UserRepository
 
 @SpringBootTest
 @Transactional

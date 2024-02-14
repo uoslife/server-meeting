@@ -7,11 +7,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import uoslife.servermeeting.domain.meeting.domain.dao.UserTeamDao
-import uoslife.servermeeting.domain.meeting.domain.entity.MeetingTeam
-import uoslife.servermeeting.domain.meeting.domain.repository.MeetingTeamRepository
-import uoslife.servermeeting.domain.user.domain.entity.User
-import uoslife.servermeeting.domain.user.domain.repository.UserRepository
+import uoslife.servermeeting.meetingteam.dao.UserTeamDao
+import uoslife.servermeeting.meetingteam.entity.MeetingTeam
+import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
+import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.repository.UserRepository
 
 @SpringBootTest
 @Transactional

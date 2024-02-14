@@ -5,18 +5,18 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.meeting.domain.common.TripleMeetingTest
-import uoslife.servermeeting.domain.meeting.domain.entity.Information
-import uoslife.servermeeting.domain.meeting.domain.entity.enums.TeamType
-import uoslife.servermeeting.domain.meeting.domain.exception.MeetingTeamNotFoundException
-import uoslife.servermeeting.domain.meeting.domain.exception.TeamCodeInvalidFormatException
-import uoslife.servermeeting.domain.meeting.domain.exception.TeamConsistOfSameGenderException
-import uoslife.servermeeting.domain.meeting.domain.exception.TeamFullException
-import uoslife.servermeeting.domain.meeting.domain.exception.TeamNameLeast2CharacterException
-import uoslife.servermeeting.domain.meeting.domain.exception.UserAlreadyHaveTeamException
-import uoslife.servermeeting.domain.meeting.domain.exception.UserNotInTeamException
-import uoslife.servermeeting.domain.meeting.domain.exception.UserTeamNotFoundException
-import uoslife.servermeeting.domain.user.domain.entity.enums.GenderType
-import uoslife.servermeeting.domain.user.domain.exception.UserNotFoundException
+import uoslife.servermeeting.meetingteam.entity.Information
+import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
+import uoslife.servermeeting.meetingteam.exception.TeamCodeInvalidFormatException
+import uoslife.servermeeting.meetingteam.exception.TeamConsistOfSameGenderException
+import uoslife.servermeeting.meetingteam.exception.TeamFullException
+import uoslife.servermeeting.meetingteam.exception.TeamNameLeast2CharacterException
+import uoslife.servermeeting.meetingteam.exception.UserAlreadyHaveTeamException
+import uoslife.servermeeting.meetingteam.exception.UserNotInTeamException
+import uoslife.servermeeting.meetingteam.exception.UserTeamNotFoundException
+import uoslife.servermeeting.user.entity.enums.GenderType
+import uoslife.servermeeting.user.exception.UserNotFoundException
 
 class TripleMeetingServiceTest : TripleMeetingTest() {
 
