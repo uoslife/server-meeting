@@ -5,6 +5,7 @@ import jakarta.persistence.*
 import org.hibernate.annotations.Type
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.user.entity.User
 
 @Entity
 @Table(name = "meeting_team")
@@ -22,6 +23,7 @@ class MeetingTeam(
     var compatibility: Compatibility? = null,
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "maleTeam") var maleMatch: Match? = null,
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "femaleTeam") var femaleMatch: Match? = null,
+    @OneToMany(mappedBy = "team") var users: MutableList<User> = mutableListOf(),
     @Column(nullable = false) var isLeader: Boolean,
     @Column(nullable = false) @Enumerated(EnumType.STRING) var type: TeamType,
 )

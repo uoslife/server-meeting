@@ -28,34 +28,30 @@ class MatchingService(
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
 ) {
-//    @Transactional
-//    fun getMatchedMeetingTeam(userUUID: UUID): MeetingTeamInformationGetResponse {
-//        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
-//        val userTeam = userTeamDao.findByUser(user) ?: throw UserTeamNotFoundException()
-//        val meetingTeam =
-//            meetingTeamRepository.findByIdOrNull(userTeam.team.id!!)
-//                ?: throw MeetingTeamNotFoundException()
-//        val opponentTeam =
-//            matchedDao.findMatchedTeamByTeamAndGender(
-//                meetingTeam,
-//                user.userPersonalInformation.gender
-//            )
-//                ?: throw MatchNotFoundException()
-//        return when (userTeam.type) {
-//            SINGLE -> {
-//                val opponentUserTeam = userTeamDao.findByTeam(opponentTeam)
-//                val opponentUser = opponentUserTeam.first().user ?: throw UserNotFoundException()
-//                singleMeetingService.getMeetingTeamInformation(
-//                    opponentUser.id ?: throw UserNotFoundException()
-//                )
-//            }
-//            TRIPLE -> {
-//                val opponentUserTeam = userTeamDao.findByTeam(opponentTeam)
-//                val opponentUser = opponentUserTeam.first().user ?: throw UserNotFoundException()
-//                tripleMeetingService.getMeetingTeamInformation(
-//                    opponentUser.id ?: throw UserNotFoundException()
-//                )
-//            }
-//        }
-//    }
+    @Transactional
+    fun getMatchedMeetingTeam(userUUID: UUID): MeetingTeamInformationGetResponse {
+        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+        val meetingTeam =
+            user.team ?: throw MeetingTeamNotFoundException()
+        val opponentTeam =
+            matchedDao.findMatchedTeamByTeamAndGender(
+                meetingTeam,
+                user.userPersonalInformation.gender
+            )
+                ?: throw MatchNotFoundException()
+        return when (meetingTeam.type) {
+            SINGLE -> {
+                val opponentUser = opponentTeam.users.first() ?: throw UserNotFoundException()
+                singleMeetingService.getMeetingTeamInformation(
+                    opponentUser.id ?: throw UserNotFoundException()
+                )
+            }
+            TRIPLE -> {
+                val opponentUser = opponentTeam.users.first() ?: throw UserNotFoundException()
+                tripleMeetingService.getMeetingTeamInformation(
+                    opponentUser.id ?: throw UserNotFoundException()
+                )
+            }
+        }
+    }
 }
