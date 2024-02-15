@@ -56,6 +56,8 @@ dependencies {
     implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
     kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
 
+    implementation(platform("org.testcontainers:testcontainers-bom:1.19.5")) //import bom
+
     // spring security
     implementation("org.springframework.boot:spring-boot-starter-security")
     testImplementation("org.springframework.security:spring-security-test")
@@ -72,6 +74,8 @@ dependencies {
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
     testImplementation("io.mockk:mockk:1.13.5")
     testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
+    testImplementation("org.testcontainers:postgresql")
+
 
     // hibernate annotation
     implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
