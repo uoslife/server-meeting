@@ -10,23 +10,11 @@ import uoslife.servermeeting.meetingteam.service.PaymentService
 @RestController
 @RequestMapping("/api/payment")
 @Tag(name = "Payment", description = "결제 API")
-class PaymentApi(
-    @Qualifier("PayappService") private val paymentService: PaymentService
-) {
+class PaymentApi(@Qualifier("PayappService") private val paymentService: PaymentService) {
 
-    @PostMapping("/spend")
-    fun spendPayment(): Unit {
+    @PostMapping("/spend") fun spendPayment(): Unit {}
 
-    }
+    @PostMapping("/cancel/request") fun spendPaymentRequest(): Unit {}
 
-    @PostMapping("/cancel/request")
-    fun spendPaymentRequest(): Unit {
-
-    }
-
-    @PostMapping("/cancel")
-    fun cancelPayment(): Unit {
-
-    }
+    @PostMapping("/cancel") fun cancelPayment(): Unit {}
 }
-
