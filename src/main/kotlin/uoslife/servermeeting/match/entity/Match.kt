@@ -2,8 +2,8 @@ package uoslife.servermeeting.match.entity
 
 import jakarta.persistence.*
 import java.time.LocalDateTime
-import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.global.common.BaseEntity
+import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 
 @Entity
 @Table(name = "match")

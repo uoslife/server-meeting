@@ -57,8 +57,10 @@ class MeetingApi(
 
         val code =
             when (teamType) {
-                TeamType.SINGLE -> singleMeetingService.createMeetingTeam(userUUID, name)
-                TeamType.TRIPLE -> tripleMeetingService.createMeetingTeam(userUUID, name)
+                TeamType.SINGLE ->
+                    singleMeetingService.createMeetingTeam(userUUID, name, teamType = teamType)
+                TeamType.TRIPLE ->
+                    tripleMeetingService.createMeetingTeam(userUUID, name, teamType = teamType)
             }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(code)

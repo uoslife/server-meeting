@@ -24,6 +24,8 @@ class MeetingTeam(
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "maleTeam") var maleMatch: Match? = null,
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "femaleTeam") var femaleMatch: Match? = null,
     @OneToMany(mappedBy = "team") var users: MutableList<User> = mutableListOf(),
-    @Column(nullable = false) var isLeader: Boolean,
+    @OneToOne
+    @JoinColumn(name = "leader_id", referencedColumnName = "id", unique = true)
+    var leader: User? = null,
     @Column(nullable = false) @Enumerated(EnumType.STRING) var type: TeamType,
 )

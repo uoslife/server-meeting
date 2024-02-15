@@ -12,9 +12,9 @@ import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 import java.util.UUID
+import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.global.common.BaseEntity
 
 @Entity
 @Table(name = "payment")

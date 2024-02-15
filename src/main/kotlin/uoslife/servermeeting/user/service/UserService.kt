@@ -6,12 +6,12 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uoslife.servermeeting.user.dao.UserPutDao
+import uoslife.servermeeting.user.dao.UserUpdateDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.NicknameCheckResponse
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
 import uoslife.servermeeting.user.dto.response.toResponse
-import uoslife.servermeeting.user.dao.UserPutDao
-import uoslife.servermeeting.user.dao.UserUpdateDao
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.ExistingUserNotFoundException
 import uoslife.servermeeting.user.exception.UserNotFoundException

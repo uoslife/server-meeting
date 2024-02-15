@@ -5,9 +5,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import uoslife.servermeeting.domain.meeting.domain.common.SingleMeetingTest
+import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.domain.meeting.domain.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamNoJoinTeamException
 import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamOnlyOneUserException
