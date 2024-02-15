@@ -68,8 +68,9 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException::class)
-    fun handleHttpMessageNotReadableException(exception: MethodArgumentTypeMismatchException):
-        ResponseEntity<ErrorResponse> {
+    fun handleHttpMessageNotReadableException(
+        exception: MethodArgumentTypeMismatchException
+    ): ResponseEntity<ErrorResponse> {
         logger.error("[Error] MethodArgumentTypeMismatchException", exception)
         val errorCode = ErrorCode.INVALID_INPUT_VALUE
         val response = ErrorResponse(errorCode)

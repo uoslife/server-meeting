@@ -4,12 +4,13 @@ plugins {
     id("org.springframework.boot") version "3.0.5"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.asciidoctor.convert") version "2.4.0"
+    id("com.diffplug.spotless") version "6.11.0"
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
     kotlin("plugin.jpa") version "1.7.22"
     kotlin("kapt") version "1.7.10" // querydsl
-    id("org.jlleitschuh.gradle.ktlint") version "10.3.0" // ktlint
     id("jacoco") // jacoco 플러그인 추가
+    id("org.jetbrains.dokka") version "1.9.10" // dokka 플러그인 추가
 }
 
 allOpen {
@@ -40,6 +41,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
 
     // validation
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -69,6 +71,13 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:5.5.5")
     testImplementation("io.kotest:kotest-extensions-spring:4.4.3")
     testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:5.5.5")
+
+    // hibernate annotation
+    implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
+
+    // dokka
+    dokkaPlugin("org.jetbrains.dokka:mathjax-plugin:1.9.10")
 }
 
 tasks.withType<KotlinCompile> {
@@ -87,6 +96,12 @@ tasks.withType<Test> {
     finalizedBy("jacocoTestReport")
 }
 
+spotless {
+    kotlin {
+        ktfmt().kotlinlangStyle()
+    }
+}
+
 tasks.jacocoTestReport {
     executionData(fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec"))
 
@@ -100,3 +115,15 @@ tasks.jacocoTestReport {
 tasks.test {
     outputs.dir(snippetsDir)
 }
+
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
+    dokkaSourceSets {
+        outputDirectory.set(file("build/dokka"))
+
+        named("main") {
+            displayName.set("Main")
+            includes.from("src/main/kotlin")
+        }
+    }
+}
+
