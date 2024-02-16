@@ -93,4 +93,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "External API Request is failed.",
         HttpStatus.INTERNAL_SERVER_ERROR.value()
     ),
+
+    // payment
+    AlREADY_EXISTS_PAYMENT("P01", "User has already paid.", HttpStatus.BAD_REQUEST.value())
 }
