@@ -1,6 +1,9 @@
 package uoslife.servermeeting.meetingteam.service.impl
 
 import jakarta.transaction.Transactional
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.util.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
@@ -8,7 +11,6 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
-import org.springframework.web.util.UriComponentsBuilder
 import uoslife.servermeeting.meetingteam.dao.PaymentDao
 import uoslife.servermeeting.meetingteam.dto.request.PayappRequestDto
 import uoslife.servermeeting.meetingteam.dto.response.PayappResponseDto
@@ -21,9 +23,6 @@ import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
-import java.net.URLDecoder
-import java.net.URLEncoder
-import java.util.*
 
 @Service
 @Qualifier("PayappService")
@@ -102,16 +101,17 @@ class PayappService(
                 set("Content-Type", "application/x-www-form-urlencoded")
             }
 
-        val requestMap: Map<String, String?> = mapOf(
-            "cmd" to requestPaymentCmd,
-            "userid" to userId,
-            "goodname" to goodName,
-            "price" to payment.price.toString(),
-            "recvphone" to payment.user!!.phoneNumber,
-            "feedbackurl" to feedbackUrl,
-            "var1" to payment.var1,
-            "var2" to payment.var2
-        )
+        val requestMap: Map<String, String?> =
+            mapOf(
+                "cmd" to requestPaymentCmd,
+                "userid" to userId,
+                "goodname" to goodName,
+                "price" to payment.price.toString(),
+                "recvphone" to payment.user!!.phoneNumber,
+                "feedbackurl" to feedbackUrl,
+                "var1" to payment.var1,
+                "var2" to payment.var2
+            )
 
         val entity = HttpEntity(mapToQueryString(requestMap), header)
         val response = restTemplate.postForObject(apiUrl, entity, String::class.java)
@@ -129,30 +129,31 @@ class PayappService(
 
     @Transactional
     override fun checkPayment(request: PayappRequestDto.PayappCheckStatusRequest) {
-        require (userId == request.userid &&
-            linkKey == request.linkkey &&
-            linkValue == request.linkval) {
+        require(
+            userId == request.userid && linkKey == request.linkkey && linkValue == request.linkval
+        ) {
             throw PaymentInformationInvalidException()
         }
 
-        val payment = paymentDao.selectPaymentByMulNoAndVar(
-            request.mulNo,
-            request.var1,
-            request.var2
-        ) ?: throw PaymentNotFoundException()
+        val payment =
+            paymentDao.selectPaymentByMulNoAndVar(request.mulNo, request.var1, request.var2)
+                ?: throw PaymentNotFoundException()
 
-        require(payment.price != request.price) {
-            throw PaymentInformationInvalidException()
-        }
+        require(payment.price != request.price) { throw PaymentInformationInvalidException() }
 
-        paymentDao.updatePaymentByCheck(payment,
-            when(request.payState) {
+        paymentDao.updatePaymentByCheck(
+            payment,
+            when (request.payState) {
                 1 -> PaymentStatus.REQUEST
                 4 -> PaymentStatus.COMPLETE_PAYMENT
-                8, 16, 32 -> PaymentStatus.CANCEL_REQUEST
-                9, 64 -> PaymentStatus.REQUEST
+                8,
+                16,
+                32 -> PaymentStatus.CANCEL_REQUEST
+                9,
+                64 -> PaymentStatus.REQUEST
                 10 -> PaymentStatus.WAITING_PAYMENT
-                70, 71 -> PaymentStatus.CANCEL_PARTIAL
+                70,
+                71 -> PaymentStatus.CANCEL_PARTIAL
                 else -> throw PaymentInformationInvalidException()
             }
         )
@@ -183,5 +184,4 @@ class PayappService(
         }
         return paramMap
     }
-
 }

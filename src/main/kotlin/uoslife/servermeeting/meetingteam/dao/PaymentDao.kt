@@ -2,12 +2,12 @@ package uoslife.servermeeting.meetingteam.dao
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.transaction.Transactional
+import java.time.LocalDateTime
 import org.springframework.stereotype.Repository
 import uoslife.servermeeting.meetingteam.dto.response.PayappResponseDto
 import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.meetingteam.entity.QPayment
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
-import java.time.LocalDateTime
 
 @Repository
 @Transactional
@@ -29,9 +29,11 @@ class PaymentDao(private val queryFactory: JPAQueryFactory) {
         return queryFactory
             .select(QPayment.payment)
             .from(QPayment.payment)
-            .where(QPayment.payment.mul_no.eq(mulNo)
-                .and(QPayment.payment.var1.eq(var1))
-                .and(QPayment.payment.var2.eq(var2))
+            .where(
+                QPayment.payment.mul_no
+                    .eq(mulNo)
+                    .and(QPayment.payment.var1.eq(var1))
+                    .and(QPayment.payment.var2.eq(var2))
             )
             .fetchOne()
     }
