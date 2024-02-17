@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uoslife.servermeeting.meetingteam.dto.request.PayappRequestDto
 import uoslife.servermeeting.meetingteam.dto.response.PayappResponseDto
 import uoslife.servermeeting.meetingteam.service.PaymentService
 
@@ -26,6 +28,15 @@ class PaymentApi(@Qualifier("PayappService") private val paymentService: Payment
 
         val payappRequestStatusResponse = paymentService.requestPayment(userUUID)
         return ResponseEntity.status(HttpStatus.OK).body(payappRequestStatusResponse)
+    }
+
+    // TODO: AUTH FITERING OFF
+    @PostMapping("/check")
+    fun checkPayment(
+        @RequestBody payappCheckStatusRequest: PayappRequestDto.PayappCheckStatusRequest
+    ): ResponseEntity<String> {
+        paymentService.checkPayment(payappCheckStatusRequest)
+        return ResponseEntity.ok("SUCCESS")
     }
 
     @PostMapping("/refund") fun refundPaymentById(): Unit {}

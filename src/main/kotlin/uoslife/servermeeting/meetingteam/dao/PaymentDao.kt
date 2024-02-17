@@ -7,11 +7,12 @@ import uoslife.servermeeting.meetingteam.dto.response.PayappResponseDto
 import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.meetingteam.entity.QPayment
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
+import java.time.LocalDateTime
 
 @Repository
 @Transactional
 class PaymentDao(private val queryFactory: JPAQueryFactory) {
-    fun updatePayment(
+    fun updatePaymentByRequest(
         updatePayment: Payment,
         payappRequestStatusResponse: PayappResponseDto.PayappRequestStatusResponse,
         paymentStatus: PaymentStatus
@@ -21,6 +22,26 @@ class PaymentDao(private val queryFactory: JPAQueryFactory) {
             .where(QPayment.payment.eq(updatePayment))
             .set(QPayment.payment.status, paymentStatus)
             .set(QPayment.payment.mul_no, payappRequestStatusResponse.mulNo)
+            .execute()
+    }
+
+    fun selectPaymentByMulNoAndVar(mulNo: Int, var1: String, var2: String): Payment? {
+        return queryFactory
+            .select(QPayment.payment)
+            .from(QPayment.payment)
+            .where(QPayment.payment.mul_no.eq(mulNo)
+                .and(QPayment.payment.var1.eq(var1))
+                .and(QPayment.payment.var2.eq(var2))
+            )
+            .fetchOne()
+    }
+
+    fun updatePaymentByCheck(updatePayment: Payment, paymentStatus: PaymentStatus) {
+        queryFactory
+            .update(QPayment.payment)
+            .where(QPayment.payment.eq(updatePayment))
+            .set(QPayment.payment.status, paymentStatus)
+            .set(QPayment.payment.payDate, LocalDateTime.now())
             .execute()
     }
 }

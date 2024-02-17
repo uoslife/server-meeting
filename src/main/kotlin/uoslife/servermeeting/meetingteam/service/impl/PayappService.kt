@@ -1,32 +1,29 @@
 package uoslife.servermeeting.meetingteam.service.impl
 
 import jakarta.transaction.Transactional
-import java.net.URLDecoder
-import java.util.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 import uoslife.servermeeting.meetingteam.dao.PaymentDao
+import uoslife.servermeeting.meetingteam.dto.request.PayappRequestDto
 import uoslife.servermeeting.meetingteam.dto.response.PayappResponseDto
 import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
-import uoslife.servermeeting.meetingteam.exception.AlreadyExistsPaymentException
-import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
-import uoslife.servermeeting.meetingteam.exception.PhoneNumberNotFoundException
+import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.util.*
 
 @Service
 @Qualifier("PayappService")
@@ -34,13 +31,16 @@ class PayappService(
     private val userRepository: UserRepository,
     private val paymentRepository: PaymentRepository,
     private val paymentDao: PaymentDao,
+    @Value("\${payapp.api.domain}") private val domain: String,
     @Value("\${payapp.api.url}") private val apiUrl: String,
-    @Value("\${payapp.api.cmd.spendpayment}") private val spendPaymentCmd: String,
+    @Value("\${payapp.api.cmd.requestpayment}") private val requestPaymentCmd: String,
     @Value("\${payapp.api.userid}") private val userId: String,
     @Value("\${payapp.api.goodname}") private val goodName: String,
     @Value("\${payapp.api.price.single}") private val singlePrice: Int,
     @Value("\${payapp.api.price.triple}") private val triplePrice: Int,
-    @Value("") private val feedbackUrl: String,
+    @Value("\${payapp.api.feedbackurl}") private val feedbackUrl: String,
+    @Value("\${payapp.api.link.key}") private val linkKey: String,
+    @Value("\${payapp.api.link.value}") private val linkValue: String,
 ) : PaymentService {
     @Transactional
     override fun requestPayment(userUUID: UUID): PayappResponseDto.PayappRequestStatusResponse {
@@ -52,6 +52,7 @@ class PayappService(
             }
                 ?: throw UserNotFoundException()
 
+        // payment 생성
         var payment: Payment =
             paymentRepository.findByUser(user)
                 ?: Payment.createPayment(
@@ -65,7 +66,7 @@ class PayappService(
                 )
 
         // 이미 결제한 경우 중복 결제임으로 예외 처리
-        if (payment.status!!.equals(PaymentStatus.PAID)) {
+        if (payment.status!!.equals(PaymentStatus.COMPLETE_PAYMENT)) {
             throw AlreadyExistsPaymentException()
         }
 
@@ -74,12 +75,16 @@ class PayappService(
 
         // 결제 여부에 따라 PaymentStatus 리턴
         if (payappRequestStatusResponse.state == 1) {
-            paymentDao.updatePayment(payment, payappRequestStatusResponse, PaymentStatus.REQUESTED)
-        } else {
-            paymentDao.updatePayment(
+            paymentDao.updatePaymentByRequest(
                 payment,
                 payappRequestStatusResponse,
-                PaymentStatus.FAILED_REQUEST
+                PaymentStatus.REQUEST
+            )
+        } else {
+            paymentDao.updatePaymentByRequest(
+                payment,
+                payappRequestStatusResponse,
+                PaymentStatus.CANCEL_REQUEST
             )
         }
 
@@ -91,37 +96,69 @@ class PayappService(
 
         val header =
             HttpHeaders().apply {
-                contentType = MediaType.APPLICATION_FORM_URLENCODED
-                acceptCharset = listOf(Charsets.UTF_8)
+                set("Accept", "text/html,application/xhtml+xml,*/*")
+                set("Host", domain)
+                set("Accept-Language", "ko-KR")
+                set("Content-Type", "application/x-www-form-urlencoded")
             }
 
-        val requestBody: MultiValueMap<String, Any> = LinkedMultiValueMap()
-        requestBody.add("cmd", spendPaymentCmd)
-        requestBody.add("userid", userId)
-        requestBody.add("goodname", goodName)
-        requestBody.add("price", payment.price.toString())
-        requestBody.add("recvphone", payment.user!!.phoneNumber)
-        requestBody.add("feedbackurl", feedbackUrl)
-        requestBody.add("var1", payment.var1)
-        requestBody.add("var2", payment.var2)
+        val requestMap: Map<String, String?> = mapOf(
+            "cmd" to requestPaymentCmd,
+            "userid" to userId,
+            "goodname" to goodName,
+            "price" to payment.price.toString(),
+            "recvphone" to payment.user!!.phoneNumber,
+            "feedbackurl" to feedbackUrl,
+            "var1" to payment.var1,
+            "var2" to payment.var2
+        )
 
-        val entity = HttpEntity(requestBody, header)
+        val entity = HttpEntity(mapToQueryString(requestMap), header)
         val response = restTemplate.postForObject(apiUrl, entity, String::class.java)
 
-        val decodedResponseString = URLDecoder.decode(response, "UTF-8")
-
-        val queryParams =
-            UriComponentsBuilder.fromUriString(decodedResponseString).build().queryParams
+        val resposneMap = queryStringToMap(URLDecoder.decode(response, "UTF-8"))
 
         return PayappResponseDto.PayappRequestStatusResponse(
-            state = queryParams.getFirst("state")?.toInt() ?: 0,
-            errorMessage = queryParams.getFirst("errorMessage") ?: "",
-            mulNo = queryParams.getFirst("mul_no")?.toInt() ?: 0,
-            payUrl = queryParams.getFirst("payurl") ?: "",
-            qrUrl = queryParams.getFirst("qrurl") ?: "",
+            state = resposneMap.get("state")?.toInt() ?: 0,
+            errorMessage = resposneMap.get("errorMessage") ?: "",
+            mulNo = resposneMap.get("mul_no")?.toInt() ?: 0,
+            payUrl = resposneMap.get("payurl") ?: "",
+            qrUrl = resposneMap.get("qrurl") ?: "",
         )
     }
 
+    @Transactional
+    override fun checkPayment(request: PayappRequestDto.PayappCheckStatusRequest) {
+        require (userId == request.userid &&
+            linkKey == request.linkkey &&
+            linkValue == request.linkval) {
+            throw PaymentInformationInvalidException()
+        }
+
+        val payment = paymentDao.selectPaymentByMulNoAndVar(
+            request.mulNo,
+            request.var1,
+            request.var2
+        ) ?: throw PaymentNotFoundException()
+
+        require(payment.price != request.price) {
+            throw PaymentInformationInvalidException()
+        }
+
+        paymentDao.updatePaymentByCheck(payment,
+            when(request.payState) {
+                1 -> PaymentStatus.REQUEST
+                4 -> PaymentStatus.COMPLETE_PAYMENT
+                8, 16, 32 -> PaymentStatus.CANCEL_REQUEST
+                9, 64 -> PaymentStatus.REQUEST
+                10 -> PaymentStatus.WAITING_PAYMENT
+                70, 71 -> PaymentStatus.CANCEL_PARTIAL
+                else -> throw PaymentInformationInvalidException()
+            }
+        )
+    }
+
+    @Transactional
     override fun refundPaymentById(): Unit {
         TODO("id 기반으로 특정 유저만 결제 취소 api 구현(부분 취소)")
     }
@@ -130,4 +167,21 @@ class PayappService(
     override fun refundPayment(): Unit {
         TODO("매칭이 안됐을 경우 결제 취소 api 구현(부분 취소)")
     }
+
+    fun mapToQueryString(map: Map<String, String?>): String {
+        return map.entries.joinToString("&") { (key, value) ->
+            "${URLEncoder.encode(key, "UTF-8")}=${URLEncoder.encode(value, "UTF-8")}"
+        }
+    }
+
+    fun queryStringToMap(queryString: String): MutableMap<String, String> {
+        val paramMap = mutableMapOf<String, String>()
+
+        queryString.split("&").forEach { pair ->
+            val (key, value) = pair.split("=")
+            paramMap[key] = value
+        }
+        return paramMap
+    }
+
 }

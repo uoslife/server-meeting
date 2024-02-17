@@ -99,5 +99,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     ),
 
     // payment
-    AlREADY_EXISTS_PAYMENT("P01", "User has already paid.", HttpStatus.BAD_REQUEST.value())
+    AlREADY_EXISTS_PAYMENT("P01", "User has already paid.", HttpStatus.BAD_REQUEST.value()),
+    PAYMENT_INFORMATION_INVALID("P02", "Payment information is invalid.", HttpStatus.BAD_REQUEST.value()),
+    PAYMENT_NOT_FOUND("P03", "Payment is not found", HttpStatus.BAD_REQUEST.value())
 }
