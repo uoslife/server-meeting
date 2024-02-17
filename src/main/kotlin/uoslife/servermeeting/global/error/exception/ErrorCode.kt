@@ -20,7 +20,11 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     EMAIL_DUPLICATION("U03", "Email is Duplicated.", HttpStatus.BAD_REQUEST.value()),
     NICKNAME_DUPLICATION("U04", "Nickname is Duplicated.", HttpStatus.BAD_REQUEST.value()),
     USER_ALREADY_RESET("U05", "User data is already reset.", HttpStatus.BAD_REQUEST.value()),
-
+    PHONE_NUMBER_NOT_FOUND(
+        "U06",
+        "User's phone number is not fount",
+        HttpStatus.BAD_REQUEST.value()
+    ),
     // User - Cookie
     SESSION_COOKIE_EXPIRED("AT01", "Access Token is Expired", HttpStatus.UNAUTHORIZED.value()),
     SESSION_COOKIE_INVALID("AT02", "Access Token is Invalid.", HttpStatus.UNAUTHORIZED.value()),

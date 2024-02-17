@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uoslife.servermeeting.meetingteam.dto.response.PaymentStatusResponse
+import uoslife.servermeeting.meetingteam.dto.response.PayappResponseDto
 import uoslife.servermeeting.meetingteam.service.PaymentService
 
 @RestController
@@ -18,18 +18,17 @@ import uoslife.servermeeting.meetingteam.service.PaymentService
 @Tag(name = "Payment", description = "결제 API")
 class PaymentApi(@Qualifier("PayappService") private val paymentService: PaymentService) {
 
-    @PostMapping("/spend")
-    fun spendPayment(
+    @PostMapping("/request")
+    fun requestPayment(
         @AuthenticationPrincipal userDetails: UserDetails
-    ): ResponseEntity<PaymentStatusResponse> {
+    ): ResponseEntity<PayappResponseDto.PayappRequestStatusResponse> {
         val userUUID = UUID.fromString(userDetails.username)
 
-        val paymentStatusResponse =
-            PaymentStatusResponse(paymentStatus = paymentService.spendPayment(userUUID))
-        return ResponseEntity.status(HttpStatus.OK).body(paymentStatusResponse)
+        val payappRequestStatusResponse = paymentService.requestPayment(userUUID)
+        return ResponseEntity.status(HttpStatus.OK).body(payappRequestStatusResponse)
     }
 
-    @PostMapping("/refund/request") fun refundPaymentById(): Unit {}
+    @PostMapping("/refund") fun refundPaymentById(): Unit {}
 
-    @PostMapping("/refund") fun refundPayment(): Unit {}
+    @PostMapping("/refund/all") fun refundPayment(): Unit {}
 }

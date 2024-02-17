@@ -23,10 +23,29 @@ class Payment(
     @OneToOne
     @JoinColumn(name = "payment_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     var user: User? = null,
-    var date: LocalDateTime? = null,
-    var amount: Int? = null,
-    var address: String? = null,
-    var name: String? = null,
-    var payedUserId: UUID? = null,
+    var mul_no: Int? = null,
+    var var1: String? = null,
+    var var2: String? = null,
+    var price: Int? = null,
+    var payDate: LocalDateTime? = null,
     @Enumerated(EnumType.STRING) var status: PaymentStatus? = null,
-) : BaseEntity()
+) : BaseEntity() {
+    companion object {
+        fun createPayment(
+            user: User,
+            var1: String,
+            var2: String,
+            price: Int,
+        ): Payment {
+            return Payment(
+                user = user,
+                mul_no = null,
+                var1 = var1,
+                var2 = var2,
+                price = price,
+                payDate = null,
+                status = PaymentStatus.NONE
+            )
+        }
+    }
+}
