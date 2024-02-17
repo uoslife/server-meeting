@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository
 import uoslife.servermeeting.meetingteam.dto.response.PayappResponseDto
 import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.meetingteam.entity.QPayment
+import uoslife.servermeeting.meetingteam.entity.QPayment.*
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 
 @Repository
@@ -18,32 +19,32 @@ class PaymentDao(private val queryFactory: JPAQueryFactory) {
         paymentStatus: PaymentStatus
     ) {
         queryFactory
-            .update(QPayment.payment)
-            .where(QPayment.payment.eq(updatePayment))
-            .set(QPayment.payment.status, paymentStatus)
-            .set(QPayment.payment.mul_no, payappRequestStatusResponse.mulNo)
+            .update(payment)
+            .where(payment.eq(updatePayment))
+            .set(payment.status, paymentStatus)
+            .set(payment.mul_no, payappRequestStatusResponse.mulNo)
             .execute()
     }
 
     fun selectPaymentByMulNoAndVar(mulNo: Int, var1: String, var2: String): Payment? {
         return queryFactory
-            .select(QPayment.payment)
-            .from(QPayment.payment)
+            .select(payment)
+            .from(payment)
             .where(
-                QPayment.payment.mul_no
+                payment.mul_no
                     .eq(mulNo)
-                    .and(QPayment.payment.var1.eq(var1))
-                    .and(QPayment.payment.var2.eq(var2))
+                    .and(payment.var1.eq(var1))
+                    .and(payment.var2.eq(var2))
             )
             .fetchOne()
     }
 
     fun updatePaymentByCheck(updatePayment: Payment, paymentStatus: PaymentStatus) {
         queryFactory
-            .update(QPayment.payment)
-            .where(QPayment.payment.eq(updatePayment))
-            .set(QPayment.payment.status, paymentStatus)
-            .set(QPayment.payment.payDate, LocalDateTime.now())
+            .update(payment)
+            .where(payment.eq(updatePayment))
+            .set(payment.status, paymentStatus)
+            .set(payment.payDate, LocalDateTime.now())
             .execute()
     }
 }
