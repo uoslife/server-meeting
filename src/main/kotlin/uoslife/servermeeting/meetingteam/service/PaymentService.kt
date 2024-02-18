@@ -7,6 +7,6 @@ import uoslife.servermeeting.meetingteam.dto.response.PayappResponseDto
 interface PaymentService {
     fun requestPayment(userUUID: UUID): PayappResponseDto.PayappRequestStatusResponse
     fun checkPayment(payappCheckStatusRequest: PayappRequestDto.PayappCheckStatusRequest)
-    fun refundPaymentById(): Unit
-    fun refundPayment(): Unit
+    fun refundPaymentById(userUUID: UUID): PayappResponseDto.PayappCancelStatusResponse
+    fun refundPayment(): PayappResponseDto.PayappNotMatchingCancelResponse
 }

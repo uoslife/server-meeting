@@ -6,7 +6,6 @@ import java.time.LocalDateTime
 import org.springframework.stereotype.Repository
 import uoslife.servermeeting.meetingteam.dto.response.PayappResponseDto
 import uoslife.servermeeting.meetingteam.entity.Payment
-import uoslife.servermeeting.meetingteam.entity.QPayment
 import uoslife.servermeeting.meetingteam.entity.QPayment.*
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 
@@ -30,12 +29,7 @@ class PaymentDao(private val queryFactory: JPAQueryFactory) {
         return queryFactory
             .select(payment)
             .from(payment)
-            .where(
-                payment.mul_no
-                    .eq(mulNo)
-                    .and(payment.var1.eq(var1))
-                    .and(payment.var2.eq(var2))
-            )
+            .where(payment.mul_no.eq(mulNo).and(payment.var1.eq(var1)).and(payment.var2.eq(var2)))
             .fetchOne()
     }
 
@@ -45,6 +39,14 @@ class PaymentDao(private val queryFactory: JPAQueryFactory) {
             .where(payment.eq(updatePayment))
             .set(payment.status, paymentStatus)
             .set(payment.payDate, LocalDateTime.now())
+            .execute()
+    }
+
+    fun updatePaymentByCancel(updatePayment: Payment, paymentStatus: PaymentStatus) {
+        queryFactory
+            .update(payment)
+            .where(payment.eq(updatePayment))
+            .set(payment.status, paymentStatus)
             .execute()
     }
 }

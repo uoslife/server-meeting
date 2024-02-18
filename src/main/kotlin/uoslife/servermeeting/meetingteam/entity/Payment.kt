@@ -23,7 +23,7 @@ class Payment(
     @OneToOne
     @JoinColumn(name = "payment_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     var user: User? = null,
-    var mul_no: Int? = null,
+    var mulNo: Int? = null,
     var var1: String? = null,
     var var2: String? = null,
     var price: Int? = null,
@@ -39,7 +39,7 @@ class Payment(
         ): Payment {
             return Payment(
                 user = user,
-                mul_no = null,
+                mulNo = null,
                 var1 = var1,
                 var2 = var2,
                 price = price,

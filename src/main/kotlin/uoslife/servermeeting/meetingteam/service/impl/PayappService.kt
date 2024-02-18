@@ -20,6 +20,7 @@ import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
+import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
@@ -29,10 +30,12 @@ import uoslife.servermeeting.user.repository.UserRepository
 class PayappService(
     private val userRepository: UserRepository,
     private val paymentRepository: PaymentRepository,
+    private val userDao: UserDao,
     private val paymentDao: PaymentDao,
     @Value("\${payapp.api.domain}") private val domain: String,
     @Value("\${payapp.api.url}") private val apiUrl: String,
     @Value("\${payapp.api.cmd.requestpayment}") private val requestPaymentCmd: String,
+    @Value("\${payapp.api.cmd.cancelpayment}") private val cancelPaymentCmd: String,
     @Value("\${payapp.api.userid}") private val userId: String,
     @Value("\${payapp.api.goodname}") private val goodName: String,
     @Value("\${payapp.api.price.single}") private val singlePrice: Int,
@@ -70,7 +73,7 @@ class PayappService(
         }
 
         // 결제 요청
-        val payappRequestStatusResponse = requestPaymentByPayApp(payment)
+        val payappRequestStatusResponse = requestPaymentInPayApp(payment)
 
         // 결제 여부에 따라 PaymentStatus 리턴
         if (payappRequestStatusResponse.state == 1) {
@@ -90,7 +93,7 @@ class PayappService(
         return payappRequestStatusResponse
     }
 
-    fun requestPaymentByPayApp(payment: Payment): PayappResponseDto.PayappRequestStatusResponse {
+    fun requestPaymentInPayApp(payment: Payment): PayappResponseDto.PayappRequestStatusResponse {
         val restTemplate = RestTemplate()
 
         val header =
@@ -153,20 +156,108 @@ class PayappService(
                 64 -> PaymentStatus.REQUEST
                 10 -> PaymentStatus.WAITING_PAYMENT
                 70,
-                71 -> PaymentStatus.CANCEL_PARTIAL
+                71 -> PaymentStatus.CANCEL_PARTIAL_REFUND
                 else -> throw PaymentInformationInvalidException()
             }
         )
     }
 
     @Transactional
-    override fun refundPaymentById(): Unit {
-        TODO("id 기반으로 특정 유저만 결제 취소 api 구현(부분 취소)")
+    override fun refundPaymentById(userUUID: UUID): PayappResponseDto.PayappCancelStatusResponse {
+        val user: User =
+            userRepository.findByIdOrNull(userUUID)?.also { user ->
+                user.team ?: throw MeetingTeamNotFoundException()
+            }
+                ?: throw UserNotFoundException()
+
+        val price =
+            when (user.team!!.type) {
+                TeamType.SINGLE -> singlePrice
+                TeamType.TRIPLE -> triplePrice
+            }
+
+        var payment: Payment =
+            paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
+
+        val payappCancelStatusResponse = refundPaymentByIdInPayApp(payment, price)
+
+        if (payappCancelStatusResponse.state == 1) {
+            paymentDao.updatePaymentByCancel(payment, PaymentStatus.CANCEL_PARTIAL_REFUND)
+        } else {
+            paymentDao.updatePaymentByCancel(payment, PaymentStatus.FAILED_REFUND)
+        }
+
+        return payappCancelStatusResponse
     }
 
     @Transactional
-    override fun refundPayment(): Unit {
-        TODO("매칭이 안됐을 경우 결제 취소 api 구현(부분 취소)")
+    override fun refundPayment(): PayappResponseDto.PayappNotMatchingCancelResponse {
+        val users = userDao.selctNotMatchedUser()
+
+        val payappCanelStatusResponseList =
+            users.map { user ->
+                val price =
+                    when (user.team!!.type) {
+                        TeamType.SINGLE -> singlePrice
+                        TeamType.TRIPLE -> triplePrice
+                    }
+                val payappCanelStatusResponse = refundPaymentByIdInPayApp(user.payment!!, price)
+                payappCanelStatusResponse
+            }
+
+        val successCount = payappCanelStatusResponseList.sumOf { it.state }
+        val failedCount = payappCanelStatusResponseList.size - successCount
+
+        return PayappResponseDto.PayappNotMatchingCancelResponse(
+            successCount = successCount,
+            failedCount = failedCount,
+            payappCancelStatusResponseList = payappCanelStatusResponseList
+        )
+    }
+
+    fun refundPaymentByIdInPayApp(
+        payment: Payment,
+        price: Int
+    ): PayappResponseDto.PayappCancelStatusResponse {
+        val restTemplate = RestTemplate()
+
+        val header =
+            HttpHeaders().apply {
+                set("Accept", "text/html,application/xhtml+xml,*/*")
+                set("Host", domain)
+                set("Accept-Language", "ko-KR")
+                set("Content-Type", "application/x-www-form-urlencoded")
+            }
+
+        val requestMap: Map<String, String?> =
+            mapOf(
+                "cmd" to cancelPaymentCmd,
+                "userid" to userId,
+                "linkkey" to linkKey,
+                "mul_no" to payment.mulNo.toString(),
+                "cancelmemo" to "cancel payment to " + payment.user!!.id,
+                "dpname" to "시대생",
+                "partcancel" to "1",
+                "cancelprice" to price.toString(),
+            )
+
+        val entity = HttpEntity(mapToQueryString(requestMap), header)
+        val response = restTemplate.postForObject(apiUrl, entity, String::class.java)
+
+        val resposneMap = queryStringToMap(URLDecoder.decode(response, "UTF-8"))
+
+        return PayappResponseDto.PayappCancelStatusResponse(
+            state = resposneMap.get("state")?.toInt() ?: 0,
+            errorMessage = resposneMap.get("errorMessage") ?: "",
+            crDpname = resposneMap.get("cr_dpname") ?: "",
+            partcancel = resposneMap.get("partcancel") ?: "",
+            paybackprice = resposneMap.get("paybackprice")?.toInt() ?: 0,
+            partprice = resposneMap.get("partprice")?.toInt() ?: 0,
+            cancelTaxable = resposneMap.get("cancel_taxable")?.toInt() ?: 0,
+            cancelVat = resposneMap.get("cancel_vat")?.toInt() ?: 0,
+            cancelTaxfree = resposneMap.get("cancel_taxfree")?.toInt() ?: 0,
+            paybackbank = resposneMap.get("paybackbank") ?: "",
+        )
     }
 
     fun mapToQueryString(map: Map<String, String?>): String {

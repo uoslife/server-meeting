@@ -39,7 +39,19 @@ class PaymentApi(@Qualifier("PayappService") private val paymentService: Payment
         return ResponseEntity.ok("SUCCESS")
     }
 
-    @PostMapping("/refund") fun refundPaymentById(): Unit {}
+    @PostMapping("/refund")
+    fun refundPaymentById(
+        @AuthenticationPrincipal userDetails: UserDetails
+    ): ResponseEntity<PayappResponseDto.PayappCancelStatusResponse> {
+        val userUUID = UUID.fromString(userDetails.username)
 
-    @PostMapping("/refund/all") fun refundPayment(): Unit {}
+        val payappCancelStatusResponse = paymentService.refundPaymentById(userUUID)
+        return ResponseEntity.status(HttpStatus.OK).body(payappCancelStatusResponse)
+    }
+
+    @PostMapping("/refund/all")
+    fun refundPayment(): ResponseEntity<PayappResponseDto.PayappNotMatchingCancelResponse> {
+        val payappNotMatchingCancelResponse = paymentService.refundPayment()
+        return ResponseEntity.status(HttpStatus.OK).body(payappNotMatchingCancelResponse)
+    }
 }
