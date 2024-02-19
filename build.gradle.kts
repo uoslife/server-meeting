@@ -1,9 +1,10 @@
+import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.springframework.boot") version "3.0.5"
     id("io.spring.dependency-management") version "1.1.0"
-    id("org.asciidoctor.convert") version "2.4.0"
+    id("org.asciidoctor.jvm.convert") version "4.0.2"
     id("com.diffplug.spotless") version "6.11.0"
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
@@ -11,6 +12,8 @@ plugins {
     kotlin("kapt") version "1.7.10" // querydsl
     id("jacoco") // jacoco 플러그인 추가
     id("org.jetbrains.dokka") version "1.9.10" // dokka 플러그인 추가
+    id("com.epages.restdocs-api-spec") version "0.18.2"
+
 }
 
 allOpen {
@@ -32,6 +35,7 @@ repositories {
 }
 
 val snippetsDir by extra { file("build/generated-snippets") }
+
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -76,6 +80,12 @@ dependencies {
     testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
     testImplementation("org.testcontainers:postgresql")
 
+    //spring-restdocs
+    testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
+    testImplementation("io.rest-assured:rest-assured:5.2.0")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor")
+    testCompileOnly("com.epages:restdocs-api-spec-restassured:0.18.2")
 
     // hibernate annotation
     implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
@@ -84,11 +94,26 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:mathjax-plugin:1.9.10")
 }
 
+
+tasks {
+    withType<AsciidoctorTask> {
+        inputs.dir(snippetsDir)
+        dependsOn("test")
+    }
+}
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
     }
+}
+
+openapi3 {
+    setServer("http://localhost:8080")
+    title = "UOSLIFE Meeting API"
+    description = "UOSLIFE Meeting API Documentation"
+    version = "v0.0.1"
+    format = "yaml"
 }
 
 tasks.named<Jar>("jar") {
@@ -118,6 +143,10 @@ tasks.jacocoTestReport {
 
 tasks.test {
     outputs.dir(snippetsDir)
+}
+
+asciidoctorj {
+
 }
 
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
