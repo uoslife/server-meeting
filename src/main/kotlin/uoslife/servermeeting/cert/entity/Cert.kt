@@ -16,7 +16,6 @@ class Cert(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, unique = true)
     val id: Long? = null,
-
     val email: String? = null,
     val university: University? = null,
     val code: String? = null, // 인증 코드

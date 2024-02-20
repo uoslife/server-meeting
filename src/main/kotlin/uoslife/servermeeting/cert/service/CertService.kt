@@ -5,7 +5,6 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.cert.dto.request.CertifyRequest
 import uoslife.servermeeting.cert.dto.request.VerifyCodeRequest
-import uoslife.servermeeting.cert.dto.response.VerifyCodeResponse
 import uoslife.servermeeting.cert.entity.Cert
 import uoslife.servermeeting.cert.exception.CertNotFoundException
 import uoslife.servermeeting.cert.repository.CertRepository
@@ -17,9 +16,7 @@ class CertService(
     private val javaMailSender: JavaMailSender,
     private val uniqueCodeGenerator: UniqueCodeGenerator
 ) {
-    fun sendMail(
-        certifyRequest: CertifyRequest
-    ): Boolean {
+    fun sendMail(certifyRequest: CertifyRequest): Boolean {
         // 코드 생성, 옮길 예정
         val code: String = uniqueCodeGenerator.getUniqueCertCode()
 
@@ -43,7 +40,13 @@ class CertService(
     }
 
     fun verifyCode(verifyCodeRequest: VerifyCodeRequest): Boolean {
-        val cert: Cert = certRepository.findByEmailAndCodeAndIsVerifiedNot(verifyCodeRequest.email, verifyCodeRequest.code) ?: throw CertNotFoundException()// email, code가 일치하고 verifed 되지 않은 레코드 반환(verified된 Cert는 이미 사용 됨.)
+        val cert: Cert =
+            certRepository.findByEmailAndCodeAndIsVerifiedNot(
+                verifyCodeRequest.email,
+                verifyCodeRequest.code
+            )
+                ?: throw CertNotFoundException(
+                ) // email, code가 일치하고 verifed 되지 않은 레코드 반환(verified된 Cert는 이미 사용 됨.)
         cert.isVerified = true // 인증 된 Cert로 변경
         certRepository.save(cert) // DB에 저장
 
