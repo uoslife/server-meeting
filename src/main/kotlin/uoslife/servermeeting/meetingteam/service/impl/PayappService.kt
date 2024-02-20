@@ -40,6 +40,8 @@ class PayappService(
     @Value("\${payapp.api.goodname}") private val goodName: String,
     @Value("\${payapp.api.price.single}") private val singlePrice: Int,
     @Value("\${payapp.api.price.triple}") private val triplePrice: Int,
+    @Value("\${payapp.api.price.refund.single}") private val refundSinglePrice: Int,
+    @Value("\${payapp.api.price.refund.triple}") private val refundTriplePrice: Int,
     @Value("\${payapp.api.feedbackurl}") private val feedbackUrl: String,
     @Value("\${payapp.api.link.key}") private val linkKey: String,
     @Value("\${payapp.api.link.value}") private val linkValue: String,
@@ -172,8 +174,8 @@ class PayappService(
 
         val price =
             when (user.team!!.type) {
-                TeamType.SINGLE -> singlePrice
-                TeamType.TRIPLE -> triplePrice
+                TeamType.SINGLE -> refundSinglePrice
+                TeamType.TRIPLE -> refundTriplePrice
             }
 
         var payment: Payment =
@@ -198,8 +200,8 @@ class PayappService(
             users.map { user ->
                 val price =
                     when (user.team!!.type) {
-                        TeamType.SINGLE -> singlePrice
-                        TeamType.TRIPLE -> triplePrice
+                        TeamType.SINGLE -> refundSinglePrice
+                        TeamType.TRIPLE -> refundTriplePrice
                     }
                 val payappCanelStatusResponse = refundPaymentByIdInPayApp(user.payment!!, price)
                 payappCanelStatusResponse
