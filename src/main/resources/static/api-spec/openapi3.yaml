@@ -1,0 +1,11 @@
+openapi: 3.0.1
+info:
+  title: UOSLIFE Meeting API
+  description: UOSLIFE Meeting API Documentation
+  version: v0.0.1
+servers:
+- url: http://localhost:8080
+tags: []
+paths: {}
+components:
+  schemas: {}
