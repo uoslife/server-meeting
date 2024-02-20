@@ -16,8 +16,8 @@ class Certification(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, unique = true)
     val id: Long? = null,
-    val email: String? = null,
-    val university: University? = null,
+    val email: String,
+    val university: University,
     val code: String? = null, // 인증 코드
     var isVerified: Boolean = false, // 인증 됐는지 확인
 ) : BaseEntity()
