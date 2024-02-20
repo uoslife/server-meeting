@@ -42,4 +42,12 @@ class CertApi (
         return ResponseEntity.ok()
             .body(VerifyCodeResponse(true))
     }
+
+    @Operation(summary = "인증 여부 확인", description = "이메일을 조회하여 이미 인증 되었는지 확인한다.")
+    @GetMapping("/{email}")
+    fun isVerifiedCert(@PathVariable email: String): ResponseEntity<CertCheckResponse> {
+        val status: Boolean = certService.findByEmailAndIsVerified(email)
+
+        return ResponseEntity.ok().body(CertCheckResponse(status))
+    }
 }

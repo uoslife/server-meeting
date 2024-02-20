@@ -49,4 +49,9 @@ class CertService(
 
         return true
     }
+
+    fun findByEmailAndIsVerified(email: String): Boolean {
+        val status: Boolean = certRepository.existsByEmailAndIsVerified(email)
+        return status
+    }
 }
