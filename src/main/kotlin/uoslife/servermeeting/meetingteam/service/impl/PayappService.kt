@@ -3,6 +3,7 @@ package uoslife.servermeeting.meetingteam.service.impl
 import jakarta.transaction.Transactional
 import java.net.URLDecoder
 import java.net.URLEncoder
+import java.time.LocalDateTime
 import java.util.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -79,17 +80,10 @@ class PayappService(
 
         // 결제 여부에 따라 PaymentStatus 리턴
         if (payappRequestStatusResponse.state == 1) {
-            paymentDao.updatePaymentByRequest(
-                payment,
-                payappRequestStatusResponse,
-                PaymentStatus.REQUEST
-            )
+            paymentDao.updatePaymentStatus(payment, PaymentStatus.REQUEST)
+            paymentDao.updatePaymentMulNo(payment, payappRequestStatusResponse.mulNo)
         } else {
-            paymentDao.updatePaymentByRequest(
-                payment,
-                payappRequestStatusResponse,
-                PaymentStatus.CANCEL_REQUEST
-            )
+            paymentDao.updatePaymentStatus(payment, PaymentStatus.CANCEL_REQUEST)
         }
 
         return payappRequestStatusResponse
@@ -144,14 +138,18 @@ class PayappService(
 
         // DB에서 해당 payment 찾기
         val payment =
-            paymentDao.selectPaymentByMulNoAndVar(request.mulNo, request.identifier1, request.identifier2)
+            paymentDao.selectPaymentByMulNoAndVar(
+                request.mulNo,
+                request.identifier1,
+                request.identifier2
+            )
                 ?: throw PaymentNotFoundException()
 
         // DB에 저장된 가격과 결제 통보로 들어온 가격이 다른 경우 예외처 리
         require(payment.price != request.price) { throw PaymentInformationInvalidException() }
 
         // payment 상태 업데이트
-        paymentDao.updatePaymentByCheck(
+        paymentDao.updatePaymentStatus(
             payment,
             when (request.payState) {
                 1 -> PaymentStatus.REQUEST
@@ -167,6 +165,7 @@ class PayappService(
                 else -> throw PaymentInformationInvalidException()
             }
         )
+        paymentDao.updatePaymentPayDate(payment, LocalDateTime.now())
     }
 
     @Transactional
@@ -194,9 +193,9 @@ class PayappService(
 
         // 결제 취소 여부에 따라 상태 변경
         if (payappCancelStatusResponse.state == 1) {
-            paymentDao.updatePaymentByCancel(payment, PaymentStatus.CANCEL_PARTIAL_REFUND)
+            paymentDao.updatePaymentStatus(payment, PaymentStatus.CANCEL_PARTIAL_REFUND)
         } else {
-            paymentDao.updatePaymentByCancel(payment, PaymentStatus.FAILED_REFUND)
+            paymentDao.updatePaymentStatus(payment, PaymentStatus.FAILED_REFUND)
         }
 
         return payappCancelStatusResponse
