@@ -41,4 +41,12 @@ class CertService(
 
         return true
     }
+
+    fun verifyCode(verifyCodeRequest: VerifyCodeRequest): Boolean {
+        val cert: Cert = certRepository.findByEmailAndCodeAndIsVerifiedNot(verifyCodeRequest.email, verifyCodeRequest.code) ?: throw CertNotFoundException()// email, code가 일치하고 verifed 되지 않은 레코드 반환(verified된 Cert는 이미 사용 됨.)
+        cert.isVerified = true // 인증 된 Cert로 변경
+        certRepository.save(cert) // DB에 저장
+
+        return true
+    }
 }

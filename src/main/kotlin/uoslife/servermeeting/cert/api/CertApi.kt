@@ -31,4 +31,15 @@ class CertApi (
         return ResponseEntity.ok()
             .body(SendMailResponse(status))
     }
+
+    @Operation(summary = "인증 코드 확인", description = "cert 테이블의 인증 코드와 사용자가 입력한 인증 코드를 비교합니다.")
+    @PostMapping("/code")
+    fun verifyCode(
+        @RequestBody verifyCodeRequest: VerifyCodeRequest
+    ): ResponseEntity<VerifyCodeResponse> {
+        val status: Boolean = certService.verifyCode(verifyCodeRequest)
+
+        return ResponseEntity.ok()
+            .body(VerifyCodeResponse(true))
+    }
 }
