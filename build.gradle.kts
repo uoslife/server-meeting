@@ -81,11 +81,9 @@ dependencies {
     testImplementation("org.testcontainers:postgresql")
 
     //spring-restdocs
-    testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
-    testImplementation("io.rest-assured:rest-assured:5.2.0")
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor")
-    testCompileOnly("com.epages:restdocs-api-spec-restassured:0.18.2")
 
     // hibernate annotation
     implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
@@ -114,6 +112,7 @@ openapi3 {
     description = "UOSLIFE Meeting API Documentation"
     version = "v0.0.1"
     format = "yaml"
+    outputDirectory = "src/main/resources/static/api-spec"
 }
 
 tasks.named<Jar>("jar") {
@@ -132,6 +131,7 @@ spotless {
 }
 
 tasks.jacocoTestReport {
+    dependsOn(tasks.named("spotlessKotlin"))
     executionData(fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec"))
 
     reports {
