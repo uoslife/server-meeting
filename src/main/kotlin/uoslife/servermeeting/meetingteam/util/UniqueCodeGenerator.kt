@@ -14,7 +14,7 @@ class UniqueCodeGenerator(
 ) {
     fun getUniqueTeamCode(): String {
         val characters = ('A'..'Z') + ('0'..'9') // A-Z, 0-9 문자열 리스트
-        val random = Random()
+        val random = SecureRandom.getInstanceStrong()
 
         var code: String
         var attempts = 0
