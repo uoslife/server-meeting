@@ -5,14 +5,14 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.cert.dto.request.CertifyRequest
 import uoslife.servermeeting.cert.dto.request.VerifyCodeRequest
-import uoslife.servermeeting.cert.entity.Cert
-import uoslife.servermeeting.cert.exception.CertNotFoundException
-import uoslife.servermeeting.cert.repository.CertRepository
+import uoslife.servermeeting.cert.entity.Certification
+import uoslife.servermeeting.cert.exception.CertificationNotFoundException
+import uoslife.servermeeting.cert.repository.CertificationRepository
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 
 @Service
-class CertService(
-    private val certRepository: CertRepository,
+class CertificationService(
+    private val certificationRepository: CertificationRepository,
     private val javaMailSender: JavaMailSender,
     private val uniqueCodeGenerator: UniqueCodeGenerator
 ) {
@@ -21,10 +21,10 @@ class CertService(
         val code: String = uniqueCodeGenerator.getUniqueCertCode()
 
         // DTO to entity
-        var cert: Cert = Cert(null, certifyRequest.email, certifyRequest.university, code)
+        var certification: Certification = Certification(null, certifyRequest.email, certifyRequest.university, code)
 
         // db에 저장, redis로 바꿔야 하나???
-        certRepository.save(cert)
+        certificationRepository.save(certification)
 
         // 메일 내용 생성
         var message: SimpleMailMessage = SimpleMailMessage()
@@ -40,21 +40,20 @@ class CertService(
     }
 
     fun verifyCode(verifyCodeRequest: VerifyCodeRequest): Boolean {
-        val cert: Cert =
-            certRepository.findByEmailAndCodeAndIsVerifiedNot(
+        val certification: Certification =
+            certificationRepository.findByEmailAndCodeAndIsVerifiedNot(
                 verifyCodeRequest.email,
                 verifyCodeRequest.code
             )
-                ?: throw CertNotFoundException(
-                ) // email, code가 일치하고 verifed 되지 않은 레코드 반환(verified된 Cert는 이미 사용 됨.)
-        cert.isVerified = true // 인증 된 Cert로 변경
-        certRepository.save(cert) // DB에 저장
+                ?: throw CertificationNotFoundException()
+        certification.isVerified = true // 인증 된 Cert로 변경
+        certificationRepository.save(certification) // DB에 저장
 
         return true
     }
 
     fun findByEmailAndIsVerified(email: String): Boolean {
-        val status: Boolean = certRepository.existsByEmailAndIsVerified(email)
-        return status
+        val isVerifiedStatus: Boolean = certificationRepository.existsByEmailAndIsVerified(email)
+        return isVerifiedStatus
     }
 }

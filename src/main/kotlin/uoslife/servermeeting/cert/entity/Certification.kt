@@ -10,8 +10,8 @@ import uoslife.servermeeting.cert.dto.University
 import uoslife.servermeeting.global.common.BaseEntity
 
 @Entity
-@Table(name = "cert")
-class Cert(
+@Table(name = "certication")
+class Certification(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, unique = true)

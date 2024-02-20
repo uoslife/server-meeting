@@ -20,10 +20,10 @@ class EmailConfig {
     @Value("\${spring.mail.properties.mail.smtp.auth}") private val auth = false
 
     @Value("\${spring.mail.properties.mail.smtp.starttls.enable}")
-    private val starttlsEnable = false
+    private val startTlsEnable = false
 
     @Value("\${spring.mail.properties.mail.smtp.starttls.required}")
-    private val starttlsRequired = false
+    private val startTlsRequired = false
 
     @Value("\${spring.mail.properties.mail.smtp.connectiontimeout}")
     private val connectionTimeout = 0
@@ -48,8 +48,8 @@ class EmailConfig {
         private get() {
             val properties = Properties()
             properties["mail.smtp.auth"] = auth
-            properties["mail.smtp.starttls.enable"] = starttlsEnable
-            properties["mail.smtp.starttls.required"] = starttlsRequired
+            properties["mail.smtp.starttls.enable"] = startTlsEnable
+            properties["mail.smtp.starttls.required"] = startTlsRequired
             properties["mail.smtp.connectiontimeout"] = connectionTimeout
             properties["mail.smtp.timeout"] = timeout
             properties["mail.smtp.writetimeout"] = writeTimeout
