@@ -1,5 +1,7 @@
 package uoslife.servermeeting.meetingteam.api
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import java.util.*
 import org.springframework.beans.factory.annotation.Qualifier
@@ -20,6 +22,11 @@ import uoslife.servermeeting.meetingteam.service.PaymentService
 @Tag(name = "Payment", description = "결제 API")
 class PaymentApi(@Qualifier("PayappService") private val paymentService: PaymentService) {
 
+    @Operation(summary = "결제 요청 API", description = "결제 요청 링크를 제공(아직 결제된 것 아님)")
+    @ApiResponse(
+        responseCode = "200",
+        description = "state = 1이면 요청 성공, state = 0이면 요청 실패",
+    )
     @PostMapping("/request")
     fun requestPayment(
         @AuthenticationPrincipal userDetails: UserDetails
@@ -31,6 +38,11 @@ class PaymentApi(@Qualifier("PayappService") private val paymentService: Payment
     }
 
     // TODO: AUTH FITERING OFF
+    @Operation(summary = "결제 통보 API", description = "payapp 서버에서 해당 api로 결제 결과 전달")
+    @ApiResponse(
+        responseCode = "200",
+        description = "pay_state를 통해 결제 상태 분류",
+    )
     @PostMapping("/check")
     fun checkPayment(
         @RequestBody payappCheckStatusRequest: PayappRequestDto.PayappCheckStatusRequest
@@ -39,6 +51,11 @@ class PaymentApi(@Qualifier("PayappService") private val paymentService: Payment
         return ResponseEntity.ok("SUCCESS")
     }
 
+    @Operation(summary = "결제 취소 API", description = "user 특정하여 결제 취소")
+    @ApiResponse(
+        responseCode = "200",
+        description = "mulNo를 통해 식별",
+    )
     @PostMapping("/refund")
     fun refundPaymentById(
         @AuthenticationPrincipal userDetails: UserDetails
@@ -49,6 +66,11 @@ class PaymentApi(@Qualifier("PayappService") private val paymentService: Payment
         return ResponseEntity.status(HttpStatus.OK).body(payappCancelStatusResponse)
     }
 
+    @Operation(summary = "매칭 안된 유저 결제 취소 API", description = "매칭이 되지않은 모든 유저에 대해 환불")
+    @ApiResponse(
+        responseCode = "200",
+        description = "모든 환불 정보 제공",
+    )
     @PostMapping("/refund/all")
     fun refundPayment(): ResponseEntity<PayappResponseDto.PayappNotMatchingCancelResponse> {
         val payappNotMatchingCancelResponse = paymentService.refundPayment()

@@ -21,15 +21,15 @@ class PaymentDao(private val queryFactory: JPAQueryFactory) {
             .update(payment)
             .where(payment.eq(updatePayment))
             .set(payment.status, paymentStatus)
-            .set(payment.mul_no, payappRequestStatusResponse.mulNo)
+            .set(payment.mulNo, payappRequestStatusResponse.mulNo)
             .execute()
     }
 
-    fun selectPaymentByMulNoAndVar(mulNo: Int, var1: String, var2: String): Payment? {
+    fun selectPaymentByMulNoAndVar(mulNo: Int, identifier1: String, identifier2: String): Payment? {
         return queryFactory
             .select(payment)
             .from(payment)
-            .where(payment.mul_no.eq(mulNo).and(payment.var1.eq(var1)).and(payment.var2.eq(var2)))
+            .where(payment.mulNo.eq(mulNo).and(payment.identifier1.eq(identifier1)).and(payment.identifier2.eq(identifier2)))
             .fetchOne()
     }
 

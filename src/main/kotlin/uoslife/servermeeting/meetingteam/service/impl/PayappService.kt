@@ -112,8 +112,8 @@ class PayappService(
                 "price" to payment.price.toString(),
                 "recvphone" to payment.user!!.phoneNumber,
                 "feedbackurl" to feedbackUrl,
-                "var1" to payment.var1,
-                "var2" to payment.var2
+                "identifier1" to payment.identifier1,
+                "identifier2" to payment.identifier2
             )
 
         val entity = HttpEntity(mapToQueryString(requestMap), header)
@@ -139,7 +139,7 @@ class PayappService(
         }
 
         val payment =
-            paymentDao.selectPaymentByMulNoAndVar(request.mulNo, request.var1, request.var2)
+            paymentDao.selectPaymentByMulNoAndVar(request.mulNo, request.identifier1, request.identifier2)
                 ?: throw PaymentNotFoundException()
 
         require(payment.price != request.price) { throw PaymentInformationInvalidException() }

@@ -24,8 +24,8 @@ class Payment(
     @JoinColumn(name = "payment_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     var user: User? = null,
     var mulNo: Int? = null,
-    var var1: String? = null,
-    var var2: String? = null,
+    var identifier1: String? = null,
+    var identifier2: String? = null,
     var price: Int? = null,
     var payDate: LocalDateTime? = null,
     @Enumerated(EnumType.STRING) var status: PaymentStatus? = null,
@@ -33,15 +33,15 @@ class Payment(
     companion object {
         fun createPayment(
             user: User,
-            var1: String,
-            var2: String,
+            identifier1: String,
+            identifier2: String,
             price: Int,
         ): Payment {
             return Payment(
                 user = user,
                 mulNo = null,
-                var1 = var1,
-                var2 = var2,
+                identifier1 = identifier1,
+                identifier2 = identifier2,
                 price = price,
                 payDate = null,
                 status = PaymentStatus.NONE
