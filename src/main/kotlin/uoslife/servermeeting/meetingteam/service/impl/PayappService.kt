@@ -95,6 +95,7 @@ class PayappService(
         return payappRequestStatusResponse
     }
 
+    // payapp 결제요청 api
     fun requestPaymentInPayApp(payment: Payment): PayappResponseDto.PayappRequestStatusResponse {
         val restTemplate = RestTemplate()
 
@@ -134,18 +135,22 @@ class PayappService(
 
     @Transactional
     override fun checkPayment(request: PayappRequestDto.PayappCheckStatusRequest) {
+        // userid, linkkey, linkval이 다른 경우 예외 처리
         require(
             userId == request.userid && linkKey == request.linkkey && linkValue == request.linkval
         ) {
             throw PaymentInformationInvalidException()
         }
 
+        // DB에서 해당 payment 찾기
         val payment =
             paymentDao.selectPaymentByMulNoAndVar(request.mulNo, request.identifier1, request.identifier2)
                 ?: throw PaymentNotFoundException()
 
+        // DB에 저장된 가격과 결제 통보로 들어온 가격이 다른 경우 예외처 리
         require(payment.price != request.price) { throw PaymentInformationInvalidException() }
 
+        // payment 상태 업데이트
         paymentDao.updatePaymentByCheck(
             payment,
             when (request.payState) {
@@ -166,23 +171,28 @@ class PayappService(
 
     @Transactional
     override fun refundPaymentById(userUUID: UUID): PayappResponseDto.PayappCancelStatusResponse {
+        // 환불할 유저 찾기
         val user: User =
             userRepository.findByIdOrNull(userUUID)?.also { user ->
                 user.team ?: throw MeetingTeamNotFoundException()
             }
                 ?: throw UserNotFoundException()
 
+        // 환불 가격 설정
         val price =
             when (user.team!!.type) {
                 TeamType.SINGLE -> refundSinglePrice
                 TeamType.TRIPLE -> refundTriplePrice
             }
 
+        // payment 찾기
         var payment: Payment =
             paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
 
+        // payapp 결제 취소 api
         val payappCancelStatusResponse = refundPaymentByIdInPayApp(payment, price)
 
+        // 결제 취소 여부에 따라 상태 변경
         if (payappCancelStatusResponse.state == 1) {
             paymentDao.updatePaymentByCancel(payment, PaymentStatus.CANCEL_PARTIAL_REFUND)
         } else {
@@ -194,8 +204,10 @@ class PayappService(
 
     @Transactional
     override fun refundPayment(): PayappResponseDto.PayappNotMatchingCancelResponse {
+        // 매칭되지않은 userList 조회
         val users = userDao.selctNotMatchedUser()
 
+        // 각 user마다 환불
         val payappCanelStatusResponseList =
             users.map { user ->
                 val price =
@@ -207,6 +219,7 @@ class PayappService(
                 payappCanelStatusResponse
             }
 
+        // 성공, 실패 count 후 return
         val successCount = payappCanelStatusResponseList.sumOf { it.state }
         val failedCount = payappCanelStatusResponseList.size - successCount
 
@@ -217,6 +230,7 @@ class PayappService(
         )
     }
 
+    // payapp 결제 취소 api
     fun refundPaymentByIdInPayApp(
         payment: Payment,
         price: Int
