@@ -1,5 +1,6 @@
 package uoslife.servermeeting.cert.service
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
@@ -14,7 +15,9 @@ import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 class CertificationService(
     private val certificationRepository: CertificationRepository,
     private val javaMailSender: JavaMailSender,
-    private val uniqueCodeGenerator: UniqueCodeGenerator
+    private val uniqueCodeGenerator: UniqueCodeGenerator,
+    @Value("\${mail.from}")
+    private val mailFrom: String
 ) {
     fun sendMail(certifyRequest: CertifyRequest): Boolean {
         // 코드 생성, 옮길 예정
@@ -28,7 +31,7 @@ class CertificationService(
 
         // 메일 내용 생성
         var message: SimpleMailMessage = SimpleMailMessage()
-        message.from = "gustmd5715@gmail.com"
+        message.from = mailFrom
         message.setTo(certifyRequest.email)
         message.subject = "Uoslife : 인증 메일 코드를 확인해주세요"
         message.text = "인증 번호 : " + code
