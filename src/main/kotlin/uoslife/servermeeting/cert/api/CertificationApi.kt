@@ -19,9 +19,9 @@ class CertificationApi(private val certificationService: CertificationService) {
     @Operation(summary = "대학 메일 인증 시작", description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다.")
     @PostMapping
     fun sendMail(@RequestBody certifyRequest: CertifyRequest): ResponseEntity<SendMailResponse> {
-        val status: Boolean = certificationService.sendMail(certifyRequest)
+        val isSended: Boolean = certificationService.sendMail(certifyRequest)
 
-        return ResponseEntity.ok().body(SendMailResponse(status))
+        return ResponseEntity.ok().body(SendMailResponse(isSended))
     }
 
     @Operation(summary = "인증 코드 확인", description = "cert 테이블의 인증 코드와 사용자가 입력한 인증 코드를 비교합니다.")
@@ -29,9 +29,9 @@ class CertificationApi(private val certificationService: CertificationService) {
     fun verifyCode(
         @RequestBody verifyCodeRequest: VerifyCodeRequest
     ): ResponseEntity<VerificationCodeResponse> {
-        val status: Boolean = certificationService.verifyCode(verifyCodeRequest)
+        val isVerified: Boolean = certificationService.verifyCode(verifyCodeRequest)
 
-        return ResponseEntity.ok().body(VerificationCodeResponse(true))
+        return ResponseEntity.ok().body(VerificationCodeResponse(isVerified))
     }
 
     @Operation(summary = "인증 여부 확인", description = "이메일을 조회하여 이미 인증 되었는지 확인한다.")

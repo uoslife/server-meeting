@@ -20,13 +20,13 @@ class CertificationService(
     private val mailFrom: String
 ) {
     fun sendMail(certifyRequest: CertifyRequest): Boolean {
-        // 코드 생성, 옮길 예정
+        // Certification 코드 생성
         val code: String = uniqueCodeGenerator.getUniqueCertCode()
 
         // DTO to entity
-        var certification: Certification = Certification(null, certifyRequest.email, certifyRequest.university, code)
+        val certification: Certification = Certification(null, certifyRequest.email, certifyRequest.university, code)
 
-        // db에 저장, redis로 바꿔야 하나???
+        // db에 저장
         certificationRepository.save(certification)
 
         // 메일 내용 생성
@@ -50,7 +50,7 @@ class CertificationService(
             )
                 ?: throw CertificationNotFoundException()
         certification.isVerified = true // 인증 된 Cert로 변경
-        certificationRepository.save(certification) // DB에 저장
+        certificationRepository.save(certification) // 변경 사항 DB에 저장
 
         return true
     }
