@@ -1,6 +1,7 @@
 package uoslife.servermeeting.cert.api
 
 import io.swagger.v3.oas.annotations.Operation
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,7 +19,7 @@ import uoslife.servermeeting.cert.service.CertificationService
 class CertificationApi(private val certificationService: CertificationService) {
     @Operation(summary = "대학 메일 인증 시작", description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다.")
     @PostMapping
-    fun sendMail(@RequestBody certifyRequest: CertifyRequest): ResponseEntity<SendMailResponse> {
+    fun sendMail(@RequestBody @Valid certifyRequest: CertifyRequest): ResponseEntity<SendMailResponse> {
         val isSended: Boolean = certificationService.sendMail(certifyRequest)
 
         return ResponseEntity.ok().body(SendMailResponse(isSended))
@@ -27,7 +28,7 @@ class CertificationApi(private val certificationService: CertificationService) {
     @Operation(summary = "인증 코드 확인", description = "cert 테이블의 인증 코드와 사용자가 입력한 인증 코드를 비교합니다.")
     @PostMapping("/code")
     fun verifyCode(
-        @RequestBody verifyCodeRequest: VerifyCodeRequest
+        @RequestBody @Valid verifyCodeRequest: VerifyCodeRequest
     ): ResponseEntity<VerificationCodeResponse> {
         val isVerified: Boolean = certificationService.verifyCode(verifyCodeRequest)
 
@@ -36,7 +37,7 @@ class CertificationApi(private val certificationService: CertificationService) {
 
     @Operation(summary = "인증 여부 확인", description = "이메일을 조회하여 이미 인증 되었는지 확인한다.")
     @GetMapping("/{email}")
-    fun isVerifiedCert(@PathVariable email: String): ResponseEntity<CertCheckResponse> {
+    fun isVerifiedCert(@PathVariable @Valid email: String): ResponseEntity<CertCheckResponse> {
         val status: Boolean = certificationService.findByEmailAndIsVerified(email)
 
         return ResponseEntity.ok().body(CertCheckResponse(status))
