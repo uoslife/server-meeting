@@ -93,4 +93,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "External API Request is failed.",
         HttpStatus.INTERNAL_SERVER_ERROR.value()
     ),
+
+    // Cert
+    CERT_NOT_FOUND("C01", "Certification is not Found", HttpStatus.BAD_REQUEST.value()),
 }

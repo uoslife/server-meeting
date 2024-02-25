@@ -82,6 +82,9 @@ dependencies {
 
     // dokka
     dokkaPlugin("org.jetbrains.dokka:mathjax-plugin:1.9.10")
+
+    // google mail authentication
+    implementation("org.springframework.boot:spring-boot-starter-mail")
 }
 
 tasks.withType<KotlinCompile> {
