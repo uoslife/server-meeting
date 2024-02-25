@@ -19,7 +19,9 @@ import uoslife.servermeeting.certification.service.CertificationService
 class CertificationApi(private val certificationService: CertificationService) {
     @Operation(summary = "메일 인증 코드 전송", description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다.")
     @PostMapping
-    fun sendMail(@RequestBody @Valid certifyRequest: CertifyRequest): ResponseEntity<SendMailResponse> {
+    fun sendMail(
+        @RequestBody @Valid certifyRequest: CertifyRequest
+    ): ResponseEntity<SendMailResponse> {
         val isSended: Boolean = certificationService.sendMail(certifyRequest)
 
         return ResponseEntity.ok().body(SendMailResponse(isSended))

@@ -2,7 +2,6 @@ package uoslife.servermeeting.certification.service
 
 import jakarta.mail.internet.MimeMessage
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
@@ -18,15 +17,15 @@ class CertificationService(
     private val certificationRepository: CertificationRepository,
     private val javaMailSender: JavaMailSender,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
-    @Value("\${mail.from}")
-    private val mailFrom: String
+    @Value("\${mail.from}") private val mailFrom: String
 ) {
     fun sendMail(certifyRequest: CertifyRequest): Boolean {
         // Certification 코드 생성
         val code: String = uniqueCodeGenerator.getUniqueCertCode()
 
         // DTO to entity
-        val certification: Certification = Certification(null, certifyRequest.email, certifyRequest.university, code)
+        val certification: Certification =
+            Certification(null, certifyRequest.email, certifyRequest.university, code)
 
         // db에 저장
         certificationRepository.save(certification)
