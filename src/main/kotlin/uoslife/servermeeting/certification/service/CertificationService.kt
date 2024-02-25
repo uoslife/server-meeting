@@ -1,9 +1,10 @@
 package uoslife.servermeeting.certification.service
 
+import jakarta.mail.internet.MimeMessage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
-import org.springframework.mail.javamail.MimeMailMessage
+import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.certification.dto.request.CertifyRequest
 import uoslife.servermeeting.certification.dto.request.VerifyCodeRequest
@@ -31,16 +32,22 @@ class CertificationService(
         certificationRepository.save(certification)
 
         // 메일 내용 생성
-        var message: MimeMailMessage = MimeMailMessage()
-        message.from = mailFrom
-        message.setTo(certifyRequest.email)
-        message.subject = "Uoslife : 인증 메일 코드를 확인해주세요"
-        message.text = "인증 번호 : " + code
+        val message: MimeMessage = javaMailSender.createMimeMessage()
+        val messageHelper: MimeMessageHelper = MimeMessageHelper(message, true)
+
+        messageHelper.setFrom(mailFrom)
+        messageHelper.setTo(certifyRequest.email)
+        messageHelper.setSubject("[시대팅] : 인증 메일 코드를 확인해주세요")
+        messageHelper.setText(getCertificationMessage(code), true)
 
         // 메일 보내기
         javaMailSender.send(message)
 
         return true
+    }
+
+    private fun getCertificationMessage(code: String): String {
+        return String.format("<h3 style='text-align:cetner;'>인증코드: %s</h3>", code)
     }
 
     fun verifyCode(verifyCodeRequest: VerifyCodeRequest): Boolean {
