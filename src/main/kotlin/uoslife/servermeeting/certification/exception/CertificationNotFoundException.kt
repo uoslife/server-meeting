@@ -1,4 +1,4 @@
-package uoslife.servermeeting.cert.exception
+package uoslife.servermeeting.certification.exception
 
 import uoslife.servermeeting.global.error.exception.EntityNotFoundException
 import uoslife.servermeeting.global.error.exception.ErrorCode

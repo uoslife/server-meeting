@@ -1,4 +1,4 @@
-package uoslife.servermeeting.cert.api
+package uoslife.servermeeting.certification.api
 
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uoslife.servermeeting.cert.dto.request.CertifyRequest
-import uoslife.servermeeting.cert.dto.request.VerifyCodeRequest
-import uoslife.servermeeting.cert.dto.response.*
-import uoslife.servermeeting.cert.service.CertificationService
+import uoslife.servermeeting.certification.dto.request.CertifyRequest
+import uoslife.servermeeting.certification.dto.request.VerifyCodeRequest
+import uoslife.servermeeting.certification.dto.response.*
+import uoslife.servermeeting.certification.service.CertificationService
 
 @RestController
 @RequestMapping("/api/cert")
 class CertificationApi(private val certificationService: CertificationService) {
-    @Operation(summary = "대학 메일 인증 시작", description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다.")
+    @Operation(summary = "메일 인증 코드 전송", description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다.")
     @PostMapping
     fun sendMail(@RequestBody @Valid certifyRequest: CertifyRequest): ResponseEntity<SendMailResponse> {
         val isSended: Boolean = certificationService.sendMail(certifyRequest)

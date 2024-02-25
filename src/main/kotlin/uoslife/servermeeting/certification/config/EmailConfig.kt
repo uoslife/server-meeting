@@ -1,4 +1,4 @@
-package uoslife.servermeeting.cert.config
+package uoslife.servermeeting.certification.config
 
 import java.util.*
 import org.springframework.beans.factory.annotation.Value

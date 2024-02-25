@@ -1,14 +1,15 @@
-package uoslife.servermeeting.cert.service
+package uoslife.servermeeting.certification.service
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
+import org.springframework.mail.javamail.MimeMailMessage
 import org.springframework.stereotype.Service
-import uoslife.servermeeting.cert.dto.request.CertifyRequest
-import uoslife.servermeeting.cert.dto.request.VerifyCodeRequest
-import uoslife.servermeeting.cert.entity.Certification
-import uoslife.servermeeting.cert.exception.CertificationNotFoundException
-import uoslife.servermeeting.cert.repository.CertificationRepository
+import uoslife.servermeeting.certification.dto.request.CertifyRequest
+import uoslife.servermeeting.certification.dto.request.VerifyCodeRequest
+import uoslife.servermeeting.certification.entity.Certification
+import uoslife.servermeeting.certification.exception.CertificationNotFoundException
+import uoslife.servermeeting.certification.repository.CertificationRepository
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 
 @Service
@@ -30,7 +31,7 @@ class CertificationService(
         certificationRepository.save(certification)
 
         // 메일 내용 생성
-        var message: SimpleMailMessage = SimpleMailMessage()
+        var message: MimeMailMessage = MimeMailMessage()
         message.from = mailFrom
         message.setTo(certifyRequest.email)
         message.subject = "Uoslife : 인증 메일 코드를 확인해주세요"

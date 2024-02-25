@@ -1,9 +1,8 @@
 package uoslife.servermeeting.meetingteam.util
 
 import java.security.SecureRandom
-import java.util.Random
 import org.springframework.stereotype.Component
-import uoslife.servermeeting.cert.repository.CertificationRepository
+import uoslife.servermeeting.certification.repository.CertificationRepository
 import uoslife.servermeeting.meetingteam.exception.TeamCodeGenerateFailedException
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 

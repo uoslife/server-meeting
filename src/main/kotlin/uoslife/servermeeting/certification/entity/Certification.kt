@@ -1,4 +1,4 @@
-package uoslife.servermeeting.cert.entity
+package uoslife.servermeeting.certification.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import uoslife.servermeeting.cert.dto.University
+import uoslife.servermeeting.certification.dto.University
 import uoslife.servermeeting.global.common.BaseEntity
 
 @Entity

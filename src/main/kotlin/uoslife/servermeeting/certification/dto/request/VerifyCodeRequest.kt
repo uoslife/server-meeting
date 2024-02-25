@@ -1,7 +1,7 @@
-package uoslife.servermeeting.cert.dto.request
+package uoslife.servermeeting.certification.dto.request
 
 import jakarta.validation.constraints.NotBlank
-import uoslife.servermeeting.cert.dto.University
+import uoslife.servermeeting.certification.dto.University
 
 data class VerifyCodeRequest(
     @NotBlank val university: University,

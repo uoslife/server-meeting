@@ -1,4 +1,4 @@
-package uoslife.servermeeting.cert.dto
+package uoslife.servermeeting.certification.dto
 
 enum class University {
     UOS,
