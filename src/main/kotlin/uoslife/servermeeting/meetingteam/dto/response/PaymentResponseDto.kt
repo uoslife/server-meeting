@@ -16,4 +16,10 @@ class PaymentResponseDto {
         var cancelSuccess: Boolean,
         var message: String,
     )
+
+    data class PaymentNotMatchingRefundResponse(
+        val successCount: Int,
+        val failedCount: Int,
+        val refundList: List<PaymentRefundResponse>,
+    )
 }

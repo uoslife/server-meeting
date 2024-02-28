@@ -42,12 +42,18 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
     }
 
     @PostMapping("/refund")
-    fun cancelPaymentById(
+    fun refundPaymentById(
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<PaymentResponseDto.PaymentRefundResponse> {
         val userUUID = UUID.fromString(userDetails.username)
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(paymentService.refundPaymentById(userUUID))
+    }
+
+    @PostMapping("/refund/match")
+    fun refundPayment(): ResponseEntity<PaymentResponseDto.PaymentNotMatchingRefundResponse> {
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(paymentService.refundPayment())
     }
 }

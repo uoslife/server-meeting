@@ -14,5 +14,5 @@ interface PaymentService {
         paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
     ): PaymentResponseDto.PaymentCheckResponse
     fun refundPaymentById(userUUID: UUID): PaymentResponseDto.PaymentRefundResponse
-    fun refundPayment()
+    fun refundPayment(): PaymentResponseDto.PaymentNotMatchingRefundResponse
 }

@@ -21,6 +21,7 @@ import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
+import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 import java.net.URI
@@ -29,6 +30,7 @@ import java.net.URI
 @Qualifier("PortOneService")
 class PortOneService(
     private val userRepository: UserRepository,
+    private val userDao: UserDao,
     private val paymentRepository: PaymentRepository,
     @Value("\${portone.api.url}") private val url: String,
     @Value("\${portone.api.price.single}") private val singlePrice: Int,
@@ -152,8 +154,32 @@ class PortOneService(
         return responseEntity.body!!
     }
 
-    override fun refundPayment() {
-        TODO("비매칭인원 전체 결제 취소")
+    override fun refundPayment(): PaymentResponseDto.PaymentNotMatchingRefundResponse {
+        val userList = userDao.findNotMatchedUser()
+
+        val refundList =
+            userList.map { user ->
+                val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
+                val response = refundPaymentByPortOne(payment)
+
+                if (response.code == 0) {
+                    payment.status = PaymentStatus.REFUND
+                    PaymentResponseDto.PaymentRefundResponse(true, "")
+                }
+                else {
+                    payment.status = PaymentStatus.FAILED
+                    PaymentResponseDto.PaymentRefundResponse(false, response.message!!)
+                }
+            }
+
+        val successCount = refundList.count { it.cancelSuccess }
+        val failedCount = refundList.size - successCount
+
+        return PaymentResponseDto.PaymentNotMatchingRefundResponse(
+            successCount,
+            failedCount,
+            refundList
+        )
     }
 
     fun findAccessToken(): String{
