@@ -106,7 +106,7 @@ class PortOneService(
             restTemplate.exchange(
                 uri,
                 HttpMethod.GET,
-                null, // 요청 바디가 필요 없는 경우 null 전달
+                null,
                 PortOneResponseDto.SingleHistoryResponse::class.java
             )
 
