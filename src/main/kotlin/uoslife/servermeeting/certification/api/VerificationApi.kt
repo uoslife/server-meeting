@@ -9,20 +9,20 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uoslife.servermeeting.certification.dto.request.CertifyRequest
-import uoslife.servermeeting.certification.dto.request.VerifyCodeRequest
+import uoslife.servermeeting.certification.dto.request.VerificationRequest
+import uoslife.servermeeting.certification.dto.request.VerificationCheckRequest
 import uoslife.servermeeting.certification.dto.response.*
-import uoslife.servermeeting.certification.service.CertificationService
+import uoslife.servermeeting.certification.service.VerificationService
 
 @RestController
 @RequestMapping("/api/cert")
-class CertificationApi(private val certificationService: CertificationService) {
+class VerificationApi(private val verificationService: VerificationService) {
     @Operation(summary = "메일 인증 코드 전송", description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다.")
     @PostMapping
     fun sendMail(
-        @RequestBody @Valid certifyRequest: CertifyRequest
+        @RequestBody @Valid verificationRequest: VerificationRequest
     ): ResponseEntity<SendMailResponse> {
-        val isSended: Boolean = certificationService.sendMail(certifyRequest)
+        val isSended: Boolean = verificationService.sendMail(verificationRequest)
 
         return ResponseEntity.ok().body(SendMailResponse(isSended))
     }
@@ -30,18 +30,18 @@ class CertificationApi(private val certificationService: CertificationService) {
     @Operation(summary = "인증 코드 확인", description = "cert 테이블의 인증 코드와 사용자가 입력한 인증 코드를 비교합니다.")
     @PostMapping("/code")
     fun verifyCode(
-        @RequestBody @Valid verifyCodeRequest: VerifyCodeRequest
+        @RequestBody @Valid verificationCheckRequest: VerificationCheckRequest
     ): ResponseEntity<VerificationCodeResponse> {
-        val isVerified: Boolean = certificationService.verifyCode(verifyCodeRequest)
+        val isVerified: Boolean = verificationService.verifyCode(verificationCheckRequest)
 
         return ResponseEntity.ok().body(VerificationCodeResponse(isVerified))
     }
 
     @Operation(summary = "인증 여부 확인", description = "이메일을 조회하여 이미 인증 되었는지 확인한다.")
     @GetMapping("/{email}")
-    fun isVerifiedCert(@PathVariable @Valid email: String): ResponseEntity<CertCheckResponse> {
-        val status: Boolean = certificationService.findByEmailAndIsVerified(email)
+    fun isVerifiedCert(@PathVariable @Valid email: String): ResponseEntity<VerificationCheckResponse> {
+        val status: Boolean = verificationService.findByEmailAndIsVerified(email)
 
-        return ResponseEntity.ok().body(CertCheckResponse(status))
+        return ResponseEntity.ok().body(VerificationCheckResponse(status))
     }
 }

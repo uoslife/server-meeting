@@ -2,14 +2,14 @@ package uoslife.servermeeting.meetingteam.util
 
 import java.security.SecureRandom
 import org.springframework.stereotype.Component
-import uoslife.servermeeting.certification.repository.CertificationRepository
+import uoslife.servermeeting.certification.repository.VerificationRepository
 import uoslife.servermeeting.meetingteam.exception.TeamCodeGenerateFailedException
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 
 @Component
 class UniqueCodeGenerator(
     private val meetingTeamRepository: MeetingTeamRepository,
-    private val certificationRepository: CertificationRepository,
+    private val verificationRepository: VerificationRepository,
 ) {
     fun getUniqueTeamCode(): String {
         val characters = ('A'..'Z') + ('0'..'9') // A-Z, 0-9 문자열 리스트
@@ -53,7 +53,7 @@ class UniqueCodeGenerator(
                     .joinToString("") // 선택된 문자들을 연결하여 문자열 생성
 
             // DB 내 코드의 중복 체크
-            isDuplicate = certificationRepository.existsByCode(code)
+            isDuplicate = verificationRepository.existsByCode(code)
         } while (isDuplicate)
 
         return code

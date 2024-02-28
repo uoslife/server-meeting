@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 import uoslife.servermeeting.certification.dto.University
 
-data class CertifyRequest(
+data class VerificationRequest(
     @NotBlank val university: University,
     @NotBlank
     @Pattern(
