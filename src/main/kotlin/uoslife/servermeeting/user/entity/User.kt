@@ -4,6 +4,7 @@ import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.*
 import java.util.*
 import org.hibernate.annotations.Type
+import uoslife.servermeeting.certification.dto.University
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Payment
@@ -17,6 +18,7 @@ class User(
     var name: String?,
     var email: String? = null,
     var kakaoTalkId: String,
+    var university: University? = null,
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var userPersonalInformation: UserPersonalInformation = UserPersonalInformation(),
