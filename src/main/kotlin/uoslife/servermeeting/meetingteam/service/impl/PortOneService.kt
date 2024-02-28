@@ -154,6 +154,7 @@ class PortOneService(
         return responseEntity.body!!
     }
 
+    @Transactional
     override fun refundPayment(): PaymentResponseDto.PaymentNotMatchingRefundResponse {
         val userList = userDao.findNotMatchedUser()
 
