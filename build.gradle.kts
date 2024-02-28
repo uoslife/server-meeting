@@ -85,6 +85,9 @@ dependencies {
 
     // google mail authentication
     implementation("org.springframework.boot:spring-boot-starter-mail")
+
+    // reids
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 }
 
 tasks.withType<KotlinCompile> {
