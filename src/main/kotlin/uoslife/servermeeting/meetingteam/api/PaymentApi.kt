@@ -19,7 +19,7 @@ import uoslife.servermeeting.meetingteam.service.PaymentService
 @RequestMapping("/api/payment")
 @Tag(name = "Payment", description = "결제 API")
 class PaymentApi(@Qualifier("PortOneService") private val paymentService: PaymentService) {
-    @PostMapping
+    @PostMapping("/request")
     fun requestPayment(
         @AuthenticationPrincipal userDetails: UserDetails,
         @RequestBody paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest
@@ -39,5 +39,15 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(paymentService.checkPayment(userUUID, paymentCheckRequest))
+    }
+
+    @PostMapping("/refund")
+    fun cancelPaymentById(
+        @AuthenticationPrincipal userDetails: UserDetails,
+    ): ResponseEntity<PaymentResponseDto.PaymentRefundResponse> {
+        val userUUID = UUID.fromString(userDetails.username)
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(paymentService.refundPaymentById(userUUID))
     }
 }

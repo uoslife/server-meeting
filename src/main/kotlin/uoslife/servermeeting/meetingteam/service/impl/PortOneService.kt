@@ -18,15 +18,11 @@ import uoslife.servermeeting.meetingteam.dto.response.PortOneResponseDto
 import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
-import uoslife.servermeeting.meetingteam.exception.AccessTokenNotFoundException
-import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
-import uoslife.servermeeting.meetingteam.exception.PaymentNotFoundException
-import uoslife.servermeeting.meetingteam.exception.PhoneNumberNotFoundException
+import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
-import java.lang.Exception
 import java.net.URI
 
 @Service
@@ -81,20 +77,20 @@ class PortOneService(
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
         val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
 
-        val payResult = checkPaymentByPortOne(request.impUid)
+        val response = checkPaymentByPortOne(request.impUid)
 
-        if (payResult.code == 0) {
+        if (response.code == 0) {
             payment.impUid = request.impUid
             payment.status = PaymentStatus.SUCCESS
             return PaymentResponseDto.PaymentCheckResponse(true, "")
         }
         else {
             payment.status = PaymentStatus.FAILED
-            return PaymentResponseDto.PaymentCheckResponse(false, payResult.message!!)
+            return PaymentResponseDto.PaymentCheckResponse(false, response.message!!)
         }
     }
 
-    fun checkPaymentByPortOne(impUid: String): PortOneResponseDto.PaymentSingleHistoryResponse{
+    fun checkPaymentByPortOne(impUid: String): PortOneResponseDto.SingleHistoryResponse{
         val restTemplate = RestTemplate()
 
         val header =
@@ -105,15 +101,61 @@ class PortOneService(
 
         val uri = url + "/payments/" + impUid
 
-        val responseEntity: ResponseEntity<PortOneResponseDto.PaymentSingleHistoryResponse> = restTemplate.exchange(
+        val responseEntity: ResponseEntity<PortOneResponseDto.SingleHistoryResponse> = restTemplate.exchange(
             uri,
             HttpMethod.GET,
             null, // 요청 바디가 필요 없는 경우 null 전달
-            PortOneResponseDto.PaymentSingleHistoryResponse::class.java
+            PortOneResponseDto.SingleHistoryResponse::class.java
         )
 
         return responseEntity.body!!
     }
+
+    @Transactional
+    override fun refundPaymentById(userUUID: UUID): PaymentResponseDto.PaymentRefundResponse {
+        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+        val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
+
+        if (!payment.status.equals(PaymentStatus.SUCCESS)) {
+            throw PaymentInValidException()
+        }
+
+        val response = refundPaymentByPortOne(payment)
+
+        if (response.code == 0) {
+            payment.status = PaymentStatus.REFUND
+            return PaymentResponseDto.PaymentRefundResponse(true, "")
+        }
+        else {
+            payment.status = PaymentStatus.FAILED
+            return PaymentResponseDto.PaymentRefundResponse(false, response.message!!)
+        }
+    }
+
+    fun refundPaymentByPortOne(payment: Payment): PortOneResponseDto.RefundResponse {
+        val restTemplate = RestTemplate()
+
+        val header =
+            HttpHeaders().apply {
+                set("Authorization", findAccessToken())
+                set("Content-Type", "application/json")
+            }
+
+        val requestBody = PortOneRequestDto.RefundRequest(payment.impUid, 0)
+
+        val requestEntity: RequestEntity<PortOneRequestDto.RefundRequest> = RequestEntity
+            .post(URI.create(url + "/payments/cancel"))
+            .headers(header)
+            .body(requestBody)
+
+        val responseEntity = restTemplate.exchange(requestEntity, PortOneResponseDto.RefundResponse::class.java)
+        return responseEntity.body!!
+    }
+
+    override fun refundPayment() {
+        TODO("비매칭인원 전체 결제 취소")
+    }
+
     fun findAccessToken(): String{
         val restTemplate = RestTemplate()
 
@@ -136,13 +178,5 @@ class PortOneService(
             throw AccessTokenNotFoundException()
         }
         return responseBody.response!!.access_token!!
-    }
-
-    override fun refundPaymentById() {
-        TODO("특정 유저 결제 취소")
-    }
-
-    override fun refundPayment() {
-        TODO("비매칭인원 전체 결제 취소")
     }
 }

@@ -11,4 +11,9 @@ class PaymentResponseDto {
         var paymentSuccess: Boolean,
         var message: String,
     )
+
+    data class PaymentRefundResponse(
+        var cancelSuccess: Boolean,
+        var message: String,
+    )
 }

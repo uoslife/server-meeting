@@ -31,7 +31,7 @@ class Payment(
     var price: Int? = null,
     var impUid: String? = null,
     var paidDate: LocalDateTime? = null,
-    @Enumerated(EnumType.STRING) var status: PaymentStatus? = null,
+    @Enumerated(EnumType.STRING) var status: PaymentStatus = PaymentStatus.NONE,
 ) : BaseEntity() {
     companion object {
         fun createPayment(

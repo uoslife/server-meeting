@@ -13,6 +13,6 @@ interface PaymentService {
         userUUID: UUID,
         paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
     ): PaymentResponseDto.PaymentCheckResponse
-    fun refundPaymentById()
+    fun refundPaymentById(userUUID: UUID): PaymentResponseDto.PaymentRefundResponse
     fun refundPayment()
 }

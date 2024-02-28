@@ -13,7 +13,7 @@ class PortOneResponseDto {
         var now: Int,
     )
 
-    data class PaymentSingleHistoryResponse(
+    data class SingleHistoryResponse(
         var code: Int?,
         var message: String?,
         var response: PaymentAnnotation?
@@ -76,5 +76,11 @@ class PortOneResponseDto {
         var reason: String,
         var cancellation_id: String,
         var receipt_url: String?
+    )
+
+    data class RefundResponse(
+        var code: Int?,
+        var message: String?,
+        var response: PaymentAnnotation?
     )
 }
