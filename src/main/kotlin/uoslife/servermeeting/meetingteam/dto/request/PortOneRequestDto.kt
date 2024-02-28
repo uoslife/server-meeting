@@ -1,11 +1,8 @@
 package uoslife.servermeeting.meetingteam.dto.request
 
-import uoslife.servermeeting.meetingteam.entity.enums.PayMethod
-import uoslife.servermeeting.meetingteam.entity.enums.PaymentGateway
-
 class PortOneRequestDto {
-    data class PortOneRequestPaymentRequest(
-        var pg: PaymentGateway,
-        var payMethod: PayMethod,
+    data class AccessTokenRequest(
+        var imp_key: String,
+        var imp_secret: String,
     )
 }

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uoslife.servermeeting.meetingteam.dto.request.PortOneRequestDto
-import uoslife.servermeeting.meetingteam.dto.response.PortOneResponseDto
+import uoslife.servermeeting.meetingteam.dto.request.PaymentRequestDto
+import uoslife.servermeeting.meetingteam.dto.response.PaymentResponseDto
 import uoslife.servermeeting.meetingteam.service.PaymentService
 
 @RestController
@@ -22,11 +22,22 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
     @PostMapping
     fun requestPayment(
         @AuthenticationPrincipal userDetails: UserDetails,
-        @RequestBody portOneRequestPaymentRequest: PortOneRequestDto.PortOneRequestPaymentRequest
-    ): ResponseEntity<PortOneResponseDto.PortOneRequestPaymentResponse> {
+        @RequestBody paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest
+    ): ResponseEntity<PaymentResponseDto.PaymentRequestResponse> {
         val userUUID = UUID.fromString(userDetails.username)
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.requestPayment(userUUID, portOneRequestPaymentRequest))
+            .body(paymentService.requestPayment(userUUID, paymentRequestPaymentRequest))
+    }
+
+    @PostMapping("/check")
+    fun checkPayment(
+        @AuthenticationPrincipal userDetails: UserDetails,
+        @RequestBody paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
+    ): ResponseEntity<PaymentResponseDto.PaymentCheckResponse> {
+        val userUUID = UUID.fromString(userDetails.username)
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(paymentService.checkPayment(userUUID, paymentCheckRequest))
     }
 }

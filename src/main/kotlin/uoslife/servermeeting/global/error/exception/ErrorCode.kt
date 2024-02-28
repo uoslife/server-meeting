@@ -97,4 +97,8 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
 
     // Cert
     CERT_NOT_FOUND("C01", "Certification is not Found", HttpStatus.BAD_REQUEST.value()),
+
+    // Payment
+    PAYMENT_NOT_FOUND("P01", "Payment is not Found", HttpStatus.BAD_REQUEST.value()),
+    ACCESS_TOKEN_NOT_FOUND("P02", "AccessToken is not Found", HttpStatus.BAD_REQUEST.value()),
 }

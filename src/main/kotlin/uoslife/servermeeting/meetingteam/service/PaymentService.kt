@@ -1,15 +1,18 @@
 package uoslife.servermeeting.meetingteam.service
 
 import java.util.*
-import uoslife.servermeeting.meetingteam.dto.request.PortOneRequestDto
-import uoslife.servermeeting.meetingteam.dto.response.PortOneResponseDto
+import uoslife.servermeeting.meetingteam.dto.request.PaymentRequestDto
+import uoslife.servermeeting.meetingteam.dto.response.PaymentResponseDto
 
 interface PaymentService {
     fun requestPayment(
         userUUID: UUID,
-        portOneRequestPaymentRequest: PortOneRequestDto.PortOneRequestPaymentRequest
-    ): PortOneResponseDto.PortOneRequestPaymentResponse
-    fun checkPayment()
+        paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest
+    ): PaymentResponseDto.PaymentRequestResponse
+    fun checkPayment(
+        userUUID: UUID,
+        paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
+    ): PaymentResponseDto.PaymentCheckResponse
     fun refundPaymentById()
     fun refundPayment()
 }
