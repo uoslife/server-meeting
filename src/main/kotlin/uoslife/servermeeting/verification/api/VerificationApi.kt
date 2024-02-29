@@ -32,7 +32,7 @@ class VerificationApi(private val verificationService: VerificationService) {
     fun verifyCode(
         @RequestBody @Valid verificationCheckRequest: VerificationCheckRequest
     ): ResponseEntity<VerificationCodeResponse> {
-        val isVerified: Boolean = verificationService.verifyCode(verificationCheckRequest)
+        val isVerified: Boolean = verificationService.checkVerificationCode(verificationCheckRequest)
 
         return ResponseEntity.ok().body(VerificationCodeResponse(isVerified))
     }

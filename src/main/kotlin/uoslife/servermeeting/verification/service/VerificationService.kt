@@ -20,6 +20,9 @@ class VerificationService(
     @Value("\${mail.from}") private val mailFrom: String
 ) {
     fun sendMail(verificationRequest: VerificationRequest): Boolean {
+        // 메일 전송 전 Redis에 중복되는 값이 있는지 확인헐 필요가 있을까?
+//        val isExists: Boolean = verificationRedisRepository.existsByEmail(verificationRequest.email)
+
         // Certification 코드 생성
         val code: String = uniqueCodeGenerator.getUniqueCertCode()
 
@@ -50,20 +53,10 @@ class VerificationService(
 
     fun checkVerificationCode(verificationCheckRequest: VerificationCheckRequest): Boolean {
         val matchedVerification: Verification = verificationRedisRepository.findByEmailAndCodeOrNull(verificationCheckRequest.email, verificationCheckRequest.code) ?: throw VerificationNotFoundException()
-
+        matchedVerification.isVerified = true
+        verificationRedisRepository.save(matchedVerification)
 
         return true
-//        val verification: Verification =
-//            verificationRedisRepository.findByIdAnd()
-//            verificationRedisRepository.findByEmailAndCodeAndIsVerifiedNot(
-//                verificationCheckRequest.email,
-//                verificationCheckRequest.code
-//            )
-//                ?: throw VerificationNotFoundException()
-//        verification.isVerified = true // 인증 된 Cert로 변경
-//        verificationRedisRepository.save(verification) // 변경 사항 DB에 저장
-//
-//        return true
     }
 
     fun findByEmailAndIsVerified(email: String): Boolean {
