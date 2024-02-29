@@ -15,10 +15,10 @@ import uoslife.servermeeting.verification.dto.response.*
 import uoslife.servermeeting.verification.service.VerificationService
 
 @RestController
-@RequestMapping("/api/cert")
+@RequestMapping("/api/verification")
 class VerificationApi(private val verificationService: VerificationService) {
     @Operation(summary = "메일 인증 코드 전송", description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다.")
-    @PostMapping
+    @PostMapping("/send")
     fun sendMail(
         @RequestBody @Valid verificationRequest: VerificationRequest
     ): ResponseEntity<SendMailResponse> {
@@ -27,8 +27,8 @@ class VerificationApi(private val verificationService: VerificationService) {
         return ResponseEntity.ok().body(SendMailResponse(isSended))
     }
 
-    @Operation(summary = "인증 코드 확인", description = "cert 테이블의 인증 코드와 사용자가 입력한 인증 코드를 비교합니다.")
-    @PostMapping("/code")
+    @Operation(summary = "인증 코드 확인", description = "verification 테이블의 인증 코드와 사용자가 입력한 인증 코드를 비교합니다.")
+    @PostMapping("/check")
     fun verifyCode(
         @RequestBody @Valid verificationCheckRequest: VerificationCheckRequest
     ): ResponseEntity<VerificationCodeResponse> {
