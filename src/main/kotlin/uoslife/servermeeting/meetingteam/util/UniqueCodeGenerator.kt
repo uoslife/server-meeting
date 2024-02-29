@@ -2,7 +2,7 @@ package uoslife.servermeeting.meetingteam.util
 
 import java.security.SecureRandom
 import org.springframework.stereotype.Component
-import uoslife.servermeeting.certification.repository.VerificationRedisRepository
+import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 import uoslife.servermeeting.meetingteam.exception.TeamCodeGenerateFailedException
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 
