@@ -23,10 +23,9 @@ data class Verification(
     }
 
     companion object {
-        fun create(email: String, code: String): Verification {
+        fun create(email: String): Verification {
             return Verification(
                 email = email,
-                code = code,
                 trialCount = 1,
                 isVerified = false,
             )

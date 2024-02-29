@@ -20,16 +20,15 @@ class VerificationService(
     @Value("\${mail.from}") private val mailFrom: String
 ) {
     fun sendMail(verificationRequest: VerificationRequest): Boolean {
-        // 메일 전송 전 Redis에 중복되는 값이 있는지 확인헐 필요가 있을까?
-//        val isExists: Boolean = verificationRedisRepository.existsByEmail(verificationRequest.email)
-
-        // Certification 코드 생성
         val code: String = uniqueCodeGenerator.getUniqueCertCode()
 
-        // DTO to entity
-        val verification: Verification = Verification(verificationRequest.email, code)
+        // verification을 DB에 이미 존재하면 가져오고, 없으면 새로 생성함
+        val verification: Verification = getOrCreateVerification(verificationRequest.email)
 
-        // db에 저장
+        // Certification 코드 생성 후 주입
+        verification.resetCode(uniqueCodeGenerator.getUniqueCertCode())
+
+        // DB에 저장
         verificationRedisRepository.save(verification)
 
         // 메일 내용 생성
@@ -45,6 +44,9 @@ class VerificationService(
         javaMailSender.send(message)
 
         return true
+    }
+    private fun getOrCreateVerification(email: String): Verification {
+        return verificationRedisRepository.findByEmailOrNull(email) ?: Verification.create(email)
     }
 
     private fun getVerificationMessage(code: String): String {
