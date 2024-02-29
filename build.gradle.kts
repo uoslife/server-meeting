@@ -83,11 +83,14 @@ dependencies {
     // dokka
     dokkaPlugin("org.jetbrains.dokka:mathjax-plugin:1.9.10")
 
-    // google mail authentication
+    // mail
     implementation("org.springframework.boot:spring-boot-starter-mail")
 
     // reids
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
+    // amazon aws
+    implementation ("com.amazonaws:aws-java-sdk-ses:1.12.3")
 }
 
 tasks.withType<KotlinCompile> {
