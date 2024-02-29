@@ -6,6 +6,8 @@ import uoslife.servermeeting.verification.entity.Verification
 
 @Repository
 interface VerificationRedisRepository : CrudRepository<Verification, String>{
+    fun existsByEmail(email: String): Boolean
     fun findByEmailAndIsAndVerifiedNot(email: String): Verification?
     fun findByEmailAndCodeOrNull(email: String, code: String): Verification?
+    fun existsByEmailAndIsVerified(email: String): Boolean
 }

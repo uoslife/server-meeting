@@ -60,7 +60,7 @@ class VerificationService(
     }
 
     fun findByEmailAndIsVerified(email: String): Boolean {
-        val isVerifiedStatus: Boolean = verificationRepository.existsByEmailAndIsVerified(email)
-        return isVerifiedStatus
+        val isVerified: Boolean = verificationRedisRepository.existsByEmailAndIsVerified(email)
+        return isVerified
     }
 }
