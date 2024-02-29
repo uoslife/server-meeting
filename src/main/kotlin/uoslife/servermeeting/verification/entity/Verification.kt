@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
 import java.time.LocalDateTime
 
-@RedisHash(value = "verification", timeToLive = 300)
+@RedisHash(value = "verification", timeToLive = 300L) // 5분 cache
 data class Verification(
     @Id
     val email: String,
