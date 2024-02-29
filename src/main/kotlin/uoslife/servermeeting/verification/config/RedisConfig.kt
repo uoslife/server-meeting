@@ -1,4 +1,4 @@
-package uoslife.servermeeting.certification.config
+package uoslife.servermeeting.verification.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories
 
 @Configuration
+@EnableRedisRepositories
 class RedisConfig(
     @Value("\${spring.data.redis.host}") val host: String,
     @Value("\${spring.data.redis.port}") val port: Int,
