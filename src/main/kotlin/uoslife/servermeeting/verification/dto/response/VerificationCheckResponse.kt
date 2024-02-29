@@ -1,3 +1,3 @@
-package uoslife.servermeeting.certification.dto.response
+package uoslife.servermeeting.verification.dto.response
 
 data class VerificationCheckResponse(val isVerified: Boolean)

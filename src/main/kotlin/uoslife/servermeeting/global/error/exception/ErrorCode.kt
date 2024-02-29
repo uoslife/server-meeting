@@ -94,6 +94,6 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         HttpStatus.INTERNAL_SERVER_ERROR.value()
     ),
 
-    // Cert
-    CERT_NOT_FOUND("C01", "Certification is not Found", HttpStatus.BAD_REQUEST.value()),
+    // Verification
+    VERIFICATION_NOT_FOUND("V01", "VERIFICATION is not Found", HttpStatus.BAD_REQUEST.value()),
 }

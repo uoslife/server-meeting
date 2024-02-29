@@ -1,4 +1,4 @@
-package uoslife.servermeeting.certification.api
+package uoslife.servermeeting.verification.api
 
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uoslife.servermeeting.certification.dto.request.VerificationRequest
-import uoslife.servermeeting.certification.dto.request.VerificationCheckRequest
-import uoslife.servermeeting.certification.dto.response.*
-import uoslife.servermeeting.certification.service.VerificationService
+import uoslife.servermeeting.verification.dto.request.VerificationRequest
+import uoslife.servermeeting.verification.dto.request.VerificationCheckRequest
+import uoslife.servermeeting.verification.dto.response.*
+import uoslife.servermeeting.verification.service.VerificationService
 
 @RestController
 @RequestMapping("/api/cert")
