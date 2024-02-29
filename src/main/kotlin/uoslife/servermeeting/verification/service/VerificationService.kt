@@ -5,12 +5,12 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
-import uoslife.servermeeting.verification.dto.request.VerificationRequest
+import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.verification.dto.request.VerificationCheckRequest
+import uoslife.servermeeting.verification.dto.request.VerificationRequest
 import uoslife.servermeeting.verification.entity.Verification
 import uoslife.servermeeting.verification.exception.VerificationNotFoundException
 import uoslife.servermeeting.verification.repository.VerificationRedisRepository
-import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 
 @Service
 class VerificationService(
@@ -54,7 +54,12 @@ class VerificationService(
     }
 
     fun checkVerificationCode(verificationCheckRequest: VerificationCheckRequest): Boolean {
-        val matchedVerification: Verification = verificationRedisRepository.findByEmailAndCodeOrNull(verificationCheckRequest.email, verificationCheckRequest.code) ?: throw VerificationNotFoundException()
+        val matchedVerification: Verification =
+            verificationRedisRepository.findByEmailAndCodeOrNull(
+                verificationCheckRequest.email,
+                verificationCheckRequest.code
+            )
+                ?: throw VerificationNotFoundException()
         matchedVerification.isVerified = true
         verificationRedisRepository.save(matchedVerification)
 

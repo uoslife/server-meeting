@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uoslife.servermeeting.verification.dto.request.VerificationRequest
 import uoslife.servermeeting.verification.dto.request.VerificationCheckRequest
+import uoslife.servermeeting.verification.dto.request.VerificationRequest
 import uoslife.servermeeting.verification.dto.response.*
 import uoslife.servermeeting.verification.service.VerificationService
 
@@ -32,14 +32,17 @@ class VerificationApi(private val verificationService: VerificationService) {
     fun verifyCode(
         @RequestBody @Valid verificationCheckRequest: VerificationCheckRequest
     ): ResponseEntity<VerificationCodeResponse> {
-        val isVerified: Boolean = verificationService.checkVerificationCode(verificationCheckRequest)
+        val isVerified: Boolean =
+            verificationService.checkVerificationCode(verificationCheckRequest)
 
         return ResponseEntity.ok().body(VerificationCodeResponse(isVerified))
     }
 
     @Operation(summary = "인증 여부 확인", description = "이메일을 조회하여 이미 인증 되었는지 확인한다.")
     @GetMapping("/{email}")
-    fun isVerifiedCert(@PathVariable @Valid email: String): ResponseEntity<VerificationCheckResponse> {
+    fun isVerifiedCert(
+        @PathVariable @Valid email: String
+    ): ResponseEntity<VerificationCheckResponse> {
         val status: Boolean = verificationService.findByEmailAndIsVerified(email)
 
         return ResponseEntity.ok().body(VerificationCheckResponse(status))

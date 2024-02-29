@@ -2,9 +2,9 @@ package uoslife.servermeeting.meetingteam.util
 
 import java.security.SecureRandom
 import org.springframework.stereotype.Component
-import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 import uoslife.servermeeting.meetingteam.exception.TeamCodeGenerateFailedException
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
+import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 
 @Component
 class UniqueCodeGenerator(
@@ -44,9 +44,8 @@ class UniqueCodeGenerator(
         val characters: List<Char> = ('0'..'9').toList() // A-Z, 0-9 문자열 리스트
         val random: SecureRandom = SecureRandom.getInstanceStrong()
 
-        var code: String = (1..6)
-            .map { characters[random.nextInt(characters.size)] }
-            .joinToString { "" }
+        var code: String =
+            (1..6).map { characters[random.nextInt(characters.size)] }.joinToString { "" }
 
         return code
     }

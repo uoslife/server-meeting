@@ -1,13 +1,12 @@
 package uoslife.servermeeting.verification.entity
 
+import java.time.LocalDateTime
 import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
-import java.time.LocalDateTime
 
 @RedisHash(value = "verification", timeToLive = 300L) // 5분 cache
 data class Verification(
-    @Id
-    val email: String,
+    @Id val email: String,
     var code: String? = null, // 인증 코드
     var trialCount: Int = 0,
     var requestTime: LocalDateTime = LocalDateTime.now(),

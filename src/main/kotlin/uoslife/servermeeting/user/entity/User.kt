@@ -4,10 +4,10 @@ import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.*
 import java.util.*
 import org.hibernate.annotations.Type
-import uoslife.servermeeting.verification.dto.University
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Payment
+import uoslife.servermeeting.verification.dto.University
 
 @Entity
 @Table(name = "`user`")
