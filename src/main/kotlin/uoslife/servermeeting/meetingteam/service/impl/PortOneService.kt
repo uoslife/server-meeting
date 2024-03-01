@@ -6,6 +6,7 @@ import java.util.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.RequestEntity
@@ -45,6 +46,9 @@ class PortOneService(
         request: PaymentRequestDto.PaymentRequestRequest
     ): PaymentResponseDto.PaymentRequestResponse {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+
+        if (paymentRepository.existsByUser(user)) throw UserAlreadyHavePaymentException()
+
         val team = user.team ?: throw MeetingTeamNotFoundException()
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
@@ -93,12 +97,13 @@ class PortOneService(
 
     fun checkPaymentByPortOne(impUid: String): PortOneResponseDto.SingleHistoryResponse {
         val restTemplate = RestTemplate()
-
         val header =
             HttpHeaders().apply {
                 set("Authorization", findAccessToken())
                 set("Content-Type", "application/json")
             }
+
+        val requestEntity = HttpEntity(null, header)
 
         val uri = url + "/payments/" + impUid
 
@@ -106,7 +111,7 @@ class PortOneService(
             restTemplate.exchange(
                 uri,
                 HttpMethod.GET,
-                null,
+                requestEntity,
                 PortOneResponseDto.SingleHistoryResponse::class.java
             )
 
@@ -156,7 +161,9 @@ class PortOneService(
 
     @Transactional
     override fun refundPayment(): PaymentResponseDto.PaymentNotMatchingRefundResponse {
-        val userList = userDao.findNotMatchedUser()
+        val userList = userDao.findNotMatchedUserInMeetingTeam(
+            userDao.findNotMatchedMaleMeetingTeam() + userDao.findNotMatchedFeMaleMeetingTeam()
+        )
 
         val refundList =
             userList.map { user ->
@@ -201,6 +208,6 @@ class PortOneService(
         if (responseBody.code != 0) {
             throw AccessTokenNotFoundException()
         }
-        return responseBody.response!!.access_token!!
+        return "Bearer " + responseBody.response!!.access_token!!
     }
 }

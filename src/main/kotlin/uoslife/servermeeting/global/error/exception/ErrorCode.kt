@@ -102,4 +102,5 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     PAYMENT_NOT_FOUND("P01", "Payment is not Found", HttpStatus.BAD_REQUEST.value()),
     ACCESS_TOKEN_NOT_FOUND("P02", "AccessToken is not Found", HttpStatus.BAD_REQUEST.value()),
     PAYMENT_INVALID("P03", "Payment is Invalid", HttpStatus.BAD_REQUEST.value()),
+    USER_ALREADY_HAVE_PAYMENT("P04", "User already have Payment", HttpStatus.BAD_REQUEST.value()),
 }
