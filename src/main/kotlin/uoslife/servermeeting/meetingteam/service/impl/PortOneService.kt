@@ -13,6 +13,7 @@ import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.PaymentRequestDto
 import uoslife.servermeeting.meetingteam.dto.request.PortOneRequestDto
 import uoslife.servermeeting.meetingteam.dto.response.PaymentResponseDto
@@ -32,6 +33,7 @@ import uoslife.servermeeting.user.repository.UserRepository
 class PortOneService(
     private val userRepository: UserRepository,
     private val userDao: UserDao,
+    private val meetingTeamDao: MeetingTeamDao,
     private val paymentRepository: PaymentRepository,
     @Value("\${portone.api.url}") private val url: String,
     @Value("\${portone.api.price.single}") private val singlePrice: Int,
@@ -163,7 +165,8 @@ class PortOneService(
     override fun refundPayment(): PaymentResponseDto.PaymentNotMatchingRefundResponse {
         val userList =
             userDao.findNotMatchedUserInMeetingTeam(
-                userDao.findNotMatchedMaleMeetingTeam() + userDao.findNotMatchedFeMaleMeetingTeam()
+                meetingTeamDao.findNotMatchedMaleMeetingTeam() +
+                    meetingTeamDao.findNotMatchedFeMaleMeetingTeam()
             )
 
         val refundList =
