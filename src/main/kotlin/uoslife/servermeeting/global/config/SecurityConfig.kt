@@ -12,7 +12,6 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
-
 @Configuration
 @EnableWebSecurity
 class SecurityConfig() {
@@ -20,8 +19,7 @@ class SecurityConfig() {
     @ConditionalOnProperty(name = ["spring.h2.console.enabled"], havingValue = "true")
     fun configureH2ConsoleEnable(): WebSecurityCustomizer {
         return WebSecurityCustomizer { web: WebSecurity ->
-            web.ignoring()
-                .requestMatchers(PathRequest.toH2Console())
+            web.ignoring().requestMatchers(PathRequest.toH2Console())
         }
     }
     @Bean

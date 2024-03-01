@@ -161,9 +161,10 @@ class PortOneService(
 
     @Transactional
     override fun refundPayment(): PaymentResponseDto.PaymentNotMatchingRefundResponse {
-        val userList = userDao.findNotMatchedUserInMeetingTeam(
-            userDao.findNotMatchedMaleMeetingTeam() + userDao.findNotMatchedFeMaleMeetingTeam()
-        )
+        val userList =
+            userDao.findNotMatchedUserInMeetingTeam(
+                userDao.findNotMatchedMaleMeetingTeam() + userDao.findNotMatchedFeMaleMeetingTeam()
+            )
 
         val refundList =
             userList.map { user ->
