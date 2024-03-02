@@ -2,6 +2,7 @@ package uoslife.servermeeting.verification.service
 
 import jakarta.mail.internet.MimeMessage
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
@@ -20,13 +21,13 @@ class VerificationService(
     @Value("\${mail.from}") private val mailFrom: String
 ) {
     fun sendMail(verificationRequest: VerificationRequest): Boolean {
-        val code: String = uniqueCodeGenerator.getUniqueCertCode()
-
         // verification을 DB에 이미 존재하면 가져오고, 없으면 새로 생성함
-        val verification: Verification = getOrCreateVerification(verificationRequest.email)
+//        val verification: Verification = getOrCreateVerification(verificationRequest.email)
 
-        // Certification 코드 생성 후 주입
-        verification.resetCode(uniqueCodeGenerator.getUniqueCertCode())
+        // Vertification 코드 생성 후 주입
+        val verification: Verification = Verification.create(email = verificationRequest.email)
+        val code: String = uniqueCodeGenerator.getUniqueVerificationCode()
+        verification.resetCode(code)
 
         // DB에 저장
         verificationRedisRepository.save(verification)
@@ -46,7 +47,10 @@ class VerificationService(
         return true
     }
     private fun getOrCreateVerification(email: String): Verification {
-        return verificationRedisRepository.findByEmailOrNull(email) ?: Verification.create(email)
+        val verification: Verification = verificationRedisRepository.findByEmail(email)
+
+        return verification
+//        return verificationRedisRepository.findByEmailOrNull(email) ?: Verification.create(email)
     }
 
     private fun getVerificationMessage(code: String): String {
@@ -54,12 +58,12 @@ class VerificationService(
     }
 
     fun checkVerificationCode(verificationCheckRequest: VerificationCheckRequest): Boolean {
-        val matchedVerification: Verification =
-            verificationRedisRepository.findByEmailAndCodeOrNull(
-                verificationCheckRequest.email,
-                verificationCheckRequest.code
-            )
-                ?: throw VerificationNotFoundException()
+        val matchedVerification: Verification = verificationRedisRepository.findByIdOrNull(verificationCheckRequest.email) ?: throw VerificationNotFoundException()
+
+        // check request code and db code
+        if(!matchedVerification.code.equals(verificationCheckRequest.code))
+            return false
+
         matchedVerification.isVerified = true
         verificationRedisRepository.save(matchedVerification)
 

@@ -9,6 +9,8 @@ interface VerificationRedisRepository : CrudRepository<Verification, String> {
     fun existsByEmail(email: String): Boolean
     fun findByEmailAndIsAndVerifiedNot(email: String): Verification?
     fun findByEmailAndCodeOrNull(email: String, code: String): Verification?
+    fun existsByEmailAndCode(email: String, code: String): Boolean
     fun existsByEmailAndIsVerified(email: String): Boolean
     fun findByEmailOrNull(email: String): Verification?
+    fun findByEmail(email: String): Verification
 }
