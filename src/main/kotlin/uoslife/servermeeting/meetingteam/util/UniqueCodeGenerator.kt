@@ -40,12 +40,12 @@ class UniqueCodeGenerator(
         return code
     }
 
-    fun getUniqueCertCode(): String {
+    fun getUniqueVerificationCode(): String {
         val characters: List<Char> = ('0'..'9').toList() // A-Z, 0-9 문자열 리스트
-        val random: SecureRandom = SecureRandom.getInstanceStrong()
+        val random: SecureRandom = SecureRandom()
 
         var code: String =
-            (1..6).map { characters[random.nextInt(characters.size)] }.joinToString { "" }
+            (1..6).map { characters[random.nextInt(characters.size)] }.joinToString("")
 
         return code
     }
