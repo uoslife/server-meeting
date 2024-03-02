@@ -24,10 +24,9 @@ class VerificationService(
     @Transactional
     fun sendMail(verificationRequest: VerificationRequest): Boolean {
         // verification을 DB에 이미 존재하면 가져오고, 없으면 새로 생성함
-//        val verification: Verification = getOrCreateVerification(verificationRequest.email)
+        val verification: Verification = getOrCreateVerification(verificationRequest.email)
 
         // Vertification 코드 생성 후 주입
-        val verification: Verification = Verification.create(email = verificationRequest.email)
         val code: String = uniqueCodeGenerator.getUniqueVerificationCode()
         verification.resetCode(code)
 
@@ -35,19 +34,26 @@ class VerificationService(
         verificationRedisRepository.save(verification)
 
         // 메일 내용 생성
-        val message: MimeMessage = javaMailSender.createMimeMessage()
-        val messageHelper: MimeMessageHelper = MimeMessageHelper(message, true)
-
-        messageHelper.setFrom(mailFrom)
-        messageHelper.setTo(verificationRequest.email)
-        messageHelper.setSubject("[시대팅] : 인증 메일 코드를 확인해주세요")
-        messageHelper.setText(getVerificationMessage(code), true)
+        val message: MimeMessage = createMail(verification.email, code)
 
         // 메일 보내기
         javaMailSender.send(message)
 
         return true
     }
+
+    private fun createMail(email: String, code: String): MimeMessage {
+        val message: MimeMessage = javaMailSender.createMimeMessage()
+        val messageHelper: MimeMessageHelper = MimeMessageHelper(message, true)
+
+        messageHelper.setFrom(mailFrom)
+        messageHelper.setTo(email)
+        messageHelper.setSubject("[시대팅] : 인증 메일 코드를 확인해주세요")
+        messageHelper.setText(getVerificationMessage(code), true)
+
+        return message
+    }
+
     private fun getOrCreateVerification(email: String): Verification {
         val verification: Verification = verificationRedisRepository.findByEmail(email)
 
