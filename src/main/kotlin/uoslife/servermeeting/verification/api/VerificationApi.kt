@@ -37,14 +37,4 @@ class VerificationApi(private val verificationService: VerificationService) {
 
         return ResponseEntity.ok().body(VerificationCodeResponse(isVerified))
     }
-
-    @Operation(summary = "인증 여부 확인", description = "이메일을 조회하여 이미 인증 되었는지 확인한다.")
-    @GetMapping("/{email}")
-    fun isVerifiedCert(
-        @PathVariable @Valid email: String
-    ): ResponseEntity<VerificationCheckResponse> {
-        val status: Boolean = verificationService.findByEmailAndIsVerified(email)
-
-        return ResponseEntity.ok().body(VerificationCheckResponse(status))
-    }
 }

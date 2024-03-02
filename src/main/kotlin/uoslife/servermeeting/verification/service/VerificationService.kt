@@ -6,6 +6,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.verification.dto.request.VerificationCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationRequest
@@ -58,7 +59,6 @@ class VerificationService(
         val verification: Verification = verificationRedisRepository.findByIdOrNull(email) ?: Verification.create(email)
 
         return verification
-//        return verificationRedisRepository.findByEmailOrNull(email) ?: Verification.create(email)
     }
 
     private fun getVerificationMessage(code: String): String {
@@ -75,10 +75,5 @@ class VerificationService(
         matchedVerification?.let { verificationRedisRepository.save(it) }
 
         return true
-    }
-
-    fun findByEmailAndIsVerified(email: String): Boolean {
-        val isVerified: Boolean = verificationRedisRepository.existsByEmailAndIsVerified(email)
-        return isVerified
     }
 }
