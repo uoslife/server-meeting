@@ -26,6 +26,7 @@ data class Verification(
             return Verification(
                 email = email,
                 trialCount = 1,
+                requestTime = LocalDateTime.now(),
                 isVerified = false,
             )
         }

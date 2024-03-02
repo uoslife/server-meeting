@@ -14,12 +14,14 @@ import uoslife.servermeeting.verification.exception.VerificationNotFoundExceptio
 import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 
 @Service
+@Transactional(readOnly = true)
 class VerificationService(
     private val verificationRedisRepository: VerificationRedisRepository,
     private val javaMailSender: JavaMailSender,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     @Value("\${mail.from}") private val mailFrom: String
 ) {
+    @Transactional
     fun sendMail(verificationRequest: VerificationRequest): Boolean {
         // verification을 DB에 이미 존재하면 가져오고, 없으면 새로 생성함
 //        val verification: Verification = getOrCreateVerification(verificationRequest.email)
