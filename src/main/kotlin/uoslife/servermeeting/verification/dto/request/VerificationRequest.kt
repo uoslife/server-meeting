@@ -2,7 +2,6 @@ package uoslife.servermeeting.verification.dto.request
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
-import uoslife.servermeeting.verification.dto.University
 
 data class VerificationRequest(
     @NotBlank

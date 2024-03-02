@@ -3,8 +3,6 @@ package uoslife.servermeeting.verification.api
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -27,7 +25,10 @@ class VerificationApi(private val verificationService: VerificationService) {
         return ResponseEntity.ok().body(SendMailResponse(isSended))
     }
 
-    @Operation(summary = "인증 코드 확인", description = "verification 테이블의 인증 코드와 사용자가 입력한 인증 코드를 비교합니다.")
+    @Operation(
+        summary = "인증 코드 확인",
+        description = "verification 테이블의 인증 코드와 사용자가 입력한 인증 코드를 비교합니다."
+    )
     @PostMapping("/check")
     fun verifyCode(
         @RequestBody @Valid verificationCheckRequest: VerificationCheckRequest

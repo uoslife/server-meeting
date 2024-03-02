@@ -56,7 +56,8 @@ class VerificationService(
     }
 
     private fun getOrCreateVerification(email: String): Verification {
-        val verification: Verification = verificationRedisRepository.findByIdOrNull(email) ?: Verification.create(email)
+        val verification: Verification =
+            verificationRedisRepository.findByIdOrNull(email) ?: Verification.create(email)
 
         return verification
     }
@@ -66,10 +67,11 @@ class VerificationService(
     }
 
     fun checkVerificationCode(verificationCheckRequest: VerificationCheckRequest): Boolean {
-        val matchedVerification: Verification = verificationRedisRepository.findByIdOrNull(verificationCheckRequest.email) ?: throw VerificationNotFoundException()
+        val matchedVerification: Verification =
+            verificationRedisRepository.findByIdOrNull(verificationCheckRequest.email)
+                ?: throw VerificationNotFoundException()
         // check request code and db code
-        if(!matchedVerification.code.equals(verificationCheckRequest.code))
-            return false
+        if (!matchedVerification.code.equals(verificationCheckRequest.code)) return false
 
         matchedVerification?.isVerified = true
         matchedVerification?.let { verificationRedisRepository.save(it) }
