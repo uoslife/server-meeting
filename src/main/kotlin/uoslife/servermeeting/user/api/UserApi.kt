@@ -42,11 +42,11 @@ class UserApi(
         return userService.updateUser(requestBody, UUID.fromString(userDetails.username))
     }
 
-    @Operation(summary = "Nickname 중복 여부 확인", description = "nickname을 조회합니다.")
-    @GetMapping("/{nickname}")
-    fun getUserByUsername(@PathVariable nickname: String): ResponseEntity<NicknameCheckResponse> {
-        return userService.findUserByNickname(nickname)
-    }
+//    @Operation(summary = "Nickname 중복 여부 확인", description = "nickname을 조회합니다.")
+//    @GetMapping("/{nickname}")
+//    fun getUserByUsername(@PathVariable nickname: String): ResponseEntity<NicknameCheckResponse> {
+//        return userService.findUserByNickname(nickname)
+//    }
 
     @Operation(summary = "user 정보 초기화", description = "user 테이블의 정보를 원래대로 되돌립니다.")
     @PutMapping

@@ -1,20 +1,23 @@
 package uoslife.servermeeting.user.dto.request
 
 import jakarta.validation.constraints.NotBlank
-import uoslife.servermeeting.user.entity.enums.DepartmentNameType
-import uoslife.servermeeting.user.entity.enums.GenderType
-import uoslife.servermeeting.user.entity.enums.StudentType
+import uoslife.servermeeting.user.entity.enums.*
 
 data class UserUpdateRequest(
-    @NotBlank val birthYear: Int,
+    @NotBlank val name: String,
     @NotBlank val gender: GenderType,
-    @NotBlank val department: DepartmentNameType,
-    @NotBlank val kakaoTalkId: String,
-    @NotBlank val studentType: StudentType,
-    @NotBlank val smoking: Boolean,
-    @NotBlank val spiritAnimal: String,
-    @NotBlank val mbti: String,
-    @NotBlank val interest: String,
+    // TODO: PHONENUMBER UI 추가 요청
+    @NotBlank val phoneNumber: String,
+    @NotBlank val age: Int,
     @NotBlank val height: Int,
-    @NotBlank val nickname: String
+    @NotBlank val kakaoTalkId: String,
+    @NotBlank val department: String,
+    @NotBlank val studentType: StudentType,
+    val religion: ReligionType?,
+    val smoking: Boolean,
+    val drinkingMin: Int?,
+    val drinkingMax: Int?,
+    val spiritAnimal: SpiritAnimalType?,
+    val mbti: String?,
+    val interest: InterestType?,
 )

@@ -44,7 +44,7 @@ class TripleMeetingService(
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
         validator.isUserAlreadyHaveTeam(user)
-        validator.isTeamNameLeast2Character(name)
+        validator.isTeamNameInvalid(name)
 
         val code = uniqueCodeGenerator.getUniqueTeamCode()
         val meetingTeam = saveMeetingTeam(user, name, code)

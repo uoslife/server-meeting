@@ -40,6 +40,9 @@ class SingleMeetingService(
         validator.isUserAlreadyHaveTeam(user)
 
         val meetingTeam = createDefaultMeetingTeam(leader = user, teamType = teamType)
+
+        user.team = meetingTeam
+        userRepository.save(user)
         return ""
     }
 

@@ -13,7 +13,7 @@ import uoslife.servermeeting.meetingteam.entity.Payment
 class User(
     @Id @Column(nullable = false, unique = true) var id: UUID? = null,
     var phoneNumber: String?,
-    @Column(nullable = false, unique = true) var nickname: String,
+    // @Column(nullable = false, unique = true) var nickname: String,
     var name: String?,
     var email: String? = null,
     var kakaoTalkId: String,
