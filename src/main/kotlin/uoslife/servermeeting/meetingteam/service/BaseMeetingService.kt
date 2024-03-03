@@ -1,6 +1,7 @@
 package uoslife.servermeeting.meetingteam.service
 
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
+import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import java.util.UUID
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
@@ -28,7 +29,10 @@ interface BaseMeetingService {
         userUUID: UUID,
         meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
     )
-
+    fun updateMeetingTeamPreference(
+        userUUID: UUID,
+        meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
+    )
     fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse
     fun deleteMeetingTeam(userUUID: UUID)
 }

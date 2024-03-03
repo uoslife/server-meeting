@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
+import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUser
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
@@ -108,12 +110,31 @@ class TripleMeetingService(
     @Transactional
     override fun updateMeetingTeamInformation(
         userUUID: UUID,
-        information: Information,
+        meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
     ) {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
 
         val userTeam = user.team ?: throw UserTeamNotFoundException()
+
+        val information = Information(
+            gender = user.userPersonalInformation.gender,
+            meetingTeamInformationUpdateRequest.toMap()
+        )
         userTeam.information = information
+    }
+
+    @Transactional
+    override fun updateMeetingTeamPreference(
+        userUUID: UUID,
+        meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
+    ) {
+        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+
+        val meetingTeam = user.team ?: throw UserTeamNotFoundException()
+
+        val preference = meetingTeamPreferenceUpdateRequest.toTriplePreference()
+
+        meetingTeam?.preference = preference
     }
 
     override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {

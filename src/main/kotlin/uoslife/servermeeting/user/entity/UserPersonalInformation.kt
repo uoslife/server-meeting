@@ -14,7 +14,7 @@ data class UserPersonalInformation(
     var religion: ReligionType? = null,
     var drinkingMin: Int? = null,
     var drinkingMax: Int? = null,
-    var smoking: Boolean? = null,
+    var smoking: SmokingType? = null,
     var spiritAnimal: SpiritAnimalType? = null,
     var mbti: String? = null,
     var interest: InterestType? = null,

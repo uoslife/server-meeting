@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
+import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
@@ -143,6 +144,37 @@ class MeetingApi(
                  meetingTeamInformationUpdateRequest,
              )
          }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @Operation(summary = "미팅 팀 상대 정보 기입", description = "팀이 원하는 상대 정보를 기입함. 리더만 가능")
+    @ApiResponse(responseCode = "204", description = "반환값 없음")
+    @PostMapping("/{teamType}/{isTeamLeader}/info")
+    fun updateMeetingTeamPreference(
+        @AuthenticationPrincipal userDetails: UserDetails,
+        @PathVariable teamType: TeamType,
+        @PathVariable isTeamLeader: Boolean,
+        @RequestBody
+        @Valid
+        meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest,
+    ): ResponseEntity<Unit> {
+        val userUUID = UUID.fromString(userDetails.username)
+
+        if (!isTeamLeader) {
+            throw OnlyTeamLeaderCanUpdateTeamInformationException()
+        }
+
+        when (teamType) {
+            TeamType.SINGLE -> singleMeetingService.updateMeetingTeamPreference(
+                userUUID,
+                meetingTeamPreferenceUpdateRequest,
+            )
+
+            TeamType.TRIPLE -> tripleMeetingService.updateMeetingTeamPreference(
+                userUUID,
+                meetingTeamPreferenceUpdateRequest,
+            )
+        }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 

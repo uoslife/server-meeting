@@ -7,10 +7,12 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
+import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
+import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamNoJoinTeamException
 import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamOnlyOneUserException
@@ -76,6 +78,20 @@ class SingleMeetingService(
             meetingTeamInformationUpdateRequest.toMap()
         )
         meetingTeam?.information = information
+    }
+
+    @Transactional
+    override fun updateMeetingTeamPreference(
+        userUUID: UUID,
+        meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
+    ) {
+        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+
+        val meetingTeam = user.team ?: throw UserTeamNotFoundException()
+
+        val preference = meetingTeamPreferenceUpdateRequest.toSinglePreference()
+
+        meetingTeam?.preference = preference
     }
 
     override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
