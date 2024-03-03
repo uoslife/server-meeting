@@ -21,7 +21,7 @@ class User(
     var university: University? = null,
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
-    var userPersonalInformation: UserPersonalInformation? = UserPersonalInformation(),
+    var userPersonalInformation: UserPersonalInformation = UserPersonalInformation(),
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user") var payment: Payment? = null,
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "team_id") var team: MeetingTeam? = null
 ) : BaseEntity() {
@@ -33,7 +33,7 @@ class User(
                 phoneNumber = null,
                 name = null,
                 kakaoTalkId = null,
-                userPersonalInformation = null,
+                userPersonalInformation = UserPersonalInformation(),
                 payment = null,
                 team = null,
                 nickname = null
