@@ -18,6 +18,7 @@ import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 @Transactional(readOnly = true)
 class VerificationService(
     private val verificationRedisRepository: VerificationRedisRepository,
+    private val userRepository: UserRepository,
     private val javaMailSender: JavaMailSender,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     @Value("\${mail.from}") private val mailFrom: String
@@ -31,7 +32,7 @@ class VerificationService(
         val code: String = uniqueCodeGenerator.getUniqueVerificationCode()
         verification.resetCode(code)
 
-        // DB에 저장
+        // Cache에 인증코드 저장
         verificationRedisRepository.save(verification)
 
         // 메일 내용 생성
@@ -66,12 +67,14 @@ class VerificationService(
         return String.format("<h3 style='text-align:cetner;'>인증코드: %s</h3>", code)
     }
 
-    fun checkVerificationCode(verificationCheckRequest: VerificationCheckRequest): Boolean {
+    @Transactional
+    fun checkVerificationCode(verificationCheckRequest: VerificationCheckRequest): VerificationCodeResponse {
         val matchedVerification: Verification =
             verificationRedisRepository.findByIdOrNull(verificationCheckRequest.email)
                 ?: throw VerificationNotFoundException()
+
         // check request code and db code
-        if (!matchedVerification.code.equals(verificationCheckRequest.code)) return false
+        if (!matchedVerification.code.equals(verificationCheckRequest.code)) throw VerificationCodeNotMatchException()
 
         matchedVerification?.isVerified = true
         matchedVerification?.let { verificationRedisRepository.save(it) }
