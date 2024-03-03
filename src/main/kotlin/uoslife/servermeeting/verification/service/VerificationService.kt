@@ -8,10 +8,16 @@ import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
+import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.repository.UserRepository
+import uoslife.servermeeting.verification.dto.University
 import uoslife.servermeeting.verification.dto.request.VerificationCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationRequest
+import uoslife.servermeeting.verification.dto.response.VerificationCodeResponse
 import uoslife.servermeeting.verification.entity.Verification
+import uoslife.servermeeting.verification.exception.UniversityNotFoundException
 import uoslife.servermeeting.verification.exception.VerificationNotFoundException
+import uoslife.servermeeting.verification.exception.VerificationCodeNotMatchException
 import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 
 @Service
