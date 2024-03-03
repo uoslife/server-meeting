@@ -1,6 +1,7 @@
 package uoslife.servermeeting.verification.api
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -14,6 +15,7 @@ import uoslife.servermeeting.verification.service.VerificationService
 
 @RestController
 @RequestMapping("/api/verification")
+@Tag(name = "Verification", description = "이메일 인증 API")
 class VerificationApi(private val verificationService: VerificationService) {
     @Operation(summary = "메일 인증 코드 전송", description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다.")
     @PostMapping("/send")
