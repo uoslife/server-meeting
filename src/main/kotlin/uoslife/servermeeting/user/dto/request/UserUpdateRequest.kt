@@ -1,6 +1,8 @@
 package uoslife.servermeeting.user.dto.request
 
 import jakarta.validation.constraints.NotBlank
+import uoslife.servermeeting.meetingteam.entity.Preference
+import uoslife.servermeeting.user.entity.UserPersonalInformation
 import uoslife.servermeeting.user.entity.enums.*
 
 data class UserUpdateRequest(
@@ -17,7 +19,7 @@ data class UserUpdateRequest(
     val smoking: SmokingType,
     val drinkingMin: Int?,
     val drinkingMax: Int?,
-    val spiritAnimal: SpiritAnimalType?,
+    val spiritAnimal: List<SpiritAnimalType>?,
     val mbti: String?,
-    val interest: InterestType?,
+    val interest: List<InterestType>?,
 )

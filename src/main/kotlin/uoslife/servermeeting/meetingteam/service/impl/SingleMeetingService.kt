@@ -14,10 +14,7 @@ import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
-import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamNoJoinTeamException
-import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamOnlyOneUserException
-import uoslife.servermeeting.meetingteam.exception.InformationNotFoundException
-import uoslife.servermeeting.meetingteam.exception.UserTeamNotFoundException
+import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
@@ -100,12 +97,14 @@ class SingleMeetingService(
         val meetingTeam = user.team
 
         val information = meetingTeam?.information ?: throw InformationNotFoundException()
+        val preference = meetingTeam?.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
             user.userPersonalInformation.gender,
             TeamType.SINGLE,
             listOf(user),
             information,
+            preference,
             null
         )
     }

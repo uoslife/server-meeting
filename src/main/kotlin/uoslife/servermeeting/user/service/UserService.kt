@@ -47,6 +47,7 @@ class UserService(
         val existingUser =
             userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
 
+
         val userPersonalInformation = UserPersonalInformation(
             age = requestDto.age,
             gender = requestDto.gender,

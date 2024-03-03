@@ -15,10 +15,7 @@ import uoslife.servermeeting.meetingteam.dto.vo.MeetingTeamUsers
 import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
-import uoslife.servermeeting.meetingteam.exception.InformationNotFoundException
-import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
-import uoslife.servermeeting.meetingteam.exception.TeamLeaderNotFoundException
-import uoslife.servermeeting.meetingteam.exception.UserTeamNotFoundException
+import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
@@ -144,12 +141,14 @@ class TripleMeetingService(
         val userList = meetingTeam?.users ?: throw MeetingTeamNotFoundException()
 
         val information = meetingTeam.information ?: throw InformationNotFoundException()
+        val preference = meetingTeam?.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
             user.userPersonalInformation?.gender ?: GenderType.MALE,
             TeamType.TRIPLE,
             userList,
             information,
+            preference,
             meetingTeam.name
         )
     }
