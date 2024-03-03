@@ -8,14 +8,11 @@ import uoslife.servermeeting.user.entity.User
 class MeetingTeamUsers(private val users: List<User>) {
 
     fun toMeetingTeamUserListGetResponse(teamName: String): MeetingTeamUserListGetResponse {
-        val currentYear: Int = LocalDate.now().year
-
         return MeetingTeamUserListGetResponse(
             teamName = teamName,
             users.map {
                 MeetingTeamUser(
-                    nickname = it.nickname,
-                    age = currentYear,
+                    name = it.name,
                 )
             },
         )

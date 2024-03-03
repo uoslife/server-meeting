@@ -72,6 +72,9 @@ class TripleMeetingService(
         validator.isTeamFull(meetingTeam)
         validator.isUserSameGenderWithTeamLeader(user, leader)
 
+        user.team = meetingTeam
+        userRepository.save(user)
+
         return if (isJoin) {
             null
         } else {
@@ -96,8 +99,7 @@ class TripleMeetingService(
             userList =
                 meetingTeamUsers.map {
                     MeetingTeamUser(
-                        nickname = it.nickname,
-                        age = it.userPersonalInformation.birthYear
+                        name = it.name,
                     )
                 }
         )
