@@ -13,6 +13,7 @@ import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
 import uoslife.servermeeting.verification.dto.request.VerificationCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationRequest
+import uoslife.servermeeting.verification.dto.response.SendMailResponse
 import uoslife.servermeeting.verification.dto.response.VerificationCodeResponse
 import uoslife.servermeeting.verification.entity.Verification
 import uoslife.servermeeting.verification.exception.UniversityNotFoundException
@@ -30,7 +31,7 @@ class VerificationService(
     @Value("\${mail.from}") private val mailFrom: String
 ) {
     @Transactional
-    fun sendMail(verificationRequest: VerificationRequest): Boolean {
+    fun sendMail(verificationRequest: VerificationRequest): SendMailResponse {
         // verification을 DB에 이미 존재하면 가져오고, 없으면 새로 생성함
         val verification: Verification = getOrCreateVerification(verificationRequest.email)
 
@@ -47,7 +48,7 @@ class VerificationService(
         // 메일 보내기
         javaMailSender.send(message)
 
-        return true
+        return SendMailResponse(true)
     }
 
     private fun createMail(email: String, code: String): MimeMessage {
