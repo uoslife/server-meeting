@@ -1,6 +1,5 @@
 package uoslife.servermeeting.meetingteam.service.util
 
-import java.time.LocalDate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse

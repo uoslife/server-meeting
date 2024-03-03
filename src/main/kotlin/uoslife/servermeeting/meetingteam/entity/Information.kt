@@ -1,7 +1,7 @@
 package uoslife.servermeeting.meetingteam.entity
 
-import uoslife.servermeeting.user.entity.enums.GenderType
 import java.io.Serializable
+import uoslife.servermeeting.user.entity.enums.GenderType
 
 data class Information(
     val gender: GenderType? = null,

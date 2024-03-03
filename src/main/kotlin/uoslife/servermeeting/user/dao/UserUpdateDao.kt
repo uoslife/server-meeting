@@ -2,7 +2,6 @@ package uoslife.servermeeting.user.dao
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
-import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.entity.QUser.user
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserPersonalInformation

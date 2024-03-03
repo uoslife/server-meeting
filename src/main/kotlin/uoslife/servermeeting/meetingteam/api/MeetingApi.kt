@@ -133,17 +133,18 @@ class MeetingApi(
             throw OnlyTeamLeaderCanUpdateTeamInformationException()
         }
 
-         when (teamType) {
-             TeamType.SINGLE -> singleMeetingService.updateMeetingTeamInformation(
-                 userUUID,
-                 meetingTeamInformationUpdateRequest,
-             )
-
-             TeamType.TRIPLE -> tripleMeetingService.updateMeetingTeamInformation(
-                 userUUID,
-                 meetingTeamInformationUpdateRequest,
-             )
-         }
+        when (teamType) {
+            TeamType.SINGLE ->
+                singleMeetingService.updateMeetingTeamInformation(
+                    userUUID,
+                    meetingTeamInformationUpdateRequest,
+                )
+            TeamType.TRIPLE ->
+                tripleMeetingService.updateMeetingTeamInformation(
+                    userUUID,
+                    meetingTeamInformationUpdateRequest,
+                )
+        }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
@@ -154,9 +155,7 @@ class MeetingApi(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
         @PathVariable isTeamLeader: Boolean,
-        @RequestBody
-        @Valid
-        meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest,
+        @RequestBody @Valid meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest,
     ): ResponseEntity<Unit> {
         val userUUID = UUID.fromString(userDetails.username)
 
@@ -165,15 +164,16 @@ class MeetingApi(
         }
 
         when (teamType) {
-            TeamType.SINGLE -> singleMeetingService.updateMeetingTeamPreference(
-                userUUID,
-                meetingTeamPreferenceUpdateRequest,
-            )
-
-            TeamType.TRIPLE -> tripleMeetingService.updateMeetingTeamPreference(
-                userUUID,
-                meetingTeamPreferenceUpdateRequest,
-            )
+            TeamType.SINGLE ->
+                singleMeetingService.updateMeetingTeamPreference(
+                    userUUID,
+                    meetingTeamPreferenceUpdateRequest,
+                )
+            TeamType.TRIPLE ->
+                tripleMeetingService.updateMeetingTeamPreference(
+                    userUUID,
+                    meetingTeamPreferenceUpdateRequest,
+                )
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
@@ -208,7 +208,8 @@ class MeetingApi(
         @PathVariable kakaoId: String,
     ): ResponseEntity<MeetingTeamInformationGetResponse> {
         // TODO: 카카오 아이디 기반 조회는 single/triple에 의존 x -> 분리 필요
-        val meetingTeamInformationGetResponse = singleMeetingService.getMeetingTeamInformationByKakaoId(kakaoId)
+        val meetingTeamInformationGetResponse =
+            singleMeetingService.getMeetingTeamInformationByKakaoId(kakaoId)
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamInformationGetResponse)
     }
 

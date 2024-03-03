@@ -12,7 +12,6 @@ import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetR
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
@@ -70,10 +69,11 @@ class SingleMeetingService(
 
         val meetingTeam = user.team ?: throw UserTeamNotFoundException()
 
-        val information = Information(
-            gender = user.userPersonalInformation.gender,
-            meetingTeamInformationUpdateRequest.toMap()
-        )
+        val information =
+            Information(
+                gender = user.userPersonalInformation.gender,
+                meetingTeamInformationUpdateRequest.toMap()
+            )
         meetingTeam?.information = information
     }
 
@@ -109,7 +109,9 @@ class SingleMeetingService(
         )
     }
 
-    override fun getMeetingTeamInformationByKakaoId(kakaoId: String): MeetingTeamInformationGetResponse {
+    override fun getMeetingTeamInformationByKakaoId(
+        kakaoId: String
+    ): MeetingTeamInformationGetResponse {
         val user = userRepository.findByKakaoTalkId(kakaoId) ?: throw UserNotFoundException()
 
         val meetingTeam = user.team

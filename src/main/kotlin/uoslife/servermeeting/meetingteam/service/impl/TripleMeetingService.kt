@@ -113,10 +113,11 @@ class TripleMeetingService(
 
         val userTeam = user.team ?: throw UserTeamNotFoundException()
 
-        val information = Information(
-            gender = user.userPersonalInformation.gender,
-            meetingTeamInformationUpdateRequest.toMap()
-        )
+        val information =
+            Information(
+                gender = user.userPersonalInformation.gender,
+                meetingTeamInformationUpdateRequest.toMap()
+            )
         userTeam.information = information
     }
 
@@ -153,7 +154,9 @@ class TripleMeetingService(
         )
     }
 
-    override fun getMeetingTeamInformationByKakaoId(kakaoId: String): MeetingTeamInformationGetResponse {
+    override fun getMeetingTeamInformationByKakaoId(
+        kakaoId: String
+    ): MeetingTeamInformationGetResponse {
         val user = userRepository.findByKakaoTalkId(kakaoId) ?: throw UserNotFoundException()
 
         val meetingTeam = user.team

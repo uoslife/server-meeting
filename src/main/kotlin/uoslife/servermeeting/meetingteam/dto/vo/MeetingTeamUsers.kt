@@ -1,6 +1,5 @@
 package uoslife.servermeeting.meetingteam.dto.vo
 
-import java.time.LocalDate
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUser
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.user.entity.User

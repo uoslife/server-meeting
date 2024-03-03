@@ -1,7 +1,6 @@
 package uoslife.servermeeting.user.dto.response
 
 import uoslife.servermeeting.certification.dto.University
-import java.util.UUID
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.enums.*
 
