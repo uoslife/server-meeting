@@ -76,6 +76,23 @@ class VerificationService(
         matchedVerification?.isVerified = true
         matchedVerification?.let { verificationRedisRepository.save(it) }
 
-        return true
+        val university: University = extractUniversity(verificationCheckRequest.email)
+
+        // User DB에 저장
+        val user: User = User.create(email = verificationCheckRequest.email, university = university)
+        userRepository.save(user)
+
+        // token 발급(security 나오면 추가 예정)
+        val accessToken: String = ""
+
+        return VerificationCodeResponse(accessToken)
+    }
+
+    private fun extractUniversity(email: String): University {
+        val domain: String = email.split("@")[1]
+        val discriminator: String = domain.split(".")[0]
+
+        val university: University = University.values().filter { university: University -> university.name.equals(discriminator) }.getOrNull(0) ?: throw UniversityNotFoundException()
+        return university
     }
 }
