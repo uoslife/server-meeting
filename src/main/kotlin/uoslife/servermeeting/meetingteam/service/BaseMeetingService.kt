@@ -1,5 +1,6 @@
 package uoslife.servermeeting.meetingteam.service
 
+import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
 import java.util.UUID
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
@@ -25,7 +26,7 @@ interface BaseMeetingService {
     fun getMeetingTeamUserList(userUUID: UUID, code: String): MeetingTeamUserListGetResponse
     fun updateMeetingTeamInformation(
         userUUID: UUID,
-        information: Information,
+        meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
     )
 
     fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse

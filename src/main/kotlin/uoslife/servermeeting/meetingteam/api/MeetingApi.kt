@@ -132,25 +132,17 @@ class MeetingApi(
             throw OnlyTeamLeaderCanUpdateTeamInformationException()
         }
 
-        // when (teamType) {
-        //     TeamType.SINGLE -> singleMeetingService.updateMeetingTeamInformation(
-        //         userUUID,
-        //         meetingTeamInformationUpdateRequest.informationDistance,
-        //         meetingTeamInformationUpdateRequest.informationFilter,
-        //         meetingTeamInformationUpdateRequest.informationMeetingTime,
-        //         meetingTeamInformationUpdateRequest.preferenceDistance,
-        //         meetingTeamInformationUpdateRequest.preferenceFilter,
-        //     )
-        //
-        //     TeamType.TRIPLE -> tripleMeetingService.updateMeetingTeamInformation(
-        //         userUUID,
-        //         meetingTeamInformationUpdateRequest.informationDistance,
-        //         meetingTeamInformationUpdateRequest.informationFilter,
-        //         meetingTeamInformationUpdateRequest.informationMeetingTime,
-        //         meetingTeamInformationUpdateRequest.preferenceDistance,
-        //         meetingTeamInformationUpdateRequest.preferenceFilter,
-        //     )
-        // }
+         when (teamType) {
+             TeamType.SINGLE -> singleMeetingService.updateMeetingTeamInformation(
+                 userUUID,
+                 meetingTeamInformationUpdateRequest,
+             )
+
+             TeamType.TRIPLE -> tripleMeetingService.updateMeetingTeamInformation(
+                 userUUID,
+                 meetingTeamInformationUpdateRequest,
+             )
+         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
