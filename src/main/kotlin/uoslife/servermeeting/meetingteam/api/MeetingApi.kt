@@ -198,6 +198,20 @@ class MeetingApi(
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamInformationGetResponse)
     }
 
+    @Operation(summary = "카카오톡 ID로 미팅 팀 전체 정보 조회")
+    @ApiResponse(
+        responseCode = "200",
+        description = "미팅 팀 전체 정보(MeetingTeamInformationGetResponse) 반환",
+    )
+    @GetMapping("/application/info/{kakaoId}")
+    fun getMeetingTeamApplicationInformationByKakaoId(
+        @PathVariable kakaoId: String,
+    ): ResponseEntity<MeetingTeamInformationGetResponse> {
+        // TODO: 카카오 아이디 기반 조회는 single/triple에 의존 x -> 분리 필요
+        val meetingTeamInformationGetResponse = singleMeetingService.getMeetingTeamInformationByKakaoId(kakaoId)
+        return ResponseEntity.status(HttpStatus.OK).body(meetingTeamInformationGetResponse)
+    }
+
     @Operation(summary = "미팅 팀 삭제", description = "리더만 팀 삭제 가능")
     @ApiResponse(responseCode = "204", description = "반환값 없음")
     @DeleteMapping("/{teamType}/{isTeamLeader}")

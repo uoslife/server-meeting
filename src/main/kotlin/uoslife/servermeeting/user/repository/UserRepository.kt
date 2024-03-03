@@ -6,4 +6,5 @@ import uoslife.servermeeting.user.entity.User
 
 interface UserRepository : JpaRepository<User, UUID> {
     fun findUserByNickname(nickname: String): User?
+    fun findByKakaoTalkId(kakaoId: String): User?
 }
