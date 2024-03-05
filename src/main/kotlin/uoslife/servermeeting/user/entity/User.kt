@@ -14,7 +14,7 @@ import uoslife.servermeeting.verification.dto.University
 class User(
     @Id @Column(nullable = false, unique = true) var id: UUID? = null,
     var phoneNumber: String?,
-    @Column(nullable = false, unique = true) var nickname: String?,
+    @Column(nullable = true, unique = true) var nickname: String? = null,
     var name: String?,
     var email: String? = null,
     var kakaoTalkId: String?,
@@ -28,6 +28,7 @@ class User(
     companion object {
         fun create(email: String, university: University): User{
             val user: User = User(
+                id = UUID.randomUUID(),
                 email = email,
                 university = university,
                 phoneNumber = null,
