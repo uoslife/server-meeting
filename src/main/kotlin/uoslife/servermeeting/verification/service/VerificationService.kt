@@ -100,7 +100,7 @@ class VerificationService(
 
     private fun extractUniversity(email: String): University {
         val domain: String = email.split("@")[1]
-        val discriminator: String = domain.split(".")[0]
+        val discriminator: String = domain.split(".")[0].uppercase()
 
         val university: University = University.values().filter { university: University -> university.name.equals(discriminator) }.getOrNull(0) ?: throw UniversityNotFoundException()
 
