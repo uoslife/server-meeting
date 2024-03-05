@@ -78,7 +78,7 @@ class SingleMeetingService(
         val information = meetingTeam?.information ?: throw InformationNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
-            user.userPersonalInformation.gender,
+            user.gender,
             TeamType.SINGLE,
             listOf(user),
             information,

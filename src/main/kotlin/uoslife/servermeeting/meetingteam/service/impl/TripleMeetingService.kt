@@ -23,7 +23,6 @@ import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 
@@ -123,7 +122,7 @@ class TripleMeetingService(
         val information = meetingTeam.information ?: throw InformationNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
-            user.userPersonalInformation?.gender ?: GenderType.MALE,
+            user.gender,
             TeamType.TRIPLE,
             userList,
             information,

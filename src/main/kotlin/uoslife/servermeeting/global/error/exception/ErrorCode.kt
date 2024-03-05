@@ -84,10 +84,11 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "Team must consist of Same Gender",
         HttpStatus.BAD_REQUEST.value()
     ),
+    COMPATIBILITY_NOT_FOUND("M18", "Compatibility is not found", HttpStatus.BAD_REQUEST.value()),
 
     // Match
     MATCH_NOT_FOUND("MT01", "Match is not Found.", HttpStatus.BAD_REQUEST.value()),
-
+    INVALID_MATCH("MT02", "Match is invalid.", HttpStatus.BAD_REQUEST.value()),
     // External API
     EXTERNAL_API_FAILED(
         "E01",

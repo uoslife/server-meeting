@@ -25,7 +25,7 @@ fun User.toResponse() =
     UserFindResponseDto(
         id = id!!,
         birthYear = userPersonalInformation.birthYear,
-        gender = userPersonalInformation.gender,
+        gender = gender,
         department = userPersonalInformation.department,
         kakaoTalkId = userPersonalInformation.kakaoTalkId,
         studentType = userPersonalInformation.studentType,

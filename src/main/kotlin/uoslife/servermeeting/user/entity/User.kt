@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Payment
+import uoslife.servermeeting.user.entity.enums.GenderType
 
 @Entity
 @Table(name = "`user`")
@@ -17,6 +18,7 @@ class User(
     var name: String?,
     var email: String? = null,
     var kakaoTalkId: String,
+    var gender: GenderType = GenderType.MALE,
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var userPersonalInformation: UserPersonalInformation = UserPersonalInformation(),
