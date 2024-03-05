@@ -154,26 +154,6 @@ class TripleMeetingService(
         )
     }
 
-    override fun getMeetingTeamInformationByKakaoId(
-        kakaoId: String
-    ): MeetingTeamInformationGetResponse {
-        val user = userRepository.findByKakaoTalkId(kakaoId) ?: throw UserNotFoundException()
-
-        val meetingTeam = user.team
-
-        val information = meetingTeam?.information ?: throw InformationNotFoundException()
-        val preference = meetingTeam?.preference ?: throw PreferenceNotFoundException()
-
-        return meetingServiceUtils.toMeetingTeamInformationGetResponse(
-            user.userPersonalInformation.gender,
-            TeamType.SINGLE,
-            listOf(user),
-            information,
-            preference,
-            null,
-        )
-    }
-
     @Transactional
     override fun deleteMeetingTeam(userUUID: UUID) {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()

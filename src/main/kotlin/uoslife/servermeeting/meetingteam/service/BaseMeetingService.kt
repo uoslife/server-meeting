@@ -33,6 +33,5 @@ interface BaseMeetingService {
         meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
     )
     fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse
-    fun getMeetingTeamInformationByKakaoId(kakaoId: String): MeetingTeamInformationGetResponse
     fun deleteMeetingTeam(userUUID: UUID)
 }

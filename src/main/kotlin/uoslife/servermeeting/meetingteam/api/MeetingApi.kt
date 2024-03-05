@@ -150,7 +150,7 @@ class MeetingApi(
 
     @Operation(summary = "미팅 팀 상대 정보 기입", description = "팀이 원하는 상대 정보를 기입함. 리더만 가능")
     @ApiResponse(responseCode = "204", description = "반환값 없음")
-    @PostMapping("/{teamType}/{isTeamLeader}/info")
+    @PostMapping("/{teamType}/{isTeamLeader}/prefer")
     fun updateMeetingTeamPreference(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
@@ -195,21 +195,6 @@ class MeetingApi(
                 TeamType.SINGLE -> singleMeetingService.getMeetingTeamInformation(userUUID)
                 TeamType.TRIPLE -> tripleMeetingService.getMeetingTeamInformation(userUUID)
             }
-        return ResponseEntity.status(HttpStatus.OK).body(meetingTeamInformationGetResponse)
-    }
-
-    @Operation(summary = "카카오톡 ID로 미팅 팀 전체 정보 조회")
-    @ApiResponse(
-        responseCode = "200",
-        description = "미팅 팀 전체 정보(MeetingTeamInformationGetResponse) 반환",
-    )
-    @GetMapping("/application/info/{kakaoId}")
-    fun getMeetingTeamApplicationInformationByKakaoId(
-        @PathVariable kakaoId: String,
-    ): ResponseEntity<MeetingTeamInformationGetResponse> {
-        // TODO: 카카오 아이디 기반 조회는 single/triple에 의존 x -> 분리 필요
-        val meetingTeamInformationGetResponse =
-            singleMeetingService.getMeetingTeamInformationByKakaoId(kakaoId)
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamInformationGetResponse)
     }
 
