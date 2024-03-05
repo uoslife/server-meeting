@@ -1,5 +1,5 @@
 package uoslife.servermeeting.verification.dto.response
 
-data class VerificationCodeResponse(
+data class VerifyCodeResponse(
     val accessToken: String
 )

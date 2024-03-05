@@ -14,7 +14,7 @@ import uoslife.servermeeting.verification.dto.University
 import uoslife.servermeeting.verification.dto.request.VerificationCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationRequest
 import uoslife.servermeeting.verification.dto.response.SendMailResponse
-import uoslife.servermeeting.verification.dto.response.VerificationCodeResponse
+import uoslife.servermeeting.verification.dto.response.VerifyCodeResponse
 import uoslife.servermeeting.verification.entity.Verification
 import uoslife.servermeeting.verification.exception.UniversityNotFoundException
 import uoslife.servermeeting.verification.exception.VerificationNotFoundException
@@ -75,7 +75,7 @@ class VerificationService(
     }
 
     @Transactional
-    fun checkVerificationCode(verificationCheckRequest: VerificationCheckRequest): VerificationCodeResponse {
+    fun verifyVerificationCode(verificationCheckRequest: VerificationCheckRequest): VerifyCodeResponse {
         val matchedVerification: Verification =
             verificationRedisRepository.findByIdOrNull(verificationCheckRequest.email)
                 ?: throw VerificationNotFoundException()
@@ -95,7 +95,7 @@ class VerificationService(
         // token 발급(security 나오면 추가 예정)
         val accessToken: String = ""
 
-        return VerificationCodeResponse(accessToken)
+        return VerifyCodeResponse(accessToken)
     }
 
     private fun extractUniversity(email: String): University {
@@ -103,6 +103,7 @@ class VerificationService(
         val discriminator: String = domain.split(".")[0]
 
         val university: University = University.values().filter { university: University -> university.name.equals(discriminator) }.getOrNull(0) ?: throw UniversityNotFoundException()
+
         return university
     }
 }

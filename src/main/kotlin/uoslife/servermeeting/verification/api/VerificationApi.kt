@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -38,10 +39,10 @@ class VerificationApi(private val verificationService: VerificationService) {
         responseCode = "200",
         description = "인증 성공, AccessToken 반환"
     )
-    @PostMapping("/check")
+    @PostMapping("/verify")
     fun verifyCode(
         @RequestBody @Valid verificationCheckRequest: VerificationCheckRequest
-    ): ResponseEntity<VerificationCodeResponse> {
-        return ResponseEntity.ok().body(verificationService.checkVerificationCode(verificationCheckRequest))
+    ): ResponseEntity<VerifyCodeResponse> {
+        return ResponseEntity.ok().body(verificationService.verifyVerificationCode(verificationCheckRequest))
     }
 }
