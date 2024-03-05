@@ -20,6 +20,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     EMAIL_DUPLICATION("U03", "Email is Duplicated.", HttpStatus.BAD_REQUEST.value()),
     NICKNAME_DUPLICATION("U04", "Nickname is Duplicated.", HttpStatus.BAD_REQUEST.value()),
     USER_ALREADY_RESET("U05", "User data is already reset.", HttpStatus.BAD_REQUEST.value()),
+    PHONE_NUMBER_NOT_FOUND("U06", "Phone Number is not found", HttpStatus.BAD_REQUEST.value()),
 
     // User - Cookie
     SESSION_COOKIE_EXPIRED("AT01", "Access Token is Expired", HttpStatus.UNAUTHORIZED.value()),
@@ -92,4 +93,10 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
 
     // Cert
     CERT_NOT_FOUND("C01", "Certification is not Found", HttpStatus.BAD_REQUEST.value()),
+
+    // Payment
+    PAYMENT_NOT_FOUND("P01", "Payment is not Found", HttpStatus.BAD_REQUEST.value()),
+    ACCESS_TOKEN_NOT_FOUND("P02", "AccessToken is not Found", HttpStatus.BAD_REQUEST.value()),
+    PAYMENT_INVALID("P03", "Payment is Invalid", HttpStatus.BAD_REQUEST.value()),
+    USER_ALREADY_HAVE_PAYMENT("P04", "User already have Payment", HttpStatus.BAD_REQUEST.value()),
 }
