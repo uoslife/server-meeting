@@ -44,4 +44,5 @@ class VerificationApi(private val verificationService: VerificationService) {
     ): ResponseEntity<VerificationCodeResponse> {
         return ResponseEntity.ok().body(verificationService.checkVerificationCode(verificationCheckRequest))
     }
+
 }
