@@ -1,9 +1,14 @@
 package uoslife.servermeeting.global.config
 
+import com.uoslife.core.auth.filter.JwtAccessDeniedHandler
+import com.uoslife.core.auth.filter.JwtAuthenticationEntryPoint
+import com.uoslife.core.auth.jwt.TokenProvider
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -15,10 +20,14 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.CorsUtils
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.servlet.HandlerExceptionResolver
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig() {
+class SecurityConfig(
+    private val jwtUtils: TokenProvider,
+    @Qualifier("handlerExceptionResolver") private val resolver: HandlerExceptionResolver,
+) {
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
@@ -33,15 +42,14 @@ class SecurityConfig() {
             .and()
             .headers().frameOptions().disable()
             .and()
-            .exceptionHandling()
-//            .authenticationEntryPoint(
-//                RestAuthenticationEntryPoint(),
-//            ) // 인증, 인가가 되지 않은 요청 발생시
+            .exceptionHandling() // 인증, 인가가 되지 않은 요청 발생시
+                .authenticationEntryPoint(JwtAuthenticationEntryPoint(resolver))
+                .accessDeniedHandler(JwtAccessDeniedHandler())
             .and()
             .authorizeHttpRequests()
-            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // CORS preflight 요청 허용
-            .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**").permitAll() // Swagger 허용 url
-            .requestMatchers("/api/**").hasRole("USER") // 모든 api 요청에 대해 권한 필요
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // CORS preflight 요청 허용
+                .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**").permitAll() // Swagger 허용 url
+                .requestMatchers("/api/**").hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
 //        http
 //            .addFilterBefore(JwtAuthenticationFilter(jwtUtils), UsernamePasswordAuthenticationFilter::class.java)
