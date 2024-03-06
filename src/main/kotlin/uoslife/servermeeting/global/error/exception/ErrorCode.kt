@@ -96,7 +96,11 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
 
     // Verification
     VERIFICATION_NOT_FOUND("V01", "VERIFICATION is not Found", HttpStatus.BAD_REQUEST.value()),
-    VERIFICATION_CODE_NOT_MATCH("V02", "Verification code does not match", HttpStatus.BAD_REQUEST.value()),
+    VERIFICATION_CODE_NOT_MATCH(
+        "V02",
+        "Verification code does not match",
+        HttpStatus.BAD_REQUEST.value()
+    ),
 
     // University
     UNIVIERSITY_NOT_FOUND("UN01", "University is not found", HttpStatus.BAD_REQUEST.value())

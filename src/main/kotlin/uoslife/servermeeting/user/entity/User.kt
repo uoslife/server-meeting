@@ -26,19 +26,20 @@ class User(
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "team_id") var team: MeetingTeam? = null
 ) : BaseEntity() {
     companion object {
-        fun create(email: String, university: University): User{
-            val user: User = User(
-                id = UUID.randomUUID(),
-                email = email,
-                university = university,
-                phoneNumber = null,
-                name = null,
-                kakaoTalkId = null,
-                userPersonalInformation = UserPersonalInformation(),
-                payment = null,
-                team = null,
-                nickname = null
-            )
+        fun create(email: String, university: University): User {
+            val user: User =
+                User(
+                    id = UUID.randomUUID(),
+                    email = email,
+                    university = university,
+                    phoneNumber = null,
+                    name = null,
+                    kakaoTalkId = null,
+                    userPersonalInformation = UserPersonalInformation(),
+                    payment = null,
+                    team = null,
+                    nickname = null
+                )
             return user
         }
     }

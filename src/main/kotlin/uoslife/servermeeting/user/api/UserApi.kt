@@ -58,7 +58,9 @@ class UserApi(
     }
 
     @GetMapping("/check")
-    fun checkUser(@RequestBody @Valid checkUserRequest: CheckUserRequest): ResponseEntity<CheckUserResponse>{
+    fun checkUser(
+        @RequestBody @Valid checkUserRequest: CheckUserRequest
+    ): ResponseEntity<CheckUserResponse> {
         return userService.checkUserByEmail(checkUserRequest.email)
     }
 }

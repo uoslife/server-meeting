@@ -53,7 +53,7 @@ class UserService(
         return ResponseEntity.ok(userPutDao.putUser(user))
     }
 
-    fun checkUserByEmail(email: String): ResponseEntity<CheckUserResponse>{
+    fun checkUserByEmail(email: String): ResponseEntity<CheckUserResponse> {
         val isExist: Boolean = userRepository.existsByEmail(email)
         return ResponseEntity.ok(CheckUserResponse(isExist))
     }

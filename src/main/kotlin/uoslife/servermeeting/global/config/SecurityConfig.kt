@@ -20,32 +20,50 @@ class SecurityConfig() {
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
         http.cors().configurationSource(configurationSource())
 
-        http.httpBasic().disable()
-            .csrf().disable()
-            .cors().configurationSource(configurationSource())
+        http
+            .httpBasic()
+            .disable()
+            .csrf()
+            .disable()
+            .cors()
+            .configurationSource(configurationSource())
             .and()
-            .formLogin().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .formLogin()
+            .disable()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .headers().frameOptions().disable()
+            .headers()
+            .frameOptions()
+            .disable()
             .and()
             .exceptionHandling()
-//            .authenticationEntryPoint(
-//                RestAuthenticationEntryPoint(),
-//            ) // 인증, 인가가 되지 않은 요청 발생시
+            //            .authenticationEntryPoint(
+            //                RestAuthenticationEntryPoint(),
+            //            ) // 인증, 인가가 되지 않은 요청 발생시
             //            .authenticationEntryPoint(
             //                RestAuthenticationEntryPoint(),
             //            ) // 인증, 인가가 되지 않은 요청 발생시
             .and()
             .authorizeHttpRequests()
-            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // CORS preflight 요청 허용
-            .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**","/api/verification/**", "/api/user/check").permitAll() // Swagger 허용 url
-            .requestMatchers("/api/**").hasRole("USER") // 모든 api 요청에 대해 권한 필요
+            .requestMatchers(CorsUtils::isPreFlightRequest)
+            .permitAll() // CORS preflight 요청 허용
+            .requestMatchers(
+                "/api/swagger-ui/**",
+                "/api/api-docs/**",
+                "/api/verification/**",
+                "/api/user/check"
+            )
+            .permitAll() // Swagger 허용 url
+            .requestMatchers("/api/**")
+            .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
-//        http
-//            .addFilterBefore(cookieAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
         //        http
-        //            .addFilterBefore(JwtAuthenticationFilter(jwtUtils), UsernamePasswordAuthenticationFilter::class.java)
+        //            .addFilterBefore(cookieAuthFilter,
+        // UsernamePasswordAuthenticationFilter::class.java)
+        //        http
+        //            .addFilterBefore(JwtAuthenticationFilter(jwtUtils),
+        // UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
     }

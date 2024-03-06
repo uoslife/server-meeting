@@ -17,8 +17,8 @@ import uoslife.servermeeting.verification.dto.response.SendMailResponse
 import uoslife.servermeeting.verification.dto.response.VerifyCodeResponse
 import uoslife.servermeeting.verification.entity.Verification
 import uoslife.servermeeting.verification.exception.UniversityNotFoundException
-import uoslife.servermeeting.verification.exception.VerificationNotFoundException
 import uoslife.servermeeting.verification.exception.VerificationCodeNotMatchException
+import uoslife.servermeeting.verification.exception.VerificationNotFoundException
 import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 
 @Service
@@ -75,13 +75,16 @@ class VerificationService(
     }
 
     @Transactional
-    fun verifyVerificationCode(verificationCheckRequest: VerificationCheckRequest): VerifyCodeResponse {
+    fun verifyVerificationCode(
+        verificationCheckRequest: VerificationCheckRequest
+    ): VerifyCodeResponse {
         val matchedVerification: Verification =
             verificationRedisRepository.findByIdOrNull(verificationCheckRequest.email)
                 ?: throw VerificationNotFoundException()
 
         // check request code and db code
-        if (!matchedVerification.code.equals(verificationCheckRequest.code)) throw VerificationCodeNotMatchException()
+        if (!matchedVerification.code.equals(verificationCheckRequest.code))
+            throw VerificationCodeNotMatchException()
 
         matchedVerification?.isVerified = true
         matchedVerification?.let { verificationRedisRepository.save(it) }
@@ -89,7 +92,8 @@ class VerificationService(
         val university: University = extractUniversity(verificationCheckRequest.email)
 
         // User DB에 저장
-        val user: User = User.create(email = verificationCheckRequest.email, university = university)
+        val user: User =
+            User.create(email = verificationCheckRequest.email, university = university)
         userRepository.save(user)
 
         // token 발급(security 나오면 추가 예정)
@@ -102,7 +106,11 @@ class VerificationService(
         val domain: String = email.split("@")[1]
         val discriminator: String = domain.split(".")[0].uppercase()
 
-        val university: University = University.values().filter { university: University -> university.name.equals(discriminator) }.getOrNull(0) ?: throw UniversityNotFoundException()
+        val university: University =
+            University.values()
+                .filter { university: University -> university.name.equals(discriminator) }
+                .getOrNull(0)
+                ?: throw UniversityNotFoundException()
 
         return university
     }

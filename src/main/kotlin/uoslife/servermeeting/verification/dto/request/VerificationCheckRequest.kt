@@ -12,6 +12,5 @@ data class VerificationCheckRequest(
     ) // 경희대, 외대 메일 검증 정규 표현식
     @Schema(description = "이메일 주소", example = "gustmd5715@uos.ac.kr")
     val email: String,
-    @NotBlank
-    @Schema(description = "인증코드", example = "123456")
-    val code: String)
+    @NotBlank @Schema(description = "인증코드", example = "123456") val code: String
+)
