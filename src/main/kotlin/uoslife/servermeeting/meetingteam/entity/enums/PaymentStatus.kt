@@ -1,8 +1,9 @@
 package uoslife.servermeeting.meetingteam.entity.enums
 
 enum class PaymentStatus {
-    WAITING,
-    PAID,
-    CANCELED,
-    REFUNDED
+    NONE,
+    REQUEST,
+    SUCCESS,
+    FAILED,
+    REFUND,
 }
