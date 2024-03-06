@@ -93,6 +93,17 @@ dependencies {
 
     // google mail authentication
     implementation("org.springframework.boot:spring-boot-starter-mail")
+
+    // redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
+    // jwt
+    compileOnly("io.jsonwebtoken:jjwt-api:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+    testImplementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+    testImplementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+    testImplementation("io.jsonwebtoken:jjwt-api:0.11.5")
 }
 
 
