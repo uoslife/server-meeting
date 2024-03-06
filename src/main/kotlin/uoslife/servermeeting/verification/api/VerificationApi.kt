@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.verification.dto.request.VerificationCheckRequest
-import uoslife.servermeeting.verification.dto.request.VerificationRequest
+import uoslife.servermeeting.verification.dto.request.VerificationSendRequest
 import uoslife.servermeeting.verification.dto.response.*
 import uoslife.servermeeting.verification.service.VerificationService
 
@@ -22,9 +22,9 @@ class VerificationApi(private val verificationService: VerificationService) {
     @ApiResponse(responseCode = "200", description = "메인 전송 성공")
     @PostMapping("/send")
     fun sendMail(
-        @RequestBody @Valid verificationRequest: VerificationRequest
+        @RequestBody @Valid verificationSendRequest: VerificationSendRequest
     ): ResponseEntity<SendMailResponse> {
-        return ResponseEntity.ok().body(verificationService.sendMail(verificationRequest))
+        return ResponseEntity.ok().body(verificationService.sendMail(verificationSendRequest))
     }
 
     @Operation(
