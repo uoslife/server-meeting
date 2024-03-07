@@ -3,6 +3,7 @@ package uoslife.servermeeting.verification.dto.request
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
+import uoslife.servermeeting.verification.dto.University
 
 data class VerificationCodeSendRequest(
     @NotBlank
@@ -12,4 +13,7 @@ data class VerificationCodeSendRequest(
     ) // 경희대, 외대, 시립대 메일 검증 정규 표현식
     @Schema(description = "이메일 주소", example = "gustmd5715@uos.ac.kr")
     val email: String,
+
+    @Schema(description = "대학 구분", example = "UOS")
+    val university: University? = null
 )
