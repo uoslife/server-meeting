@@ -13,7 +13,7 @@ data class MeetingTeamInformationGetResponse(
 )
 
 data class UserProfile(
-    val nickname: String,
+    val nickname: String?,
     val age: Int,
     val kakaoTalkId: String,
     val department: DepartmentNameType,

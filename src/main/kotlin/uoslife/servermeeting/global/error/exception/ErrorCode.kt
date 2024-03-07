@@ -126,8 +126,20 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         HttpStatus.INTERNAL_SERVER_ERROR.value()
     ),
 
-    // Cert
-    CERT_NOT_FOUND("C01", "Certification is not Found", HttpStatus.BAD_REQUEST.value()),
+    // Verification
+    VERIFICATION_CODE_NOT_MATCH(
+        "V01",
+        "Verification code does not match",
+        HttpStatus.BAD_REQUEST.value()
+    ),
+    VERIFICATION_NOT_FOUND(
+        "V02",
+        "Verification code does not exist",
+        HttpStatus.BAD_REQUEST.value()
+    ),
+
+    // University
+    UNIVIERSITY_NOT_FOUND("UN01", "University is not Found", HttpStatus.BAD_REQUEST.value()),
 
     // Payment
     PAYMENT_NOT_FOUND("P01", "Payment is not Found", HttpStatus.BAD_REQUEST.value()),

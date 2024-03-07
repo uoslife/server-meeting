@@ -91,19 +91,14 @@ dependencies {
     // dokka
     dokkaPlugin("org.jetbrains.dokka:mathjax-plugin:1.9.10")
 
-    // google mail authentication
+    // mail
     implementation("org.springframework.boot:spring-boot-starter-mail")
 
-    // redis
+    // reids
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
-    // jwt
-    compileOnly("io.jsonwebtoken:jjwt-api:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
-    testImplementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
-    testImplementation("io.jsonwebtoken:jjwt-impl:0.11.5")
-    testImplementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    // amazon aws
+    implementation ("com.amazonaws:aws-java-sdk-ses:1.12.3")
 }
 
 
