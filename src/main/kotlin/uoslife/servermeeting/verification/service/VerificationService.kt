@@ -12,8 +12,8 @@ import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
 import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckRequest
-import uoslife.servermeeting.verification.dto.request.VerificationSendRequest
-import uoslife.servermeeting.verification.dto.response.VerificationSendResponse
+import uoslife.servermeeting.verification.dto.request.VerificationCodeSendRequest
+import uoslife.servermeeting.verification.dto.response.VerificationCodeSendResponse
 import uoslife.servermeeting.verification.dto.response.VerificationCodeCheckResponse
 import uoslife.servermeeting.verification.entity.Verification
 import uoslife.servermeeting.verification.exception.UniversityNotFoundException
@@ -31,9 +31,9 @@ class VerificationService(
     @Value("\${mail.from}") private val mailFrom: String
 ) {
     @Transactional
-    fun sendMail(verificationSendRequest: VerificationSendRequest): VerificationSendResponse {
+    fun sendMail(verificationCodeSendRequest: VerificationCodeSendRequest): VerificationCodeSendResponse {
         // verification을 DB에 이미 존재하면 가져오고, 없으면 새로 생성함
-        val verification: Verification = getOrCreateVerification(verificationSendRequest.email)
+        val verification: Verification = getOrCreateVerification(verificationCodeSendRequest.email)
 
         // Vertification 코드 생성 후 주입
         val code: String = uniqueCodeGenerator.getUniqueVerificationCode()
@@ -48,7 +48,7 @@ class VerificationService(
         // 메일 보내기
         javaMailSender.send(message)
 
-        return VerificationSendResponse(true)
+        return VerificationCodeSendResponse(true)
     }
 
     private fun createMail(email: String, code: String): MimeMessage {
