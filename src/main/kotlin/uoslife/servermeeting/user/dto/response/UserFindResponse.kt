@@ -18,7 +18,7 @@ data class UserFindResponseDto(
     val mbti: String?,
     val interest: String?,
     val height: Number?,
-    val nickname: String
+    val nickname: String?
 )
 
 fun User.toResponse() =
