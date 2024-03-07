@@ -35,7 +35,7 @@ class VerificationApi(private val verificationService: VerificationService) {
     @PostMapping("/verify")
     fun verifyCode(
         @RequestBody @Valid verificationCodeCheckRequest: VerificationCodeCheckRequest
-    ): ResponseEntity<VerificationCodeResponse> {
+    ): ResponseEntity<VerificationCodeCheckResponse> {
         return ResponseEntity.ok()
             .body(verificationService.verifyVerificationCode(verificationCodeCheckRequest))
     }
