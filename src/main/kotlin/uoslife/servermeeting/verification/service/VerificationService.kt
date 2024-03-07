@@ -22,7 +22,6 @@ import uoslife.servermeeting.verification.exception.VerificationNotFoundExceptio
 import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 
 @Service
-@Transactional(readOnly = true)
 class VerificationService(
     private val verificationRedisRepository: VerificationRedisRepository,
     private val userRepository: UserRepository,
@@ -57,7 +56,7 @@ class VerificationService(
 
         messageHelper.setFrom(mailFrom)
         messageHelper.setTo(email)
-        messageHelper.setSubject("[시대팅] : 인증 메일 코드를 확인해주세요")
+        messageHelper.setSubject("[시대팅] 인증 메일 코드를 확인해주세요")
         messageHelper.setText(getVerificationMessage(code), true)
 
         return message
