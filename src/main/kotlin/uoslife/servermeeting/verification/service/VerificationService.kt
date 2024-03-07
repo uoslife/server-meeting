@@ -10,13 +10,11 @@ import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.repository.UserRepository
-import uoslife.servermeeting.verification.dto.University
 import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationCodeSendRequest
-import uoslife.servermeeting.verification.dto.response.VerificationCodeSendResponse
 import uoslife.servermeeting.verification.dto.response.VerificationCodeCheckResponse
+import uoslife.servermeeting.verification.dto.response.VerificationCodeSendResponse
 import uoslife.servermeeting.verification.entity.Verification
-import uoslife.servermeeting.verification.exception.UniversityNotFoundException
 import uoslife.servermeeting.verification.exception.VerificationCodeNotMatchException
 import uoslife.servermeeting.verification.exception.VerificationNotFoundException
 import uoslife.servermeeting.verification.repository.VerificationRedisRepository
@@ -30,7 +28,9 @@ class VerificationService(
     @Value("\${mail.from}") private val mailFrom: String
 ) {
     @Transactional
-    fun sendMail(verificationCodeSendRequest: VerificationCodeSendRequest): VerificationCodeSendResponse {
+    fun sendMail(
+        verificationCodeSendRequest: VerificationCodeSendRequest
+    ): VerificationCodeSendResponse {
         // verification을 DB에 이미 존재하면 가져오고, 없으면 새로 생성함
         val verification: Verification = getOrCreateVerification(verificationCodeSendRequest.email)
 
@@ -90,7 +90,10 @@ class VerificationService(
 
         // User DB에 저장
         val user: User =
-            User.create(email = verificationCodeCheckRequest.email, university = verificationCodeCheckRequest.university)
+            User.create(
+                email = verificationCodeCheckRequest.email,
+                university = verificationCodeCheckRequest.university
+            )
         userRepository.save(user)
 
         // token 발급(security 나오면 추가 예정)
