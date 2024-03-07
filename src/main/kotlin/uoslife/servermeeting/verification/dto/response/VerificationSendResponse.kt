@@ -1,3 +1,3 @@
 package uoslife.servermeeting.verification.dto.response
 
-data class SendMailResponse(val success: Boolean)
+data class VerificationSendResponse(val result: Boolean)
