@@ -5,11 +5,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uoslife.servermeeting.verification.dto.request.VerificationCheckRequest
+import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationSendRequest
 import uoslife.servermeeting.verification.dto.response.*
 import uoslife.servermeeting.verification.service.VerificationService
@@ -34,9 +35,9 @@ class VerificationApi(private val verificationService: VerificationService) {
     @ApiResponse(responseCode = "200", description = "인증 성공, AccessToken 반환")
     @PostMapping("/verify")
     fun verifyCode(
-        @RequestBody @Valid verificationCheckRequest: VerificationCheckRequest
-    ): ResponseEntity<VerifyCodeResponse> {
+        @RequestBody @Valid verificationCodeCheckRequest: VerificationCodeCheckRequest
+    ): ResponseEntity<VerificationCodeResponse> {
         return ResponseEntity.ok()
-            .body(verificationService.verifyVerificationCode(verificationCheckRequest))
+            .body(verificationService.verifyVerificationCode(verificationCodeCheckRequest))
     }
 }

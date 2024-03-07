@@ -11,10 +11,10 @@ import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
-import uoslife.servermeeting.verification.dto.request.VerificationCheckRequest
+import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationSendRequest
 import uoslife.servermeeting.verification.dto.response.SendMailResponse
-import uoslife.servermeeting.verification.dto.response.VerifyCodeResponse
+import uoslife.servermeeting.verification.dto.response.VerificationCodeResponse
 import uoslife.servermeeting.verification.entity.Verification
 import uoslife.servermeeting.verification.exception.UniversityNotFoundException
 import uoslife.servermeeting.verification.exception.VerificationCodeNotMatchException
@@ -76,30 +76,30 @@ class VerificationService(
 
     @Transactional
     fun verifyVerificationCode(
-        verificationCheckRequest: VerificationCheckRequest
-    ): VerifyCodeResponse {
+        verificationCodeCheckRequest: VerificationCodeCheckRequest
+    ): VerificationCodeResponse {
         val matchedVerification: Verification =
-            verificationRedisRepository.findByIdOrNull(verificationCheckRequest.email)
+            verificationRedisRepository.findByIdOrNull(verificationCodeCheckRequest.email)
                 ?: throw VerificationNotFoundException()
 
         // check request code and db code
-        if (!matchedVerification.code.equals(verificationCheckRequest.code))
+        if (!matchedVerification.code.equals(verificationCodeCheckRequest.code))
             throw VerificationCodeNotMatchException()
 
         matchedVerification?.isVerified = true
         matchedVerification?.let { verificationRedisRepository.save(it) }
 
-        val university: University = extractUniversity(verificationCheckRequest.email)
+        val university: University = extractUniversity(verificationCodeCheckRequest.email)
 
         // User DB에 저장
         val user: User =
-            User.create(email = verificationCheckRequest.email, university = university)
+            User.create(email = verificationCodeCheckRequest.email, university = university)
         userRepository.save(user)
 
         // token 발급(security 나오면 추가 예정)
         val accessToken: String = ""
 
-        return VerifyCodeResponse(accessToken)
+        return VerificationCodeResponse(accessToken)
     }
 
     private fun extractUniversity(email: String): University {
