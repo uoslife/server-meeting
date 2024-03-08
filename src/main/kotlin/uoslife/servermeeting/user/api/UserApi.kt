@@ -2,17 +2,15 @@ package uoslife.servermeeting.user.api
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import java.util.UUID
+import jakarta.validation.Valid
+import java.util.*
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import uoslife.servermeeting.user.dto.request.CheckUserRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
+import uoslife.servermeeting.user.dto.response.CheckUserResponse
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
 import uoslife.servermeeting.user.service.UserService
 
@@ -51,5 +49,12 @@ class UserApi(
     @PutMapping
     fun resetUser(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {
         return userService.resetUser(UUID.fromString(userDetails.username))
+    }
+
+    @GetMapping("/check")
+    fun checkUser(
+        @RequestBody @Valid checkUserRequest: CheckUserRequest
+    ): ResponseEntity<CheckUserResponse> {
+        return userService.checkUserByEmail(checkUserRequest.email)
     }
 }

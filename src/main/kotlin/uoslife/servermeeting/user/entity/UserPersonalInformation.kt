@@ -1,7 +1,7 @@
 package uoslife.servermeeting.user.entity
 
-import uoslife.servermeeting.certification.dto.University
 import uoslife.servermeeting.user.entity.enums.*
+import uoslife.servermeeting.verification.dto.University
 
 data class UserPersonalInformation(
     var age: Int? = 0,

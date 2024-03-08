@@ -1,6 +1,6 @@
 package uoslife.servermeeting.user.service
 
-import java.util.UUID
+import java.util.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.user.dao.UserPutDao
 import uoslife.servermeeting.user.dao.UserUpdateDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
+import uoslife.servermeeting.user.dto.response.CheckUserResponse
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
 import uoslife.servermeeting.user.dto.response.toResponse
 import uoslife.servermeeting.user.entity.UserPersonalInformation
@@ -82,4 +83,9 @@ class UserService(
     //            NicknameCheckResponse(true)
     //        }
     //    }
+
+    fun checkUserByEmail(email: String): ResponseEntity<CheckUserResponse> {
+        val isExist: Boolean = userRepository.existsByEmail(email)
+        return ResponseEntity.ok(CheckUserResponse(isExist))
+    }
 }

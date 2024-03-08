@@ -1,11 +1,11 @@
 package uoslife.servermeeting.meetingteam.entity
 
-import uoslife.servermeeting.certification.dto.University
 import uoslife.servermeeting.meetingteam.entity.enums.TeamMood
 import uoslife.servermeeting.user.entity.enums.ReligionType
 import uoslife.servermeeting.user.entity.enums.SmokingType
 import uoslife.servermeeting.user.entity.enums.SpiritAnimalType
 import uoslife.servermeeting.user.entity.enums.StudentType
+import uoslife.servermeeting.verification.dto.University
 
 data class Preference(
     var ageMin: Int? = 0,

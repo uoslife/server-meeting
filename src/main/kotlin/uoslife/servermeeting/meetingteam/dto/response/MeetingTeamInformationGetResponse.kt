@@ -1,10 +1,10 @@
 package uoslife.servermeeting.meetingteam.dto.response
 
-import uoslife.servermeeting.certification.dto.University
 import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.user.entity.enums.*
+import uoslife.servermeeting.verification.dto.University
 
 data class MeetingTeamInformationGetResponse(
     val teamType: TeamType,
@@ -22,7 +22,7 @@ data class UserProfile(
     val university: University?,
     val department: String?,
     val studentType: StudentType?,
-    val kakaoTalkId: String,
+    val kakaoTalkId: String?,
     val smoking: SmokingType?,
     val drinkingMin: Int?,
     val drinkingMax: Int?,

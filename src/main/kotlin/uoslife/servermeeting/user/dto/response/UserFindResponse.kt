@@ -1,8 +1,11 @@
 package uoslife.servermeeting.user.dto.response
 
-import uoslife.servermeeting.certification.dto.University
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.enums.*
+import uoslife.servermeeting.user.entity.enums.InterestType
+import uoslife.servermeeting.user.entity.enums.SmokingType
+import uoslife.servermeeting.user.entity.enums.SpiritAnimalType
+import uoslife.servermeeting.user.entity.enums.StudentType
+import uoslife.servermeeting.verification.dto.University
 
 data class UserFindResponseDto(
     val name: String?,
@@ -11,7 +14,7 @@ data class UserFindResponseDto(
     val university: University?,
     val department: String?,
     val studentType: StudentType?,
-    val kakaoTalkId: String,
+    val kakaoTalkId: String?,
     val smoking: SmokingType?,
     val drinkingMin: Int?,
     val drinkingMax: Int?,

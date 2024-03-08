@@ -1,10 +1,13 @@
 package uoslife.servermeeting.meetingteam.dto.request
 
 import jakarta.validation.constraints.NotBlank
-import uoslife.servermeeting.certification.dto.University
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamMood
-import uoslife.servermeeting.user.entity.enums.*
+import uoslife.servermeeting.user.entity.enums.ReligionType
+import uoslife.servermeeting.user.entity.enums.SmokingType
+import uoslife.servermeeting.user.entity.enums.SpiritAnimalType
+import uoslife.servermeeting.user.entity.enums.StudentType
+import uoslife.servermeeting.verification.dto.University
 
 class MeetingTeamPreferenceUpdateRequest(
     @NotBlank val ageMin: Int,
