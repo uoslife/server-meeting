@@ -3,6 +3,7 @@ package uoslife.servermeeting.meetingteam.dto.request
 import jakarta.validation.constraints.NotBlank
 
 class MeetingTeamInformationUpdateRequest(
+    // TODO: 해당 부분 어떻게 처리할지?
     @NotBlank val question1: Any,
     @NotBlank val question2: Int,
     @NotBlank val question3: Int,
