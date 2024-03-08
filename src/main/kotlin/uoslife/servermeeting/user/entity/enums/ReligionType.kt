@@ -5,5 +5,6 @@ enum class ReligionType {
     CATHOLIC,
     BUDDHISM,
     NO_RELIGION,
-    ETC
+    ETC,
+    NO_MATTER
 }

@@ -14,7 +14,7 @@ data class UserUpdateRequest(
     @NotBlank val department: String,
     @NotBlank val studentType: StudentType,
     val religion: ReligionType?,
-    val smoking: SmokingType,
+    val smoking: SmokingType?,
     val drinkingMin: Int?,
     val drinkingMax: Int?,
     val spiritAnimal: List<SpiritAnimalType>?,

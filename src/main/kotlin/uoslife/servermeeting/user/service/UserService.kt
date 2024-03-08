@@ -76,14 +76,6 @@ class UserService(
         return ResponseEntity.ok(userPutDao.putUser(user))
     }
 
-    //    private fun checkNicknameDuplication(user: User?): NicknameCheckResponse {
-    //        return if (user?.nickname == null) {
-    //            NicknameCheckResponse(false)
-    //        } else {
-    //            NicknameCheckResponse(true)
-    //        }
-    //    }
-
     fun checkUserByEmail(email: String): ResponseEntity<CheckUserResponse> {
         val isExist: Boolean = userRepository.existsByEmail(email)
         return ResponseEntity.ok(CheckUserResponse(isExist))
