@@ -65,11 +65,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "Only Team Leader can Delete Team.",
         HttpStatus.BAD_REQUEST.value()
     ),
-    TEAM_NAME_LEAST_2_CHARACTER(
-        "M11",
-        "Team Name must be at Least 2 Characters.",
-        HttpStatus.BAD_REQUEST.value()
-    ),
+    INVALID_TEAM_NAME("M11", "Team name is invalid", HttpStatus.BAD_REQUEST.value()),
     TEAM_CODE_GENERATE_FAILED(
         "M12",
         "Team Code Generate is Failed.",
