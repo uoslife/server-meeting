@@ -1,6 +1,6 @@
 package uoslife.servermeeting.user.service
 
-import java.util.UUID
+import java.util.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.user.dao.UserPutDao
 import uoslife.servermeeting.user.dao.UserUpdateDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
-import uoslife.servermeeting.user.dto.response.NicknameCheckResponse
+import uoslife.servermeeting.user.dto.response.CheckUserResponse
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
 import uoslife.servermeeting.user.dto.response.toResponse
-import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.entity.UserPersonalInformation
 import uoslife.servermeeting.user.exception.ExistingUserNotFoundException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
@@ -32,16 +32,40 @@ class UserService(
         return ResponseEntity.ok(user.toResponse())
     }
 
-    fun findUserByNickname(nickname: String): ResponseEntity<NicknameCheckResponse> {
-        val user = userRepository.findUserByNickname(nickname)
-        return ResponseEntity.ok(checkNicknameDuplication(user))
-    }
+    //    fun findUserByNickname(nickname: String): ResponseEntity<NicknameCheckResponse> {
+    //        val user = userRepository.findUserByNickname(nickname)
+    //        return ResponseEntity.ok(checkNicknameDuplication(user))
+    //    }
 
     @Transactional
     fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<Unit> {
         val existingUser =
             userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
-        userUpdateDao.updateUser(requestDto, existingUser)
+
+        val userPersonalInformation =
+            UserPersonalInformation(
+                age = requestDto.age,
+                gender = requestDto.gender,
+                height = requestDto.height,
+                kakaoTalkId = requestDto.kakaoTalkId,
+                studentType = requestDto.studentType,
+                university = existingUser.userPersonalInformation.university,
+                department = requestDto.department,
+                religion = requestDto.religion,
+                drinkingMin = requestDto.drinkingMin,
+                drinkingMax = requestDto.drinkingMax,
+                smoking = requestDto.smoking,
+                spiritAnimal = requestDto.spiritAnimal,
+                mbti = requestDto.mbti,
+                interest = requestDto.interest,
+            )
+        userUpdateDao.updateUser(
+            requestDto.name,
+            requestDto.phoneNumber,
+            requestDto.kakaoTalkId,
+            userPersonalInformation,
+            existingUser
+        )
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
@@ -52,11 +76,8 @@ class UserService(
         return ResponseEntity.ok(userPutDao.putUser(user))
     }
 
-    private fun checkNicknameDuplication(user: User?): NicknameCheckResponse {
-        return if (user?.nickname == null) {
-            NicknameCheckResponse(false)
-        } else {
-            NicknameCheckResponse(true)
-        }
+    fun checkUserByEmail(email: String): ResponseEntity<CheckUserResponse> {
+        val isExist: Boolean = userRepository.existsByEmail(email)
+        return ResponseEntity.ok(CheckUserResponse(isExist))
     }
 }

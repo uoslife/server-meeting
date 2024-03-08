@@ -14,7 +14,7 @@ class UserPutDao(
         queryFactory
             .update(user)
             .where(user.eq(existingUser))
-            .set(user.nickname, "user@" + UUID.randomUUID().toString())
+            .set(user.name, "user@" + UUID.randomUUID().toString())
             .execute()
     }
 }

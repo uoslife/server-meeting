@@ -65,11 +65,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "Only Team Leader can Delete Team.",
         HttpStatus.BAD_REQUEST.value()
     ),
-    TEAM_NAME_LEAST_2_CHARACTER(
-        "M11",
-        "Team Name must be at Least 2 Characters.",
-        HttpStatus.BAD_REQUEST.value()
-    ),
+    INVALID_TEAM_NAME("M11", "Team name is invalid", HttpStatus.BAD_REQUEST.value()),
     TEAM_CODE_GENERATE_FAILED(
         "M12",
         "Team Code Generate is Failed.",
@@ -95,8 +91,20 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         HttpStatus.INTERNAL_SERVER_ERROR.value()
     ),
 
-    // Cert
-    CERT_NOT_FOUND("C01", "Certification is not Found", HttpStatus.BAD_REQUEST.value()),
+    // Verification
+    VERIFICATION_CODE_NOT_MATCH(
+        "V01",
+        "Verification code does not match",
+        HttpStatus.BAD_REQUEST.value()
+    ),
+    VERIFICATION_NOT_FOUND(
+        "V02",
+        "Verification code does not exist",
+        HttpStatus.BAD_REQUEST.value()
+    ),
+
+    // University
+    UNIVIERSITY_NOT_FOUND("UN01", "University is not Found", HttpStatus.BAD_REQUEST.value()),
 
     // Payment
     PAYMENT_NOT_FOUND("P01", "Payment is not Found", HttpStatus.BAD_REQUEST.value()),

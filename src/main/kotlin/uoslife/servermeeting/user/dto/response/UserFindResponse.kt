@@ -1,38 +1,41 @@
 package uoslife.servermeeting.user.dto.response
 
-import java.util.UUID
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.enums.DepartmentNameType
-import uoslife.servermeeting.user.entity.enums.GenderType
+import uoslife.servermeeting.user.entity.enums.InterestType
+import uoslife.servermeeting.user.entity.enums.SmokingType
+import uoslife.servermeeting.user.entity.enums.SpiritAnimalType
 import uoslife.servermeeting.user.entity.enums.StudentType
+import uoslife.servermeeting.verification.dto.University
 
 data class UserFindResponseDto(
-    val id: UUID,
-    val birthYear: Number?,
-    val gender: GenderType?,
-    val department: DepartmentNameType?,
-    val kakaoTalkId: String?,
+    val name: String?,
+    val age: Int?,
+    val height: Int?,
+    val university: University?,
+    val department: String?,
     val studentType: StudentType?,
-    val smoking: Boolean?,
-    val spirit_animal: String?,
+    val kakaoTalkId: String?,
+    val smoking: SmokingType?,
+    val drinkingMin: Int?,
+    val drinkingMax: Int?,
+    val spiritAnimal: List<SpiritAnimalType>?,
     val mbti: String?,
-    val interest: String?,
-    val height: Number?,
-    val nickname: String
+    val interest: List<InterestType>?,
 )
 
 fun User.toResponse() =
     UserFindResponseDto(
-        id = id!!,
-        birthYear = userPersonalInformation.birthYear,
-        gender = userPersonalInformation.gender,
-        department = userPersonalInformation.department,
-        kakaoTalkId = userPersonalInformation.kakaoTalkId,
-        studentType = userPersonalInformation.studentType,
-        smoking = userPersonalInformation.smoking,
-        spirit_animal = userPersonalInformation.spiritAnimal,
-        mbti = userPersonalInformation.mbti,
-        interest = userPersonalInformation.interest,
+        name = name,
+        age = userPersonalInformation.age,
         height = userPersonalInformation.height,
-        nickname = nickname,
+        university = userPersonalInformation.university,
+        department = userPersonalInformation.department,
+        studentType = userPersonalInformation.studentType,
+        kakaoTalkId = kakaoTalkId,
+        smoking = userPersonalInformation.smoking,
+        drinkingMin = userPersonalInformation.drinkingMin,
+        drinkingMax = userPersonalInformation.drinkingMax,
+        spiritAnimal = userPersonalInformation.spiritAnimal,
+        mbti = userPersonalInformation.mbti,
+        interest = userPersonalInformation.interest
     )

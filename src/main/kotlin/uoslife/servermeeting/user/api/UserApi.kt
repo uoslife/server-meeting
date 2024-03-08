@@ -2,19 +2,15 @@ package uoslife.servermeeting.user.api
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import java.util.UUID
+import jakarta.validation.Valid
+import java.util.*
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import uoslife.servermeeting.user.dto.request.CheckUserRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
-import uoslife.servermeeting.user.dto.response.NicknameCheckResponse
+import uoslife.servermeeting.user.dto.response.CheckUserResponse
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
 import uoslife.servermeeting.user.service.UserService
 
@@ -42,15 +38,16 @@ class UserApi(
         return userService.updateUser(requestBody, UUID.fromString(userDetails.username))
     }
 
-    @Operation(summary = "Nickname 중복 여부 확인", description = "nickname을 조회합니다.")
-    @GetMapping("/{nickname}")
-    fun getUserByUsername(@PathVariable nickname: String): ResponseEntity<NicknameCheckResponse> {
-        return userService.findUserByNickname(nickname)
-    }
-
     @Operation(summary = "user 정보 초기화", description = "user 테이블의 정보를 원래대로 되돌립니다.")
     @PutMapping
     fun resetUser(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {
         return userService.resetUser(UUID.fromString(userDetails.username))
+    }
+
+    @GetMapping("/check")
+    fun checkUser(
+        @RequestBody @Valid checkUserRequest: CheckUserRequest
+    ): ResponseEntity<CheckUserResponse> {
+        return userService.checkUserByEmail(checkUserRequest.email)
     }
 }
