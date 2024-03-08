@@ -1,4 +1,4 @@
-package com.uoslife.core.auth.security
+package uoslife.servermeeting.global.auth.jwt
 
 import org.springframework.security.authentication.AbstractAuthenticationToken
 

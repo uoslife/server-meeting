@@ -1,10 +1,5 @@
-package com.uoslife.core.auth.jwt
+package uoslife.servermeeting.global.auth.jwt
 
-import com.uoslife.core.auth.exception.InvalidTokenException
-import com.uoslife.core.auth.jwt.TokenType.ACCESS_SECRET
-import com.uoslife.core.auth.jwt.TokenType.REFRESH_SECRET
-import com.uoslife.core.auth.security.JwtUserDetails
-import com.uoslife.core.auth.security.JwtUserDetailsService
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
@@ -24,6 +19,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
+import uoslife.servermeeting.global.auth.exception.InvalidTokenException
+import uoslife.servermeeting.global.auth.security.JwtUserDetailsService
 
 @Component
 class TokenProvider(
@@ -42,8 +39,8 @@ class TokenProvider(
 
     fun getTokenSecret(tokenType: TokenType): String {
         return when (tokenType) {
-            ACCESS_SECRET -> accessTokenSecret
-            REFRESH_SECRET -> refreshTokenSecret
+            TokenType.ACCESS_SECRET -> accessTokenSecret
+            TokenType.REFRESH_SECRET -> refreshTokenSecret
         }
     }
 
@@ -70,13 +67,13 @@ class TokenProvider(
     }
 
     fun getAuthentication(accessToken: String): UsernamePasswordAuthenticationToken {
-        val claims = parseClaims(accessToken, ACCESS_SECRET)
+        val claims = parseClaims(accessToken, TokenType.ACCESS_SECRET)
         val principal: JwtUserDetails = jwtUserDetailsService.loadUserByUsername(claims.subject)
         return UsernamePasswordAuthenticationToken(principal, "", principal.authorities)
     }
 
     fun getTempAuthentication(tempToken: String): UsernamePasswordAuthenticationToken {
-        val claims = parseClaims(tempToken, REFRESH_SECRET)
+        val claims = parseClaims(tempToken, TokenType.REFRESH_SECRET)
         val principal: UserDetails =
             JwtUserDetails(
                 id = String(Base64.getDecoder().decode(claims.subject)),
@@ -99,7 +96,7 @@ class TokenProvider(
             .setSubject(userPrincipal.username)
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + accessTokenExpiration))
-            .signWith(key(ACCESS_SECRET), SignatureAlgorithm.HS256)
+            .signWith(key(TokenType.ACCESS_SECRET), SignatureAlgorithm.HS256)
             .compact()
     }
 
@@ -109,7 +106,7 @@ class TokenProvider(
             .setSubject(Base64.getEncoder().encodeToString(phoneNumber.toByteArray()))
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + accessTokenExpiration))
-            .signWith(key(REFRESH_SECRET), SignatureAlgorithm.HS256)
+            .signWith(key(TokenType.REFRESH_SECRET), SignatureAlgorithm.HS256)
             .compact()
     }
 
@@ -124,7 +121,7 @@ class TokenProvider(
             .setIssuer(deviceId.toString())
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + refreshTokenExpiration))
-            .signWith(key(REFRESH_SECRET), SignatureAlgorithm.HS256)
+            .signWith(key(TokenType.REFRESH_SECRET), SignatureAlgorithm.HS256)
             .compact()
     }
 

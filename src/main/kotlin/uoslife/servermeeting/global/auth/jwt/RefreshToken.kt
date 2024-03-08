@@ -1,4 +1,4 @@
-package com.uoslife.core.auth.jwt
+package uoslife.servermeeting.global.auth.jwt
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash

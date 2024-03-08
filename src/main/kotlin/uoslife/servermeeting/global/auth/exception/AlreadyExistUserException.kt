@@ -1,4 +1,4 @@
-package com.uoslife.core.auth.exception
+package uoslife.servermeeting.global.auth.exception
 
 import uoslife.servermeeting.global.error.exception.ErrorCode
 import uoslife.servermeeting.global.error.exception.AccessDeniedException

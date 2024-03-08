@@ -1,9 +1,10 @@
-package com.uoslife.core.auth.security
+package uoslife.servermeeting.global.auth.jwt
 
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
+import uoslife.servermeeting.global.auth.security.JwtUserDetailsService
 
 @Component
 class JwtAuthenticationProvider(private val userDetailsService: JwtUserDetailsService) :

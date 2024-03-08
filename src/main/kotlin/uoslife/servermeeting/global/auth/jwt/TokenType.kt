@@ -1,4 +1,4 @@
-package com.uoslife.core.auth.jwt
+package uoslife.servermeeting.global.auth.jwt
 
 enum class TokenType {
     ACCESS_SECRET,
