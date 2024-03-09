@@ -61,9 +61,9 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
     )
     @PostMapping("/refund")
     fun refundPaymentById(
-        @AuthenticationPrincipal userDetails: UserDetails,
+        @RequestBody paymentRefundRequest: PaymentRequestDto.PaymentRefundRequest
     ): ResponseEntity<PaymentResponseDto.PaymentRefundResponse> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userUUID = UUID.fromString(paymentRefundRequest.id)
 
         return ResponseEntity.status(HttpStatus.OK).body(paymentService.refundPaymentById(userUUID))
     }
