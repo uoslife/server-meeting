@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationCodeSendRequest
 import uoslife.servermeeting.verification.dto.response.*
@@ -35,7 +36,7 @@ class VerificationApi(private val verificationService: VerificationService) {
     @PostMapping("/verify")
     fun verifyCode(
         @RequestBody @Valid verificationCodeCheckRequest: VerificationCodeCheckRequest
-    ): ResponseEntity<VerificationCodeCheckResponse> {
+    ): ResponseEntity<TokenResponse> {
         return ResponseEntity.ok()
             .body(verificationService.verifyVerificationCode(verificationCodeCheckRequest))
     }
