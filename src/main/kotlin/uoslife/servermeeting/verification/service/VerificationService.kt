@@ -101,4 +101,12 @@ class VerificationService(
 
         return VerificationCodeCheckResponse(accessToken)
     }
+
+    private fun matchVerificationCode(email: String, code: String): Unit{
+        val matchedVerification: Verification =
+            verificationRedisRepository.findByIdOrNull(email)
+                ?: throw VerificationNotFoundException()
+        if (!matchedVerification.code.equals(code))
+            throw VerificationCodeNotMatchException()
+    }
 }
