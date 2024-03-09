@@ -78,37 +78,12 @@ class TokenProvider(
             .body
     }
 
-    fun generateAccessTokenFromUserPrincipal(userPrincipal: JwtUserDetails): String {
-        logger.info("generate access token for user: ${userPrincipal.username}")
-        return Jwts.builder()
-            .setSubject(userPrincipal.username)
-            .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + accessTokenExpiration))
-            .signWith(key(TokenType.ACCESS_SECRET), SignatureAlgorithm.HS256)
-            .compact()
-    }
-
     fun generateAccessTokenFromEmail(email: String): String {
         return Jwts.builder()
             .setSubject(email)
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + accessTokenExpiration))
             .signWith(key(TokenType.ACCESS_SECRET), SignatureAlgorithm.HS256)
-            .compact()
-    }
-
-    fun generateRefreshTokenFromUserPrincipal(
-        userPrincipal: JwtUserDetails,
-        deviceSecret: String,
-        deviceId: Long
-    ): String {
-        return Jwts.builder()
-            .setSubject(userPrincipal.username)
-            .setAudience(deviceSecret)
-            .setIssuer(deviceId.toString())
-            .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + refreshTokenExpiration))
-            .signWith(key(TokenType.REFRESH_SECRET), SignatureAlgorithm.HS256)
             .compact()
     }
 
@@ -127,9 +102,5 @@ class TokenProvider(
             return bearerToken.substring(7)
         }
         return null
-    }
-
-    fun shouldRefreshToken(claims: Claims): Boolean {
-        return claims.expiration.time - System.currentTimeMillis() < refreshTokenExpiration / 2
     }
 }
