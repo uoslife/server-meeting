@@ -36,7 +36,7 @@ class VerificationService(
     fun sendMail(
         verificationCodeSendRequest: VerificationCodeSendRequest
     ): VerificationCodeSendResponse {
-        // verification을 DB에 이미 존재하면 가져오고, 없으면 새로 생성함
+        // verification을 DB에 이미 존재하면 재발급하고, 없으면 새로 생성함
         val verification: Verification = getOrCreateVerification(verificationCodeSendRequest.email)
 
         // Vertification 코드 생성 후 주입
@@ -95,8 +95,8 @@ class VerificationService(
         // 리퀘스트 인증코드와 DB 인증코드가 같은지 체크
         matchVerificationCode(verificationCodeCheckRequest.email, verificationCodeCheckRequest.code)
 
-        // 인증코드 일치할 때, redis에 인증코드 지워야 하나?
-        //        verificationRedisRepository.deleteById(verificationCodeCheckRequest.email)
+        // 캐시에 인증코드 삭제
+        verificationRedisRepository.deleteById(verificationCodeCheckRequest.email)
 
         // 유저 반환, 새로운 유저면 회원가입 후 반환
         val savedUser: User =
