@@ -26,7 +26,10 @@ class JwtAuthenticationFilter(
     private fun setAuthentication(request: HttpServletRequest) {
         val token = tokenProvider.resolveToken(request) ?: throw UnauthorizedException()
 
-        if (StringUtils.hasText(token) && tokenProvider.validateJwtToken(token, TokenType.ACCESS_SECRET)) {
+        if (
+            StringUtils.hasText(token) &&
+                tokenProvider.validateJwtToken(token, TokenType.ACCESS_SECRET)
+        ) {
             val authentication = tokenProvider.getAuthentication(token)
             SecurityContextHolder.getContext().authentication = authentication
         }

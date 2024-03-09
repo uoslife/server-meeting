@@ -10,13 +10,11 @@ import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import io.jsonwebtoken.security.SignatureException
 import jakarta.servlet.http.HttpServletRequest
-import java.util.Base64
 import java.util.Date
 import javax.crypto.SecretKey
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
 import uoslife.servermeeting.global.auth.exception.InvalidTokenException
@@ -90,7 +88,7 @@ class TokenProvider(
             .compact()
     }
 
-    fun generateAccessTokenFromEmail(email: String): String{
+    fun generateAccessTokenFromEmail(email: String): String {
         return Jwts.builder()
             .setSubject(email)
             .setIssuedAt(Date())

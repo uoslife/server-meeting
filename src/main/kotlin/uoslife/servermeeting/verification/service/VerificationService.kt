@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.security.JwtUserDetailsService
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
@@ -15,7 +16,6 @@ import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
 import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationCodeSendRequest
-import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.verification.dto.response.VerificationCodeSendResponse
 import uoslife.servermeeting.verification.entity.Verification
 import uoslife.servermeeting.verification.exception.VerificationCodeNotMatchException
@@ -83,8 +83,12 @@ class VerificationService(
         verificationCodeCheckRequest: VerificationCodeCheckRequest
     ): TokenResponse {
         // 유저 업데이트 하거나 새로 생성해주는 마스터 코드(000000)
-        if(verificationCodeCheckRequest.code.equals("000000")){
-            val savedUser: User = updateOrCreateUser(verificationCodeCheckRequest.email, verificationCodeCheckRequest.university)
+        if (verificationCodeCheckRequest.code.equals("000000")) {
+            val savedUser: User =
+                updateOrCreateUser(
+                    verificationCodeCheckRequest.email,
+                    verificationCodeCheckRequest.university
+                )
             return getTokenByEmail(savedUser.email)
         }
 
@@ -92,10 +96,14 @@ class VerificationService(
         matchVerificationCode(verificationCodeCheckRequest.email, verificationCodeCheckRequest.code)
 
         // 인증코드 일치할 때, redis에 인증코드 지워야 하나?
-//        verificationRedisRepository.deleteById(verificationCodeCheckRequest.email)
+        //        verificationRedisRepository.deleteById(verificationCodeCheckRequest.email)
 
         // 유저 반환, 새로운 유저면 회원가입 후 반환
-        val savedUser: User = updateOrCreateUser(verificationCodeCheckRequest.email, verificationCodeCheckRequest.university)
+        val savedUser: User =
+            updateOrCreateUser(
+                verificationCodeCheckRequest.email,
+                verificationCodeCheckRequest.university
+            )
 
         // token(accessToken, refreshToken) 발급
         val tokenResponse: TokenResponse = getTokenByEmail(savedUser.email)
@@ -103,19 +111,16 @@ class VerificationService(
         return tokenResponse
     }
 
-    private fun matchVerificationCode(email: String, code: String): Unit{
+    private fun matchVerificationCode(email: String, code: String): Unit {
         val matchedVerification: Verification =
             verificationRedisRepository.findByIdOrNull(email)
                 ?: throw VerificationNotFoundException()
-        if (!matchedVerification.code.equals(code))
-            throw VerificationCodeNotMatchException()
+        if (!matchedVerification.code.equals(code)) throw VerificationCodeNotMatchException()
     }
 
-    private fun updateOrCreateUser(email: String, university: University): User{
-        val user: User = userRepository.findByEmail(email) ?: User.create(
-            email = email,
-            university = university
-        )
+    private fun updateOrCreateUser(email: String, university: University): User {
+        val user: User =
+            userRepository.findByEmail(email) ?: User.create(email = email, university = university)
         val savedUser: User = userRepository.save(user)
 
         return savedUser
@@ -125,9 +130,6 @@ class VerificationService(
         val accessToken: String = tokenProvider.generateAccessTokenFromEmail(email)
         val refreshToken: String = tokenProvider.generateRefreshTokenFromEmail(email)
 
-        return TokenResponse(
-            accessToken = accessToken,
-            refreshToken = refreshToken
-        )
+        return TokenResponse(accessToken = accessToken, refreshToken = refreshToken)
     }
 }

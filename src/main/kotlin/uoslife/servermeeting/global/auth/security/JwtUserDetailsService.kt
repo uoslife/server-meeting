@@ -1,11 +1,11 @@
 package uoslife.servermeeting.global.auth.security
 
-import uoslife.servermeeting.user.service.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.global.auth.jwt.JwtUserDetails
+import uoslife.servermeeting.user.service.UserService
 
 @Service
 class JwtUserDetailsService(private val userService: UserService) : UserDetailsService {

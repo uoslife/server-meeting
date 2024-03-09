@@ -1,4 +1,4 @@
-기package uoslife.servermeeting.global.auth.api
+package uoslife.servermeeting.global.auth.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
@@ -16,7 +16,7 @@ class AuthController(
     private val authService: AuthService,
 ) {
     @PostMapping("/refresh")
-    fun refreshToken(request: HttpServletRequest): ResponseEntity<TokenResponse>{
+    fun refreshToken(request: HttpServletRequest): ResponseEntity<TokenResponse> {
         val tokenResponse: TokenResponse = authService.refreshAccessToken(request)
 
         return ResponseEntity.ok().body(tokenResponse)

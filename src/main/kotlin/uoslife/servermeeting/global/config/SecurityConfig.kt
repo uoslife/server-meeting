@@ -1,8 +1,6 @@
 package uoslife.servermeeting.global.config
 
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -40,26 +38,38 @@ class SecurityConfig(
         http.cors().configurationSource(configurationSource())
 
         http
-            .httpBasic().disable()
-            .csrf().disable()
-            .cors().configurationSource(configurationSource())
+            .httpBasic()
+            .disable()
+            .csrf()
+            .disable()
+            .cors()
+            .configurationSource(configurationSource())
             .and()
-            .formLogin().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .formLogin()
+            .disable()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .headers().frameOptions().disable()
+            .headers()
+            .frameOptions()
+            .disable()
             .and()
             .exceptionHandling() // 인증, 인가가 되지 않은 요청 발생시
-                .authenticationEntryPoint(JwtAuthenticationEntryPoint(resolver))
-                .accessDeniedHandler(JwtAccessDeniedHandler())
+            .authenticationEntryPoint(JwtAuthenticationEntryPoint(resolver))
+            .accessDeniedHandler(JwtAccessDeniedHandler())
             .and()
             .authorizeHttpRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // CORS preflight 요청 허용
-                .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**", "/api/verification/**").permitAll() // Swagger 허용 url, 인증 허용
-                .requestMatchers("/api/**").hasRole("USER") // 모든 api 요청에 대해 권한 필요
+            .requestMatchers(CorsUtils::isPreFlightRequest)
+            .permitAll() // CORS preflight 요청 허용
+            .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**", "/api/verification/**")
+            .permitAll() // Swagger 허용 url, 인증 허용
+            .requestMatchers("/api/**")
+            .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
-                http
-                    .addFilterBefore(JwtAuthenticationFilter(jwtUtils), UsernamePasswordAuthenticationFilter::class.java)
+        http.addFilterBefore(
+            JwtAuthenticationFilter(jwtUtils),
+            UsernamePasswordAuthenticationFilter::class.java
+        )
 
         return http.build()
     }
@@ -106,7 +116,7 @@ class SecurityConfig(
                     "/api/verification/send",
                     "/api/verification/verify",
                     "/api/auth/refresh",
-                    )
+                )
         }
     }
 
