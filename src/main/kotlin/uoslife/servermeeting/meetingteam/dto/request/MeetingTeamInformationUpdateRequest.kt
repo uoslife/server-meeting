@@ -1,10 +1,6 @@
 package uoslife.servermeeting.meetingteam.dto.request
 
-import jakarta.validation.constraints.NotBlank
-
-class MeetingTeamInformationUpdateRequest(
-    val questions: List<String>
-) {
+class MeetingTeamInformationUpdateRequest(val questions: List<String>) {
     fun toMap(): Map<Int, String> {
         return mapOf(
             0 to questions[0],
