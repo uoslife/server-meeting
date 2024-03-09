@@ -66,7 +66,6 @@ class SecurityConfig() {
             web.ignoring().requestMatchers(PathRequest.toH2Console())
         }
     }
-
     @Bean
     fun configurationSource(): CorsConfigurationSource? {
         val configuration = CorsConfiguration()
