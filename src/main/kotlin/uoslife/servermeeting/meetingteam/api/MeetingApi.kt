@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
+import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
@@ -117,7 +119,7 @@ class MeetingApi(
 
     @Operation(summary = "미팅 팀 정보 기입", description = "팀의 정보를 기입함. 리더만 가능")
     @ApiResponse(responseCode = "204", description = "반환값 없음")
-    @PostMapping("/{teamType}/{isTeamLeader}/info")
+    @PutMapping("/{teamType}/{isTeamLeader}/info")
     fun updateMeetingTeamInformation(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
@@ -132,25 +134,48 @@ class MeetingApi(
             throw OnlyTeamLeaderCanUpdateTeamInformationException()
         }
 
-        // when (teamType) {
-        //     TeamType.SINGLE -> singleMeetingService.updateMeetingTeamInformation(
-        //         userUUID,
-        //         meetingTeamInformationUpdateRequest.informationDistance,
-        //         meetingTeamInformationUpdateRequest.informationFilter,
-        //         meetingTeamInformationUpdateRequest.informationMeetingTime,
-        //         meetingTeamInformationUpdateRequest.preferenceDistance,
-        //         meetingTeamInformationUpdateRequest.preferenceFilter,
-        //     )
-        //
-        //     TeamType.TRIPLE -> tripleMeetingService.updateMeetingTeamInformation(
-        //         userUUID,
-        //         meetingTeamInformationUpdateRequest.informationDistance,
-        //         meetingTeamInformationUpdateRequest.informationFilter,
-        //         meetingTeamInformationUpdateRequest.informationMeetingTime,
-        //         meetingTeamInformationUpdateRequest.preferenceDistance,
-        //         meetingTeamInformationUpdateRequest.preferenceFilter,
-        //     )
-        // }
+        when (teamType) {
+            TeamType.SINGLE ->
+                singleMeetingService.updateMeetingTeamInformation(
+                    userUUID,
+                    meetingTeamInformationUpdateRequest,
+                )
+            TeamType.TRIPLE ->
+                tripleMeetingService.updateMeetingTeamInformation(
+                    userUUID,
+                    meetingTeamInformationUpdateRequest,
+                )
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @Operation(summary = "미팅 팀 상대 정보 기입", description = "팀이 원하는 상대 정보를 기입함. 리더만 가능")
+    @ApiResponse(responseCode = "204", description = "반환값 없음")
+    @PutMapping("/{teamType}/{isTeamLeader}/prefer")
+    fun updateMeetingTeamPreference(
+        @AuthenticationPrincipal userDetails: UserDetails,
+        @PathVariable teamType: TeamType,
+        @PathVariable isTeamLeader: Boolean,
+        @RequestBody @Valid meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest,
+    ): ResponseEntity<Unit> {
+        val userUUID = UUID.fromString(userDetails.username)
+
+        if (!isTeamLeader) {
+            throw OnlyTeamLeaderCanUpdateTeamInformationException()
+        }
+
+        when (teamType) {
+            TeamType.SINGLE ->
+                singleMeetingService.updateMeetingTeamPreference(
+                    userUUID,
+                    meetingTeamPreferenceUpdateRequest,
+                )
+            TeamType.TRIPLE ->
+                tripleMeetingService.updateMeetingTeamPreference(
+                    userUUID,
+                    meetingTeamPreferenceUpdateRequest,
+                )
+        }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 

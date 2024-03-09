@@ -1,20 +1,22 @@
 package uoslife.servermeeting.user.entity
 
-import uoslife.servermeeting.user.entity.enums.DepartmentNameType
-import uoslife.servermeeting.user.entity.enums.GenderType
-import uoslife.servermeeting.user.entity.enums.StudentType
+import uoslife.servermeeting.user.entity.enums.*
+import uoslife.servermeeting.verification.dto.University
 
 data class UserPersonalInformation(
-    var birthYear: Int? = null,
+    var age: Int? = 0,
     var gender: GenderType = GenderType.MALE,
-    var height: Int = 0,
+    var height: Int? = 0,
     var kakaoTalkId: String? = null,
     var studentType: StudentType? = null,
-    var university: String? = null,
-    var department: DepartmentNameType? = null,
-    var studentNumber: String? = null,
-    var smoking: Boolean? = null,
-    var spiritAnimal: String? = null,
+    // TODO: 이메일 인증 절차 때 user 생성하면서 함께 넣을 것!
+    var university: University? = null,
+    var department: String? = null,
+    var religion: ReligionType? = null,
+    var drinkingMin: Int? = null,
+    var drinkingMax: Int? = null,
+    var smoking: SmokingType? = null,
+    var spiritAnimal: List<SpiritAnimalType>? = null,
     var mbti: String? = null,
-    var interest: String? = null,
+    var interest: List<InterestType>? = null,
 )

@@ -2,11 +2,7 @@ package uoslife.servermeeting.meetingteam.util
 
 import org.springframework.stereotype.Component
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.meetingteam.exception.TeamCodeInvalidFormatException
-import uoslife.servermeeting.meetingteam.exception.TeamConsistOfSameGenderException
-import uoslife.servermeeting.meetingteam.exception.TeamFullException
-import uoslife.servermeeting.meetingteam.exception.TeamNameLeast2CharacterException
-import uoslife.servermeeting.meetingteam.exception.UserAlreadyHaveTeamException
+import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.user.entity.User
 
 @Component
@@ -18,9 +14,9 @@ class Validator() {
         }
     }
 
-    fun isTeamNameLeast2Character(name: String?) {
-        if (name == null || name.length < 2) {
-            throw TeamNameLeast2CharacterException()
+    fun isTeamNameInvalid(name: String?) {
+        if (name == null || name.length < 2 || name.length > 8) {
+            throw InvalidTeamNameException()
         }
     }
 
