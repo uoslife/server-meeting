@@ -25,6 +25,8 @@ class VerificationService(
     private val userRepository: UserRepository,
     private val javaMailSender: JavaMailSender,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
+    private val tokenProvider: TokenProvider,
+    private val jwtUserDetailsService: JwtUserDetailsService,
     @Value("\${mail.from}") private val mailFrom: String
 ) {
     @Transactional
@@ -108,5 +110,14 @@ class VerificationService(
                 ?: throw VerificationNotFoundException()
         if (!matchedVerification.code.equals(code))
             throw VerificationCodeNotMatchException()
+    }
+    private fun updateOrCreateUser(email: String, university: University): User{
+        val user: User = userRepository.findByEmail(email) ?: User.create(
+            email = email,
+            university = university
+        )
+        val savedUser: User = userRepository.save(user)
+
+        return savedUser
     }
 }
