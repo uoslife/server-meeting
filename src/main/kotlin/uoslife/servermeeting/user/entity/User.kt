@@ -14,7 +14,7 @@ import uoslife.servermeeting.verification.dto.University
 class User(
     @Id @Column(nullable = false, unique = true) var id: UUID? = null,
     var phoneNumber: String?,
-    @Column(nullable = true, unique = true) var nickname: String? = null,
+    // @Column(nullable = false, unique = true) var nickname: String,
     var name: String?,
     @Column(nullable = false, unique = true) val email: String,
     var kakaoTalkId: String?,
@@ -38,7 +38,6 @@ class User(
                     userPersonalInformation = UserPersonalInformation(),
                     payment = null,
                     team = null,
-                    nickname = null
                 )
             return user
         }
