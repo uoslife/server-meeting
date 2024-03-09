@@ -111,6 +111,7 @@ class VerificationService(
         if (!matchedVerification.code.equals(code))
             throw VerificationCodeNotMatchException()
     }
+
     private fun updateOrCreateUser(email: String, university: University): User{
         val user: User = userRepository.findByEmail(email) ?: User.create(
             email = email,
@@ -119,5 +120,15 @@ class VerificationService(
         val savedUser: User = userRepository.save(user)
 
         return savedUser
+    }
+
+    fun getTokenByEmail(email: String): TokenResponse {
+        val accessToken: String = tokenProvider.generateAccessTokenFromEmail(email)
+        val refreshToken: String = tokenProvider.generateRefreshTokenFromEmail(email)
+
+        return TokenResponse(
+            accessToken = accessToken,
+            refreshToken = refreshToken
+        )
     }
 }
