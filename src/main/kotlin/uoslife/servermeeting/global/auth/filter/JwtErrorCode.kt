@@ -1,4 +1,4 @@
-package com.uoslife.core.auth.filter
+package uoslife.servermeeting.global.auth.filter
 
 import org.springframework.http.HttpStatus
 

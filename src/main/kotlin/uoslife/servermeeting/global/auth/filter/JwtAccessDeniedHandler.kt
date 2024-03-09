@@ -1,4 +1,4 @@
-package com.uoslife.core.auth.filter
+package uoslife.servermeeting.global.auth.filter
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

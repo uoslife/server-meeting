@@ -34,8 +34,8 @@ class TokenProvider(
         private val logger = LoggerFactory.getLogger(TokenProvider::class.java)
     }
 
-    private val authorizationHeader: String = "Authorization"
-    private val bearerPrefix: String = "Bearer "
+    private final val authorizationHeader: String = "Authorization"
+    private final val bearerPrefix: String = "Bearer "
 
     fun getTokenSecret(tokenType: TokenType): String {
         return when (tokenType) {
@@ -69,16 +69,6 @@ class TokenProvider(
     fun getAuthentication(accessToken: String): UsernamePasswordAuthenticationToken {
         val claims = parseClaims(accessToken, TokenType.ACCESS_SECRET)
         val principal: JwtUserDetails = jwtUserDetailsService.loadUserByUsername(claims.subject)
-        return UsernamePasswordAuthenticationToken(principal, "", principal.authorities)
-    }
-
-    fun getTempAuthentication(tempToken: String): UsernamePasswordAuthenticationToken {
-        val claims = parseClaims(tempToken, TokenType.REFRESH_SECRET)
-        val principal: UserDetails =
-            JwtUserDetails(
-                id = String(Base64.getDecoder().decode(claims.subject)),
-                authorities = null,
-            )
         return UsernamePasswordAuthenticationToken(principal, "", principal.authorities)
     }
 
