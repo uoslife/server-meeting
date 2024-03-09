@@ -104,6 +104,19 @@ class SecurityConfig(
     }
 
     @Bean
+    fun webSecurityCustomizer(): WebSecurityCustomizer {
+        // 토큰 검사 미실시 리스트
+        return WebSecurityCustomizer { web: WebSecurity ->
+            web.ignoring()
+                .requestMatchers(
+                    "/api/verification/send",
+                    "/api/verification/verify",
+                    "/api/auth/refresh",
+                    )
+        }
+    }
+
+    @Bean
     fun bCryptPasswordEncoder(): BCryptPasswordEncoder? {
         return BCryptPasswordEncoder()
     }
