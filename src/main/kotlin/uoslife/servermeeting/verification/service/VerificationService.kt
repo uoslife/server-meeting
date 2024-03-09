@@ -7,12 +7,15 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uoslife.servermeeting.global.auth.jwt.TokenProvider
+import uoslife.servermeeting.global.auth.security.JwtUserDetailsService
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.repository.UserRepository
+import uoslife.servermeeting.verification.dto.University
 import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationCodeSendRequest
-import uoslife.servermeeting.verification.dto.response.VerificationCodeCheckResponse
+import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.verification.dto.response.VerificationCodeSendResponse
 import uoslife.servermeeting.verification.entity.Verification
 import uoslife.servermeeting.verification.exception.VerificationCodeNotMatchException
@@ -78,30 +81,26 @@ class VerificationService(
     @Transactional
     fun verifyVerificationCode(
         verificationCodeCheckRequest: VerificationCodeCheckRequest
-    ): VerificationCodeCheckResponse {
-        val matchedVerification: Verification =
-            verificationRedisRepository.findByIdOrNull(verificationCodeCheckRequest.email)
-                ?: throw VerificationNotFoundException()
+    ): TokenResponse {
+        // 유저 업데이트 하거나 새로 생성해주는 마스터 코드(000000)
+        if(verificationCodeCheckRequest.code.equals("000000")){
+            val savedUser: User = updateOrCreateUser(verificationCodeCheckRequest.email, verificationCodeCheckRequest.university)
+            return getTokenByEmail(savedUser.email)
+        }
 
-        // check request code and db code
-        if (!matchedVerification.code.equals(verificationCodeCheckRequest.code))
-            throw VerificationCodeNotMatchException()
+        // 리퀘스트 인증코드와 DB 인증코드가 같은지 체크
+        matchVerificationCode(verificationCodeCheckRequest.email, verificationCodeCheckRequest.code)
 
-        matchedVerification?.isVerified = true
-        matchedVerification?.let { verificationRedisRepository.save(it) }
+        // 인증코드 일치할 때, redis에 인증코드 지워야 하나?
+//        verificationRedisRepository.deleteById(verificationCodeCheckRequest.email)
 
-        // User DB에 저장
-        val user: User =
-            User.create(
-                email = verificationCodeCheckRequest.email,
-                university = verificationCodeCheckRequest.university
-            )
-        userRepository.save(user)
+        // 유저 반환, 새로운 유저면 회원가입 후 반환
+        val savedUser: User = updateOrCreateUser(verificationCodeCheckRequest.email, verificationCodeCheckRequest.university)
 
-        // token 발급(security 나오면 추가 예정)
-        val accessToken: String = ""
+        // token(accessToken, refreshToken) 발급
+        val tokenResponse: TokenResponse = getTokenByEmail(savedUser.email)
 
-        return VerificationCodeCheckResponse(accessToken)
+        return tokenResponse
     }
 
     private fun matchVerificationCode(email: String, code: String): Unit{
