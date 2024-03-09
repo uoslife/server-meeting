@@ -90,13 +90,12 @@ class TokenProvider(
             .compact()
     }
 
-    fun generateTempTokenFromSMSVerification(phoneNumber: String): String {
-        logger.info("generate temp token for phone number: $phoneNumber")
+    fun generateAccessTokenFromEmail(email: String): String{
         return Jwts.builder()
-            .setSubject(Base64.getEncoder().encodeToString(phoneNumber.toByteArray()))
+            .setSubject(email)
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + accessTokenExpiration))
-            .signWith(key(TokenType.REFRESH_SECRET), SignatureAlgorithm.HS256)
+            .signWith(key(TokenType.ACCESS_SECRET), SignatureAlgorithm.HS256)
             .compact()
     }
 
@@ -109,6 +108,15 @@ class TokenProvider(
             .setSubject(userPrincipal.username)
             .setAudience(deviceSecret)
             .setIssuer(deviceId.toString())
+            .setIssuedAt(Date())
+            .setExpiration(Date(System.currentTimeMillis() + refreshTokenExpiration))
+            .signWith(key(TokenType.REFRESH_SECRET), SignatureAlgorithm.HS256)
+            .compact()
+    }
+
+    fun generateRefreshTokenFromEmail(email: String): String {
+        return Jwts.builder()
+            .setSubject(email)
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + refreshTokenExpiration))
             .signWith(key(TokenType.REFRESH_SECRET), SignatureAlgorithm.HS256)
