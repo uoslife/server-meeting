@@ -6,6 +6,5 @@ data class MeetingTeamUserListGetResponse(
 )
 
 data class MeetingTeamUser(
-    val nickname: String? = null,
-    val age: Int? = null,
+    val name: String? = null,
 )

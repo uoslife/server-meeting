@@ -2,19 +2,28 @@ package uoslife.servermeeting.user.dao
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
-import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.entity.QUser.user
 import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.entity.UserPersonalInformation
 
 @Repository
 class UserUpdateDao(
     private val queryFactory: JPAQueryFactory,
 ) {
-    fun updateUser(requestDto: UserUpdateRequest, existingUser: User) {
+    fun updateUser(
+        name: String,
+        phoneNumber: String,
+        kakaoTalkId: String,
+        userPersonalInformation: UserPersonalInformation,
+        existingUser: User
+    ) {
         queryFactory
             .update(user)
             .where(user.eq(existingUser))
-            .set(user.nickname, requestDto.nickname)
+            .set(user.name, name)
+            .set(user.phoneNumber, phoneNumber)
+            .set(user.kakaoTalkId, kakaoTalkId)
+            .set(user.userPersonalInformation, userPersonalInformation)
             .execute()
     }
 }
