@@ -75,9 +75,4 @@ class UserService(
         validator.isUserDefault(user)
         return ResponseEntity.ok(userPutDao.putUser(user))
     }
-
-    fun checkUserByEmail(email: String): ResponseEntity<CheckUserResponse> {
-        val isExist: Boolean = userRepository.existsByEmail(email)
-        return ResponseEntity.ok(CheckUserResponse(isExist))
-    }
 }

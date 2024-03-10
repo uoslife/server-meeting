@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.CheckUserResponse
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
+import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.user.service.UserService
 
 @Tag(name = "User", description = "User API")
@@ -22,6 +23,7 @@ import uoslife.servermeeting.user.service.UserService
 @RequestMapping("/api/user")
 class UserApi(
     private val userService: UserService,
+    private val userRepository: UserRepository
 ) {
 
     @Operation(summary = "User 정보 조회", description = "세션을 통해서 User의 정보를 조회합니다. row가 없다면 생성합니다.")
@@ -50,7 +52,7 @@ class UserApi(
     @GetMapping("/check")
     fun sample(
         @AuthenticationPrincipal userDetails: UserDetails
-    ): ResponseEntity<CheckUserResponse> {
-        return userService.checkUserByEmail(userDetails.username)
+    ): Boolean {
+        return userRepository.existsById(UUID.fromString(userDetails.username))
     }
 }
