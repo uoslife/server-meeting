@@ -30,7 +30,7 @@ class MatchedDao(private val queryFactory: JPAQueryFactory) {
             .fetchJoin()
             .join(meetingTeam.leader, user)
             .fetchJoin()
-            .where(match.maleTeam.eq(femaleTeam))
+            .where(match.femaleTeam.eq(femaleTeam))
             .fetchOne()
     }
 }
