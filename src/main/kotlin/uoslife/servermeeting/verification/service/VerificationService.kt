@@ -8,6 +8,7 @@ import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
+import uoslife.servermeeting.global.auth.jwt.JwtUserDetails
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.security.JwtUserDetailsService
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
@@ -85,11 +86,11 @@ class VerificationService(
         // 유저 업데이트 하거나 새로 생성해주는 마스터 코드(000000)
         if (verificationCodeCheckRequest.code.equals("000000")) {
             val savedUser: User =
-                updateOrCreateUser(
+                getOrCreateUser(
                     verificationCodeCheckRequest.email,
                     verificationCodeCheckRequest.university
                 )
-            return getTokenByEmail(savedUser.email)
+            return getTokenByUser(savedUser)
         }
 
         // 리퀘스트 인증코드와 DB 인증코드가 같은지 체크
@@ -100,13 +101,13 @@ class VerificationService(
 
         // 유저 반환, 새로운 유저면 회원가입 후 반환
         val savedUser: User =
-            updateOrCreateUser(
+            getOrCreateUser(
                 verificationCodeCheckRequest.email,
                 verificationCodeCheckRequest.university
             )
 
         // token(accessToken, refreshToken) 발급
-        val tokenResponse: TokenResponse = getTokenByEmail(savedUser.email)
+        val tokenResponse: TokenResponse = getTokenByUser(savedUser)
 
         return tokenResponse
     }
@@ -118,17 +119,20 @@ class VerificationService(
         if (!matchedVerification.code.equals(code)) throw VerificationCodeNotMatchException()
     }
 
-    private fun updateOrCreateUser(email: String, university: University): User {
+    private fun getOrCreateUser(email: String, university: University): User {
         val user: User =
-            userRepository.findByEmail(email) ?: User.create(email = email, university = university)
-        val savedUser: User = userRepository.save(user)
+            userRepository.findByEmail(email)
+                ?: userRepository.save(User.create(email = email, university = university))
 
-        return savedUser
+        return user
     }
 
-    fun getTokenByEmail(email: String): TokenResponse {
-        val accessToken: String = tokenProvider.generateAccessTokenFromEmail(email)
-        val refreshToken: String = tokenProvider.generateRefreshTokenFromEmail(email)
+    fun getTokenByUser(user: User): TokenResponse {
+        val userDetails: JwtUserDetails =
+            jwtUserDetailsService.loadUserByUsername(user.id.toString())
+
+        val accessToken: String = tokenProvider.generateAccessTokenFromUserPrincipal(userDetails)
+        val refreshToken: String = tokenProvider.generateRefreshTokenFromUserPrincipal(userDetails)
 
         return TokenResponse(accessToken = accessToken, refreshToken = refreshToken)
     }
