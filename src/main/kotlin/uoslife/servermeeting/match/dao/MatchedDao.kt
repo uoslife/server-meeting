@@ -9,7 +9,9 @@ import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.user.entity.QUser.user
 
-@Repository @Transactional class MatchedDao(private val queryFactory: JPAQueryFactory) {
+@Repository
+@Transactional
+class MatchedDao(private val queryFactory: JPAQueryFactory) {
     fun findMatchByMaleTeamWithFemaleTeam(maleTeam: MeetingTeam): Match? {
         return queryFactory
             .selectFrom(match)

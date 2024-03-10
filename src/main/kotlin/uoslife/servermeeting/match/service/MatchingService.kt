@@ -1,16 +1,12 @@
 package uoslife.servermeeting.match.service
 
 import java.util.*
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.match.dao.MatchedDao
 import uoslife.servermeeting.match.entity.QMatch.match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
-import uoslife.servermeeting.match.repository.MatchRepository
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
-import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.SINGLE
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.TRIPLE
 import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
@@ -19,7 +15,6 @@ import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.exception.UserNotFoundException
-import uoslife.servermeeting.user.repository.UserRepository
 
 @Service
 @Transactional(readOnly = true)
@@ -36,8 +31,10 @@ class MatchingService(
 
         val match =
             when (user.userPersonalInformation.gender) {
-                GenderType.MALE -> matchedDao.findMatchByMaleTeamWithFemaleTeam(meetingTeam) ?: throw MatchNotFoundException()
-                GenderType.FEMALE -> matchedDao.findMatchByFeMaleTeamWithMaleTeam(meetingTeam) ?: throw MatchNotFoundException()
+                GenderType.MALE -> matchedDao.findMatchByMaleTeamWithFemaleTeam(meetingTeam)
+                        ?: throw MatchNotFoundException()
+                GenderType.FEMALE -> matchedDao.findMatchByFeMaleTeamWithMaleTeam(meetingTeam)
+                        ?: throw MatchNotFoundException()
             }
         val opponentTeam =
             when (user.userPersonalInformation.gender) {

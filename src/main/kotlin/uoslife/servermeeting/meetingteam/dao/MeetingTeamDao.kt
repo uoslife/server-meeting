@@ -5,10 +5,6 @@ import org.springframework.stereotype.Repository
 import uoslife.servermeeting.match.entity.QMatch
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
-import uoslife.servermeeting.meetingteam.entity.enums.TeamType
-import uoslife.servermeeting.user.entity.QUser.user
-import uoslife.servermeeting.user.entity.User
-import java.util.UUID
 
 @Repository
 class MeetingTeamDao(

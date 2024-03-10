@@ -82,7 +82,6 @@ class TokenProvider(
         logger.info("generate access token for user: ${userPrincipal.username}")
         return Jwts.builder()
             .setSubject(userPrincipal.username)
-
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + accessTokenExpiration))
             .signWith(key(TokenType.ACCESS_SECRET), SignatureAlgorithm.HS256)
@@ -94,7 +93,6 @@ class TokenProvider(
     ): String {
         return Jwts.builder()
             .setSubject(userPrincipal.username)
-
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + refreshTokenExpiration))
             .signWith(key(TokenType.REFRESH_SECRET), SignatureAlgorithm.HS256)
