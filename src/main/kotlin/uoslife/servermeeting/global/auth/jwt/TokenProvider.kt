@@ -78,18 +78,23 @@ class TokenProvider(
             .body
     }
 
-    fun generateAccessTokenFromEmail(email: String): String {
+    fun generateAccessTokenFromUserPrincipal(userPrincipal: JwtUserDetails): String {
+        logger.info("generate access token for user: ${userPrincipal.username}")
         return Jwts.builder()
-            .setSubject(email)
+            .setSubject(userPrincipal.username)
+
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + accessTokenExpiration))
             .signWith(key(TokenType.ACCESS_SECRET), SignatureAlgorithm.HS256)
             .compact()
     }
 
-    fun generateRefreshTokenFromEmail(email: String): String {
+    fun generateRefreshTokenFromUserPrincipal(
+        userPrincipal: JwtUserDetails,
+    ): String {
         return Jwts.builder()
-            .setSubject(email)
+            .setSubject(userPrincipal.username)
+
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + refreshTokenExpiration))
             .signWith(key(TokenType.REFRESH_SECRET), SignatureAlgorithm.HS256)
