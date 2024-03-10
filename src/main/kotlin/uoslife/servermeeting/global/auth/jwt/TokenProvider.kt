@@ -35,6 +35,7 @@ class TokenProvider(
     private final val authorizationHeader: String = "Authorization"
     private final val bearerPrefix: String = "Bearer "
 
+    //
     fun getTokenSecret(tokenType: TokenType): String {
         return when (tokenType) {
             TokenType.ACCESS_SECRET -> accessTokenSecret
