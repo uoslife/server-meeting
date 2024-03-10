@@ -12,7 +12,7 @@ import uoslife.servermeeting.global.auth.service.AuthService
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Auth", description = "Auth API")
-class AuthController(
+class AuthApi(
     private val authService: AuthService,
 ) {
     @PostMapping("/refresh")
