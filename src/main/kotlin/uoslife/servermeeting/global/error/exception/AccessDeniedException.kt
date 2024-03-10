@@ -1,8 +1,14 @@
 package uoslife.servermeeting.global.error.exception
 
-open class AccessDeniedException : BusinessException {
+open class AccessDeniedException : RuntimeException {
 
-    constructor(errorCode: ErrorCode) : super(errorCode)
+    val errorCode: ErrorCode
 
-    constructor(message: String, errorCode: ErrorCode) : super(message, errorCode)
+    constructor(message: String, errorCode: ErrorCode) : super(message) {
+        this.errorCode = errorCode
+    }
+
+    constructor(errorCode: ErrorCode) : super(errorCode.message) {
+        this.errorCode = errorCode
+    }
 }

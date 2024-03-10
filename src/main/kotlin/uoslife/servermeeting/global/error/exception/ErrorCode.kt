@@ -21,6 +21,22 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     NICKNAME_DUPLICATION("U04", "Nickname is Duplicated.", HttpStatus.BAD_REQUEST.value()),
     USER_ALREADY_RESET("U05", "User data is already reset.", HttpStatus.BAD_REQUEST.value()),
     PHONE_NUMBER_NOT_FOUND("U06", "Phone Number is not found", HttpStatus.BAD_REQUEST.value()),
+    USER_ALREADY_EXISTING("U07", "User is already Existing", HttpStatus.BAD_REQUEST.value()),
+    REQUEST_USER_NICKNAME_DUPLICATED(
+        "U08",
+        "Request nickname is Duplicated",
+        HttpStatus.FOUND.value()
+    ),
+    USER_NOT_ALLOWED_FOR_MIGRATION(
+        "U09",
+        "User Migration is not allowed",
+        HttpStatus.BAD_REQUEST.value()
+    ),
+    USER_NOT_ALLOWED_FOR_RESIGN_UP(
+        "U10",
+        "User is not allowed for resign up",
+        HttpStatus.BAD_REQUEST.value()
+    ),
 
     // User - Cookie
     SESSION_COOKIE_EXPIRED("AT01", "Access Token is Expired", HttpStatus.UNAUTHORIZED.value()),
@@ -29,6 +45,21 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "AT03",
         "Access Token is not Found in Header.",
         HttpStatus.UNAUTHORIZED.value()
+    ),
+
+    // User - Token
+    INVALID_TOKEN("T01", "Token is not valid", HttpStatus.UNAUTHORIZED.value()),
+    USER_DEVICE_NOT_MATCHED_WITH_TOKEN(
+        "T02",
+        "User Device is not matched with Token.",
+        HttpStatus.FORBIDDEN.value()
+    ),
+
+    // User -cs
+    USER_REJOIN_LIMIT_EXCEED(
+        "CS01",
+        "User Rejoin Request limit has exceed. Please contact customer support for assistance.",
+        HttpStatus.FORBIDDEN.value()
     ),
 
     // Department

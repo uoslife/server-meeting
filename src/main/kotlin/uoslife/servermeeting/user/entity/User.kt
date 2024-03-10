@@ -16,9 +16,9 @@ class User(
     var phoneNumber: String?,
     // @Column(nullable = false, unique = true) var nickname: String,
     var name: String?,
-    var email: String? = null,
+    @Column(nullable = false, unique = true) val email: String,
     var kakaoTalkId: String?,
-    var university: University? = null,
+    var university: University,
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var userPersonalInformation: UserPersonalInformation = UserPersonalInformation(),
