@@ -14,13 +14,12 @@ import java.util.*
 class UserDao(
     private val queryFactory: JPAQueryFactory,
 ) {
-    fun findUserWithMeetingTeam(userId: UUID, teamType: TeamType): User? {
+    fun findUserWithMeetingTeam(userId: UUID): User? {
         return queryFactory
             .selectFrom(user)
             .leftJoin(user.team, meetingTeam)
             .fetchJoin()
             .where(user.id.eq(userId))
-            .where(meetingTeam.type.eq(teamType))
             .fetchOne()
     }
     fun findNotMatchedUserInMeetingTeam(meetingTeamList: List<MeetingTeam>): List<User> {

@@ -67,7 +67,7 @@ class SingleMeetingService(
         userUUID: UUID,
         meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
     ) {
-        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.SINGLE) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val information =
@@ -84,7 +84,7 @@ class SingleMeetingService(
         userUUID: UUID,
         meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
     ) {
-        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.SINGLE) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val preference = meetingTeamPreferenceUpdateRequest.toSinglePreference()
@@ -93,7 +93,7 @@ class SingleMeetingService(
     }
 
     override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
-        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.SINGLE) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val information = meetingTeam.information ?: throw InformationNotFoundException()
@@ -111,7 +111,7 @@ class SingleMeetingService(
 
     @Transactional
     override fun deleteMeetingTeam(userUUID: UUID) {
-        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.SINGLE) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         meetingTeamRepository.deleteById(meetingTeam.id ?: throw UserTeamNotFoundException())
