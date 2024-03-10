@@ -17,7 +17,7 @@ class UserDao(
     fun findUserWithMeetingTeam(userId: UUID, teamType: TeamType): User? {
         return queryFactory
             .selectFrom(user)
-            .join(user.team, meetingTeam)
+            .leftJoin(user.team, meetingTeam)
             .fetchJoin()
             .where(user.id.eq(userId))
             .where(meetingTeam.type.eq(teamType))

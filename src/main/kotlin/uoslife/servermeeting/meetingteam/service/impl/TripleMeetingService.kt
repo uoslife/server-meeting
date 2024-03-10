@@ -111,7 +111,7 @@ class TripleMeetingService(
         userUUID: UUID,
         meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
     ) {
-        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.SINGLE) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.TRIPLE) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val information =
@@ -127,7 +127,7 @@ class TripleMeetingService(
         userUUID: UUID,
         meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
     ) {
-        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.SINGLE) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.TRIPLE) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val preference = meetingTeamPreferenceUpdateRequest.toTriplePreference()
@@ -136,7 +136,7 @@ class TripleMeetingService(
     }
 
     override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
-        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.SINGLE) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.TRIPLE) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val userList = meetingTeam.users
@@ -156,7 +156,7 @@ class TripleMeetingService(
 
     @Transactional
     override fun deleteMeetingTeam(userUUID: UUID) {
-        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.SINGLE) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID, TeamType.TRIPLE) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         meetingTeamRepository.delete(meetingTeam)
