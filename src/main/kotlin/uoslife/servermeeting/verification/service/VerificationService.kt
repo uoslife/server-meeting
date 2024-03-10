@@ -121,13 +121,15 @@ class VerificationService(
 
     private fun getOrCreateUser(email: String, university: University): User {
         val user: User =
-            userRepository.findByEmail(email) ?: userRepository.save(User.create(email = email, university = university))
+            userRepository.findByEmail(email)
+                ?: userRepository.save(User.create(email = email, university = university))
 
         return user
     }
 
     fun getTokenByUser(user: User): TokenResponse {
-        val userDetails: JwtUserDetails = jwtUserDetailsService.loadUserByUsername(user.id.toString())
+        val userDetails: JwtUserDetails =
+            jwtUserDetailsService.loadUserByUsername(user.id.toString())
 
         val accessToken: String = tokenProvider.generateAccessTokenFromUserPrincipal(userDetails)
         val refreshToken: String = tokenProvider.generateRefreshTokenFromUserPrincipal(userDetails)

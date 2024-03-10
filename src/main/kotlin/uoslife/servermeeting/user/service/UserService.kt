@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.user.dao.UserPutDao
 import uoslife.servermeeting.user.dao.UserUpdateDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
-import uoslife.servermeeting.user.dto.response.CheckUserResponse
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
 import uoslife.servermeeting.user.dto.response.toResponse
 import uoslife.servermeeting.user.entity.UserPersonalInformation

@@ -88,7 +88,6 @@ class TokenProvider(
             .compact()
     }
 
-
     fun generateRefreshTokenFromUserPrincipal(
         userPrincipal: JwtUserDetails,
     ): String {
