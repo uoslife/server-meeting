@@ -53,6 +53,7 @@ class AuthService(
             throw UserAlreadyExistsException()
 
         val user: User = User(
+            id = UUID.randomUUID(),
             email = migrationRequest.email,
             phoneNumber = migrationRequest.phoneNumber,
             university = University.UOS,
