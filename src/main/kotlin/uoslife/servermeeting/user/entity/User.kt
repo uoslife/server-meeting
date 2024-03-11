@@ -14,10 +14,9 @@ import uoslife.servermeeting.verification.dto.University
 class User(
     @Id @Column(nullable = false, unique = true) var id: UUID? = null,
     var phoneNumber: String?,
-    // @Column(nullable = false, unique = true) var nickname: String,
     var name: String?,
     @Column(nullable = false, unique = true) val email: String,
-    var kakaoTalkId: String?,
+    var kakaoTalkId: String? = null,
     var university: University,
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
