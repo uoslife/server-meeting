@@ -114,9 +114,10 @@ class SecurityConfig(
         return WebSecurityCustomizer { web: WebSecurity ->
             web.ignoring()
                 .requestMatchers(
-                    "/api/verification/send",
-                    "/api/verification/verify",
-                    "/api/auth/refresh",
+                    "/api/verification/send", // 인증코드 전송
+                    "/api/verification/verify", // 인증코드 검증
+                    "/api/auth/refresh", // 토큰 재발급
+                    "/api/auth/migrate", // 시대생 유저들 마이그레이션
                 )
                 .requestMatchers("/api/payment/refund/**")
         }
