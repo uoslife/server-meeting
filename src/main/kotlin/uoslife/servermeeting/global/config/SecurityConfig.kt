@@ -1,6 +1,7 @@
 package uoslife.servermeeting.global.config
 
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -63,6 +64,8 @@ class SecurityConfig(
             .permitAll() // CORS preflight 요청 허용
             .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**", "/api/verification/**")
             .permitAll() // Swagger 허용 url, 인증 허용
+            .requestMatchers("/api/payment/refund/**")
+            .permitAll()
             .requestMatchers("/api/**")
             .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
@@ -115,6 +118,18 @@ class SecurityConfig(
                     "/api/verification/send",
                     "/api/verification/verify",
                     "/api/auth/refresh",
+                )
+                .requestMatchers(
+                    "/api/payment/refund/**"
+                )
+                .requestMatchers(
+                    "/swagger-ui.html",
+                    "/swagger-ui/*",
+                    "/v3/api-docs/**",
+                    "/swagger-resources/**",
+                )
+                .requestMatchers(
+                    PathRequest.toH2Console()
                 )
         }
     }
