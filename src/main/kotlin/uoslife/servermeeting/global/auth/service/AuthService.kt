@@ -57,9 +57,9 @@ class AuthService(
             id = UUID.randomUUID(),
             email = migrationRequest.email,
             phoneNumber = migrationRequest.phoneNumber,
-            university = University.UOS,
             name = migrationRequest.name,
             )
+        user.userPersonalInformation.university = University.UOS
         val savedUser: User = userRepository.save(user)
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
