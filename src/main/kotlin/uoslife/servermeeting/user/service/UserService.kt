@@ -11,6 +11,7 @@ import uoslife.servermeeting.user.dao.UserUpdateDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
 import uoslife.servermeeting.user.dto.response.toResponse
+import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserPersonalInformation
 import uoslife.servermeeting.user.exception.ExistingUserNotFoundException
 import uoslife.servermeeting.user.exception.UserNotFoundException
@@ -22,8 +23,6 @@ import uoslife.servermeeting.user.util.Validator
 class UserService(
     private val userRepository: UserRepository,
     private val userUpdateDao: UserUpdateDao,
-    private val userPutDao: UserPutDao,
-    private val validator: Validator,
 ) {
 
     fun findUser(id: UUID): ResponseEntity<UserFindResponseDto> {
@@ -65,8 +64,16 @@ class UserService(
 
     @Transactional
     fun resetUser(id: UUID): ResponseEntity<Unit> {
-        val user = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
-        validator.isUserDefault(user)
-        return ResponseEntity.ok(userPutDao.putUser(user))
+        val user: User = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+
+        val updatingUser: User = User(
+            id = user.id,
+            email = user.email,
+            payment = user.payment,
+         )
+        updatingUser.userPersonalInformation.university = user.userPersonalInformation.university
+        userRepository.save(updatingUser)
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
