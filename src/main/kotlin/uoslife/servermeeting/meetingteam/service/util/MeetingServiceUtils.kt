@@ -25,7 +25,7 @@ class MeetingServiceUtils {
         return MeetingTeamInformationGetResponse(
             teamType = teamType,
             teamName = teamName,
-            sex = gender,
+            gender = gender,
             teamUserList =
                 userList.map {
                     UserProfile(

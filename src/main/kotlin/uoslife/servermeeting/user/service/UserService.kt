@@ -58,13 +58,11 @@ class UserService(
                 mbti = requestDto.mbti,
                 interest = requestDto.interest,
             )
-        userUpdateDao.updateUser(
-            requestDto.name,
-            requestDto.phoneNumber,
-            requestDto.kakaoTalkId,
-            userPersonalInformation,
-            existingUser
-        )
+
+        existingUser.name = requestDto.name
+        existingUser.phoneNumber = requestDto.phoneNumber
+        existingUser.kakaoTalkId = requestDto.kakaoTalkId
+        existingUser.userPersonalInformation = userPersonalInformation
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 

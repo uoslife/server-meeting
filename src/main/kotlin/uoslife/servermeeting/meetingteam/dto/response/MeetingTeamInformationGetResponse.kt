@@ -9,7 +9,7 @@ import uoslife.servermeeting.verification.dto.University
 data class MeetingTeamInformationGetResponse(
     val teamType: TeamType,
     val teamName: String?,
-    val sex: GenderType,
+    val gender: GenderType,
     val teamUserList: List<UserProfile>,
     val information: Information,
     val preference: Preference,
