@@ -23,7 +23,7 @@ import uoslife.servermeeting.verification.dto.University
 import uoslife.servermeeting.verification.service.VerificationService
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 class AuthService(
     private val userRepository: UserRepository,
     private val userService: UserService,
@@ -47,6 +47,7 @@ class AuthService(
         return tokenResponse
     }
 
+    @Transactional
     fun migrateFromUoslife(migrationRequest: MigrationRequest): ResponseEntity<Unit>{
         // 이미 migration 되어 있다면 예외 발생
         if(userRepository.existsByEmail(migrationRequest.email))
