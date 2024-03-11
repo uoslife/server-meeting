@@ -63,6 +63,8 @@ class SecurityConfig(
             .permitAll() // CORS preflight 요청 허용
             .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**", "/api/verification/**")
             .permitAll() // Swagger 허용 url, 인증 허용
+            .requestMatchers("/api/payment/refund/**")
+            .permitAll()
             .requestMatchers("/api/**")
             .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
@@ -73,7 +75,6 @@ class SecurityConfig(
 
         return http.build()
     }
-
     @Bean
     fun configurationSource(): CorsConfigurationSource? {
         val configuration = CorsConfiguration()
@@ -117,6 +118,7 @@ class SecurityConfig(
                     "/api/verification/verify",
                     "/api/auth/refresh",
                 )
+                .requestMatchers("/api/payment/refund/**")
         }
     }
 

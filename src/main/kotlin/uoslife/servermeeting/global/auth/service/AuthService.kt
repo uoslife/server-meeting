@@ -2,7 +2,9 @@ package uoslife.servermeeting.global.auth.service
 
 import io.jsonwebtoken.Claims
 import jakarta.servlet.http.HttpServletRequest
+import java.util.*
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
@@ -32,8 +34,10 @@ class AuthService(
             tokenProvider.resolveToken(request) ?: throw InvalidTokenException()
         val claims: Claims = tokenProvider.parseClaims(refreshToken, TokenType.REFRESH_SECRET)
 
-        val user: User = userRepository.findByEmail(claims.subject) ?: throw UserNotFoundException()
-        val tokenResponse: TokenResponse = verificationService.getTokenByEmail(user.email)
+        val user: User =
+            userRepository.findByIdOrNull(UUID.fromString(claims.subject))
+                ?: throw UserNotFoundException()
+        val tokenResponse: TokenResponse = verificationService.getTokenByUser(user)
 
         return tokenResponse
     }

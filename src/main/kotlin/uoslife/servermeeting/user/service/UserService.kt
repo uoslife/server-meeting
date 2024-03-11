@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.user.dao.UserPutDao
 import uoslife.servermeeting.user.dao.UserUpdateDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
-import uoslife.servermeeting.user.dto.response.CheckUserResponse
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
 import uoslife.servermeeting.user.dto.response.toResponse
 import uoslife.servermeeting.user.entity.UserPersonalInformation
@@ -59,13 +58,11 @@ class UserService(
                 mbti = requestDto.mbti,
                 interest = requestDto.interest,
             )
-        userUpdateDao.updateUser(
-            requestDto.name,
-            requestDto.phoneNumber,
-            requestDto.kakaoTalkId,
-            userPersonalInformation,
-            existingUser
-        )
+
+        existingUser.name = requestDto.name
+        existingUser.phoneNumber = requestDto.phoneNumber
+        existingUser.kakaoTalkId = requestDto.kakaoTalkId
+        existingUser.userPersonalInformation = userPersonalInformation
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
@@ -74,10 +71,5 @@ class UserService(
         val user = userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
         validator.isUserDefault(user)
         return ResponseEntity.ok(userPutDao.putUser(user))
-    }
-
-    fun checkUserByEmail(email: String): ResponseEntity<CheckUserResponse> {
-        val isExist: Boolean = userRepository.existsByEmail(email)
-        return ResponseEntity.ok(CheckUserResponse(isExist))
     }
 }

@@ -14,6 +14,6 @@ class PaymentRequestDto {
     )
 
     data class PaymentRefundRequest(
-        val id: String,
+        val email: String,
     )
 }
