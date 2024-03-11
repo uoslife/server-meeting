@@ -2,24 +2,25 @@ package uoslife.servermeeting.user.api
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.validation.Valid
-import java.util.*
+import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.web.bind.annotation.*
-import uoslife.servermeeting.user.dto.request.CheckUserRequest
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
-import uoslife.servermeeting.user.dto.response.CheckUserResponse
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
+import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.user.service.UserService
 
 @Tag(name = "User", description = "User API")
 @RestController
 @RequestMapping("/api/user")
-class UserApi(
-    private val userService: UserService,
-) {
+class UserApi(private val userService: UserService, private val userRepository: UserRepository) {
 
     @Operation(summary = "User 정보 조회", description = "세션을 통해서 User의 정보를 조회합니다. row가 없다면 생성합니다.")
     @GetMapping
@@ -45,9 +46,7 @@ class UserApi(
     }
 
     @GetMapping("/check")
-    fun checkUser(
-        @RequestBody @Valid checkUserRequest: CheckUserRequest
-    ): ResponseEntity<CheckUserResponse> {
-        return userService.checkUserByEmail(checkUserRequest.email)
+    fun sample(@AuthenticationPrincipal userDetails: UserDetails): Boolean {
+        return userRepository.existsById(UUID.fromString(userDetails.username))
     }
 }

@@ -24,6 +24,7 @@ data class UserProfile(
     val studentType: StudentType?,
     val kakaoTalkId: String?,
     val smoking: SmokingType?,
+    val religion: ReligionType?,
     val drinkingMin: Int?,
     val drinkingMax: Int?,
     val spiritAnimal: List<SpiritAnimalType>?,
