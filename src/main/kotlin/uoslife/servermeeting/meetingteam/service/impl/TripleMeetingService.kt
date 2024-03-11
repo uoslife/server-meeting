@@ -24,7 +24,6 @@ import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 
