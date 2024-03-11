@@ -31,11 +31,6 @@ class UserService(
         return ResponseEntity.ok(user.toResponse())
     }
 
-    //    fun findUserByNickname(nickname: String): ResponseEntity<NicknameCheckResponse> {
-    //        val user = userRepository.findUserByNickname(nickname)
-    //        return ResponseEntity.ok(checkNicknameDuplication(user))
-    //    }
-
     @Transactional
     fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<Unit> {
         val existingUser =
