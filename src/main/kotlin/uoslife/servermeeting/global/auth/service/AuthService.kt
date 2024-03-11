@@ -48,16 +48,16 @@ class AuthService(
     }
 
     @Transactional
-    fun migrateFromUoslife(migrationRequest: MigrationRequest): ResponseEntity<Unit>{
+    fun migrateFromUoslife(migrationRequest: MigrationRequest): ResponseEntity<Unit> {
         // 이미 migration 되어 있다면 예외 발생
-        if(userRepository.existsByEmail(migrationRequest.email))
-            throw UserAlreadyExistsException()
+        if (userRepository.existsByEmail(migrationRequest.email)) throw UserAlreadyExistsException()
 
-        val user: User = User(
-            id = UUID.randomUUID(),
-            email = migrationRequest.email,
-            phoneNumber = migrationRequest.phoneNumber,
-            name = migrationRequest.name,
+        val user: User =
+            User(
+                id = UUID.randomUUID(),
+                email = migrationRequest.email,
+                phoneNumber = migrationRequest.phoneNumber,
+                name = migrationRequest.name,
             )
         user.userPersonalInformation.university = University.UOS
         val savedUser: User = userRepository.save(user)
