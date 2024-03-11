@@ -1,7 +1,6 @@
 package uoslife.servermeeting.global.config
 
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -119,18 +118,7 @@ class SecurityConfig(
                     "/api/verification/verify",
                     "/api/auth/refresh",
                 )
-                .requestMatchers(
-                    "/api/payment/refund/**"
-                )
-                .requestMatchers(
-                    "/swagger-ui.html",
-                    "/swagger-ui/*",
-                    "/v3/api-docs/**",
-                    "/swagger-resources/**",
-                )
-                .requestMatchers(
-                    PathRequest.toH2Console()
-                )
+                .requestMatchers("/api/payment/refund/**")
         }
     }
 
