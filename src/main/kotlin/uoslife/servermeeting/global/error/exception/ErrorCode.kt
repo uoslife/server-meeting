@@ -18,34 +18,9 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     USER_ACCESS_DENIED("U01", "User Access is Denied.", HttpStatus.UNAUTHORIZED.value()),
     USER_NOT_FOUND("U02", "User is not Found.", HttpStatus.BAD_REQUEST.value()),
     EMAIL_DUPLICATION("U03", "Email is Duplicated.", HttpStatus.BAD_REQUEST.value()),
-    NICKNAME_DUPLICATION("U04", "Nickname is Duplicated.", HttpStatus.BAD_REQUEST.value()),
     USER_ALREADY_RESET("U05", "User data is already reset.", HttpStatus.BAD_REQUEST.value()),
     PHONE_NUMBER_NOT_FOUND("U06", "Phone Number is not found", HttpStatus.BAD_REQUEST.value()),
     USER_ALREADY_EXISTING("U07", "User is already Existing", HttpStatus.BAD_REQUEST.value()),
-    REQUEST_USER_NICKNAME_DUPLICATED(
-        "U08",
-        "Request nickname is Duplicated",
-        HttpStatus.FOUND.value()
-    ),
-    USER_NOT_ALLOWED_FOR_MIGRATION(
-        "U09",
-        "User Migration is not allowed",
-        HttpStatus.BAD_REQUEST.value()
-    ),
-    USER_NOT_ALLOWED_FOR_RESIGN_UP(
-        "U10",
-        "User is not allowed for resign up",
-        HttpStatus.BAD_REQUEST.value()
-    ),
-
-    // User - Cookie
-    SESSION_COOKIE_EXPIRED("AT01", "Access Token is Expired", HttpStatus.UNAUTHORIZED.value()),
-    SESSION_COOKIE_INVALID("AT02", "Access Token is Invalid.", HttpStatus.UNAUTHORIZED.value()),
-    SESSION_COOKIE_NOT_FOUND_IN_HEADER(
-        "AT03",
-        "Access Token is not Found in Header.",
-        HttpStatus.UNAUTHORIZED.value()
-    ),
 
     // User - Token
     INVALID_TOKEN("T01", "Token is not valid", HttpStatus.UNAUTHORIZED.value()),
@@ -54,16 +29,6 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "User Device is not matched with Token.",
         HttpStatus.FORBIDDEN.value()
     ),
-
-    // User -cs
-    USER_REJOIN_LIMIT_EXCEED(
-        "CS01",
-        "User Rejoin Request limit has exceed. Please contact customer support for assistance.",
-        HttpStatus.FORBIDDEN.value()
-    ),
-
-    // Department
-    DEPARTMENT_NOT_FOUND("D01", "Department is not Found.", HttpStatus.BAD_REQUEST.value()),
 
     // Meeting
     USER_TEAM_NOT_FOUND("M01", "User Team is not Found.", HttpStatus.BAD_REQUEST.value()),
@@ -142,4 +107,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     ACCESS_TOKEN_NOT_FOUND("P02", "AccessToken is not Found", HttpStatus.BAD_REQUEST.value()),
     PAYMENT_INVALID("P03", "Payment is Invalid", HttpStatus.BAD_REQUEST.value()),
     USER_ALREADY_HAVE_PAYMENT("P04", "User already have Payment", HttpStatus.BAD_REQUEST.value()),
+
+    // Login
+    LOG_IN_FAILED("L01", "Login failed", HttpStatus.BAD_REQUEST.value())
 }
