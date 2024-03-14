@@ -109,5 +109,5 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     USER_ALREADY_HAVE_PAYMENT("P04", "User already have Payment", HttpStatus.BAD_REQUEST.value()),
 
     // Login
-    LOG_IN_FAILED("L01", "Login failed", HttpStatus.NOT_ACCEPTABLE.value())
+    LOG_IN_FAILED("L01", "Login failed", HttpStatus.BAD_REQUEST.value())
 }
