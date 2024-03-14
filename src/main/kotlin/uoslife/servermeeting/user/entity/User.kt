@@ -18,6 +18,9 @@ class User(
     @Column(nullable = false, unique = true) val email: String,
     @Column(nullable = true, unique = true) var deviceSecret: String? = null,
     var kakaoTalkId: String? = null,
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tos_id", foreignKey = ForeignKey(ConstraintMode.CONSTRAINT))
+    var tos: Tos? = null,
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var userPersonalInformation: UserPersonalInformation = UserPersonalInformation(),
