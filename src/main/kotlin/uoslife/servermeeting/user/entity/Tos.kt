@@ -10,8 +10,7 @@ import uoslife.servermeeting.global.common.BaseEntity
 @Entity
 @Table(name = "tos")
 class Tos(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long? = null,
     var privatePolicy: Boolean? = null,
     var termsOfUse: Boolean? = null,
     var marketing: Boolean? = null,

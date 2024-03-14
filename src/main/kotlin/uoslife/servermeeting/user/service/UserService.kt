@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uoslife.servermeeting.user.dao.UserUpdateDao
 import uoslife.servermeeting.user.dto.request.TosDto
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
@@ -79,7 +78,7 @@ class UserService(
     }
 
     @Transactional
-    fun setTos(uuid: UUID, tosDto: TosDto){
+    fun setTos(uuid: UUID, tosDto: TosDto) {
         val user: User = userRepository.findByIdOrNull(uuid) ?: throw UserNotFoundException()
 
         // dto에서 entity로 변경

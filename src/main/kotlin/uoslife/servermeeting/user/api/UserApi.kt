@@ -3,9 +3,8 @@ package uoslife.servermeeting.user.api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import java.util.UUID
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -45,7 +44,10 @@ class UserApi(private val userService: UserService, private val userRepository: 
     }
 
     @PostMapping("/tos")
-    fun setTos(@AuthenticationPrincipal userDetails: UserDetails, @RequestBody @Valid tosDto: TosDto): ResponseEntity<Unit> {
+    fun setTos(
+        @AuthenticationPrincipal userDetails: UserDetails,
+        @RequestBody @Valid tosDto: TosDto
+    ): ResponseEntity<Unit> {
         val userUUID: UUID = UUID.fromString(userDetails.username)
 
         userService.setTos(userUUID, tosDto)
