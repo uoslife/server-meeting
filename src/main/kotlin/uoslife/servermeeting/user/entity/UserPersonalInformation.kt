@@ -10,7 +10,6 @@ data class UserPersonalInformation(
     var height: Int? = 0,
     var kakaoTalkId: String? = null,
     var studentType: StudentType? = null,
-    // TODO: 이메일 인증 절차 때 user 생성하면서 함께 넣을 것!
     var university: University? = null,
     var department: String? = null,
     var religion: ReligionType? = null,
