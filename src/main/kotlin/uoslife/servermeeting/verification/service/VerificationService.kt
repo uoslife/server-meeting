@@ -115,7 +115,7 @@ class VerificationService(
     private fun matchVerificationCode(email: String, code: String): Unit {
         val matchedVerification: Verification =
             verificationRedisRepository.findByIdOrNull(email)
-                ?: throw VerificationNotFoundException()
+                ?: throw VerificationCodeNotMatchException()
         if (!matchedVerification.code.equals(code)) throw VerificationCodeNotMatchException()
     }
 
