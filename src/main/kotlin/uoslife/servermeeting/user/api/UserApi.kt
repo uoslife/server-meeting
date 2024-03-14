@@ -2,16 +2,15 @@ package uoslife.servermeeting.user.api
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import uoslife.servermeeting.user.dto.request.TosDto
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
 import uoslife.servermeeting.user.repository.UserRepository
@@ -45,8 +44,12 @@ class UserApi(private val userService: UserService, private val userRepository: 
         return userService.resetUser(UUID.fromString(userDetails.username))
     }
 
-    @GetMapping("/check")
-    fun sample(@AuthenticationPrincipal userDetails: UserDetails): Boolean {
-        return userRepository.existsById(UUID.fromString(userDetails.username))
+    @PostMapping("/tos")
+    fun setTos(@AuthenticationPrincipal userDetails: UserDetails, @RequestBody @Valid tosDto: TosDto): ResponseEntity<Unit> {
+        val userUUID: UUID = UUID.fromString(userDetails.username)
+
+        userService.setTos(userUUID, tosDto)
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
