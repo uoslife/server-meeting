@@ -40,15 +40,21 @@ class UserService(
                 age = requestDto.age ?: existingUser.userPersonalInformation.age,
                 gender = requestDto.gender ?: existingUser.userPersonalInformation.gender,
                 height = requestDto.height ?: existingUser.userPersonalInformation.height,
-                studentType = requestDto.studentType ?: existingUser.userPersonalInformation.studentType,
-                kakaoTalkId = requestDto.kakaoTalkId ?: existingUser.userPersonalInformation.kakaoTalkId,
+                studentType = requestDto.studentType
+                        ?: existingUser.userPersonalInformation.studentType,
+                kakaoTalkId = requestDto.kakaoTalkId
+                        ?: existingUser.userPersonalInformation.kakaoTalkId,
                 university = existingUser.userPersonalInformation.university,
-                department = requestDto.department ?: existingUser.userPersonalInformation.department,
+                department = requestDto.department
+                        ?: existingUser.userPersonalInformation.department,
                 religion = requestDto.religion ?: existingUser.userPersonalInformation.religion,
-                drinkingMin = requestDto.drinkingMin ?: existingUser.userPersonalInformation.drinkingMin,
-                drinkingMax = requestDto.drinkingMax ?: existingUser.userPersonalInformation.drinkingMax,
+                drinkingMin = requestDto.drinkingMin
+                        ?: existingUser.userPersonalInformation.drinkingMin,
+                drinkingMax = requestDto.drinkingMax
+                        ?: existingUser.userPersonalInformation.drinkingMax,
                 smoking = requestDto.smoking ?: existingUser.userPersonalInformation.smoking,
-                spiritAnimal = requestDto.spiritAnimal ?: existingUser.userPersonalInformation.spiritAnimal,
+                spiritAnimal = requestDto.spiritAnimal
+                        ?: existingUser.userPersonalInformation.spiritAnimal,
                 mbti = requestDto.mbti ?: existingUser.userPersonalInformation.mbti,
                 interest = requestDto.interest ?: existingUser.userPersonalInformation.interest,
                 message = requestDto.message ?: existingUser.userPersonalInformation.message,

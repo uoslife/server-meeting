@@ -1,6 +1,5 @@
 package uoslife.servermeeting.user.dto.request
 
-import jakarta.validation.constraints.NotBlank
 import uoslife.servermeeting.user.entity.enums.*
 
 data class UserUpdateRequest(
