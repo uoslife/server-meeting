@@ -27,14 +27,14 @@ class AuthApi(
         return ResponseEntity.ok().body(tokenResponse)
     }
 
-    @PostMapping("/migrate")
+    @PostMapping("/uos/migrate")
     fun migrateUOS(@RequestBody @Valid migrationRequest: MigrationRequest): ResponseEntity<Unit> {
         authService.migrateFromUoslife(migrationRequest)
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @PostMapping("/login")
+    @PostMapping("/uos/login")
     fun login(@RequestBody @Valid loginRequest: LoginRequest): ResponseEntity<TokenResponse> {
         val tokenResponse: TokenResponse = authService.login(loginRequest)
 
