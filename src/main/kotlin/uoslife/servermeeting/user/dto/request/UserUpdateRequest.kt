@@ -20,4 +20,5 @@ data class UserUpdateRequest(
     val spiritAnimal: List<SpiritAnimalType>?,
     val mbti: String?,
     val interest: List<InterestType>?,
+    val message: String?,
 )

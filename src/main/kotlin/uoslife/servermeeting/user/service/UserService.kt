@@ -51,6 +51,7 @@ class UserService(
                 spiritAnimal = requestDto.spiritAnimal,
                 mbti = requestDto.mbti,
                 interest = requestDto.interest,
+                message = requestDto.message ?: existingUser.userPersonalInformation.message,
             )
 
         existingUser.name = requestDto.name
