@@ -18,7 +18,6 @@ import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserAlreadyExistsException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
-import uoslife.servermeeting.user.service.UserService
 import uoslife.servermeeting.verification.dto.University
 import uoslife.servermeeting.verification.service.VerificationService
 
@@ -26,7 +25,6 @@ import uoslife.servermeeting.verification.service.VerificationService
 @Transactional
 class AuthService(
     private val userRepository: UserRepository,
-    private val userService: UserService,
     private val tokenProvider: TokenProvider,
     private val verificationService: VerificationService,
 ) {

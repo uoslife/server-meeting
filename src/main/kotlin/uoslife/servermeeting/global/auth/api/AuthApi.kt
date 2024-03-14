@@ -26,7 +26,7 @@ class AuthApi(
     }
 
     @PostMapping("/migrate")
-    fun migrateUOS(@Valid @RequestBody migrationRequest: MigrationRequest): ResponseEntity<Unit> {
+    fun migrateUOS(@RequestBody @Valid migrationRequest: MigrationRequest): ResponseEntity<Unit> {
         return authService.migrateFromUoslife(migrationRequest)
     }
 }
