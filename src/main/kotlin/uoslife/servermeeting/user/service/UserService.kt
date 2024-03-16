@@ -33,7 +33,7 @@ class UserService(
     @Transactional
     fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<Unit> {
         val existingUser =
-            userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
+            userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
         val userPersonalInformation =
             UserPersonalInformation(

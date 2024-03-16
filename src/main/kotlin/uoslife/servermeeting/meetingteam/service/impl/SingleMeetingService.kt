@@ -113,7 +113,7 @@ class SingleMeetingService(
         val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
-        meetingTeamRepository.deleteById(meetingTeam.id ?: throw UserTeamNotFoundException())
+        meetingTeamRepository.delete(meetingTeam)
     }
 
     @Transactional
