@@ -46,81 +46,74 @@ class MeetingApi(
 
     @Operation(summary = "미팅 팀 생성", description = "리더만 팀 생성 가능")
     @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "201",
-                description = "1대1의 경우 빈 문자열을 반환, 3대3의 경우 팀 코드(A-Z0-9 4개)(String)를 반환",
-                content =
-                [
-                    Content(
-                        schema =
-                        Schema(
-                            implementation = String::class
-                        )
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 유저 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+        value =
+            [
+                ApiResponse(
+                    responseCode = "201",
+                    description = "1대1의 경우 빈 문자열을 반환, 3대3의 경우 팀 코드(A-Z0-9 4개)(String)를 반환",
+                    content = [Content(schema = Schema(implementation = String::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User is not Found., status: 400, code: U02}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "유저가 이미 팀에 속해있음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 이미 팀에 속해있음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User already have Team., status: 400, code: M02}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User already have Team., status: 400, code: M02}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "유저가 이미 팀에 속해있음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 이미 팀에 속해있음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Team name is invalid., status: 400, code: M11}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Team name is invalid., status: 400, code: M11}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "유저가 이미 팀에 속해있음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 이미 팀에 속해있음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Team Code Generate is Failed., status: 500, code: M12}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Team Code Generate is Failed., status: 500, code: M12}"
+                                        )]
                             )]
-                    )]
-            ),
-        ]
+                ),
+            ]
     )
     @PostMapping("/{teamType}/{isTeamLeader}/create")
     fun createMeetingTeam(
@@ -148,126 +141,124 @@ class MeetingApi(
 
     @Operation(summary = "미팅 팀 참가", description = "1대1의 경우 지원되지 않음. 1대1은 미팅 팀 생성 시 자동으로 참가됨")
     @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "isJoin true일 경우, 팀 참가 및 null 반환, false일 경우, 팀 참가하지 않고 팀 정보 반환",
-                content =
-                [
-                    Content(
-                        schema =
-                        Schema(
-                            implementation = MeetingTeamUserListGetResponse::class
-                        )
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 유저 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+        value =
+            [
+                ApiResponse(
+                    responseCode = "204",
+                    description = "isJoin true일 경우, 팀 참가 및 null 반환, false일 경우, 팀 참가하지 않고 팀 정보 반환",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User is not Found., status: 400, code: U02}"
+                            Content(
+                                schema =
+                                    Schema(implementation = MeetingTeamUserListGetResponse::class)
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "유저가 일치하는 팀 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 팀에 팀장이 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 일치하는 팀 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Team Leader is not Found., status: 400, code: M16}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "팀 코드가 맞지않음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 팀에 팀장이 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Team Code is Invalid Format., status: 400, code: M13}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Team Leader is not Found., status: 400, code: M16}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "유저가 이미 팀을 가지고 있음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "팀 코드가 맞지않음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User already have Team., status: 400, code: M02}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Team Code is Invalid Format., status: 400, code: M13}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 팀의 정원이 꽉참",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 이미 팀을 가지고 있음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Team is Full., status: 400, code: M14}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User already have Team., status: 400, code: M02}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "다른 성별의 팀에 입장 불가",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 팀의 정원이 꽉참",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Team must consist of Same Gender, status: 400, code: M17}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Team is Full., status: 400, code: M14}"
+                                        )]
                             )]
-                    )]
-            ),
-        ]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "다른 성별의 팀에 입장 불가",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Team must consist of Same Gender, status: 400, code: M17}"
+                                        )]
+                            )]
+                ),
+            ]
     )
     @PostMapping("/{teamType}/join/{code}")
     fun joinMeetingTeam(
@@ -292,66 +283,64 @@ class MeetingApi(
         description = "1대1의 경우 지원되지 않음. 1대1은 팀 유저가 본인 단독"
     )
     @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "미팅 팀 유저 리스트 및 팀 이름(MeetingTeamUserListGetResponse) 반환",
-                content =
-                [
-                    Content(
-                        schema =
-                        Schema(
-                            implementation = MeetingTeamUserListGetResponse::class
-                        )
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 유저 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "미팅 팀 유저 리스트 및 팀 이름(MeetingTeamUserListGetResponse) 반환",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User is not Found., status: 400, code: U02}"
+                            Content(
+                                schema =
+                                    Schema(implementation = MeetingTeamUserListGetResponse::class)
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "유저가 일치하는 팀 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "1대1 팀의 경우는 팀에 속한 유저 리스트 조회 불가",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 일치하는 팀 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: In Single Meeting Team, only One User Exist., status: 400, code: M05}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                        )]
                             )]
-                    )]
-            ),
-        ]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "1대1 팀의 경우는 팀에 속한 유저 리스트 조회 불가",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: In Single Meeting Team, only One User Exist., status: 400, code: M05}"
+                                        )]
+                            )]
+                ),
+            ]
     )
     @GetMapping("/{teamType}/{code}/user/list")
     fun getMeetingTeamUserList(
@@ -373,51 +362,44 @@ class MeetingApi(
 
     @Operation(summary = "미팅 팀 정보 기입", description = "팀의 정보를 기입함. 리더만 가능")
     @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "반환값 없음",
-                content =
-                [
-                    Content(
-                        schema =
-                        Schema(
-                            implementation = Unit::class
-                        )
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 유저 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+        value =
+            [
+                ApiResponse(
+                    responseCode = "204",
+                    description = "반환값 없음",
+                    content = [Content(schema = Schema(implementation = Unit::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User is not Found., status: 400, code: U02}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "유저가 일치하는 팀 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 일치하는 팀 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                        )]
                             )]
-                    )]
-            ),
-        ]
+                ),
+            ]
     )
     @PutMapping("/{teamType}/{isTeamLeader}/info")
     fun updateMeetingTeamInformation(
@@ -451,51 +433,44 @@ class MeetingApi(
 
     @Operation(summary = "미팅 팀 상대 정보 기입", description = "팀이 원하는 상대 정보를 기입함. 리더만 가능")
     @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "반환값 없음",
-                content =
-                [
-                    Content(
-                        schema =
-                        Schema(
-                            implementation = Unit::class
-                        )
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 유저 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+        value =
+            [
+                ApiResponse(
+                    responseCode = "204",
+                    description = "반환값 없음",
+                    content = [Content(schema = Schema(implementation = Unit::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User is not Found., status: 400, code: U02}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "유저가 일치하는 팀 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 일치하는 팀 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                        )]
                             )]
-                    )]
-            ),
-        ]
+                ),
+            ]
     )
     @PutMapping("/{teamType}/{isTeamLeader}/prefer")
     fun updateMeetingTeamPreference(
@@ -527,81 +502,81 @@ class MeetingApi(
 
     @Operation(summary = "미팅 팀 전체 정보 조회")
     @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "미팅 팀 전체 정보(MeetingTeamInformationGetResponse) 반환",
-                content =
-                [
-                    Content(
-                        schema =
-                        Schema(
-                            implementation = MeetingTeamInformationGetResponse::class
-                        )
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 유저 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "미팅 팀 전체 정보(MeetingTeamInformationGetResponse) 반환",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User is not Found., status: 400, code: U02}"
+                            Content(
+                                schema =
+                                    Schema(
+                                        implementation = MeetingTeamInformationGetResponse::class
+                                    )
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "유저가 일치하는 팀 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "매칭된 상대의 선호 상대방에 대한 응답값이 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 일치하는 팀 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Preference is not Found., status: 400, code: M08}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "매칭된 상대의 질문 리스트 응답값이 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "매칭된 상대의 선호 상대방에 대한 응답값이 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Information is not Found., status: 400, code: M07}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Preference is not Found., status: 400, code: M08}"
+                                        )]
                             )]
-                    )]
-            ),
-        ]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "매칭된 상대의 질문 리스트 응답값이 없음",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Information is not Found., status: 400, code: M07}"
+                                        )]
+                            )]
+                ),
+            ]
     )
     @GetMapping("/{teamType}/application/info")
     fun getMeetingTeamApplicationInformation(
@@ -620,51 +595,44 @@ class MeetingApi(
 
     @Operation(summary = "미팅 팀 삭제", description = "리더만 팀 삭제 가능")
     @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "반환값 없음",
-                content =
-                [
-                    Content(
-                        schema =
-                        Schema(
-                            implementation = Unit::class
-                        )
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 유저 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+        value =
+            [
+                ApiResponse(
+                    responseCode = "204",
+                    description = "반환값 없음",
+                    content = [Content(schema = Schema(implementation = Unit::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User is not Found., status: 400, code: U02}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
                             )]
-                    )]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "유저가 일치하는 팀 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 일치하는 팀 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                        )]
                             )]
-                    )]
-            ),
-        ]
+                ),
+            ]
     )
     @DeleteMapping("/{teamType}/{isTeamLeader}")
     fun deleteMeetingTeam(

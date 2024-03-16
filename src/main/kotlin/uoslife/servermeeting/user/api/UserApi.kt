@@ -15,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.user.dto.request.TosDto
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.repository.UserRepository
@@ -37,41 +36,29 @@ class UserApi(private val userService: UserService, private val userRepository: 
 
     @Operation(summary = "User 정보 업데이트", description = "유저의 정보를 업데이트합니다.")
     @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "유저 정보 업데이트 성공, 반환값 없음",
-                content =
-                [
-                    Content(
-                        schema =
-                        Schema(
-                            implementation = Unit::class
-                        )
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 유저 정보 없음",
-                content =
-                [
-                    Content(
-                        schema =
-                        Schema(
-                            implementation = ErrorResponse::class
-                        ),
-                        examples =
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "유저 정보 업데이트 성공, 반환값 없음",
+                    content = [Content(schema = Schema(implementation = Unit::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User is not Found., status: 400, code: U02}"
-                            )
-                        ]
-                    )
-                ]
-            ),
-        ]
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
+                            )]
+                ),
+            ]
     )
     @PatchMapping
     fun updateUser(
@@ -89,41 +76,29 @@ class UserApi(private val userService: UserService, private val userRepository: 
 
     @Operation(summary = "개인 정보 약관 동의", description = "개인 정보 약관 동의 여부를 저장합니다.")
     @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "개인 정보 약관 동의 여부 저장 성공, 반환값 없음",
-                content =
-                [
-                    Content(
-                        schema =
-                        Schema(
-                            implementation = Unit::class
-                        )
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 유저 정보 없음",
-                content =
-                [
-                    Content(
-                        schema =
-                        Schema(
-                            implementation = ErrorResponse::class
-                        ),
-                        examples =
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "개인 정보 약관 동의 여부 저장 성공, 반환값 없음",
+                    content = [Content(schema = Schema(implementation = Unit::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User is not Found., status: 400, code: U02}"
-                            )
-                        ]
-                    )
-                ]
-            ),
-        ]
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
+                            )]
+                ),
+            ]
     )
     @PostMapping("/tos")
     fun setTos(
