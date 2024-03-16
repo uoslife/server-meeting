@@ -121,8 +121,8 @@ class PortOneService(
     }
 
     @Transactional
-    override fun refundPaymentById(userUUID: UUID): PaymentResponseDto.PaymentRefundResponse {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+    override fun refundPaymentById(email: String): PaymentResponseDto.PaymentRefundResponse {
+        val user = userRepository.findByEmail(email) ?: throw UserNotFoundException()
         val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
 
         if (!payment.status.equals(PaymentStatus.SUCCESS)) {

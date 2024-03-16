@@ -2,12 +2,12 @@ package uoslife.servermeeting.meetingteam.dto.request
 
 class PortOneRequestDto {
     data class AccessTokenRequest(
-        var imp_key: String,
-        var imp_secret: String,
+        val imp_key: String,
+        val imp_secret: String,
     )
 
     data class RefundRequest(
-        var imp_uid: String?,
-        var amount: Number?,
+        val imp_uid: String?,
+        val amount: Number?,
     )
 }

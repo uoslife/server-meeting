@@ -43,7 +43,7 @@ class RedisCacheConfig(
                         GenericJackson2JsonRedisSerializer(objectMapper)
                     )
                 )
-                .entryTtl(Duration.ofMinutes(5L)) // TTL 5분 설정
+                .entryTtl(Duration.ofMinutes(60L)) // TTL 1시간 설정
 
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory)
             .cacheDefaults(redisCacheConfiguration)

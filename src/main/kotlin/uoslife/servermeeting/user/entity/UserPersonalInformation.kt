@@ -1,5 +1,6 @@
 package uoslife.servermeeting.user.entity
 
+import java.io.Serializable
 import uoslife.servermeeting.user.entity.enums.*
 import uoslife.servermeeting.verification.dto.University
 
@@ -19,4 +20,4 @@ data class UserPersonalInformation(
     var spiritAnimal: List<SpiritAnimalType>? = null,
     var mbti: String? = null,
     var interest: List<InterestType>? = null,
-)
+) : Serializable

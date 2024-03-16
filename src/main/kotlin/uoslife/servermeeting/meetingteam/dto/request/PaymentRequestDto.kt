@@ -5,11 +5,15 @@ import uoslife.servermeeting.meetingteam.entity.enums.PaymentGateway
 
 class PaymentRequestDto {
     data class PaymentRequestRequest(
-        var pg: PaymentGateway,
-        var payMethod: PayMethod,
+        val pg: PaymentGateway,
+        val payMethod: PayMethod,
     )
 
     data class PaymentCheckRequest(
-        var impUid: String,
+        val impUid: String,
+    )
+
+    data class PaymentRefundRequest(
+        val email: String,
     )
 }

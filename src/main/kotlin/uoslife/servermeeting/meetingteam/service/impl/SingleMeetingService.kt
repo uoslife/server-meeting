@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
@@ -19,6 +18,7 @@ import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
 import uoslife.servermeeting.meetingteam.util.Validator
+import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
@@ -29,7 +29,7 @@ import uoslife.servermeeting.user.repository.UserRepository
 class SingleMeetingService(
     private val userRepository: UserRepository,
     private val meetingTeamRepository: MeetingTeamRepository,
-    private val meetingTeamDao: MeetingTeamDao,
+    private val userDao: UserDao,
     private val meetingServiceUtils: MeetingServiceUtils,
     private val validator: Validator,
     @Value("\${app.season}") private val season: Int,
@@ -66,18 +66,16 @@ class SingleMeetingService(
         userUUID: UUID,
         meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
     ) {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
-
-        val meetingTeam =
-            meetingTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE)
-                ?: throw MeetingTeamNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val information =
             Information(
                 gender = user.userPersonalInformation.gender,
                 meetingTeamInformationUpdateRequest.toMap()
             )
-        meetingTeam?.information = information
+
+        meetingTeam.information = information
     }
 
     @Transactional
@@ -85,26 +83,20 @@ class SingleMeetingService(
         userUUID: UUID,
         meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
     ) {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
-
-        val meetingTeam =
-            meetingTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE)
-                ?: throw MeetingTeamNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val preference = meetingTeamPreferenceUpdateRequest.toSinglePreference()
 
-        meetingTeam?.preference = preference
+        meetingTeam.preference = preference
     }
 
     override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
-        val meetingTeam =
-            meetingTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE)
-                ?: throw MeetingTeamNotFoundException()
-
-        val information = meetingTeam?.information ?: throw InformationNotFoundException()
-        val preference = meetingTeam?.preference ?: throw PreferenceNotFoundException()
+        val information = meetingTeam.information ?: throw InformationNotFoundException()
+        val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
             user.userPersonalInformation.gender,
@@ -118,13 +110,10 @@ class SingleMeetingService(
 
     @Transactional
     override fun deleteMeetingTeam(userUUID: UUID) {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
-        val meetingTeam =
-            meetingTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE)
-                ?: throw MeetingTeamNotFoundException()
-
-        meetingTeamRepository.deleteById(meetingTeam?.id ?: throw UserTeamNotFoundException())
+        meetingTeamRepository.deleteById(meetingTeam.id ?: throw UserTeamNotFoundException())
     }
 
     @Transactional

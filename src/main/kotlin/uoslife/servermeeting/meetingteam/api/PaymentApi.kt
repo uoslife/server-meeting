@@ -54,18 +54,17 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
             .body(paymentService.checkPayment(userUUID, paymentCheckRequest))
     }
 
-    @Operation(summary = "결제 취소 API", description = "특정한 유저에게 환불해줍니다.")
+    @Operation(summary = "결제 취소 API", description = "이메일을 입력하면 특정한 유저에게 환불해줍니다.")
     @ApiResponse(
         responseCode = "200",
         description = "결제 환불 완료",
     )
     @PostMapping("/refund")
-    fun refundPaymentById(
-        @AuthenticationPrincipal userDetails: UserDetails,
+    fun refundPaymentByEmail(
+        @RequestBody paymentRefundRequest: PaymentRequestDto.PaymentRefundRequest
     ): ResponseEntity<PaymentResponseDto.PaymentRefundResponse> {
-        val userUUID = UUID.fromString(userDetails.username)
-
-        return ResponseEntity.status(HttpStatus.OK).body(paymentService.refundPaymentById(userUUID))
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(paymentService.refundPaymentById(paymentRefundRequest.email))
     }
 
     @Operation(summary = "매칭 안된 유저 결제 취소 API", description = "매칭이 되지않은 모든 유저에 대해 환불합니다")

@@ -25,7 +25,7 @@ class MeetingServiceUtils {
         return MeetingTeamInformationGetResponse(
             teamType = teamType,
             teamName = teamName,
-            sex = gender,
+            gender = gender,
             teamUserList =
                 userList.map {
                     UserProfile(
@@ -37,6 +37,7 @@ class MeetingServiceUtils {
                         studentType = it.userPersonalInformation.studentType,
                         kakaoTalkId = it.kakaoTalkId,
                         smoking = it.userPersonalInformation.smoking,
+                        religion = it.userPersonalInformation.religion,
                         drinkingMin = it.userPersonalInformation.drinkingMin,
                         drinkingMax = it.userPersonalInformation.drinkingMax,
                         spiritAnimal = it.userPersonalInformation.spiritAnimal,
