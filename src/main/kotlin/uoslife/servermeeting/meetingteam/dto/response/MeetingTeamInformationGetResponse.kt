@@ -10,7 +10,7 @@ import uoslife.servermeeting.verification.dto.University
 
 data class MeetingTeamInformationGetResponse(
     @field:NotNull @Schema(description = "팀 타입", example = "SINGLE") val teamType: TeamType,
-    @field:NotNull @Schema(description = "팀 이름", example = "팀 이름") val teamName: String,
+    @Schema(description = "팀 이름", example = "팀 이름") val teamName: String?,
     @field:NotNull @Schema(description = "성별", example = "MALE") val gender: GenderType,
     @Schema(description = "팀에 속한 유저 정보") val teamUserList: List<UserProfile>?,
     @Schema(description = "질문 응답값") val information: Information?,

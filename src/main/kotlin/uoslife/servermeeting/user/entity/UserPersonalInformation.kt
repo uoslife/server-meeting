@@ -5,14 +5,14 @@ import uoslife.servermeeting.user.entity.enums.*
 import uoslife.servermeeting.verification.dto.University
 
 data class UserPersonalInformation(
-    var age: Int? = 0,
+    var age: Int = 0,
     var gender: GenderType = GenderType.MALE,
     var height: Int? = 0,
     var kakaoTalkId: String? = null,
-    var studentType: StudentType? = null,
+    var studentType: StudentType = StudentType.UNDERGRADUATE,
     // TODO: 이메일 인증 절차 때 user 생성하면서 함께 넣을 것!
     var university: University? = null,
-    var department: String? = null,
+    var department: String = "",
     var religion: ReligionType? = null,
     var drinkingMin: Int? = null,
     var drinkingMax: Int? = null,
