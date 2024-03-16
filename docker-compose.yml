@@ -3,6 +3,7 @@ version: '3'
 services:
     postgres:
         image: postgres
+        restart: always
         ports:
             - "5432:5432"
         container_name: postgres
@@ -10,6 +11,14 @@ services:
             POSTGRES_USER: server-meeting
             POSTGRES_PASSWORD: server-meeting
             POSTGRES_DB: server-meeting
+
+    redis:
+        image: redis
+        restart: always
+        command: redis-server --port 6379
+        hostname: redis
+        ports:
+            - "6379:6379"
 
     application:
         build:
@@ -23,3 +32,4 @@ services:
             SPRING_DATASOURCE_PASSWORD: server-meeting
         depends_on:
             - postgres
+            - redis
