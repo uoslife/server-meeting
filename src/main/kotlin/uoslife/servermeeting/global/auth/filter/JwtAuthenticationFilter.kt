@@ -9,11 +9,13 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.util.StringUtils
 import org.springframework.web.filter.OncePerRequestFilter
+import uoslife.servermeeting.global.auth.exception.InvalidTokenException
 import uoslife.servermeeting.global.auth.exception.UnauthorizedException
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.jwt.TokenType
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.global.error.exception.ErrorCode
+import java.lang.RuntimeException
 
 
 class JwtAuthenticationFilter(
@@ -28,13 +30,16 @@ class JwtAuthenticationFilter(
         try {
             setAuthentication(request)
             filterChain.doFilter(request, response)
-        } catch (e: RuntimeException){
-            val errorResponse = ErrorResponse(ErrorCode.INVALID_TOKEN)
-            response.status = HttpStatus.UNAUTHORIZED.value()
-//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
-            response.characterEncoding = "utf-8"
-            response.contentType = "application/json;charset-UTF-8"
-            response.writer.write(convertObjectToJson(errorResponse))
+        } catch (e: Exception){
+            when(e){
+                is InvalidTokenException, is UnauthorizedException -> {
+                    val errorResponse = ErrorResponse(ErrorCode.INVALID_TOKEN)
+                    response.status = HttpStatus.UNAUTHORIZED.value()
+                    response.characterEncoding = "utf-8"
+                    response.contentType = "application/json;charset-UTF-8"
+                    response.writer.write(convertObjectToJson(errorResponse))
+                }
+            }
         }
     }
 
