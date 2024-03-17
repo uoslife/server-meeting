@@ -6,8 +6,8 @@ import jakarta.validation.constraints.Pattern
 import uoslife.servermeeting.verification.dto.University
 
 data class VerificationCodeSendRequest(
-    @NotBlank
-    @Pattern(
+    @field:NotBlank
+    @field:Pattern(
         regexp =
             "\\b[A-Za-z0-9._%+-]+@khu\\.ac\\.kr\\b|\\b[A-Za-z0-9._%+-]+@hufs\\.ac\\.kr\\b|\\b[A-Za-z0-9._%+-]+@uos\\.ac\\.kr\\b",
         message = "Invalid Email"

@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+    postgres:
+        image: postgres
+        restart: always
+        ports:
+            - "5432:5432"
+        container_name: postgres
+        environment:
+            POSTGRES_USER: server-meeting
+            POSTGRES_PASSWORD: server-meeting
+            POSTGRES_DB: server-meeting
+
+    redis:
+        image: redis
+        restart: always
+        command: redis-server --port 6379
+        hostname: redis
+        ports:
+            - "6379:6379"
+
+    application:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8081:8081"
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/server-meeting?stringtype=unspecified
+            SPRING_DATASOURCE_USERNAME: server-meeting
+            SPRING_DATASOURCE_PASSWORD: server-meeting
+        depends_on:
+            - postgres
+            - redis

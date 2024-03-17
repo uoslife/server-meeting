@@ -13,12 +13,14 @@ import uoslife.servermeeting.verification.dto.University
 @Table(name = "`user`")
 class User(
     @Id @Column(nullable = false, unique = true) var id: UUID? = null,
-    var phoneNumber: String?,
-    // @Column(nullable = false, unique = true) var nickname: String,
-    var name: String?,
+    var phoneNumber: String? = null,
+    var name: String = "",
     @Column(nullable = false, unique = true) val email: String,
-    var kakaoTalkId: String?,
-    var university: University,
+    @Column(nullable = true, unique = true) var deviceSecret: String? = null,
+    var kakaoTalkId: String = "",
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tos_id", foreignKey = ForeignKey(ConstraintMode.CONSTRAINT))
+    var tos: Tos = Tos(),
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var userPersonalInformation: UserPersonalInformation = UserPersonalInformation(),
@@ -31,14 +33,8 @@ class User(
                 User(
                     id = UUID.randomUUID(),
                     email = email,
-                    university = university,
-                    phoneNumber = null,
-                    name = null,
-                    kakaoTalkId = null,
-                    userPersonalInformation = UserPersonalInformation(),
-                    payment = null,
-                    team = null,
                 )
+            user.userPersonalInformation.university = university
             return user
         }
     }

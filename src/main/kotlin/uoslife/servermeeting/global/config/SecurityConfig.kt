@@ -1,6 +1,7 @@
 package uoslife.servermeeting.global.config
 
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -36,7 +37,6 @@ class SecurityConfig(
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
         http.cors().configurationSource(configurationSource())
-
         http
             .httpBasic()
             .disable()
@@ -61,8 +61,12 @@ class SecurityConfig(
             .authorizeHttpRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest)
             .permitAll() // CORS preflight 요청 허용
-            .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**", "/api/verification/**")
-            .permitAll() // Swagger 허용 url, 인증 허용
+            .requestMatchers("/api/auth/refresh", "/api/auth/uos/migrate", "/api/auth/uos/login")
+            .permitAll()
+            .requestMatchers("/api/verification/send", "/api/verification/verify")
+            .permitAll()
+            .requestMatchers("/api/payment/refund/**")
+            .permitAll()
             .requestMatchers("/api/**")
             .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
@@ -73,7 +77,6 @@ class SecurityConfig(
 
         return http.build()
     }
-
     @Bean
     fun configurationSource(): CorsConfigurationSource? {
         val configuration = CorsConfiguration()
@@ -113,10 +116,20 @@ class SecurityConfig(
         return WebSecurityCustomizer { web: WebSecurity ->
             web.ignoring()
                 .requestMatchers(
-                    "/api/verification/send",
-                    "/api/verification/verify",
-                    "/api/auth/refresh",
+                    "/api/verification/send", // 인증코드 전송
+                    "/api/verification/verify", // 인증코드 검증
+                    "/api/auth/refresh", // 토큰 재발급
+                    "/api/auth/uos/migrate", // 시대생 유저 마이그레이션
+                    "/api/auth/uos/login", // 시대생 유저 로그인 (이메일 검증을 안 해서)
+                    "/api/payment/refund/**", // 유저 환불
                 )
+                .requestMatchers(
+                    "/swagger-ui.html",
+                    "/swagger-ui/*",
+                    "/v3/api-docs/**",
+                    "/swagger-resources/**",
+                )
+                .requestMatchers(PathRequest.toH2Console())
         }
     }
 
