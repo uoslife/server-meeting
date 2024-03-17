@@ -19,11 +19,11 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     USER_NOT_FOUND("U02", "User is not Found.", HttpStatus.BAD_REQUEST.value()),
     EMAIL_DUPLICATION("U03", "Email is Duplicated.", HttpStatus.BAD_REQUEST.value()),
     USER_ALREADY_RESET("U05", "User data is already reset.", HttpStatus.BAD_REQUEST.value()),
-    PHONE_NUMBER_NOT_FOUND("U06", "Phone Number is not found", HttpStatus.BAD_REQUEST.value()),
-    USER_ALREADY_EXISTING("U07", "User is already Existing", HttpStatus.BAD_REQUEST.value()),
+    PHONE_NUMBER_NOT_FOUND("U06", "Phone Number is not found.", HttpStatus.BAD_REQUEST.value()),
+    USER_ALREADY_EXISTING("U07", "User is already Existing.", HttpStatus.BAD_REQUEST.value()),
 
     // User - Token
-    INVALID_TOKEN("T01", "Token is not valid", HttpStatus.UNAUTHORIZED.value()),
+    INVALID_TOKEN("T01", "Token is not valid.", HttpStatus.UNAUTHORIZED.value()),
     USER_DEVICE_NOT_MATCHED_WITH_TOKEN(
         "T02",
         "User Device is not matched with Token.",
@@ -61,7 +61,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "Only Team Leader can Delete Team.",
         HttpStatus.BAD_REQUEST.value()
     ),
-    INVALID_TEAM_NAME("M11", "Team name is invalid", HttpStatus.BAD_REQUEST.value()),
+    INVALID_TEAM_NAME("M11", "Team name is invalid.", HttpStatus.BAD_REQUEST.value()),
     TEAM_CODE_GENERATE_FAILED(
         "M12",
         "Team Code Generate is Failed.",
@@ -90,12 +90,12 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     // Verification
     VERIFICATION_CODE_NOT_MATCH(
         "V01",
-        "Verification code does not match",
+        "Verification code does not match.",
         HttpStatus.BAD_REQUEST.value()
     ),
     VERIFICATION_NOT_FOUND(
         "V02",
-        "Verification code does not exist",
+        "Verification code does not exist.",
         HttpStatus.BAD_REQUEST.value()
     ),
 
@@ -103,10 +103,10 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     UNIVIERSITY_NOT_FOUND("UN01", "University is not Found", HttpStatus.BAD_REQUEST.value()),
 
     // Payment
-    PAYMENT_NOT_FOUND("P01", "Payment is not Found", HttpStatus.BAD_REQUEST.value()),
+    PAYMENT_NOT_FOUND("P01", "Payment is not Found.", HttpStatus.BAD_REQUEST.value()),
     ACCESS_TOKEN_NOT_FOUND("P02", "AccessToken is not Found", HttpStatus.BAD_REQUEST.value()),
-    PAYMENT_INVALID("P03", "Payment is Invalid", HttpStatus.BAD_REQUEST.value()),
-    USER_ALREADY_HAVE_PAYMENT("P04", "User already have Payment", HttpStatus.BAD_REQUEST.value()),
+    PAYMENT_INVALID("P03", "Payment is Invalid.", HttpStatus.BAD_REQUEST.value()),
+    USER_ALREADY_HAVE_PAYMENT("P04", "User already have Payment.", HttpStatus.BAD_REQUEST.value()),
 
     // Login
     LOG_IN_FAILED("L01", "Login failed", HttpStatus.BAD_REQUEST.value())
