@@ -20,4 +20,5 @@ data class UserPersonalInformation(
     var spiritAnimal: List<SpiritAnimalType>? = null,
     var mbti: String? = null,
     var interest: List<InterestType>? = null,
+    var message: String? = null,
 ) : Serializable
