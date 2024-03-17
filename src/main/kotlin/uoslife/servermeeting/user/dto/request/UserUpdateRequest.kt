@@ -15,10 +15,11 @@ data class UserUpdateRequest(
     @field:NotNull val studentType: StudentType,
     val height: Int?,
     val religion: ReligionType?,
-    val smoking: SmokingType?,
     val drinkingMin: Int?,
     val drinkingMax: Int?,
+    val smoking: SmokingType?,
     val spiritAnimal: List<SpiritAnimalType>?,
     val mbti: String?,
     val interest: List<InterestType>?,
+    val message: String?,
 )
