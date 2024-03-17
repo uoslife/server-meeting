@@ -35,7 +35,8 @@ class UserService(
         val existingUser =
             userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
 
-        val userPersonalInformation: UserPersonalInformation = updateUserPersonalInformationWithDto(existingUser, requestDto)
+        val userPersonalInformation: UserPersonalInformation =
+            updateUserPersonalInformationWithDto(existingUser, requestDto)
 
         existingUser.name = requestDto.name ?: existingUser.name
         existingUser.phoneNumber = requestDto.phoneNumber ?: existingUser.phoneNumber
@@ -44,27 +45,30 @@ class UserService(
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    private fun updateUserPersonalInformationWithDto(existingUser: User, requestDto: UserUpdateRequest): UserPersonalInformation{
+    private fun updateUserPersonalInformationWithDto(
+        existingUser: User,
+        requestDto: UserUpdateRequest
+    ): UserPersonalInformation {
         val userPersonalInformation =
             UserPersonalInformation(
                 age = requestDto.age ?: existingUser.userPersonalInformation.age,
                 gender = requestDto.gender ?: existingUser.userPersonalInformation.gender,
                 height = requestDto.height ?: existingUser.userPersonalInformation.height,
                 studentType = requestDto.studentType
-                    ?: existingUser.userPersonalInformation.studentType,
+                        ?: existingUser.userPersonalInformation.studentType,
                 kakaoTalkId = requestDto.kakaoTalkId
-                    ?: existingUser.userPersonalInformation.kakaoTalkId,
+                        ?: existingUser.userPersonalInformation.kakaoTalkId,
                 university = existingUser.userPersonalInformation.university,
                 department = requestDto.department
-                    ?: existingUser.userPersonalInformation.department,
+                        ?: existingUser.userPersonalInformation.department,
                 religion = requestDto.religion ?: existingUser.userPersonalInformation.religion,
                 drinkingMin = requestDto.drinkingMin
-                    ?: existingUser.userPersonalInformation.drinkingMin,
+                        ?: existingUser.userPersonalInformation.drinkingMin,
                 drinkingMax = requestDto.drinkingMax
-                    ?: existingUser.userPersonalInformation.drinkingMax,
+                        ?: existingUser.userPersonalInformation.drinkingMax,
                 smoking = requestDto.smoking ?: existingUser.userPersonalInformation.smoking,
                 spiritAnimal = requestDto.spiritAnimal
-                    ?: existingUser.userPersonalInformation.spiritAnimal,
+                        ?: existingUser.userPersonalInformation.spiritAnimal,
                 mbti = requestDto.mbti ?: existingUser.userPersonalInformation.mbti,
                 interest = requestDto.interest ?: existingUser.userPersonalInformation.interest,
                 message = requestDto.message ?: existingUser.userPersonalInformation.message,
