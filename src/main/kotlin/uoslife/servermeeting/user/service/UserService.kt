@@ -19,7 +19,7 @@ import uoslife.servermeeting.user.repository.TosRepository
 import uoslife.servermeeting.user.repository.UserRepository
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 class UserService(
     private val userRepository: UserRepository,
     private val tosRepository: TosRepository,
@@ -35,29 +35,46 @@ class UserService(
         val existingUser =
             userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
 
-        val userPersonalInformation =
-            UserPersonalInformation(
-                age = requestDto.age,
-                gender = requestDto.gender,
-                height = requestDto.height,
-                kakaoTalkId = requestDto.kakaoTalkId,
-                studentType = requestDto.studentType,
-                university = existingUser.userPersonalInformation.university,
-                department = requestDto.department,
-                religion = requestDto.religion,
-                drinkingMin = requestDto.drinkingMin,
-                drinkingMax = requestDto.drinkingMax,
-                smoking = requestDto.smoking,
-                spiritAnimal = requestDto.spiritAnimal,
-                mbti = requestDto.mbti,
-                interest = requestDto.interest,
-            )
+        val userPersonalInformation: UserPersonalInformation =
+            updateUserPersonalInformationWithDto(existingUser, requestDto)
 
-        existingUser.name = requestDto.name
-        existingUser.phoneNumber = requestDto.phoneNumber
-        existingUser.kakaoTalkId = requestDto.kakaoTalkId
+        existingUser.name = requestDto.name ?: existingUser.name
+        existingUser.phoneNumber = requestDto.phoneNumber ?: existingUser.phoneNumber
+        existingUser.kakaoTalkId = requestDto.kakaoTalkId ?: existingUser.kakaoTalkId
         existingUser.userPersonalInformation = userPersonalInformation
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    private fun updateUserPersonalInformationWithDto(
+        existingUser: User,
+        requestDto: UserUpdateRequest
+    ): UserPersonalInformation {
+        val userPersonalInformation =
+            UserPersonalInformation(
+                age = requestDto.age ?: existingUser.userPersonalInformation.age,
+                gender = requestDto.gender ?: existingUser.userPersonalInformation.gender,
+                height = requestDto.height ?: existingUser.userPersonalInformation.height,
+                studentType = requestDto.studentType
+                        ?: existingUser.userPersonalInformation.studentType,
+                kakaoTalkId = requestDto.kakaoTalkId
+                        ?: existingUser.userPersonalInformation.kakaoTalkId,
+                university = existingUser.userPersonalInformation.university,
+                department = requestDto.department
+                        ?: existingUser.userPersonalInformation.department,
+                religion = requestDto.religion ?: existingUser.userPersonalInformation.religion,
+                drinkingMin = requestDto.drinkingMin
+                        ?: existingUser.userPersonalInformation.drinkingMin,
+                drinkingMax = requestDto.drinkingMax
+                        ?: existingUser.userPersonalInformation.drinkingMax,
+                smoking = requestDto.smoking ?: existingUser.userPersonalInformation.smoking,
+                spiritAnimal = requestDto.spiritAnimal
+                        ?: existingUser.userPersonalInformation.spiritAnimal,
+                mbti = requestDto.mbti ?: existingUser.userPersonalInformation.mbti,
+                interest = requestDto.interest ?: existingUser.userPersonalInformation.interest,
+                message = requestDto.message ?: existingUser.userPersonalInformation.message,
+            )
+
+        return userPersonalInformation
     }
 
     @Transactional
