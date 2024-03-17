@@ -20,7 +20,6 @@ import uoslife.servermeeting.verification.dto.request.VerificationCodeSendReques
 import uoslife.servermeeting.verification.dto.response.VerificationCodeSendResponse
 import uoslife.servermeeting.verification.entity.Verification
 import uoslife.servermeeting.verification.exception.VerificationCodeNotMatchException
-import uoslife.servermeeting.verification.exception.VerificationNotFoundException
 import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 
 @Service
@@ -115,7 +114,7 @@ class VerificationService(
     private fun matchVerificationCode(email: String, code: String): Unit {
         val matchedVerification: Verification =
             verificationRedisRepository.findByIdOrNull(email)
-                ?: throw VerificationNotFoundException()
+                ?: throw VerificationCodeNotMatchException()
         if (!matchedVerification.code.equals(code)) throw VerificationCodeNotMatchException()
     }
 
