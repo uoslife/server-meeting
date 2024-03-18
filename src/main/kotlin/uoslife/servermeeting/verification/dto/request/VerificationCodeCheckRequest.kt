@@ -2,7 +2,6 @@ package uoslife.servermeeting.verification.dto.request
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotEmpty
 import uoslife.servermeeting.verification.dto.University
 
 data class VerificationCodeCheckRequest(

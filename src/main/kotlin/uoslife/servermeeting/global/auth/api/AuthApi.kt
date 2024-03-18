@@ -8,15 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.validation.Valid
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uoslife.servermeeting.global.auth.dto.request.LoginRequest
-import uoslife.servermeeting.global.auth.dto.request.MigrationRequest
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.service.AuthService
 import uoslife.servermeeting.global.error.ErrorResponse

@@ -2,6 +2,7 @@ package uoslife.servermeeting.global.auth.service
 
 import io.jsonwebtoken.Claims
 import jakarta.servlet.http.HttpServletRequest
+import java.util.*
 import org.apache.http.HttpEntity
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -13,11 +14,9 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
-import uoslife.servermeeting.global.auth.dto.request.LoginRequest
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.dto.response.UserProfileVO
 import uoslife.servermeeting.global.auth.exception.InvalidTokenException
-import uoslife.servermeeting.global.auth.exception.LoginFailedException
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.jwt.TokenType
 import uoslife.servermeeting.user.entity.User
@@ -25,9 +24,6 @@ import uoslife.servermeeting.user.exception.UserAlreadyExistsException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
-import uoslife.servermeeting.verification.service.VerificationService
-import java.util.*
-
 
 @Service
 @Transactional(readOnly = true)
@@ -59,7 +55,7 @@ class AuthService(
         val userProfileVOFromUoslife: UserProfileVO = getUserProfileFromUoslife(bearerToken)
 
         // 이미 회원가입 되어 있다면 예외 발생
-        if(userRepository.existsByPhoneNumber(userProfileVOFromUoslife.phone))
+        if (userRepository.existsByPhoneNumber(userProfileVOFromUoslife.phone))
             throw UserAlreadyExistsException()
 
         // 회원가입 진행
@@ -81,14 +77,25 @@ class AuthService(
         headers.add("Authorization", bearerToken)
 
         // 리빌드 서버에서 유저 정보 가져오기
-        val responseEntity: ResponseEntity<UserProfileVO> = restTemplate.exchange(url, HttpMethod.GET, org.springframework.http.HttpEntity<Any>(headers), UserProfileVO::class.java)
+        val responseEntity: ResponseEntity<UserProfileVO> =
+            restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                org.springframework.http.HttpEntity<Any>(headers),
+                UserProfileVO::class.java
+            )
         val userProfileVO: UserProfileVO = responseEntity.body ?: throw RuntimeException()
 
         return userProfileVO
     }
 
     private fun saveUser(userProfileVO: UserProfileVO): User {
-        val user: User = User(id = UUID.randomUUID(), phoneNumber = userProfileVO.phone, name = userProfileVO.name)
+        val user: User =
+            User(
+                id = UUID.randomUUID(),
+                phoneNumber = userProfileVO.phone,
+                name = userProfileVO.name
+            )
         user.userPersonalInformation.university = University.UOS
 
         val savedUser: User = userRepository.save(user)
@@ -101,7 +108,9 @@ class AuthService(
         val userProfileVOFromUoslife: UserProfileVO = getUserProfileFromUoslife(bearerToken)
 
         // 비회원이라면 예외 발생
-        val user: User = userRepository.findByPhoneNumber(userProfileVOFromUoslife.phone) ?: throw UserNotFoundException()
+        val user: User =
+            userRepository.findByPhoneNumber(userProfileVOFromUoslife.phone)
+                ?: throw UserNotFoundException()
 
         // 토큰 발급
         val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(user)

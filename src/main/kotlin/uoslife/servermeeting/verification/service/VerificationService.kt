@@ -8,9 +8,7 @@ import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
-import uoslife.servermeeting.global.auth.jwt.JwtUserDetails
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
-import uoslife.servermeeting.global.auth.security.JwtUserDetailsService
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.repository.UserRepository
@@ -124,6 +122,4 @@ class VerificationService(
 
         return user
     }
-
-
 }

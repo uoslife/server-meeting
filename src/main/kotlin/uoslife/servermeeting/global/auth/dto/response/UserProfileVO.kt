@@ -1,10 +1,8 @@
 package uoslife.servermeeting.global.auth.dto.response
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.querydsl.core.annotations.QueryProjection
 import java.time.LocalDate
 
-data class UserProfileVO (
+data class UserProfileVO(
     val id: Long?,
     val name: String,
     val nickname: String?,
