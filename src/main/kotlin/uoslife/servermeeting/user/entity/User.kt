@@ -20,7 +20,7 @@ class User(
     var kakaoTalkId: String = "",
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tos_id", foreignKey = ForeignKey(ConstraintMode.CONSTRAINT))
-    var tos: Tos = Tos(),
+    var tos: Tos? = null,
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var userPersonalInformation: UserPersonalInformation = UserPersonalInformation(),

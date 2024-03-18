@@ -7,6 +7,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
+import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
@@ -91,6 +92,19 @@ class SingleMeetingService(
         meetingTeam.preference = preference
     }
 
+    @Transactional
+    override fun updateMeetingTeamMessage(
+        userUUID: UUID,
+        meetingTeamMessageUpdateRequest: MeetingTeamMessageUpdateRequest
+    ) {
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
+
+        val message = meetingTeamMessageUpdateRequest.message
+
+        meetingTeam.message = message
+    }
+
     override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
         val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
@@ -104,7 +118,8 @@ class SingleMeetingService(
             listOf(user),
             information,
             preference,
-            null
+            null,
+            meetingTeam.message
         )
     }
 

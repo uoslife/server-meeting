@@ -52,7 +52,7 @@ class AuthApi(
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
+                    responseCode = "401",
                     description = "부적절한 토큰 정보",
                     content =
                         [
