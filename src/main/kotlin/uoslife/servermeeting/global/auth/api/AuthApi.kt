@@ -8,15 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.validation.Valid
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uoslife.servermeeting.global.auth.dto.request.LoginRequest
-import uoslife.servermeeting.global.auth.dto.request.MigrationRequest
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.service.AuthService
 import uoslife.servermeeting.global.error.ErrorResponse
@@ -102,10 +97,11 @@ class AuthApi(
             ]
     )
     @PostMapping("/uos/migrate")
-    fun migrateUOS(@RequestBody @Valid migrationRequest: MigrationRequest): ResponseEntity<Unit> {
-        authService.migrateFromUoslife(migrationRequest)
+    fun migrateUOS(request: HttpServletRequest): ResponseEntity<TokenResponse> {
+        val bearerToken: String = request.getHeader("Authorization")
+        val tokenResponse: TokenResponse = authService.migrateFromUoslife(bearerToken)
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        return ResponseEntity.ok().body(tokenResponse)
     }
 
     @Operation(summary = "시립대 학생 로그인", description = "시립대 학생들은 시대생 앱의 토큰을 통해 로그인")
@@ -150,8 +146,9 @@ class AuthApi(
             ]
     )
     @PostMapping("/uos/login")
-    fun login(@RequestBody @Valid loginRequest: LoginRequest): ResponseEntity<TokenResponse> {
-        val tokenResponse: TokenResponse = authService.login(loginRequest)
+    fun login(request: HttpServletRequest): ResponseEntity<TokenResponse> {
+        val bearerToken: String = request.getHeader("Authorization")
+        val tokenResponse: TokenResponse = authService.login(bearerToken)
 
         return ResponseEntity.ok().body(tokenResponse)
     }

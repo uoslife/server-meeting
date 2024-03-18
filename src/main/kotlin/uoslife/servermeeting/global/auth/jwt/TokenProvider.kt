@@ -17,8 +17,10 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
+import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.exception.InvalidTokenException
 import uoslife.servermeeting.global.auth.security.JwtUserDetailsService
+import uoslife.servermeeting.user.entity.User
 
 @Component
 class TokenProvider(
@@ -105,5 +107,15 @@ class TokenProvider(
             return bearerToken.substring(7)
         }
         return null
+    }
+
+    fun getTokenByUser(user: User): TokenResponse {
+        val userDetails: JwtUserDetails =
+            jwtUserDetailsService.loadUserByUsername(user.id.toString())
+
+        val accessToken: String = generateAccessTokenFromUserPrincipal(userDetails)
+        val refreshToken: String = generateRefreshTokenFromUserPrincipal(userDetails)
+
+        return TokenResponse(accessToken = accessToken, refreshToken = refreshToken)
     }
 }
