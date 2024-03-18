@@ -39,6 +39,13 @@ class JwtAuthenticationFilter(
                     response.contentType = "application/json;charset-UTF-8"
                     response.writer.write(convertObjectToJson(errorResponse))
                 }
+                else -> {
+                    val errorResponse = ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR)
+                    response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
+                    response.characterEncoding = "utf-8"
+                    response.contentType = "application/json;charset-UTF-8"
+                    response.writer.write(convertObjectToJson(errorResponse))
+                }
             }
         }
     }
