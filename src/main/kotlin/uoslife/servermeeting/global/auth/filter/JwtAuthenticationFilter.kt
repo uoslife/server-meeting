@@ -15,8 +15,6 @@ import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.jwt.TokenType
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.global.error.exception.ErrorCode
-import java.lang.RuntimeException
-
 
 class JwtAuthenticationFilter(
     private val tokenProvider: TokenProvider,
@@ -30,9 +28,10 @@ class JwtAuthenticationFilter(
         try {
             setAuthentication(request)
             filterChain.doFilter(request, response)
-        } catch (e: Exception){
-            when(e){
-                is InvalidTokenException, is UnauthorizedException -> {
+        } catch (e: Exception) {
+            when (e) {
+                is InvalidTokenException,
+                is UnauthorizedException -> {
                     val errorResponse = ErrorResponse(ErrorCode.INVALID_TOKEN)
                     response.status = HttpStatus.UNAUTHORIZED.value()
                     response.characterEncoding = "utf-8"
