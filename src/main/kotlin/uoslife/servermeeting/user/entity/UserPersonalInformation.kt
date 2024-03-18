@@ -18,6 +18,6 @@ data class UserPersonalInformation(
     var smoking: SmokingType? = null,
     var spiritAnimal: List<SpiritAnimalType>? = null,
     var mbti: String? = null,
-    var interest: List<InterestType>? = null,
-    var message: String? = null,
+    var interest: List<InterestType>? = null, // 취미
+    var message: String? = null, // 상대에게 전하고자 하는 첫 메시지
 ) : Serializable
