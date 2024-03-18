@@ -102,10 +102,11 @@ class AuthApi(
             ]
     )
     @PostMapping("/uos/migrate")
-    fun migrateUOS(@RequestBody @Valid migrationRequest: MigrationRequest): ResponseEntity<Unit> {
-        authService.migrateFromUoslife(migrationRequest)
+    fun migrateUOS(request: HttpServletRequest): ResponseEntity<TokenResponse> {
+        val bearerToken: String = request.getHeader("Authorization")
+        val tokenResponse: TokenResponse = authService.migrateFromUoslife(bearerToken)
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        return ResponseEntity.ok().body(tokenResponse)
     }
 
     @Operation(summary = "시립대 학생 로그인", description = "시립대 학생들은 시대생 앱의 토큰을 통해 로그인")
