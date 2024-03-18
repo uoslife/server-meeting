@@ -151,8 +151,9 @@ class AuthApi(
             ]
     )
     @PostMapping("/uos/login")
-    fun login(@RequestBody @Valid loginRequest: LoginRequest): ResponseEntity<TokenResponse> {
-        val tokenResponse: TokenResponse = authService.login(loginRequest)
+    fun login(request: HttpServletRequest): ResponseEntity<TokenResponse> {
+        val bearerToken: String = request.getHeader("Authorization")
+        val tokenResponse: TokenResponse = authService.login(bearerToken)
 
         return ResponseEntity.ok().body(tokenResponse)
     }

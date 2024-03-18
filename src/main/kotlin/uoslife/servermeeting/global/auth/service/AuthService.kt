@@ -96,13 +96,16 @@ class AuthService(
         return savedUser
     }
 
-    fun login(loginRequest: LoginRequest): TokenResponse {
-        val email: String = loginRequest.email
-        val deviceSecret: String = loginRequest.deviceSecret
+    fun login(bearerToken: String): TokenResponse {
+        // rebuild-server에서 유저 데이터 가져오기
+        val userProfileVOFromUoslife: UserProfileVO = getUserProfileFromUoslife(bearerToken)
 
-        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException()
+        // 비회원이라면 예외 발생
+        val user: User = userRepository.findByPhoneNumber(userProfileVOFromUoslife.phone) ?: throw UserNotFoundException()
 
-        val tokenResponse: TokenResponse = verificationService.getTokenByUser(user)
+        // 토큰 발급
+        val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(user)
+
         return tokenResponse
     }
 }
