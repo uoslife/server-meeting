@@ -19,6 +19,7 @@ class MeetingTeam(
     var name: String? = null,
     @Type(JsonType::class) @Column(columnDefinition = "jsonb") var information: Information? = null,
     @Type(JsonType::class) @Column(columnDefinition = "jsonb") var preference: Preference? = null,
+    var message: String? = null,
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var compatibility: Compatibility? = null,

@@ -15,6 +15,7 @@ data class MeetingTeamInformationGetResponse(
     @Schema(description = "팀에 속한 유저 정보") val teamUserList: List<UserProfile>?,
     @Schema(description = "질문 응답값") val information: Information?,
     @Schema(description = "상대방 선호 응답값") val preference: Preference?,
+    @Schema(description = "상대에게 전하는 메세지") val message: String?
 )
 
 data class UserProfile(
