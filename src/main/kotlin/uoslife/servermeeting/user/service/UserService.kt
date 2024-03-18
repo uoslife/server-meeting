@@ -13,7 +13,6 @@ import uoslife.servermeeting.user.dto.response.toResponse
 import uoslife.servermeeting.user.entity.Tos
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserPersonalInformation
-import uoslife.servermeeting.user.exception.ExistingUserNotFoundException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.TosRepository
 import uoslife.servermeeting.user.repository.UserRepository
@@ -32,9 +31,22 @@ class UserService(
 
     @Transactional
     fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<Unit> {
-        val existingUser =
-            userRepository.findByIdOrNull(id) ?: throw ExistingUserNotFoundException()
+        val existingUser = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
+        val userPersonalInformation: UserPersonalInformation =
+            updateUserPersonalInformationWithDto(existingUser, requestDto)
+
+        existingUser.name = requestDto.name ?: existingUser.name
+        existingUser.phoneNumber = requestDto.phoneNumber ?: existingUser.phoneNumber
+        existingUser.kakaoTalkId = requestDto.kakaoTalkId ?: existingUser.kakaoTalkId
+        existingUser.userPersonalInformation = userPersonalInformation
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    private fun updateUserPersonalInformationWithDto(
+        existingUser: User,
+        requestDto: UserUpdateRequest
+    ): UserPersonalInformation {
         val userPersonalInformation =
             UserPersonalInformation(
                 age = requestDto.age ?: existingUser.userPersonalInformation.age,
@@ -60,11 +72,7 @@ class UserService(
                 message = requestDto.message ?: existingUser.userPersonalInformation.message,
             )
 
-        existingUser.name = requestDto.name ?: existingUser.name
-        existingUser.phoneNumber = requestDto.phoneNumber ?: existingUser.phoneNumber
-        existingUser.kakaoTalkId = requestDto.kakaoTalkId ?: existingUser.kakaoTalkId
-        existingUser.userPersonalInformation = userPersonalInformation
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        return userPersonalInformation
     }
 
     @Transactional
