@@ -29,7 +29,6 @@ class VerificationService(
     private val javaMailSender: JavaMailSender,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val tokenProvider: TokenProvider,
-    private val jwtUserDetailsService: JwtUserDetailsService,
     @Value("\${mail.from}") private val mailFrom: String
 ) {
     @Transactional
@@ -89,7 +88,7 @@ class VerificationService(
                     verificationCodeCheckRequest.email,
                     verificationCodeCheckRequest.university
                 )
-            return getTokenByUser(savedUser)
+            return tokenProvider.getTokenByUser(savedUser)
         }
 
         // 리퀘스트 인증코드와 DB 인증코드가 같은지 체크
@@ -106,7 +105,7 @@ class VerificationService(
             )
 
         // token(accessToken, refreshToken) 발급
-        val tokenResponse: TokenResponse = getTokenByUser(savedUser)
+        val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(savedUser)
 
         return tokenResponse
     }
@@ -126,13 +125,5 @@ class VerificationService(
         return user
     }
 
-    fun getTokenByUser(user: User): TokenResponse {
-        val userDetails: JwtUserDetails =
-            jwtUserDetailsService.loadUserByUsername(user.id.toString())
 
-        val accessToken: String = tokenProvider.generateAccessTokenFromUserPrincipal(userDetails)
-        val refreshToken: String = tokenProvider.generateRefreshTokenFromUserPrincipal(userDetails)
-
-        return TokenResponse(accessToken = accessToken, refreshToken = refreshToken)
-    }
 }

@@ -34,7 +34,6 @@ import java.util.*
 class AuthService(
     private val userRepository: UserRepository,
     private val tokenProvider: TokenProvider,
-    private val verificationService: VerificationService,
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(AuthService::class.java)
@@ -48,7 +47,7 @@ class AuthService(
         val user: User =
             userRepository.findByIdOrNull(UUID.fromString(claims.subject))
                 ?: throw UserNotFoundException()
-        val tokenResponse: TokenResponse = verificationService.getTokenByUser(user)
+        val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(user)
 
         return tokenResponse
     }
@@ -57,16 +56,17 @@ class AuthService(
     @Transactional
     fun migrateFromUoslife(bearerToken: String): TokenResponse {
         // rebuild-server에서 유저 데이터 가져오기
-        val userProfileVO: UserProfileVO = getUserProfileFromUoslife(bearerToken)
+        val userProfileVOFromUoslife: UserProfileVO = getUserProfileFromUoslife(bearerToken)
 
         // 이미 회원가입 되어 있다면 예외 발생
-        if(userRepository.existsByPhoneNumber(userProfileVO.phone)) throw UserAlreadyExistsException()
+        if(userRepository.existsByPhoneNumber(userProfileVOFromUoslife.phone))
+            throw UserAlreadyExistsException()
 
         // 회원가입 진행
-        val savedUser: User = saveUser(userProfileVO)
+        val savedUser: User = saveUser(userProfileVOFromUoslife)
 
         // 토큰 발급
-        val tokenResponse: TokenResponse = verificationService.getTokenByUser(savedUser)
+        val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(savedUser)
         return tokenResponse
     }
 
