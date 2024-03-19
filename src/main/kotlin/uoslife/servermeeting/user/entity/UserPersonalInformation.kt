@@ -10,7 +10,6 @@ data class UserPersonalInformation(
     var height: Int? = 0,
     var kakaoTalkId: String? = null,
     var studentType: StudentType = StudentType.UNDERGRADUATE,
-    // TODO: 이메일 인증 절차 때 user 생성하면서 함께 넣을 것!
     var university: University? = null,
     var department: String = "",
     var religion: ReligionType? = null,
@@ -19,6 +18,6 @@ data class UserPersonalInformation(
     var smoking: SmokingType? = null,
     var spiritAnimal: List<SpiritAnimalType>? = null,
     var mbti: String? = null,
-    var interest: List<InterestType>? = null,
-    var message: String? = null,
+    var interest: List<InterestType>? = null, // 취미
+    var message: String? = null, // 상대에게 전하고자 하는 첫 메시지
 ) : Serializable

@@ -8,9 +8,7 @@ import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
-import uoslife.servermeeting.global.auth.jwt.JwtUserDetails
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
-import uoslife.servermeeting.global.auth.security.JwtUserDetailsService
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.repository.UserRepository
@@ -29,7 +27,6 @@ class VerificationService(
     private val javaMailSender: JavaMailSender,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val tokenProvider: TokenProvider,
-    private val jwtUserDetailsService: JwtUserDetailsService,
     @Value("\${mail.from}") private val mailFrom: String
 ) {
     @Transactional
@@ -89,7 +86,7 @@ class VerificationService(
                     verificationCodeCheckRequest.email,
                     verificationCodeCheckRequest.university
                 )
-            return getTokenByUser(savedUser)
+            return tokenProvider.getTokenByUser(savedUser)
         }
 
         // 리퀘스트 인증코드와 DB 인증코드가 같은지 체크
@@ -106,7 +103,7 @@ class VerificationService(
             )
 
         // token(accessToken, refreshToken) 발급
-        val tokenResponse: TokenResponse = getTokenByUser(savedUser)
+        val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(savedUser)
 
         return tokenResponse
     }
@@ -124,15 +121,5 @@ class VerificationService(
                 ?: userRepository.save(User.create(email = email, university = university))
 
         return user
-    }
-
-    fun getTokenByUser(user: User): TokenResponse {
-        val userDetails: JwtUserDetails =
-            jwtUserDetailsService.loadUserByUsername(user.id.toString())
-
-        val accessToken: String = tokenProvider.generateAccessTokenFromUserPrincipal(userDetails)
-        val refreshToken: String = tokenProvider.generateRefreshTokenFromUserPrincipal(userDetails)
-
-        return TokenResponse(accessToken = accessToken, refreshToken = refreshToken)
     }
 }

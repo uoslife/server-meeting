@@ -6,22 +6,18 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uoslife.servermeeting.user.dto.request.TosDto
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
 import uoslife.servermeeting.user.dto.response.toResponse
-import uoslife.servermeeting.user.entity.Tos
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserPersonalInformation
 import uoslife.servermeeting.user.exception.UserNotFoundException
-import uoslife.servermeeting.user.repository.TosRepository
 import uoslife.servermeeting.user.repository.UserRepository
 
 @Service
 @Transactional
 class UserService(
     private val userRepository: UserRepository,
-    private val tosRepository: TosRepository,
 ) {
 
     fun findUser(id: UUID): ResponseEntity<UserFindResponseDto> {
@@ -84,22 +80,10 @@ class UserService(
                 id = user.id,
                 email = user.email,
                 payment = user.payment,
-                tos = user.tos,
             )
         updatingUser.userPersonalInformation.university = user.userPersonalInformation.university
         userRepository.save(updatingUser)
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-    }
-
-    @Transactional
-    fun setTos(uuid: UUID, tosDto: TosDto) {
-        val user: User = userRepository.findByIdOrNull(uuid) ?: throw UserNotFoundException()
-
-        // dto에서 entity로 변경
-        val tos: Tos = TosDto.toEntity(tosDto)
-        val savedTos: Tos = tosRepository.save(tos)
-
-        user.tos = savedTos
     }
 }

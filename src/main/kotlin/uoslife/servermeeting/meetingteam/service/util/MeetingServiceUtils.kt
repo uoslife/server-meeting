@@ -21,6 +21,7 @@ class MeetingServiceUtils {
         information: Information,
         preference: Preference,
         teamName: String?,
+        message: String?
     ): MeetingTeamInformationGetResponse {
         return MeetingTeamInformationGetResponse(
             teamType = teamType,
@@ -47,6 +48,7 @@ class MeetingServiceUtils {
                 },
             information = information,
             preference = preference,
+            message = message
         )
     }
 }
