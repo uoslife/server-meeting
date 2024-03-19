@@ -17,6 +17,6 @@ data class Preference(
     var religion: List<ReligionType>? = null,
     var smoking: List<SmokingType>? = null,
     var spiritAnimal: List<SpiritAnimalType>? = null,
-    var mbti: List<String>? = null,
+    var mbti: String? = null,
     var mood: TeamMood? = null,
 )

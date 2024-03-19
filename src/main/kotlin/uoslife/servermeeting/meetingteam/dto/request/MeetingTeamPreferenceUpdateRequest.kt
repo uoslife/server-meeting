@@ -20,7 +20,7 @@ class MeetingTeamPreferenceUpdateRequest(
     @Schema(description = "종교", example = "[CHRISTIAN]") val religion: List<ReligionType>?,
     @Schema(description = "흡연 여부", example = "[TRUE]") val smoking: List<SmokingType>?,
     @Schema(description = "동물상", example = "[DOG]") val spiritAnimal: List<SpiritAnimalType>?,
-    @Schema(description = "MBTI", example = "EINTFJP") val mbti: List<String>?,
+    @Schema(description = "MBTI", example = "EINTFJP") val mbti: String?,
     @Schema(description = "미팅 분위기", example = "[ACTIVE, CALM]") val mood: TeamMood?,
 ) {
     fun toSinglePreference(): Preference {
