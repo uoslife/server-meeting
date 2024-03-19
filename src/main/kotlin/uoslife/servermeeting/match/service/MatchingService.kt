@@ -1,5 +1,6 @@
 package uoslife.servermeeting.match.service
 
+import java.util.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.match.dao.MatchedDao
@@ -13,7 +14,6 @@ import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.exception.UserNotFoundException
-import java.util.*
 
 @Service
 @Transactional(readOnly = true)

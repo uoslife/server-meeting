@@ -2,6 +2,7 @@ package uoslife.servermeeting.global.auth.service
 
 import io.jsonwebtoken.Claims
 import jakarta.servlet.http.HttpServletRequest
+import java.util.*
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpMethod
@@ -21,7 +22,6 @@ import uoslife.servermeeting.user.exception.UserAlreadyExistsException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
-import java.util.*
 
 @Service
 @Transactional(readOnly = true)
