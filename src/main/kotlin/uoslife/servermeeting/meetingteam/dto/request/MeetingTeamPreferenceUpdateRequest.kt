@@ -1,5 +1,6 @@
 package uoslife.servermeeting.meetingteam.dto.request
 
+import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamMood
@@ -10,18 +11,17 @@ import uoslife.servermeeting.user.entity.enums.StudentType
 import uoslife.servermeeting.verification.dto.University
 
 class MeetingTeamPreferenceUpdateRequest(
-    @NotBlank val ageMin: Int,
-    @NotBlank val ageMax: Int,
-    val heightMin: Int?,
-    val heightMax: Int?,
-    val studentType: List<StudentType>?,
-    @NotBlank val university: List<University>,
-    val religion: List<ReligionType>?,
-    val smoking: List<SmokingType>?,
-    val spiritAnimal: List<SpiritAnimalType>?,
-    // TODO: mbti 형식 어떻게 받을지 지정
-    val mbti: List<String>?,
-    val mood: TeamMood?,
+    @Schema(description = "최소 나이", example = "20") @field:NotBlank val ageMin: Int,
+    @Schema(description = "최대 나이", example = "30") @field:NotBlank val ageMax: Int,
+    @Schema(description = "최소 키", example = "130") val heightMin: Int?,
+    @Schema(description = "최대 키", example = "210") val heightMax: Int?,
+    @Schema(description = "신분", example = "[UNDERGRADUATE]") val studentType: List<StudentType>?,
+    @Schema(description = "대학", example = "[UOS]") @field:NotBlank val university: List<University>,
+    @Schema(description = "종교", example = "[CHRISTIAN]") val religion: List<ReligionType>?,
+    @Schema(description = "흡연 여부", example = "[TRUE]") val smoking: List<SmokingType>?,
+    @Schema(description = "동물상", example = "[DOG]") val spiritAnimal: List<SpiritAnimalType>?,
+    @Schema(description = "MBTI", example = "EINTFJP") val mbti: List<String>?,
+    @Schema(description = "미팅 분위기", example = "[ACTIVE, CALM]") val mood: TeamMood?,
 ) {
     fun toSinglePreference(): Preference {
         return Preference(

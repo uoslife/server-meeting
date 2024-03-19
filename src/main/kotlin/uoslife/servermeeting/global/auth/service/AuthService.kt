@@ -2,8 +2,6 @@ package uoslife.servermeeting.global.auth.service
 
 import io.jsonwebtoken.Claims
 import jakarta.servlet.http.HttpServletRequest
-import java.util.*
-import org.apache.http.HttpEntity
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpMethod
@@ -13,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.exchange
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.dto.response.UserProfileVO
 import uoslife.servermeeting.global.auth.exception.InvalidTokenException
@@ -24,6 +21,7 @@ import uoslife.servermeeting.user.exception.UserAlreadyExistsException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
+import java.util.*
 
 @Service
 @Transactional(readOnly = true)
