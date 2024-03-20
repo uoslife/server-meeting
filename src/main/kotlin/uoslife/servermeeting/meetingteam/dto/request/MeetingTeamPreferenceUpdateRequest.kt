@@ -15,13 +15,13 @@ class MeetingTeamPreferenceUpdateRequest(
     @Schema(description = "최대 나이", example = "30") @field:NotBlank val ageMax: Int,
     @Schema(description = "최소 키", example = "130") val heightMin: Int?,
     @Schema(description = "최대 키", example = "210") val heightMax: Int?,
-    @Schema(description = "신분", example = "[UNDERGRADUATE]") val studentType: List<StudentType>?,
-    @Schema(description = "대학", example = "[UOS]") @field:NotBlank val university: List<University>,
-    @Schema(description = "종교", example = "[CHRISTIAN]") val religion: List<ReligionType>?,
+    @Schema(description = "신분", example = "[UNDERGRADUATE, POSTGRADUATE]") val studentType: List<StudentType>?,
+    @Schema(description = "대학", example = "[UOS, KHU]") @field:NotBlank val university: List<University>,
+    @Schema(description = "종교", example = "[CHRISTIAN, CATHOLIC]") val religion: List<ReligionType>?,
     @Schema(description = "흡연 여부", example = "[TRUE]") val smoking: List<SmokingType>?,
-    @Schema(description = "동물상", example = "[DOG]") val spiritAnimal: List<SpiritAnimalType>?,
+    @Schema(description = "동물상", example = "[DOG, CAT]") val spiritAnimal: List<SpiritAnimalType>?,
     @Schema(description = "MBTI", example = "EINTFJP") val mbti: String?,
-    @Schema(description = "미팅 분위기", example = "[ACTIVE, CALM]") val mood: TeamMood?,
+    @Schema(description = "미팅 분위기", example = "ACTIVE") val mood: TeamMood?,
 ) {
     fun toSinglePreference(): Preference {
         return Preference(
