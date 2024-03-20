@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
+import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
@@ -591,6 +592,75 @@ class MeetingApi(
                 TeamType.TRIPLE -> tripleMeetingService.getMeetingTeamInformation(userUUID)
             }
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamInformationGetResponse)
+    }
+
+    @Operation(summary = "상대에게 보내는 메세지 입력")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "204",
+                    description = "반환값 없음",
+                    content = [Content(schema = Schema(implementation = Unit::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
+                            )]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 일치하는 팀 정보 없음",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                        )]
+                            )]
+                ),
+            ]
+    )
+    @PutMapping("/{teamType}/{isTeamLeader}/message")
+    fun updateMeetingTeamMessage(
+        @AuthenticationPrincipal userDetails: UserDetails,
+        @PathVariable teamType: TeamType,
+        @PathVariable isTeamLeader: Boolean,
+        @RequestBody @Valid meetingTeamMessageUpdateRequest: MeetingTeamMessageUpdateRequest,
+    ): ResponseEntity<Unit> {
+        val userUUID = UUID.fromString(userDetails.username)
+
+        if (!isTeamLeader) {
+            throw OnlyTeamLeaderCanUpdateTeamInformationException()
+        }
+
+        when (teamType) {
+            TeamType.SINGLE ->
+                singleMeetingService.updateMeetingTeamMessage(
+                    userUUID,
+                    meetingTeamMessageUpdateRequest,
+                )
+            TeamType.TRIPLE ->
+                tripleMeetingService.updateMeetingTeamMessage(
+                    userUUID,
+                    meetingTeamMessageUpdateRequest,
+                )
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     @Operation(summary = "미팅 팀 삭제", description = "리더만 팀 삭제 가능")

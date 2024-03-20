@@ -4,7 +4,6 @@ import java.util.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.match.dao.MatchedDao
-import uoslife.servermeeting.match.entity.QMatch.match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.SINGLE

@@ -1,6 +1,10 @@
 package uoslife.servermeeting.meetingteam.dto.request
 
-class MeetingTeamInformationUpdateRequest(val questions: List<String>) {
+import io.swagger.v3.oas.annotations.media.Schema
+
+class MeetingTeamInformationUpdateRequest(
+    @Schema(description = "질문에 대한 답한(5개)") val questions: List<String>
+) {
     fun toMap(): Map<Int, String> {
         return mapOf(
             0 to questions[0],
