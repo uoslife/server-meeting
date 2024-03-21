@@ -20,7 +20,7 @@ data class UserUpdateRequest(
     val studentType: StudentType,
     @Schema(description = "키", example = "178") val height: Int?,
     @Schema(description = "종교", example = "") val religion: ReligionType?,
-    @Schema(description = "이름", example = "[NO_RELIGION]") val drinkingMin: Int?,
+    @Schema(description = "최소 주량(병)", example = "1") val drinkingMin: Int?,
     @Schema(description = "최대 주량(병)", example = "3") val drinkingMax: Int?,
     @Schema(description = "흡연 여부", example = "[FALSE]") val smoking: SmokingType?,
     @Schema(description = "동물상", example = "[DOG]") val spiritAnimal: List<SpiritAnimalType>?,
