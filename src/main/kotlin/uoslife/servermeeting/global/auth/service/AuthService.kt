@@ -3,7 +3,6 @@ package uoslife.servermeeting.global.auth.service
 import io.jsonwebtoken.Claims
 import jakarta.servlet.http.HttpServletRequest
 import java.util.*
-import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
@@ -24,14 +23,11 @@ import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 class AuthService(
     private val userRepository: UserRepository,
     private val tokenProvider: TokenProvider,
 ) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(AuthService::class.java)
-    }
     @Transactional
     fun refreshAccessToken(request: HttpServletRequest): TokenResponse {
         val refreshToken: String =

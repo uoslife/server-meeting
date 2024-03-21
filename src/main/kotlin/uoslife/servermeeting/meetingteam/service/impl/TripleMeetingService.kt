@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
@@ -34,7 +33,6 @@ import uoslife.servermeeting.user.repository.UserRepository
 class TripleMeetingService(
     private val userRepository: UserRepository,
     private val userDao: UserDao,
-    private val meetingTeamDao: MeetingTeamDao,
     private val meetingTeamRepository: MeetingTeamRepository,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val validator: Validator,
@@ -88,7 +86,7 @@ class TripleMeetingService(
         userUUID: UUID,
         code: String
     ): MeetingTeamUserListGetResponse {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+        userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
         validator.isTeamCodeValid(code)
 
         val meetingTeam =

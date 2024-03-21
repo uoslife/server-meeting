@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import java.util.UUID
+import java.util.*
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -15,13 +15,12 @@ import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
-import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.user.service.UserService
 
 @Tag(name = "User", description = "User API")
 @RestController
 @RequestMapping("/api/user")
-class UserApi(private val userService: UserService, private val userRepository: UserRepository) {
+class UserApi(private val userService: UserService) {
 
     @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 정보를 조회합니다. row가 없다면 생성합니다.")
     @GetMapping
