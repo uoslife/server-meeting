@@ -61,8 +61,8 @@ class AuthService(
     }
 
     private fun getUserProfileFromUoslife(bearerToken: String): UserProfileVO {
-        val restTemplate = RestTemplate()
-        val url = "http://localhost:8081/core/users"
+        val restTemplate: RestTemplate = RestTemplate()
+        val url: String = "http://localhost:8081/core/users"
 
         // request header
         val headers: MultiValueMap<String, String> = LinkedMultiValueMap()
@@ -84,7 +84,7 @@ class AuthService(
     }
 
     private fun saveUser(userProfileVO: UserProfileVO): User {
-        val user =
+        val user: User =
             User(
                 id = UUID.randomUUID(),
                 phoneNumber = userProfileVO.phone,
