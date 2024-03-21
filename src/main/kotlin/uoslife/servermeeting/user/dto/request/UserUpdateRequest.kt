@@ -7,7 +7,6 @@ import uoslife.servermeeting.user.entity.enums.*
 data class UserUpdateRequest(
     @field:NotNull val name: String,
     @field:NotNull val gender: GenderType,
-    // TODO: PHONENUMBER UI 추가 요청
     @field:NotNull @field:Size(max = 11) val phoneNumber: String,
     @field:NotNull val age: Int,
     @field:NotNull val kakaoTalkId: String,
