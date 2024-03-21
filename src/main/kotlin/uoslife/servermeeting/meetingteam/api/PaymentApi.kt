@@ -242,11 +242,11 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
             ]
     )
     @PostMapping("/refund")
-    fun refundPaymentByEmail(
+    fun refundPaymentByPhoneNumber(
         @RequestBody paymentRefundRequest: PaymentRequestDto.PaymentRefundRequest
     ): ResponseEntity<PaymentResponseDto.PaymentRefundResponse> {
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.refundPaymentById(paymentRefundRequest.email))
+            .body(paymentService.refundPaymentByPhoneNumber(paymentRefundRequest.phoneNumber))
     }
 
     @Operation(summary = "매칭 안된 유저 결제 취소 API", description = "매칭이 되지않은 모든 유저에 대해 환불합니다")
