@@ -3,7 +3,6 @@ package uoslife.servermeeting.meetingteam.dto.request
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Pattern
 import uoslife.servermeeting.meetingteam.entity.enums.PayMethod
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentGateway
 
@@ -19,12 +18,7 @@ class PaymentRequestDto {
 
     data class PaymentRefundRequest(
         @field:NotBlank
-        @field:Pattern(
-            regexp =
-                "\\b[A-Za-z0-9._%+-]+@khu\\.ac\\.kr\\b|\\b[A-Za-z0-9._%+-]+@hufs\\.ac\\.kr\\b|\\b[A-Za-z0-9._%+-]+@uos\\.ac\\.kr\\b",
-            message = "Invalid Email"
-        )
-        @Schema(description = "이메일", example = "uoslife123@gmail.com")
-        val email: String,
+        @Schema(description = "전화번호", example = "01012341234")
+        val phoneNumber: String,
     )
 }
