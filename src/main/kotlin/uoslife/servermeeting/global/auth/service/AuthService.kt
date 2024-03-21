@@ -24,14 +24,11 @@ import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 class AuthService(
     private val userRepository: UserRepository,
     private val tokenProvider: TokenProvider,
 ) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(AuthService::class.java)
-    }
     @Transactional
     fun refreshAccessToken(request: HttpServletRequest): TokenResponse {
         val refreshToken: String =
