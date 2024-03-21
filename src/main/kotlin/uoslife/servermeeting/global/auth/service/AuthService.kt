@@ -3,7 +3,6 @@ package uoslife.servermeeting.global.auth.service
 import io.jsonwebtoken.Claims
 import jakarta.servlet.http.HttpServletRequest
 import java.util.*
-import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
@@ -62,8 +61,8 @@ class AuthService(
     }
 
     private fun getUserProfileFromUoslife(bearerToken: String): UserProfileVO {
-        val restTemplate: RestTemplate = RestTemplate()
-        val url: String = "http://localhost:8081/core/users"
+        val restTemplate = RestTemplate()
+        val url = "http://localhost:8081/core/users"
 
         // request header
         val headers: MultiValueMap<String, String> = LinkedMultiValueMap()
@@ -85,7 +84,7 @@ class AuthService(
     }
 
     private fun saveUser(userProfileVO: UserProfileVO): User {
-        val user: User =
+        val user =
             User(
                 id = UUID.randomUUID(),
                 phoneNumber = userProfileVO.phone,
