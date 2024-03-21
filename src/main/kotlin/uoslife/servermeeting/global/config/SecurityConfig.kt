@@ -125,7 +125,8 @@ class SecurityConfig(
                 )
                 .requestMatchers(
                     "/swagger-ui.html",
-                    "/swagger-ui/*",
+                    "/swagger-ui/**",
+                    "/api-docs/**",
                     "/v3/api-docs/**",
                     "/swagger-resources/**",
                 )
