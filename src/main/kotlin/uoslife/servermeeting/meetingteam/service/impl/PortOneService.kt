@@ -45,9 +45,9 @@ class PortOneService(
     @Transactional
     override fun requestPayment(
         userUUID: UUID,
-        request: PaymentRequestDto.PaymentRequestRequest
+        paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest
     ): PaymentResponseDto.PaymentRequestResponse {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
 
         if (paymentRepository.existsByUser(user)) throw UserAlreadyHavePaymentException()
 
@@ -57,8 +57,8 @@ class PortOneService(
         val payment =
             Payment.createPayment(
                 user = user,
-                pg = request.pg,
-                payMethod = request.payMethod,
+                pg = paymentRequestPaymentRequest.pg,
+                payMethod = paymentRequestPaymentRequest.payMethod,
                 marchantUid = UUID.randomUUID().toString(),
                 price =
                     when (team.type) {
@@ -80,15 +80,15 @@ class PortOneService(
     @Transactional
     override fun checkPayment(
         userUUID: UUID,
-        request: PaymentRequestDto.PaymentCheckRequest
+        paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
     ): PaymentResponseDto.PaymentCheckResponse {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
         val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
 
-        val response = checkPaymentByPortOne(request.impUid)
+        val response = checkPaymentByPortOne(paymentCheckRequest.impUid)
 
         if (response.code == 0) {
-            payment.impUid = request.impUid
+            payment.impUid = paymentCheckRequest.impUid
             payment.status = PaymentStatus.SUCCESS
             return PaymentResponseDto.PaymentCheckResponse(true, "")
         } else {
@@ -212,6 +212,6 @@ class PortOneService(
         if (responseBody.code != 0) {
             throw AccessTokenNotFoundException()
         }
-        return "Bearer " + responseBody.response!!.access_token!!
+        return "Bearer " + responseBody.response!!.access_token
     }
 }
