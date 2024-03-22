@@ -5,5 +5,5 @@ import uoslife.servermeeting.user.entity.enums.GenderType
 
 data class Information(
     val gender: GenderType? = null,
-    val questions: Map<Int, String>? = null,
+    val questions: Map<Int, Int>? = null,
 ) : Serializable
