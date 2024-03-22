@@ -27,7 +27,7 @@ class VerificationService(
     private val javaMailSender: JavaMailSender,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val tokenProvider: TokenProvider,
-    @Value("\${mail.from}") private val mailFrom: String
+    @Value("\${spring.mail.username}") private val mailFrom: String
 ) {
     @Transactional
     fun sendMail(

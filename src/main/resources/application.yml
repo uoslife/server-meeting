@@ -3,9 +3,9 @@ server:
 
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/server-meeting?stringtype=unspecified # url 변경 필요
-        username: ${SPRING_DATASOURCE_USERNAME}
-        password: ${SPRING_DATASOURCE_PASSWORD}
+        url: ${DATABASE_URL}
+        username: ${DATABASE_USERNAME}
+        password: ${DATABASE_PASSWORD}
         driver-class-name: org.postgresql.Driver
         hikari:
             initialization-fail-timeout: 3600
@@ -27,7 +27,7 @@ spring:
         host: smtp.gmail.com
         port: 587
         username: gustmd5715@gmail.com # 유현승 지메일 개인 계정(추후 SES로 변경 예정)
-        password: ${SPRING_MAIL_PASSWORD}
+        password: ${MAIL_PASSWORD}
         properties:
             mail:
                 smtp:
@@ -41,8 +41,8 @@ spring:
         auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30분
     data:
         redis:
-            host: 127.0.0.1
-            port: 6379
+            host: ${REDIS_HOST}
+            port: ${REDIS_PORT}
 
 app:
     season: 4
@@ -56,9 +56,6 @@ portone:
         imp:
             key: ${PORTONE_API_IMP_KEY}
             secret: ${PORTONE_API_IMP_SECRET}
-
-mail:
-    from: gusmtd5715@gmail.com # 유현승 지메일 계정
 
 jwt:
     refresh:
