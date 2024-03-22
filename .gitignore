@@ -37,7 +37,6 @@ out/
 .vscode/
 
 # ignore properties file
-application.yml
 application-dev.yml
 application-test.yml
 /lib/javaee.jar
