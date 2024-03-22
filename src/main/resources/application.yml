@@ -1,0 +1,83 @@
+server:
+    port: 8081
+
+spring:
+    datasource:
+        url: jdbc:postgresql://localhost:5432/server-meeting?stringtype=unspecified # url 변경 필요
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
+        driver-class-name: org.postgresql.Driver
+        hikari:
+            initialization-fail-timeout: 3600
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        generate-ddl: false
+        open-in-view: false
+        properties:
+            hibernate:
+                default_batch_fetch_size: 1000
+                show_sql: true
+                format_sql: true
+    flyway:
+        enabled: false
+
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: gustmd5715@gmail.com # 유현승 지메일 개인 계정(추후 SES로 변경 예정)
+        password: ${SPRING_MAIL_PASSWORD}
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+                        required: true
+                    connectiontimeout: 5000
+                    timeout: 5000
+                    writetimeout: 5000
+        auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30분
+    data:
+        redis:
+            host: 127.0.0.1
+            port: 6379
+
+app:
+    season: 4
+
+portone:
+    api:
+        url: https://api.iamport.kr
+        price:
+            single: 1000
+            triple: 3000
+        imp:
+            key: ${PORTONE_API_IMP_KEY}
+            secret: ${PORTONE_API_IMP_SECRET}
+
+mail:
+    from: gusmtd5715@gmail.com # 유현승 지메일 계정
+
+jwt:
+    refresh:
+        secret: ${JWT_REFRESH_SECRET}
+        expiration: 1209600000
+
+    access:
+        secret: ${JWT_ACCESS_SECRET}
+        expiration: 3600000
+
+springdoc:
+    swagger-ui:
+        path: /swagger-ui.html
+
+        operationsSorter: method
+        disable-swagger-default-url: true
+        display-request-duration: true
+    api-docs:
+        path: /api-docs
+    show-actuator: true
+    default-consumes-media-type: application/json
+    default-produces-media-type: application/json
