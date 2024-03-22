@@ -21,7 +21,7 @@ spring:
                 show_sql: true
                 format_sql: true
     flyway:
-        enabled: false
+        enabled: true
 
     mail:
         host: smtp.gmail.com
