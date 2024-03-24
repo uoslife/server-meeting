@@ -23,6 +23,8 @@ class MeetingTeamPreferenceUpdateRequest(
     @Schema(description = "종교", example = "[CHRISTIAN, CATHOLIC]")
     val religion: List<ReligionType>?,
     @Schema(description = "흡연 여부", example = "[TRUE]") val smoking: List<SmokingType>?,
+    @Schema(description = "최소 음주 횟수") @field:NotBlank val drinkingMin: Int,
+    @Schema(description = "최대 음주 횟수") @field:NotBlank val drinkingMax: Int,
     @Schema(description = "동물상", example = "[DOG, CAT]") val spiritAnimal: List<SpiritAnimalType>?,
     @Schema(description = "MBTI", example = "EINTFJP") val mbti: String?,
     @Schema(description = "미팅 분위기", example = "ACTIVE") val mood: TeamMood?,
@@ -37,6 +39,8 @@ class MeetingTeamPreferenceUpdateRequest(
             university = university,
             religion = religion,
             smoking = smoking,
+            drinkingMin = drinkingMin,
+            drinkingMax = drinkingMax,
             spiritAnimal = spiritAnimal,
             mbti = mbti,
         )
