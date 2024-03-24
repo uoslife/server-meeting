@@ -97,8 +97,16 @@ dependencies {
     // reids
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
-    // amazon aws
-    implementation ("com.amazonaws:aws-java-sdk-ses:1.12.3")
+    // aws
+    implementation(platform("software.amazon.awssdk:bom:2.17.230"))
+    implementation("software.amazon.awssdk:s3")
+    implementation("software.amazon.awssdk:sts")
+    implementation("software.amazon.awssdk:kms")
+    implementation("software.amazon.awssdk:auth")
+    implementation("software.amazon.awssdk:utils")
+    implementation("software.amazon.awssdk:regions")
+    // aws sdk
+    implementation("com.amazonaws:aws-java-sdk-ses:1.12.3")
 
     // jwt
     compileOnly("io.jsonwebtoken:jjwt-api:0.11.5")
