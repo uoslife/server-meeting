@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider
 import software.amazon.awssdk.regions.Region
-import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.sts.StsClient
 import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest
@@ -52,17 +51,19 @@ class AwsConfig(
     @Bean
     fun sesClient(): AmazonSimpleEmailService {
         // 추후 assume-role로 바꿀 예정 일단은 키 주입
-//        val stsAssumeRoleCredentialsProvider = assumeRole(s3RoleArn, s3RoleSessionName)
-//            logger.info("ses credentials requested")
-//            logger.info("${stsAssumeRoleCredentialsProvider?.resolveCredentials()?.accessKeyId()}")
+        //        val stsAssumeRoleCredentialsProvider = assumeRole(s3RoleArn, s3RoleSessionName)
+        //            logger.info("ses credentials requested")
+        //
+        // logger.info("${stsAssumeRoleCredentialsProvider?.resolveCredentials()?.accessKeyId()}")
 
-        val basicAWSCredentials: BasicAWSCredentials = BasicAWSCredentials(sesAccessKey, sesSecretKey)
-        val awsStaticCredentialsProvider: AWSStaticCredentialsProvider = AWSStaticCredentialsProvider(basicAWSCredentials)
+        val basicAWSCredentials: BasicAWSCredentials =
+            BasicAWSCredentials(sesAccessKey, sesSecretKey)
+        val awsStaticCredentialsProvider: AWSStaticCredentialsProvider =
+            AWSStaticCredentialsProvider(basicAWSCredentials)
 
         return AmazonSimpleEmailServiceAsyncClientBuilder.standard()
             .withCredentials(EnvironmentVariableCredentialsProvider())
             .withRegion(Regions.AP_NORTHEAST_2)
             .build()
     }
-
 }

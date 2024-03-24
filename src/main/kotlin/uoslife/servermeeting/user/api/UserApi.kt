@@ -23,13 +23,13 @@ import uoslife.servermeeting.user.service.UserService
 @RequestMapping("/api/user")
 class UserApi(private val userService: UserService, private val userRepository: UserRepository) {
 
-        @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 정보를 조회합니다. row가 없다면 생성합니다.")
-        @GetMapping
-        fun getUser(
-            @AuthenticationPrincipal userDetails: UserDetails
-        ): ResponseEntity<UserFindResponseDto> {
-            return userService.findUser(UUID.fromString(userDetails.username))
-        }
+    @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 정보를 조회합니다. row가 없다면 생성합니다.")
+    @GetMapping
+    fun getUser(
+        @AuthenticationPrincipal userDetails: UserDetails
+    ): ResponseEntity<UserFindResponseDto> {
+        return userService.findUser(UUID.fromString(userDetails.username))
+    }
 
     @Operation(summary = "User 정보 업데이트", description = "유저의 정보를 업데이트합니다.")
     @ApiResponses(

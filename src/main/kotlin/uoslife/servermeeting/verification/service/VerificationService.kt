@@ -6,11 +6,8 @@ import com.amazonaws.services.simpleemail.model.Content
 import com.amazonaws.services.simpleemail.model.Destination
 import com.amazonaws.services.simpleemail.model.Message
 import com.amazonaws.services.simpleemail.model.SendEmailRequest
-import jakarta.mail.internet.MimeMessage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.mail.javamail.JavaMailSender
-import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
@@ -35,7 +32,7 @@ class VerificationService(
     private val tokenProvider: TokenProvider,
     @Value("\${mail.from}") private val mailFrom: String
 ) {
-    companion object{
+    companion object {
         const val SUBJECT: String = "[시대팅] 인증 메일 코드를 확인해주세요"
     }
 
@@ -54,9 +51,17 @@ class VerificationService(
         verificationRedisRepository.save(verification)
 
         // 메일 내용 생성
-        val destination: Destination = Destination().withToAddresses(listOf(verificationCodeSendRequest.email))
-        val message: Message = Message().withSubject(createContent(SUBJECT)).withBody(Body().withHtml(createContent(getVerificationMessage(code))))
-        val sendEmailRequest: SendEmailRequest = SendEmailRequest().withSource(mailFrom).withDestination(destination).withMessage(message)
+        val destination: Destination =
+            Destination().withToAddresses(listOf(verificationCodeSendRequest.email))
+        val message: Message =
+            Message()
+                .withSubject(createContent(SUBJECT))
+                .withBody(Body().withHtml(createContent(getVerificationMessage(code))))
+        val sendEmailRequest: SendEmailRequest =
+            SendEmailRequest()
+                .withSource(mailFrom)
+                .withDestination(destination)
+                .withMessage(message)
 
         // 메일 보내기
         amazonSimpleEmailService.sendEmail(sendEmailRequest)
@@ -64,7 +69,7 @@ class VerificationService(
         return VerificationCodeSendResponse(true)
     }
 
-    private fun createContent(content: String): Content{
+    private fun createContent(content: String): Content {
         return Content().withData(content).withCharset("UTF-8")
     }
 
