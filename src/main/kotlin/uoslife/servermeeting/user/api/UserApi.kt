@@ -21,7 +21,7 @@ import uoslife.servermeeting.user.service.UserService
 @Tag(name = "User", description = "User API")
 @RestController
 @RequestMapping("/api/user")
-class UserApi(private val userService: UserService, private val userRepository: UserRepository) {
+class UserApi(private val userService: UserService) {
 
     @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 정보를 조회합니다. row가 없다면 생성합니다.")
     @GetMapping
