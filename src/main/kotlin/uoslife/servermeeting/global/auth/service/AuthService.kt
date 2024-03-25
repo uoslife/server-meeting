@@ -48,12 +48,8 @@ class AuthService(
         // rebuild-server에서 유저 데이터 가져오기
         val userProfileVOFromUoslife: UserProfileVO = getUserProfileFromUoslife(bearerToken)
 
-        // 이미 회원가입 되어 있다면 예외 발생
-        if (userRepository.existsByPhoneNumber(userProfileVOFromUoslife.phone))
-            throw UserAlreadyExistsException()
-
         // 회원가입 진행
-        val savedUser: User = saveUser(userProfileVOFromUoslife)
+        val savedUser: User = createOrGetUser(userProfileVOFromUoslife)
 
         // 토큰 발급
         val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(savedUser)
@@ -62,7 +58,7 @@ class AuthService(
 
     private fun getUserProfileFromUoslife(bearerToken: String): UserProfileVO {
         val restTemplate: RestTemplate = RestTemplate()
-        val url: String = "http://localhost:8081/core/users"
+        val url: String = "https://api.uoslife.com/core/users"
 
         // request header
         val headers: MultiValueMap<String, String> = LinkedMultiValueMap()
@@ -83,7 +79,14 @@ class AuthService(
         return userProfileVO
     }
 
-    private fun saveUser(userProfileVO: UserProfileVO): User {
+    private fun createOrGetUser(userProfileVO: UserProfileVO): User {
+        // DB에 검색해서 있으면 가져오고 없으면 생성(회원가입)
+        val user: User = userRepository.findByPhoneNumber(userProfileVO.phone) ?: createUser(userProfileVO)
+
+        return user
+    }
+
+    private fun createUser(userProfileVO: UserProfileVO): User {
         val user: User =
             User(
                 id = UUID.randomUUID(),
@@ -91,13 +94,11 @@ class AuthService(
                 name = userProfileVO.name
             )
         user.userPersonalInformation.university = University.UOS
-
         val savedUser: User = userRepository.save(user)
 
-        return savedUser
+        return user
     }
 
-    fun login(bearerToken: String): TokenResponse {
     fun signIn(bearerToken: String): TokenResponse {
         // rebuild-server에서 유저 데이터 가져오기
         val userProfileVOFromUoslife: UserProfileVO = getUserProfileFromUoslife(bearerToken)
