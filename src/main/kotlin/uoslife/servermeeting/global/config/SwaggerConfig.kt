@@ -25,7 +25,10 @@ class SwaggerConfig {
     @Bean
     fun openAPI(): OpenAPI {
         val info: Info =
-            Info().title("UOSLIFE Meeting API").description("UOSLIFE Meeting API Documentation").version("v4.0.1")
+            Info()
+                .title("UOSLIFE Meeting API")
+                .description("UOSLIFE Meeting API Documentation")
+                .version("v4.0.1")
 
         val securityRequirement = SecurityRequirement().addList(ACCESS_TOKEN)
 
