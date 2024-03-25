@@ -17,7 +17,6 @@ import uoslife.servermeeting.global.auth.exception.InvalidTokenException
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.jwt.TokenType
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.exception.UserAlreadyExistsException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
@@ -81,7 +80,8 @@ class AuthService(
 
     private fun createOrGetUser(userProfileVO: UserProfileVO): User {
         // DB에 검색해서 있으면 가져오고 없으면 생성(회원가입)
-        val user: User = userRepository.findByPhoneNumber(userProfileVO.phone) ?: createUser(userProfileVO)
+        val user: User =
+            userRepository.findByPhoneNumber(userProfileVO.phone) ?: createUser(userProfileVO)
 
         return user
     }
