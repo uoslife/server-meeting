@@ -4,10 +4,10 @@ import java.time.LocalDate
 
 data class UserProfileVO(
     val id: Long?,
-    val name: String,
+    val name: String, // 이것들만 사용
     val nickname: String?,
     val birthday: LocalDate?,
-    val phone: String,
+    val phone: String, // 이것들만 사용
     val avatarUrl: String?,
     var isVerified: Boolean? = null,
     var degree: String? = null,
