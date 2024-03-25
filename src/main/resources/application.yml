@@ -79,3 +79,14 @@ springdoc:
     show-actuator: true
     default-consumes-media-type: application/json
     default-produces-media-type: application/json
+
+cloud:
+    aws:
+        region:
+            static: ${CLOUD_AWS_REGION_STATIC}
+        ses:
+            access-key: ${CLOUD_AWS_SES_ACCESS-KEY}
+            secret-key: ${CLOUD_AWS_SES_SECRET-KEY}
+            iam:
+                role-arn: ${CLOUD_AWS_SES_IAM_ROLE-ARN}
+                role-session-name: ${CLOUD_AWS_SES_IAM_ROLE-SESSION-NAME}

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
-import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.user.service.UserService
 
 @Tag(name = "User", description = "User API")
