@@ -130,7 +130,6 @@ class SecurityConfig(
                     "/v3/api-docs/**",
                     "/swagger-resources/**",
                 )
-                .requestMatchers(PathRequest.toH2Console())
         }
     }
 
