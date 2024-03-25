@@ -44,7 +44,7 @@ class AuthService(
 
     // 시대생 앱 토큰으로 요청 시 회원가입 후 토큰 발급
     @Transactional
-    fun migrateFromUoslife(bearerToken: String): TokenResponse {
+    fun signUpFromUoslife(bearerToken: String): TokenResponse {
         // rebuild-server에서 유저 데이터 가져오기
         val userProfileVOFromUoslife: UserProfileVO = getUserProfileFromUoslife(bearerToken)
 
@@ -98,6 +98,7 @@ class AuthService(
     }
 
     fun login(bearerToken: String): TokenResponse {
+    fun signIn(bearerToken: String): TokenResponse {
         // rebuild-server에서 유저 데이터 가져오기
         val userProfileVOFromUoslife: UserProfileVO = getUserProfileFromUoslife(bearerToken)
 

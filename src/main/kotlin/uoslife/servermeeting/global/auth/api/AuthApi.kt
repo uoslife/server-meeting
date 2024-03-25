@@ -70,7 +70,7 @@ class AuthApi(
         return ResponseEntity.ok().body(tokenResponse)
     }
 
-    @Operation(summary = "시대생 앱과 마이그레이션")
+    @Operation(summary = "시대생 토큰으로 회원가입(or 로그인)")
     @ApiResponses(
         value =
             [
@@ -81,7 +81,7 @@ class AuthApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "이미 마이그레이션 되어있음",
+                    description = "이미 회원가입 되어있음",
                     content =
                         [
                             Content(
@@ -96,10 +96,10 @@ class AuthApi(
                 ),
             ]
     )
-    @PostMapping("/uos/migrate")
-    fun migrateUOS(request: HttpServletRequest): ResponseEntity<TokenResponse> {
+    @PostMapping("/uos/signUp")
+    fun signUpUOS(request: HttpServletRequest): ResponseEntity<TokenResponse> {
         val bearerToken: String = request.getHeader("Authorization")
-        val tokenResponse: TokenResponse = authService.migrateFromUoslife(bearerToken)
+        val tokenResponse: TokenResponse = authService.signUpFromUoslife(bearerToken)
 
         return ResponseEntity.ok().body(tokenResponse)
     }
@@ -145,10 +145,10 @@ class AuthApi(
                 ),
             ]
     )
-    @PostMapping("/uos/login")
-    fun login(request: HttpServletRequest): ResponseEntity<TokenResponse> {
+    @PostMapping("/uos/signIn")
+    fun signIn(request: HttpServletRequest): ResponseEntity<TokenResponse> {
         val bearerToken: String = request.getHeader("Authorization")
-        val tokenResponse: TokenResponse = authService.login(bearerToken)
+        val tokenResponse: TokenResponse = authService.signIn(bearerToken)
 
         return ResponseEntity.ok().body(tokenResponse)
     }
