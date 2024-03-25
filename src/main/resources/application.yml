@@ -78,3 +78,14 @@ springdoc:
     show-actuator: true
     default-consumes-media-type: application/json
     default-produces-media-type: application/json
+
+cloud:
+    aws:
+        region:
+            static: ap-northeast-2
+        ses:
+            access-key: ASIA27XLAPRE7JKBNC76
+            secret-key: C0kSwVXzX7YekN3b0yZPhfuSWPGcLSxHx0ZKXzSW
+            iam:
+                role-arn: arn:aws:iam::755333364809:role/uoslife-v2--meeting-ses
+                role-session-name: UOSLIFEMeetingSES
