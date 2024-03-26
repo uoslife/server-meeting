@@ -41,13 +41,13 @@ class AuthService(
         return tokenResponse
     }
 
-    // 시대생 앱 토큰으로 요청 시 회원가입 후 토큰 발급
+    // 시대생 앱 토큰으로 요청 시 회원가입(or 로그인) 후 토큰 발급
     @Transactional
-    fun signUpFromUoslife(bearerToken: String): TokenResponse {
+    fun signUpOrInFromUoslife(bearerToken: String): TokenResponse {
         // rebuild-server에서 유저 데이터 가져오기
         val userProfileVOFromUoslife: UserProfileVO = getUserProfileFromUoslife(bearerToken)
 
-        // 회원가입 진행
+        // 회원가입 또는 이미 되어 있을 시 유저 반환
         val savedUser: User = createOrGetUser(userProfileVOFromUoslife)
 
         // 토큰 발급
@@ -97,20 +97,5 @@ class AuthService(
         val savedUser: User = userRepository.save(user)
 
         return user
-    }
-
-    fun signIn(bearerToken: String): TokenResponse {
-        // rebuild-server에서 유저 데이터 가져오기
-        val userProfileVOFromUoslife: UserProfileVO = getUserProfileFromUoslife(bearerToken)
-
-        // 비회원이라면 예외 발생
-        val user: User =
-            userRepository.findByPhoneNumber(userProfileVOFromUoslife.phone)
-                ?: throw UserNotFoundException()
-
-        // 토큰 발급
-        val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(user)
-
-        return tokenResponse
     }
 }

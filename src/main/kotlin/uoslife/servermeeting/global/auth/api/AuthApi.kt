@@ -70,7 +70,7 @@ class AuthApi(
         return ResponseEntity.ok().body(tokenResponse)
     }
 
-    @Operation(summary = "시대생 토큰으로 회원가입(or 로그인)")
+    @Operation(summary = "시대생 유저 회원가입 or 로그인", description = "시대생 토큰으로 회원가입(이미 되어 있으면 로그인)")
     @ApiResponses(
         value =
             [
@@ -79,76 +79,12 @@ class AuthApi(
                     description = "반환값 없음",
                     content = [Content(schema = Schema(implementation = Unit::class))]
                 ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "이미 회원가입 되어있음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: User is already Existing., status: 400, code: U07}"
-                                        )]
-                            )]
-                ),
             ]
     )
-    @PostMapping("/uos/signUp")
-    fun signUpUOS(request: HttpServletRequest): ResponseEntity<TokenResponse> {
+    @PostMapping("/uos/signUpOrIn")
+    fun signUpOrInUOS(request: HttpServletRequest): ResponseEntity<TokenResponse> {
         val bearerToken: String = request.getHeader("Authorization")
-        val tokenResponse: TokenResponse = authService.signUpFromUoslife(bearerToken)
-
-        return ResponseEntity.ok().body(tokenResponse)
-    }
-
-    @Operation(summary = "시립대 학생 로그인", description = "시립대 학생들은 시대생 앱의 토큰을 통해 로그인")
-    @ApiResponses(
-        value =
-            [
-                ApiResponse(
-                    responseCode = "200",
-                    description = "토큰 반환",
-                    content = [Content(schema = Schema(implementation = TokenResponse::class))]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "해당 유저 정보 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: User is not Found., status: 400, code: U02}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "로그인 실패",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: Login failed., status: 400, code: L01}"
-                                        )]
-                            )]
-                ),
-            ]
-    )
-    @PostMapping("/uos/signIn")
-    fun signIn(request: HttpServletRequest): ResponseEntity<TokenResponse> {
-        val bearerToken: String = request.getHeader("Authorization")
-        val tokenResponse: TokenResponse = authService.signIn(bearerToken)
+        val tokenResponse: TokenResponse = authService.signUpOrInFromUoslife(bearerToken)
 
         return ResponseEntity.ok().body(tokenResponse)
     }
