@@ -113,6 +113,7 @@ class SingleMeetingService(
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
+            user.name,
             user.userPersonalInformation.gender,
             TeamType.SINGLE,
             listOf(user),

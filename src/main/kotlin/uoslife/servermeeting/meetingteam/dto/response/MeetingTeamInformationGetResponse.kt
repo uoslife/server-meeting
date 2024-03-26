@@ -9,6 +9,7 @@ import uoslife.servermeeting.user.entity.enums.*
 import uoslife.servermeeting.verification.dto.University
 
 data class MeetingTeamInformationGetResponse(
+    @Schema(description = "본인 이름(매칭 정보 확인에서 사용)", example = "호랑이") val myName: String?,
     @field:NotNull @Schema(description = "팀 타입", example = "SINGLE") val teamType: TeamType,
     @Schema(description = "팀 이름", example = "팀 이름") val teamName: String?,
     @field:NotNull @Schema(description = "성별", example = "MALE") val gender: GenderType,
@@ -20,6 +21,9 @@ data class MeetingTeamInformationGetResponse(
 
 data class UserProfile(
     @field:NotNull @Schema(description = "유저 이름", example = "이름") val name: String,
+    @field:NotNull
+    @Schema(description = "유저 전화번호", example = "01012341234")
+    val phoneNumber: String,
     @field:NotNull @Schema(description = "유저 나이", example = "20") val age: Int,
     @Schema(description = "유저 키", example = "180") val height: Int?,
     @Schema(description = "대학", example = "UOS") val university: University?,
