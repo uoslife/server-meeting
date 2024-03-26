@@ -10,6 +10,17 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class SwaggerConfig {
+    companion object {
+        const val ACCESS_TOKEN = "Access Token"
+    }
+
+    private val accessToken: SecurityScheme =
+        SecurityScheme()
+            .type(SecurityScheme.Type.HTTP)
+            .scheme("bearer")
+            .bearerFormat("JWT")
+            .name(ACCESS_TOKEN)
+            .description("시대팅 서비스 인증을 위한 토큰")
 
     @Bean
     fun openAPI(): OpenAPI {
@@ -17,18 +28,12 @@ class SwaggerConfig {
             Info()
                 .title("UOSLIFE Meeting API")
                 .description("UOSLIFE Meeting API Documentation")
-                .version("v0.0.1")
+                .version("v4.0.1")
 
-        val jwtSchemeName = "Session Cookie"
-        val auth =
-            SecurityScheme()
-                .type(SecurityScheme.Type.APIKEY)
-                .`in`(SecurityScheme.In.COOKIE)
-                .name("session")
-        val securityRequirement = SecurityRequirement().addList(jwtSchemeName)
+        val securityRequirement = SecurityRequirement().addList(ACCESS_TOKEN)
 
         return OpenAPI()
-            .components(Components().addSecuritySchemes(jwtSchemeName, auth))
+            .components(Components().addSecuritySchemes(ACCESS_TOKEN, accessToken))
             .addSecurityItem(securityRequirement)
             .info(info)
     }

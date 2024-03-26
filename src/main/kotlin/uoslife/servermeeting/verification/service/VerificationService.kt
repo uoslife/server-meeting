@@ -1,5 +1,7 @@
 package uoslife.servermeeting.verification.service
 
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
+import com.amazonaws.services.simpleemail.model.*
 import jakarta.mail.internet.MimeMessage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
@@ -24,11 +26,14 @@ import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 class VerificationService(
     private val verificationRedisRepository: VerificationRedisRepository,
     private val userRepository: UserRepository,
-    private val javaMailSender: JavaMailSender,
+    private val amazonSimpleEmailService: AmazonSimpleEmailService,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val tokenProvider: TokenProvider,
     @Value("\${spring.mail.username}") private val mailFrom: String
 ) {
+    companion object{
+        const val SUBJECT: String = "[시대팅] 인증 메일 코드를 확인해주세요"
+    }
     @Transactional
     fun sendMail(
         verificationCodeSendRequest: VerificationCodeSendRequest
@@ -44,24 +49,18 @@ class VerificationService(
         verificationRedisRepository.save(verification)
 
         // 메일 내용 생성
-        val message: MimeMessage = createMail(verification.email, code)
+        val destination: Destination = Destination().withToAddresses(listOf(verificationCodeSendRequest.email))
+        val message: Message = Message().withSubject(createContent(SUBJECT)).withBody(Body().withHtml(createContent(getVerificationMessage(code))))
+        val sendEmailRequest: SendEmailRequest = SendEmailRequest().withSource(mailFrom).withDestination(destination).withMessage(message)
 
         // 메일 보내기
-        javaMailSender.send(message)
+        amazonSimpleEmailService.sendEmail(sendEmailRequest)
 
         return VerificationCodeSendResponse(true)
     }
 
-    private fun createMail(email: String, code: String): MimeMessage {
-        val message: MimeMessage = javaMailSender.createMimeMessage()
-        val messageHelper: MimeMessageHelper = MimeMessageHelper(message, true)
-
-        messageHelper.setFrom(mailFrom)
-        messageHelper.setTo(email)
-        messageHelper.setSubject("[시대팅] 인증 메일 코드를 확인해주세요")
-        messageHelper.setText(getVerificationMessage(code), true)
-
-        return message
+    private fun createContent(content: String): Content {
+        return Content().withData(content).withCharset("UTF-8")
     }
 
     private fun getOrCreateVerification(email: String): Verification {
