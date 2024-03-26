@@ -49,7 +49,7 @@ class AwsConfig(
     }
 
     @Bean
-    fun sesClient(): AmazonSimpleEmailService {
+    fun amazonSimpleEmailService(): AmazonSimpleEmailService {
         // 추후 assume-role로 바꿀 예정 일단은 키 주입
         //        val stsAssumeRoleCredentialsProvider = assumeRole(s3RoleArn, s3RoleSessionName)
         //            logger.info("ses credentials requested")
