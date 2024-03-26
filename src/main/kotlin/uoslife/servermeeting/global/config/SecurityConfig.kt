@@ -118,8 +118,6 @@ class SecurityConfig(
                     "/api/verification/send", // 인증코드 전송
                     "/api/verification/verify", // 인증코드 검증
                     "/api/auth/refresh", // 토큰 재발급
-                    "/api/auth/uos/migrate", // 시대생 유저 마이그레이션
-                    "/api/auth/uos/login", // 시대생 유저 로그인 (이메일 검증을 안 해서)
                     "/api/payment/refund/**", // 유저 환불
                 )
                 .requestMatchers(
