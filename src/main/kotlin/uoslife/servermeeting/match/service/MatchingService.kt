@@ -4,8 +4,8 @@ import java.util.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.match.dao.MatchedDao
+import uoslife.servermeeting.match.dto.response.MatchInformationResponse
 import uoslife.servermeeting.match.exception.MatchNotFoundException
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.SINGLE
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.TRIPLE
 import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
@@ -24,7 +24,7 @@ class MatchingService(
     private val tripleMeetingService: TripleMeetingService,
 ) {
     @Transactional
-    fun getMatchedMeetingTeam(userUUID: UUID): MeetingTeamInformationGetResponse {
+    fun getMatchedMeetingTeam(userUUID: UUID): MatchInformationResponse {
         val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
@@ -43,17 +43,20 @@ class MatchingService(
 
         val opponentUser = opponentTeam.leader ?: throw UserNotFoundException()
 
-        return when (meetingTeam.type) {
-            SINGLE -> {
-                singleMeetingService.getMeetingTeamInformation(
-                    UUID.fromString(opponentUser.id.toString()) ?: throw UserNotFoundException()
-                )
+        return MatchInformationResponse(
+            myName = user.name,
+            when (meetingTeam.type) {
+                SINGLE -> {
+                    singleMeetingService.getMeetingTeamInformation(
+                        UUID.fromString(opponentUser.id.toString()) ?: throw UserNotFoundException()
+                    )
+                }
+                TRIPLE -> {
+                    tripleMeetingService.getMeetingTeamInformation(
+                        UUID.fromString(opponentUser.id.toString()) ?: throw UserNotFoundException()
+                    )
+                }
             }
-            TRIPLE -> {
-                tripleMeetingService.getMeetingTeamInformation(
-                    UUID.fromString(opponentUser.id.toString()) ?: throw UserNotFoundException()
-                )
-            }
-        }
+        )
     }
 }

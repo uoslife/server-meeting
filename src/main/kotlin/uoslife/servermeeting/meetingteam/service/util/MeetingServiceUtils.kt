@@ -15,7 +15,6 @@ import uoslife.servermeeting.user.entity.enums.GenderType
 class MeetingServiceUtils {
 
     fun toMeetingTeamInformationGetResponse(
-        myName: String,
         gender: GenderType,
         teamType: TeamType,
         userList: List<User>,
@@ -25,7 +24,6 @@ class MeetingServiceUtils {
         message: String?
     ): MeetingTeamInformationGetResponse {
         return MeetingTeamInformationGetResponse(
-            myName = myName,
             teamType = teamType,
             teamName = teamName,
             gender = gender,
