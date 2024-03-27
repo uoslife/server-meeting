@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.match.dto.response.MatchInformationResponse
 import uoslife.servermeeting.match.service.MatchingService
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 
 @RestController
 @RequestMapping("/api/match")
@@ -34,13 +33,7 @@ class MatchApi(
                     responseCode = "200",
                     description = "매칭된 미팅 팀 전체 정보(MatchInformationResponse) 반환",
                     content =
-                        [
-                            Content(
-                                schema =
-                                    Schema(
-                                        implementation = MatchInformationResponse::class
-                                    )
-                            )]
+                        [Content(schema = Schema(implementation = MatchInformationResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
