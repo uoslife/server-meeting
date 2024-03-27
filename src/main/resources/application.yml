@@ -83,11 +83,11 @@ springdoc:
 cloud:
     aws:
         region:
-            static: ap-northeast-2
+            static: ${CLOUD_AWS_REGION_STATIC}
         ses:
-            access-key: ASIA27XLAPRE26XSGR54
-            secret-key: lI/yXYl+77phxhSMSrvu78COKjYl0b34lfnsExTj
+            access-key: ${CLOUD_AWS_SES_ACCESS-KEY}
+            secret-key: ${CLOUD_AWS_SES_SECRET-KEY}
             iam:
-                role-arn: arn:aws:iam::755333364809:role/uoslife-v2--meeting-ses
-                role-session-name: UOSLIFEMeetingSES
+                role-arn: ${CLOUD_AWS_SES_IAM_ROLE-ARN}
+                role-session-name: ${CLOUD_AWS_SES_IAM_ROLE-SESSION-NAME}
 
