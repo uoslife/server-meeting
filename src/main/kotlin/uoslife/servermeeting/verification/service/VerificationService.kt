@@ -2,11 +2,8 @@ package uoslife.servermeeting.verification.service
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
 import com.amazonaws.services.simpleemail.model.*
-import jakarta.mail.internet.MimeMessage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.mail.javamail.JavaMailSender
-import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
@@ -31,7 +28,7 @@ class VerificationService(
     private val tokenProvider: TokenProvider,
     @Value("\${spring.mail.username}") private val mailFrom: String
 ) {
-    companion object{
+    companion object {
         const val SUBJECT: String = "[시대팅] 인증 메일 코드를 확인해주세요"
     }
     @Transactional
@@ -49,9 +46,17 @@ class VerificationService(
         verificationRedisRepository.save(verification)
 
         // 메일 내용 생성
-        val destination: Destination = Destination().withToAddresses(listOf(verificationCodeSendRequest.email))
-        val message: Message = Message().withSubject(createContent(SUBJECT)).withBody(Body().withHtml(createContent(getVerificationMessage(code))))
-        val sendEmailRequest: SendEmailRequest = SendEmailRequest().withSource(mailFrom).withDestination(destination).withMessage(message)
+        val destination: Destination =
+            Destination().withToAddresses(listOf(verificationCodeSendRequest.email))
+        val message: Message =
+            Message()
+                .withSubject(createContent(SUBJECT))
+                .withBody(Body().withHtml(createContent(getVerificationMessage(code))))
+        val sendEmailRequest: SendEmailRequest =
+            SendEmailRequest()
+                .withSource(mailFrom)
+                .withDestination(destination)
+                .withMessage(message)
 
         // 메일 보내기
         amazonSimpleEmailService.sendEmail(sendEmailRequest)
