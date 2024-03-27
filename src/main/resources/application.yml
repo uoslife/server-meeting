@@ -74,6 +74,7 @@ springdoc:
         display-request-duration: true
     api-docs:
         version: "openapi_3_0"
+        path: /api-docs
     show-actuator: true
     default-consumes-media-type: application/json
     default-produces-media-type: application/json
