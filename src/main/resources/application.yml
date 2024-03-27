@@ -69,7 +69,6 @@ jwt:
 springdoc:
     swagger-ui:
         path: /swagger-ui.html
-
         operationsSorter: method
         disable-swagger-default-url: true
         display-request-duration: true
@@ -83,11 +82,11 @@ springdoc:
 cloud:
     aws:
         region:
-            static: ${CLOUD_AWS_REGION_STATIC}
+            static: ap-northeast-2
         ses:
-            access-key: ${CLOUD_AWS_SES_ACCESS-KEY}
-            secret-key: ${CLOUD_AWS_SES_SECRET-KEY}
+            access-key: ASIA27XLAPRE26XSGR54
+            secret-key: lI/yXYl+77phxhSMSrvu78COKjYl0b34lfnsExTj
             iam:
-                role-arn: ${CLOUD_AWS_SES_IAM_ROLE-ARN}
-                role-session-name: ${CLOUD_AWS_SES_IAM_ROLE-SESSION-NAME}
+                role-arn: arn:aws:iam::755333364809:role/uoslife-v2--meeting-ses
+                role-session-name: UOSLIFEMeetingSES
 
