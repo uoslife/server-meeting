@@ -32,7 +32,7 @@ class VerificationService(
     private val sesV2Client: SesV2Client,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val tokenProvider: TokenProvider,
-    @Value("\${spring.mail.username}") private val mailFrom: String
+    @Value("\${cloud.aws.ses.from}") private val mailFrom: String
 ) {
     companion object {
         const val SUBJECT: String = "[시대팅] 인증 메일 코드를 확인해주세요"

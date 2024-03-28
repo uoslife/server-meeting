@@ -21,24 +21,7 @@ spring:
                 show_sql: true
                 format_sql: true
     flyway:
-        enabled: true
-
-    mail:
-        host: smtp.gmail.com
-        port: 587
-        username: gustmd5715@gmail.com # 유현승 지메일 개인 계정(추후 SES로 변경 예정)
-        password: ${MAIL_PASSWORD}
-        properties:
-            mail:
-                smtp:
-                    auth: true
-                    starttls:
-                        enable: true
-                        required: true
-                    connectiontimeout: 5000
-                    timeout: 5000
-                    writetimeout: 5000
-        auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30분
+        enabled: false
     data:
         redis:
             host: ${REDIS_HOST}
@@ -85,8 +68,7 @@ cloud:
         region:
             static: ap-northeast-2
         ses:
-            access-key: ASIA27XLAPRE26XSGR54
-            secret-key: lI/yXYl+77phxhSMSrvu78COKjYl0b34lfnsExTj
+            from: support@uoslife.team
             iam:
                 role-arn: arn:aws:iam::755333364809:role/uoslife-v2--meeting-ses
                 role-session-name: UOSLIFEMeetingSES
