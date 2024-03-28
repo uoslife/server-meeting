@@ -1,5 +1,6 @@
 package uoslife.servermeeting.verification.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -35,6 +36,7 @@ class VerificationService(
 ) {
     companion object {
         const val SUBJECT: String = "[시대팅] 인증 메일 코드를 확인해주세요"
+        private val logger = LoggerFactory.getLogger(VerificationService::class.java)
     }
     @Transactional
     fun sendMail(
@@ -51,9 +53,11 @@ class VerificationService(
         verificationRedisRepository.save(verification)
 
         // 메일 내용 생성
+        // 수신 이메일 설정
         val destination: Destination =
             Destination.builder().toAddresses(verificationCodeSendRequest.email).build()
 
+        // 메일 내용 설정
         val emailContent: EmailContent = getEmailContent(code)
 
         val sendEmailRequest: SendEmailRequest =
@@ -65,6 +69,9 @@ class VerificationService(
 
         // 메일 보내기
         sesV2Client.sendEmail(sendEmailRequest)
+        logger.info(
+            "Verification mail sended from $mailFrom to ${verificationCodeSendRequest.email}"
+        )
 
         return VerificationCodeSendResponse(true)
     }

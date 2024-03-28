@@ -44,7 +44,7 @@ class AwsConfig(
     @Bean
     fun sesV2Client(): SesV2Client {
         val stsAssumeRoleCredentialsProvider = assumeRole(sesRoleArn, sesRoleSeesionName)
-        logger.info("ses credentials requested")
+        logger.info("SES credentials requested")
         logger.info("${stsAssumeRoleCredentialsProvider?.resolveCredentials()?.accessKeyId()}")
 
         return SesV2Client.builder()
