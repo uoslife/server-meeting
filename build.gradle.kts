@@ -106,12 +106,11 @@ dependencies {
 
     // aws
     implementation(platform("software.amazon.awssdk:bom:2.17.230"))
-    implementation("software.amazon.awssdk:s3")
     implementation("software.amazon.awssdk:sts")
-    implementation("software.amazon.awssdk:kms")
     implementation("software.amazon.awssdk:auth")
     implementation("software.amazon.awssdk:utils")
     implementation("software.amazon.awssdk:regions")
+    implementation("software.amazon.awssdk:sesv2:2.17.230")
     // aws sdk
     implementation("com.amazonaws:aws-java-sdk-ses:1.12.3")
 }
