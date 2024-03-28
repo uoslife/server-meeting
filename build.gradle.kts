@@ -130,7 +130,7 @@ tasks.withType<KotlinCompile> {
 }
 
 openapi3 {
-    setServer("http://localhost:8080")
+    setServer("http://localhost:8081")
     title = "UOSLIFE Meeting API"
     description = "UOSLIFE Meeting API Documentation"
     version = "v0.0.1"
