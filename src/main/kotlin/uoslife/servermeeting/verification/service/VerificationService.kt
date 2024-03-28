@@ -1,17 +1,11 @@
 package uoslife.servermeeting.verification.service
 
-import org.slf4j.LoggerFactory
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
+import com.amazonaws.services.simpleemail.model.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import software.amazon.awssdk.services.sesv2.SesV2Client
-import software.amazon.awssdk.services.sesv2.model.Body
-import software.amazon.awssdk.services.sesv2.model.Content
-import software.amazon.awssdk.services.sesv2.model.Destination
-import software.amazon.awssdk.services.sesv2.model.EmailContent
-import software.amazon.awssdk.services.sesv2.model.Message
-import software.amazon.awssdk.services.sesv2.model.SendEmailRequest
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
@@ -29,14 +23,13 @@ import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 class VerificationService(
     private val verificationRedisRepository: VerificationRedisRepository,
     private val userRepository: UserRepository,
-    private val sesV2Client: SesV2Client,
+    private val amazonSimpleEmailService: AmazonSimpleEmailService,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val tokenProvider: TokenProvider,
     @Value("\${spring.mail.username}") private val mailFrom: String
 ) {
     companion object {
         const val SUBJECT: String = "[시대팅] 인증 메일 코드를 확인해주세요"
-        private val logger = LoggerFactory.getLogger(VerificationService::class.java)
     }
     @Transactional
     fun sendMail(
@@ -53,41 +46,26 @@ class VerificationService(
         verificationRedisRepository.save(verification)
 
         // 메일 내용 생성
-        // 수신 이메일 설정
         val destination: Destination =
-            Destination.builder().toAddresses(verificationCodeSendRequest.email).build()
-
-        // 메일 내용 설정
-        val emailContent: EmailContent = getEmailContent(code)
-
+            Destination().withToAddresses(listOf(verificationCodeSendRequest.email))
+        val message: Message =
+            Message()
+                .withSubject(createContent(SUBJECT))
+                .withBody(Body().withHtml(createContent(getVerificationMessage(code))))
         val sendEmailRequest: SendEmailRequest =
-            SendEmailRequest.builder()
-                .fromEmailAddress(mailFrom)
-                .destination(destination)
-                .content(emailContent)
-                .build()
+            SendEmailRequest()
+                .withSource(mailFrom)
+                .withDestination(destination)
+                .withMessage(message)
 
         // 메일 보내기
-        sesV2Client.sendEmail(sendEmailRequest)
-        logger.info(
-            "Verification mail sended from $mailFrom to ${verificationCodeSendRequest.email}"
-        )
+        amazonSimpleEmailService.sendEmail(sendEmailRequest)
 
         return VerificationCodeSendResponse(true)
     }
 
     private fun createContent(content: String): Content {
-        return Content.builder().data(content).charset("UTF-8").build()
-    }
-
-    private fun getEmailContent(code: String): EmailContent {
-        val message: Message =
-            Message.builder()
-                .subject(createContent(SUBJECT))
-                .body(Body.builder().html(createContent(getVerificationMessage(code))).build())
-                .build()
-
-        return EmailContent.builder().simple(message).build()
+        return Content().withData(content).withCharset("UTF-8")
     }
 
     private fun getOrCreateVerification(email: String): Verification {
