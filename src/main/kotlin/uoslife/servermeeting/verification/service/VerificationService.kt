@@ -51,17 +51,17 @@ class VerificationService(
         verificationRedisRepository.save(verification)
 
         // 메일 내용 생성
-        val destination: Destination = Destination.builder()
-            .toAddresses(verificationCodeSendRequest.email)
-            .build()
+        val destination: Destination =
+            Destination.builder().toAddresses(verificationCodeSendRequest.email).build()
 
         val emailContent: EmailContent = getEmailContent(code)
 
-        val sendEmailRequest: SendEmailRequest = SendEmailRequest.builder()
-            .fromEmailAddress(mailFrom)
-            .destination(destination)
-            .content(emailContent)
-            .build()
+        val sendEmailRequest: SendEmailRequest =
+            SendEmailRequest.builder()
+                .fromEmailAddress(mailFrom)
+                .destination(destination)
+                .content(emailContent)
+                .build()
 
         // 메일 보내기
         sesV2Client.sendEmail(sendEmailRequest)
@@ -70,21 +70,17 @@ class VerificationService(
     }
 
     private fun createContent(content: String): Content {
-        return Content.builder()
-            .data(content)
-            .charset("UTF-8")
-            .build()
+        return Content.builder().data(content).charset("UTF-8").build()
     }
 
-    private fun getEmailContent(code: String): EmailContent{
-        val message: Message = Message.builder()
-            .subject(createContent(SUBJECT))
-            .body(Body.builder().html(createContent(getVerificationMessage(code))).build())
-            .build()
+    private fun getEmailContent(code: String): EmailContent {
+        val message: Message =
+            Message.builder()
+                .subject(createContent(SUBJECT))
+                .body(Body.builder().html(createContent(getVerificationMessage(code))).build())
+                .build()
 
-        return EmailContent.builder()
-            .simple(message)
-            .build()
+        return EmailContent.builder().simple(message).build()
     }
 
     private fun getOrCreateVerification(email: String): Verification {

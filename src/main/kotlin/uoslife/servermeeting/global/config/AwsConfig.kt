@@ -1,6 +1,5 @@
 package uoslife.servermeeting.global.config
 
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
