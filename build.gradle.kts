@@ -129,14 +129,14 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-openapi3 {
-    setServer("http://localhost:8081")
-    title = "UOSLIFE Meeting API"
-    description = "UOSLIFE Meeting API Documentation"
-    version = "v0.0.1"
-    format = "yaml"
-    outputDirectory = "src/main/resources/static/api-spec"
-}
+//openapi3 {
+//    setServer("http://localhost:8081")
+//    title = "UOSLIFE Meeting API"
+//    description = "UOSLIFE Meeting API Documentation"
+//    version = "v0.0.1"
+//    format = "yaml"
+//    outputDirectory = "src/main/resources/static/api-spec"
+//}
 
 tasks.named<Jar>("jar") {
     enabled = false
