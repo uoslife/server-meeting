@@ -168,9 +168,9 @@ tasks.test {
     outputs.dir(snippetsDir)
 }
 
-asciidoctorj {
-
-}
+//asciidoctorj {
+//
+//}
 
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
     dokkaSourceSets {
