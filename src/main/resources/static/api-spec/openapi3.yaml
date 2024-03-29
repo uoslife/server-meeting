@@ -4,7 +4,7 @@ info:
   description: UOSLIFE Meeting API Documentation
   version: v0.0.1
 servers:
-- url: http://localhost:8080
+- url: http://localhost:8081
 tags: []
 paths: {}
 components:
