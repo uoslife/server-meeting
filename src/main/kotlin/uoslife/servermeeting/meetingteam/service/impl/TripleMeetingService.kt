@@ -156,7 +156,6 @@ class TripleMeetingService(
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
-            user.name,
             user.userPersonalInformation.gender,
             TeamType.TRIPLE,
             userList,

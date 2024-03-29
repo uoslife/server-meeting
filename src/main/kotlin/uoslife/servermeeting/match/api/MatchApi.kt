@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
+import uoslife.servermeeting.match.dto.response.MatchInformationResponse
 import uoslife.servermeeting.match.service.MatchingService
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 
 @RestController
 @RequestMapping("/api/match")
@@ -31,15 +31,9 @@ class MatchApi(
             [
                 ApiResponse(
                     responseCode = "200",
-                    description = "매칭된 미팅 팀 전체 정보(MeetingTeamInformationGetResponse) 반환",
+                    description = "매칭된 미팅 팀 전체 정보(MatchInformationResponse) 반환",
                     content =
-                        [
-                            Content(
-                                schema =
-                                    Schema(
-                                        implementation = MeetingTeamInformationGetResponse::class
-                                    )
-                            )]
+                        [Content(schema = Schema(implementation = MatchInformationResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
@@ -121,7 +115,7 @@ class MatchApi(
     @GetMapping("")
     fun getMatchedMeetingTeamInformation(
         @AuthenticationPrincipal userDetails: UserDetails,
-    ): ResponseEntity<MeetingTeamInformationGetResponse> {
+    ): ResponseEntity<MatchInformationResponse> {
         val userUUID = UUID.fromString(userDetails.username)
         return ResponseEntity.status(HttpStatus.OK)
             .body(matchingService.getMatchedMeetingTeam(userUUID))
