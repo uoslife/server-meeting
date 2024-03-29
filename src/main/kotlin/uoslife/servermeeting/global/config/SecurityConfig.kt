@@ -129,13 +129,7 @@ class SecurityConfig(
                     "/api/payment/refund/**", // 유저 환불
                 )
                 .requestMatchers(
-                    "/swagger/**",
-                    "/swagger-ui.html",
-                    "/swagger-ui/**",
-                    "/api-docs/**",
-                    "/v3/api-docs/**",
-                    "/swagger-resources/**",
-                    "/test/test",
+                    "/swagger/**"
                 )
         }
     }

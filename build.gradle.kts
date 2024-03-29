@@ -80,9 +80,9 @@ dependencies {
     testImplementation("org.testcontainers:postgresql")
 
     //spring-restdocs
-    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-    testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor")
+//    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+//    testImplementation("org.springframework.security:spring-security-test")
+//    testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor")
 
     // hibernate annotation
     implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
@@ -116,12 +116,12 @@ dependencies {
 }
 
 
-tasks {
-    withType<AsciidoctorTask> {
-        inputs.dir(snippetsDir)
-        dependsOn("test")
-    }
-}
+//tasks {
+//    withType<AsciidoctorTask> {
+//        inputs.dir(snippetsDir)
+//        dependsOn("test")
+//    }
+//}
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
@@ -168,9 +168,9 @@ tasks.test {
     outputs.dir(snippetsDir)
 }
 
-asciidoctorj {
-
-}
+//asciidoctorj {
+//
+//}
 
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
     dokkaSourceSets {
