@@ -128,9 +128,7 @@ class SecurityConfig(
                     "/api/auth/refresh", // 토큰 재발급
                     "/api/payment/refund/**", // 유저 환불
                 )
-                .requestMatchers(
-                    "/swagger/**"
-                )
+                .requestMatchers("/swagger/**")
         }
     }
 
