@@ -72,7 +72,8 @@ class SecurityConfig(
                 "/api-docs/**",
                 "/v3/api-docs/**",
                 "/swagger-resources/**"
-            ).permitAll()
+            )
+            .permitAll()
             .requestMatchers("/api/**")
             .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
