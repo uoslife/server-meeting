@@ -51,7 +51,7 @@ jwt:
 
 springdoc:
     swagger-ui:
-        path: /swagger-ui.html
+        path: /swagger/swagger-ui.html
         operationsSorter: method
         disable-swagger-default-url: true
         display-request-duration: true
