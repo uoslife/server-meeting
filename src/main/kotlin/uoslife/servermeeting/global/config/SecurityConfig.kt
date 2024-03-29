@@ -66,6 +66,13 @@ class SecurityConfig(
             .permitAll()
             .requestMatchers("/api/payment/refund/**")
             .permitAll()
+            .requestMatchers(
+                "/swagger-ui.html",
+                "/swagger-ui/**",
+                "/api-docs/**",
+                "/v3/api-docs/**",
+                "/swagger-resources/**"
+            ).permitAll()
             .requestMatchers("/api/**")
             .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
