@@ -133,6 +133,7 @@ class SecurityConfig(
                     "/api-docs/**",
                     "/v3/api-docs/**",
                     "/swagger-resources/**",
+                    "/test",
                 )
         }
     }
