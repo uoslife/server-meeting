@@ -64,10 +64,10 @@ springdoc:
 cloud:
     aws:
         region:
-            static: ap-northeast-2
+            static: ${CLOUD_AWS_SES_REGION}
         ses:
             from: support@uoslife.team
             iam:
-                role-arn: arn:aws:iam::755333364809:role/uoslife-v2--meeting-ses
+                role-arn: ${CLOUD_AWS_SES_ROLE_ARN}
                 role-session-name: UOSLIFEMeetingSES
 
