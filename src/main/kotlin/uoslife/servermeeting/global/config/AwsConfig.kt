@@ -44,18 +44,16 @@ class AwsConfig(
 
     @Bean
     fun sesV2Client(): SesV2Client {
-        if(isLocal){
+        if (isLocal) {
             logger.info("SES credentials is Local")
 
-            return SesV2Client.builder()
-                .region(Region.AP_NORTHEAST_2)
-                .build()
+            return SesV2Client.builder().region(Region.AP_NORTHEAST_2).build()
         }
 
         val stsAssumeRoleCredentialsProvider = assumeRole(sesRoleArn, sesRoleSeesionName)
         logger.info("SES credentials requested")
 
-         logger.info("${stsAssumeRoleCredentialsProvider?.resolveCredentials()?.accessKeyId()}")
+        logger.info("${stsAssumeRoleCredentialsProvider?.resolveCredentials()?.accessKeyId()}")
 
         return SesV2Client.builder()
             .credentialsProvider(stsAssumeRoleCredentialsProvider)
