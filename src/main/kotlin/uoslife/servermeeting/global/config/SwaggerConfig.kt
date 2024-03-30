@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
+import io.swagger.v3.oas.models.servers.Server
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -33,6 +34,13 @@ class SwaggerConfig {
         val securityRequirement = SecurityRequirement().addList(ACCESS_TOKEN)
 
         return OpenAPI()
+            .servers(
+                listOf(
+                    Server().url("http://localhost:8081"),
+                    Server().url("https://meeting.uoslife.com"),
+                    Server().url("https://meeting.alpha.uoslife.com"),
+                )
+            )
             .components(Components().addSecuritySchemes(ACCESS_TOKEN, accessToken))
             .addSecurityItem(securityRequirement)
             .info(info)
