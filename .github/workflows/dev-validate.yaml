@@ -3,7 +3,7 @@ name: dev-Validate
 on:
     pull_request:
         branches:
-            - 'dev/season4'
+            - 'main'
 
 permissions:
     id-token: write
