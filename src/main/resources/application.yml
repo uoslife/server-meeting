@@ -66,6 +66,7 @@ cloud:
         region:
             static: ap-northeast-2
         ses:
+            isLocal: true
             from: support@uoslife.team
             iam:
                 role-arn: arn:aws:iam::755333364809:role/uoslife-v2--meeting-ses

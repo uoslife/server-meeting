@@ -15,6 +15,7 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleRequest
 class AwsConfig(
     @Value("\${cloud.aws.ses.iam.role-arn}") private val sesRoleArn: String,
     @Value("\${cloud.aws.ses.iam.role-session-name}") private val sesRoleSeesionName: String,
+    @Value("\${cloud.aws.ses.isLocal}") private val isLocal: Boolean,
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(AwsConfig::class.java)
@@ -43,9 +44,18 @@ class AwsConfig(
 
     @Bean
     fun sesV2Client(): SesV2Client {
+        if(isLocal){
+            logger.info("SES credentials is Local")
+
+            return SesV2Client.builder()
+                .region(Region.AP_NORTHEAST_2)
+                .build()
+        }
+
         val stsAssumeRoleCredentialsProvider = assumeRole(sesRoleArn, sesRoleSeesionName)
         logger.info("SES credentials requested")
-        logger.info("${stsAssumeRoleCredentialsProvider?.resolveCredentials()?.accessKeyId()}")
+
+         logger.info("${stsAssumeRoleCredentialsProvider?.resolveCredentials()?.accessKeyId()}")
 
         return SesV2Client.builder()
             .credentialsProvider(stsAssumeRoleCredentialsProvider)
