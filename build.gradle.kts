@@ -115,13 +115,13 @@ dependencies {
     implementation("com.amazonaws:aws-java-sdk-ses:1.12.3")
 }
 
-
 //tasks {
 //    withType<AsciidoctorTask> {
 //        inputs.dir(snippetsDir)
 //        dependsOn("test")
 //    }
 //}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
