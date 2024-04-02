@@ -94,7 +94,7 @@ class SecurityConfig(
                 "http://localhost:5173"
             )
         configuration.allowedMethods =
-            mutableListOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE")
+            mutableListOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         configuration.addAllowedHeader("*")
         configuration.allowCredentials = true
 
