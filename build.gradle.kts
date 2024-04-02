@@ -79,11 +79,6 @@ dependencies {
     testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
     testImplementation("org.testcontainers:postgresql")
 
-    //spring-restdocs
-//    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-//    testImplementation("org.springframework.security:spring-security-test")
-//    testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor")
-
     // hibernate annotation
     implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
 
@@ -119,28 +114,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
 
-//tasks {
-//    withType<AsciidoctorTask> {
-//        inputs.dir(snippetsDir)
-//        dependsOn("test")
-//    }
-//}
-
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
     }
 }
-
-//openapi3 {
-//    setServer("http://localhost:8081")
-//    title = "UOSLIFE Meeting API"
-//    description = "UOSLIFE Meeting API Documentation"
-//    version = "v0.0.1"
-//    format = "yaml"
-//    outputDirectory = "src/main/resources/static/api-spec"
-//}
 
 tasks.named<Jar>("jar") {
     enabled = false
@@ -171,10 +150,6 @@ tasks.jacocoTestReport {
 tasks.test {
     outputs.dir(snippetsDir)
 }
-
-//asciidoctorj {
-//
-//}
 
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
     dokkaSourceSets {
