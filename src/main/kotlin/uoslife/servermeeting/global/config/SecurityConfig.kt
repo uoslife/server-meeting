@@ -67,11 +67,7 @@ class SecurityConfig(
             .requestMatchers("/api/payment/refund/**")
             .permitAll()
             .requestMatchers(
-                "/swagger-ui.html",
-                "/swagger-ui/**",
-                "/api-docs/**",
-                "/v3/api-docs/**",
-                "/swagger-resources/**"
+                "/swagger-ui/**"
             )
             .permitAll()
             .requestMatchers("/meeting/actuator/**")
