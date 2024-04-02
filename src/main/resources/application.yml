@@ -73,3 +73,17 @@ cloud:
                 role-arn: ${CLOUD_AWS_SES_ROLE_ARN}
                 role-session-name: UOSLIFEMeetingSES
 
+management:
+    endpoints:
+        enabled-by-default: false
+        web:
+            exposure:
+                include: health, info
+            base-path: /meeting/actuator
+    endpoint:
+        health:
+            enabled: true
+            show-details: always
+        info:
+            enabled: true
+

@@ -74,6 +74,8 @@ class SecurityConfig(
                 "/swagger-resources/**"
             )
             .permitAll()
+            .requestMatchers("/meeting/actuator/**")
+            .permitAll()
             .requestMatchers("/api/**")
             .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
@@ -129,6 +131,7 @@ class SecurityConfig(
                     "/api/payment/refund/**", // 유저 환불
                 )
                 .requestMatchers("/swagger-ui/**")
+                .requestMatchers("/meeting/actuator/**")
         }
     }
 
