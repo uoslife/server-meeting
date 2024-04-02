@@ -38,6 +38,20 @@ class VerificationApi(private val verificationService: VerificationService) {
                                     Schema(implementation = VerificationCodeSendResponse::class)
                             )]
                 ),
+                ApiResponse(
+                    responseCode = "500",
+                    description = "이메일 전송 실패",
+                    content = [
+                        Content(
+                            schema = Schema(implementation = ErrorResponse::class),
+                            examples = [
+                                ExampleObject(
+                                    value = "{message: Email send is failed., status: 500, code: E01}"
+                                )
+                            ]
+                        )
+                    ]
+                )
             ]
     )
     @PostMapping("/send")

@@ -100,7 +100,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     ),
 
     // SES(이메일)
-    EMAIL_SEND_FAILED("E01", "Email send is failed.", HttpStatus.BAD_REQUEST.value()),
+    EMAIL_SEND_FAILED("E01", "Email send is failed.", HttpStatus.INTERNAL_SERVER_ERROR.value()),
 
     // University
     UNIVIERSITY_NOT_FOUND("UN01", "University is not Found", HttpStatus.BAD_REQUEST.value()),
