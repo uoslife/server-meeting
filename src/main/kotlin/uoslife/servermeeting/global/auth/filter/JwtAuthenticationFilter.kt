@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.util.StringUtils
 import org.springframework.web.filter.OncePerRequestFilter
@@ -33,17 +32,11 @@ class JwtAuthenticationFilter(
                 is InvalidTokenException,
                 is UnauthorizedException -> {
                     val errorResponse = ErrorResponse(ErrorCode.INVALID_TOKEN)
-                    response.status = HttpStatus.UNAUTHORIZED.value()
-                    response.characterEncoding = "utf-8"
-                    response.contentType = "application/json;charset-UTF-8"
-                    response.writer.write(convertObjectToJson(errorResponse))
+                    sendError(response, errorResponse)
                 }
                 else -> {
                     val errorResponse = ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR)
-                    response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
-                    response.characterEncoding = "utf-8"
-                    response.contentType = "application/json;charset-UTF-8"
-                    response.writer.write(convertObjectToJson(errorResponse))
+                    sendError(response, errorResponse)
                 }
             }
         }
@@ -61,8 +54,15 @@ class JwtAuthenticationFilter(
         }
     }
 
+    private fun sendError(response: HttpServletResponse, errorResponse: ErrorResponse): Unit {
+        response.status = errorResponse.status
+        response.characterEncoding = "utf-8"
+        response.contentType = "application/json;charset-UTF-8"
+        response.writer.write(convertObjectToJson(errorResponse))
+    }
+
     @Throws(JsonProcessingException::class)
-    fun convertObjectToJson(`object`: Any?): String? {
+    private fun convertObjectToJson(`object`: Any?): String? {
         if (`object` == null) {
             return null
         }

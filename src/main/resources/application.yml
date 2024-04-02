@@ -21,24 +21,7 @@ spring:
                 show_sql: true
                 format_sql: true
     flyway:
-        enabled: true
-
-    mail:
-        host: smtp.gmail.com
-        port: 587
-        username: gustmd5715@gmail.com # 유현승 지메일 개인 계정(추후 SES로 변경 예정)
-        password: ${MAIL_PASSWORD}
-        properties:
-            mail:
-                smtp:
-                    auth: true
-                    starttls:
-                        enable: true
-                        required: true
-                    connectiontimeout: 5000
-                    timeout: 5000
-                    writetimeout: 5000
-        auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30분
+        enabled: false
     data:
         redis:
             host: ${REDIS_HOST}
@@ -68,13 +51,12 @@ jwt:
 
 springdoc:
     swagger-ui:
-        path: /swagger-ui.html
+        path: /swagger-ui/swagger-ui.html
         operationsSorter: method
         disable-swagger-default-url: true
         display-request-duration: true
     api-docs:
-        version: "openapi_3_0"
-        path: /api-docs
+        path: /swagger-ui/api-docs
     show-actuator: true
     default-consumes-media-type: application/json
     default-produces-media-type: application/json
@@ -82,11 +64,30 @@ springdoc:
 cloud:
     aws:
         region:
-            static: ap-northeast-2
+            static: ${CLOUD_AWS_SES_REGION}
         ses:
-            access-key: ASIA27XLAPRE26XSGR54
-            secret-key: lI/yXYl+77phxhSMSrvu78COKjYl0b34lfnsExTj
+            isLocal: false
+            from: support@uoslife.team
             iam:
-                role-arn: arn:aws:iam::755333364809:role/uoslife-v2--meeting-ses
+                role-arn: ${CLOUD_AWS_SES_ROLE_ARN}
                 role-session-name: UOSLIFEMeetingSES
+
+management:
+    endpoints:
+        enabled-by-default: false
+        web:
+            exposure:
+                include: health, info
+            base-path: /meeting/actuator
+    endpoint:
+        health:
+            probes:
+                enabled: true
+            enabled: true
+            show-details: always
+        info:
+            enabled: true
+    health:
+        diskspace:
+            enabled: false
 

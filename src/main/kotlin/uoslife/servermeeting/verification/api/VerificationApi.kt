@@ -49,7 +49,8 @@ class VerificationApi(private val verificationService: VerificationService) {
 
     @Operation(
         summary = "인증 코드 확인",
-        description = "verification 테이블의 인증 코드와 사용자가 입력한 인증 코드를 비교합니다."
+        description =
+            "verification 테이블의 인증 코드와 사용자가 입력한 인증 코드를 비교합니다. 일치하면 회원가입(이미 존재하면 로그인) 후 토큰을 발급합니다. (인증코드 000000이면 확인 안 하고 토큰 발급)"
     )
     @ApiResponses(
         value =

@@ -3,6 +3,7 @@ package uoslife.servermeeting.global.auth.service
 import io.jsonwebtoken.Claims
 import jakarta.servlet.http.HttpServletRequest
 import java.util.*
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
@@ -10,9 +11,12 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
+import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestTemplate
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.dto.response.UserProfileVO
+import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
 import uoslife.servermeeting.global.auth.exception.InvalidTokenException
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.jwt.TokenType
@@ -27,6 +31,10 @@ class AuthService(
     private val userRepository: UserRepository,
     private val tokenProvider: TokenProvider,
 ) {
+    companion object {
+        const val UOSLIFE_URL = "https://api.uoslife.com/core/users"
+        private val logger = LoggerFactory.getLogger(AuthService::class.java)
+    }
     @Transactional
     fun refreshAccessToken(request: HttpServletRequest): TokenResponse {
         val refreshToken: String =
@@ -57,25 +65,41 @@ class AuthService(
 
     private fun getUserProfileFromUoslife(bearerToken: String): UserProfileVO {
         val restTemplate: RestTemplate = RestTemplate()
-        val url: String = "https://api.uoslife.com/core/users"
 
         // request header
+        val headers: MultiValueMap<String, String> = createHeader(bearerToken)
+
+        // 리빌드 서버에서 유저 정보 가져오기
+        try {
+            val responseEntity: ResponseEntity<UserProfileVO> =
+                restTemplate.exchange(
+                    UOSLIFE_URL,
+                    HttpMethod.GET,
+                    org.springframework.http.HttpEntity<Any>(headers),
+                    UserProfileVO::class.java
+                )
+            val userProfileVO: UserProfileVO = responseEntity.body!!
+
+            return userProfileVO
+        } catch (e: HttpClientErrorException) {
+            logger.info("HttpClientErrorExcpetion: UosLife로부터 통신 에러")
+            throw ExternalApiFailedException()
+        } catch (e: HttpServerErrorException) {
+            logger.info("HttpServerErrorExcpetion: UosLife로부터 통신 에러")
+            throw ExternalApiFailedException()
+        } catch (e: Exception) {
+            logger.info("Exception: UosLife로부터 통신 에러")
+            throw ExternalApiFailedException()
+        }
+    }
+
+    private fun createHeader(bearerToken: String): MultiValueMap<String, String> {
         val headers: MultiValueMap<String, String> = LinkedMultiValueMap()
         headers.add("Content-type", "application/json")
         headers.add("accept", "application/json")
         headers.add("Authorization", bearerToken)
 
-        // 리빌드 서버에서 유저 정보 가져오기
-        val responseEntity: ResponseEntity<UserProfileVO> =
-            restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                org.springframework.http.HttpEntity<Any>(headers),
-                UserProfileVO::class.java
-            )
-        val userProfileVO: UserProfileVO = responseEntity.body ?: throw RuntimeException()
-
-        return userProfileVO
+        return headers
     }
 
     private fun createOrGetUser(userProfileVO: UserProfileVO): User {

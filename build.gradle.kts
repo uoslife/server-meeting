@@ -79,11 +79,6 @@ dependencies {
     testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
     testImplementation("org.testcontainers:postgresql")
 
-    //spring-restdocs
-    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-    testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor")
-
     // hibernate annotation
     implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
 
@@ -106,37 +101,24 @@ dependencies {
 
     // aws
     implementation(platform("software.amazon.awssdk:bom:2.17.230"))
-    implementation("software.amazon.awssdk:s3")
     implementation("software.amazon.awssdk:sts")
-    implementation("software.amazon.awssdk:kms")
     implementation("software.amazon.awssdk:auth")
     implementation("software.amazon.awssdk:utils")
     implementation("software.amazon.awssdk:regions")
+    implementation("software.amazon.awssdk:sesv2:2.17.230")
+
     // aws sdk
     implementation("com.amazonaws:aws-java-sdk-ses:1.12.3")
+
+    // actuator
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
 
-
-tasks {
-    withType<AsciidoctorTask> {
-        inputs.dir(snippetsDir)
-        dependsOn("test")
-    }
-}
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
     }
-}
-
-openapi3 {
-    setServer("http://localhost:8080")
-    title = "UOSLIFE Meeting API"
-    description = "UOSLIFE Meeting API Documentation"
-    version = "v0.0.1"
-    format = "yaml"
-    outputDirectory = "src/main/resources/static/api-spec"
 }
 
 tasks.named<Jar>("jar") {
@@ -167,10 +149,6 @@ tasks.jacocoTestReport {
 
 tasks.test {
     outputs.dir(snippetsDir)
-}
-
-asciidoctorj {
-
 }
 
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
