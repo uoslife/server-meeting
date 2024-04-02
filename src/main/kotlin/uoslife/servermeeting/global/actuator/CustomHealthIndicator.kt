@@ -5,7 +5,7 @@ import org.springframework.boot.actuate.health.HealthIndicator
 import org.springframework.stereotype.Component
 
 @Component
-class CustomHealthIndicator: HealthIndicator {
+class CustomHealthIndicator : HealthIndicator {
     override fun health(): Health {
         val errorCode = healthCheck()
         if (errorCode != 0) {
