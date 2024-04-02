@@ -56,6 +56,7 @@ springdoc:
         disable-swagger-default-url: true
         display-request-duration: true
     api-docs:
+
         path: /swagger-ui/api-docs
     show-actuator: true
     default-consumes-media-type: application/json
@@ -71,4 +72,23 @@ cloud:
             iam:
                 role-arn: ${CLOUD_AWS_SES_ROLE_ARN}
                 role-session-name: UOSLIFEMeetingSES
+
+management:
+    endpoints:
+        enabled-by-default: false
+        web:
+            exposure:
+                include: health, info
+            base-path: /meeting/actuator
+    endpoint:
+        health:
+            probes:
+                enabled: true
+            enabled: true
+            show-details: always
+        info:
+            enabled: true
+    health:
+        diskspace:
+            enabled: false
 

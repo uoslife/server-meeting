@@ -106,8 +106,12 @@ dependencies {
     implementation("software.amazon.awssdk:utils")
     implementation("software.amazon.awssdk:regions")
     implementation("software.amazon.awssdk:sesv2:2.17.230")
+
     // aws sdk
     implementation("com.amazonaws:aws-java-sdk-ses:1.12.3")
+
+    // actuator
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
 
 tasks.withType<KotlinCompile> {
