@@ -57,7 +57,7 @@ class AuthApi(
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: Token is not valid., status: 400, code: T01}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
@@ -76,10 +76,39 @@ class AuthApi(
             [
                 ApiResponse(
                     responseCode = "200",
-                    description = "반환값 없음",
-                    content = [Content(schema = Schema(implementation = Unit::class))]
+                    description = "토큰 반환",
+                    content = [Content(schema = Schema(implementation = TokenResponse::class))]
                 ),
-            ]
+                ApiResponse(
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Token is not valid., status: 401, code: T01}"
+                                        )]
+                            )]
+                ),
+                ApiResponse(
+                    responseCode = "500",
+                    description = "외부 API 통신 에러 (UOSLIFE)",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: External API Request is failed., status: 500, code: E01}"
+                                        )]
+                            )]
+                )]
     )
     @PostMapping("/uos/signUpOrIn")
     fun signUpOrInUOS(request: HttpServletRequest): ResponseEntity<TokenResponse> {

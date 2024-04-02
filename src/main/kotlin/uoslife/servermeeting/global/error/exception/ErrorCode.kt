@@ -24,11 +24,6 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
 
     // User - Token
     INVALID_TOKEN("T01", "Token is not valid.", HttpStatus.UNAUTHORIZED.value()),
-    USER_DEVICE_NOT_MATCHED_WITH_TOKEN(
-        "T02",
-        "User Device is not matched with Token.",
-        HttpStatus.FORBIDDEN.value()
-    ),
 
     // Meeting
     USER_TEAM_NOT_FOUND("M01", "User Team is not Found.", HttpStatus.BAD_REQUEST.value()),
