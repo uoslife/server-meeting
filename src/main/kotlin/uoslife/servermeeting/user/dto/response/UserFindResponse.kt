@@ -19,7 +19,6 @@ data class UserFindResponseDto(
     val spiritAnimal: List<SpiritAnimalType>?,
     val mbti: String?,
     val interest: List<InterestType>?,
-    val message: String?,
 )
 
 fun User.toResponse() =
@@ -38,5 +37,4 @@ fun User.toResponse() =
         spiritAnimal = userPersonalInformation.spiritAnimal,
         mbti = userPersonalInformation.mbti,
         interest = userPersonalInformation.interest,
-        message = userPersonalInformation.message,
     )

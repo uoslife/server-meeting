@@ -66,7 +66,7 @@ cloud:
         region:
             static: ${CLOUD_AWS_SES_REGION}
         ses:
-            isLocal: false
+            isLocal: true
             from: support@uoslife.team
             iam:
                 role-arn: ${CLOUD_AWS_SES_ROLE_ARN}
