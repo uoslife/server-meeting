@@ -67,7 +67,7 @@ cloud:
         region:
             static: ${CLOUD_AWS_SES_REGION}
         ses:
-            isLocal: true
+            isLocal: false
             from: support@uoslife.team
             iam:
                 role-arn: ${CLOUD_AWS_SES_ROLE_ARN}
@@ -82,8 +82,13 @@ management:
             base-path: /meeting/actuator
     endpoint:
         health:
+            probes:
+                enabled: true
             enabled: true
             show-details: always
         info:
             enabled: true
+    health:
+        diskspace:
+            enabled: false
 
