@@ -73,7 +73,9 @@ class PortOneService(
         return PaymentResponseDto.PaymentRequestResponse(
             payment.marchantUid!!,
             payment.price!!,
-            phoneNumber
+            phoneNumber,
+            user.name,
+            team.type
         )
     }
 

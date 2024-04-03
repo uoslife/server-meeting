@@ -26,6 +26,4 @@ data class UserUpdateRequest(
     @Schema(description = "동물상", example = "[DOG, CAT]") val spiritAnimal: List<SpiritAnimalType>?,
     @Schema(description = "MBTI", example = "INFP") val mbti: String?,
     @Schema(description = "흥미", example = "[EXERCISE, MUSIC]") val interest: List<InterestType>?,
-    @Schema(description = "상대에게 전하는 첫 메시지", example = "안녕하세요 좋은 사람과 좋은 만남 가지고 싶네요 ㅎㅎㅎ")
-    val message: String?,
 )
