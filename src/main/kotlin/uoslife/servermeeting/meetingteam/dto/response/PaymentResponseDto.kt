@@ -3,6 +3,7 @@ package uoslife.servermeeting.meetingteam.dto.response
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 
 class PaymentResponseDto {
     data class PaymentRequestResponse(
@@ -11,6 +12,8 @@ class PaymentResponseDto {
         @Schema(description = "전화번호", example = "01012341234")
         @field:NotBlank
         var phoneNumber: String,
+        @Schema(description = "이름", example = "나인규") @field:NotBlank var name: String,
+        @Schema(description = "주문명", example = "SINGLE") @field:NotNull var productName: TeamType
     )
 
     data class PaymentCheckResponse(

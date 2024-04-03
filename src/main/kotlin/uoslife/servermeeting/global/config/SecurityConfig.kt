@@ -66,13 +66,9 @@ class SecurityConfig(
             .permitAll()
             .requestMatchers("/api/payment/refund/**")
             .permitAll()
-            .requestMatchers(
-                "/swagger-ui.html",
-                "/swagger-ui/**",
-                "/api-docs/**",
-                "/v3/api-docs/**",
-                "/swagger-resources/**"
-            )
+            .requestMatchers("/swagger-ui/**")
+            .permitAll()
+            .requestMatchers("/meeting/actuator/**")
             .permitAll()
             .requestMatchers("/api/**")
             .hasRole("USER") // 모든 api 요청에 대해 권한 필요
@@ -94,9 +90,11 @@ class SecurityConfig(
                 "http://localhost:3000",
                 "https://uoslife.com",
                 "https://meeting.uoslife.com",
+                "https://meeting.alpha.uoslife.com",
+                "http://localhost:5173"
             )
         configuration.allowedMethods =
-            mutableListOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE")
+            mutableListOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         configuration.addAllowedHeader("*")
         configuration.allowCredentials = true
 
@@ -129,6 +127,7 @@ class SecurityConfig(
                     "/api/payment/refund/**", // 유저 환불
                 )
                 .requestMatchers("/swagger-ui/**")
+                .requestMatchers("/meeting/actuator/**")
         }
     }
 

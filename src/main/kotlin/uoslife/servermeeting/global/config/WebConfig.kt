@@ -15,8 +15,11 @@ class WebConfig : WebMvcConfigurer {
                 "http://localhost:3000",
                 "https://uoslife.com",
                 "https://meeting.uoslife.com",
+                "https://meeting.alpha.uoslife.com",
+                "http://localhost:5173"
             )
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
+            .allowedMethods("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             .allowCredentials(true)
+            .allowedHeaders("*")
     }
 }

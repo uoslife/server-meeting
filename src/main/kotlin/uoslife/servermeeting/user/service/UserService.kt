@@ -65,7 +65,6 @@ class UserService(
                         ?: existingUser.userPersonalInformation.spiritAnimal,
                 mbti = requestDto.mbti ?: existingUser.userPersonalInformation.mbti,
                 interest = requestDto.interest ?: existingUser.userPersonalInformation.interest,
-                message = requestDto.message ?: existingUser.userPersonalInformation.message,
             )
 
         return userPersonalInformation
