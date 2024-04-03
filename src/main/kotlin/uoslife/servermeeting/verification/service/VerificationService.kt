@@ -12,6 +12,7 @@ import software.amazon.awssdk.services.sesv2.model.Destination
 import software.amazon.awssdk.services.sesv2.model.EmailContent
 import software.amazon.awssdk.services.sesv2.model.Message
 import software.amazon.awssdk.services.sesv2.model.SendEmailRequest
+import software.amazon.awssdk.services.sesv2.model.SesV2Exception
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
@@ -22,6 +23,7 @@ import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckReque
 import uoslife.servermeeting.verification.dto.request.VerificationCodeSendRequest
 import uoslife.servermeeting.verification.dto.response.VerificationCodeSendResponse
 import uoslife.servermeeting.verification.entity.Verification
+import uoslife.servermeeting.verification.exception.EmailSendFailedException
 import uoslife.servermeeting.verification.exception.VerificationCodeNotMatchException
 import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 
@@ -53,12 +55,34 @@ class VerificationService(
         verificationRedisRepository.save(verification)
 
         // 메일 내용 생성
+        val sendEmailRequest: SendEmailRequest =
+            createSendEmailRequest(verificationCodeSendRequest.email, code)
+
+        // 메일 보내기
+        try {
+            sesV2Client.sendEmail(sendEmailRequest)
+            logger.info(
+                "Verification mail is sended from $mailFrom to ${verificationCodeSendRequest.email}"
+            )
+        } catch (e: SesV2Exception) {
+            logger.error("Email Send Failed Exception")
+            logger.error(e.message)
+            throw EmailSendFailedException()
+        } catch (e: Exception) {
+            logger.error("Email Send Failed Exception")
+            logger.error(e.message)
+            throw EmailSendFailedException()
+        }
+
+        return VerificationCodeSendResponse(true)
+    }
+
+    private fun createSendEmailRequest(to: String, code: String): SendEmailRequest {
         // 수신 이메일 설정
-        val destination: Destination =
-            Destination.builder().toAddresses(verificationCodeSendRequest.email).build()
+        val destination: Destination = Destination.builder().toAddresses(to).build()
 
         // 메일 내용 설정
-        val emailContent: EmailContent = getEmailContent(code)
+        val emailContent: EmailContent = createEmailContent(code)
 
         val sendEmailRequest: SendEmailRequest =
             SendEmailRequest.builder()
@@ -67,20 +91,14 @@ class VerificationService(
                 .content(emailContent)
                 .build()
 
-        // 메일 보내기
-        sesV2Client.sendEmail(sendEmailRequest)
-        logger.info(
-            "Verification mail sended from $mailFrom to ${verificationCodeSendRequest.email}"
-        )
-
-        return VerificationCodeSendResponse(true)
+        return sendEmailRequest
     }
 
     private fun createContent(content: String): Content {
         return Content.builder().data(content).charset("UTF-8").build()
     }
 
-    private fun getEmailContent(code: String): EmailContent {
+    private fun createEmailContent(code: String): EmailContent {
         val message: Message =
             Message.builder()
                 .subject(createContent(SUBJECT))
