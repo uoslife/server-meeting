@@ -20,5 +20,6 @@ class WebConfig : WebMvcConfigurer {
             )
             .allowedMethods("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             .allowCredentials(true)
+            .allowedHeaders("*")
     }
 }
