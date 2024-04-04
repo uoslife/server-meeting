@@ -85,4 +85,15 @@ class UserService(
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
+
+    @Transactional
+    fun deleteUserById(id: UUID): Unit {
+        // 아이디가 존재하는지 확인
+        val user: User = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+
+        // 삭제
+        userRepository.delete(user)
+
+        return
+    }
 }

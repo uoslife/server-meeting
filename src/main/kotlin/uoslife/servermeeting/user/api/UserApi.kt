@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import java.util.UUID
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -62,5 +63,22 @@ class UserApi(private val userService: UserService) {
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<Unit> {
         return userService.updateUser(requestBody, UUID.fromString(userDetails.username))
+    }
+
+    @Operation(summary = "User 계정 삭제", description = "유저 ID를 이용하여 삭제합니다.")
+    @DeleteMapping("/{userId}")
+    fun deleteUserById(@PathVariable("userId") userId: UUID): ResponseEntity<Unit> {
+        userService.deleteUserById(userId)
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @Operation(summary = "User 계정 삭제", description = "토큰을 이용하여 삭제합니다.")
+    @DeleteMapping()
+    fun deleteUserByToken(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {
+        val userId: UUID = UUID.fromString(userDetails.username)
+        userService.deleteUserById(userId)
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
