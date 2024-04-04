@@ -66,6 +66,30 @@ class UserApi(private val userService: UserService) {
     }
 
     @Operation(summary = "User 계정 삭제", description = "유저 ID를 이용하여 삭제합니다.")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "204",
+                    description = "유저 삭제 성공",
+                    content = [Content(schema = Schema(implementation = Unit::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저 정보 찾기 실패",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User in not Found., status:400, code: U02}"
+                                        )]
+                            )]
+                )]
+    )
     @DeleteMapping("/{userId}")
     fun deleteUserById(@PathVariable("userId") userId: UUID): ResponseEntity<Unit> {
         userService.deleteUserById(userId)
