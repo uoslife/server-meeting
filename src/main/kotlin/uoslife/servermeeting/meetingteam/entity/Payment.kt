@@ -16,9 +16,7 @@ class Payment(
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null,
-    @OneToOne
-    @JoinColumn(name = "user_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    var user: User? = null,
+    @OneToOne @JoinColumn(name = "user_id") var user: User? = null,
     @Enumerated(EnumType.STRING) var pg: PaymentGateway? = null,
     @Enumerated(EnumType.STRING) var payMethod: PayMethod? = null,
     var marchantUid: String? = null,
