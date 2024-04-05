@@ -55,13 +55,13 @@ ALTER TABLE meeting_team
     ADD CONSTRAINT uc_meeting_team_leader UNIQUE (leader_id);
 
 ALTER TABLE payment
-    ADD CONSTRAINT uc_payment_payment UNIQUE (payment_id);
+    ADD CONSTRAINT uc_payment_user UNIQUE (user_id);
 
 ALTER TABLE "user"
     ADD CONSTRAINT uc_user_email UNIQUE (email);
 
 ALTER TABLE payment
-    ADD CONSTRAINT payment_id FOREIGN KEY (id) REFERENCES "user";
+    ADD CONSTRAINT FK_PAYMENT_ON_USER FOREIGN KEY (user_id) REFERENCES "user" (id);
 
 ALTER TABLE meeting_team
     ADD CONSTRAINT FK_MEETING_TEAM_ON_LEADER FOREIGN KEY (leader_id) REFERENCES "user" (id);
