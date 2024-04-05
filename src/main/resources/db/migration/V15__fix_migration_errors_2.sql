@@ -28,7 +28,7 @@ ALTER TABLE payment
     ADD pay_method VARCHAR(255);
 
 ALTER TABLE payment
-    ADD payment_id UUID;
+    ADD user_id UUID;
 
 ALTER TABLE payment
     ADD pg VARCHAR(255);
