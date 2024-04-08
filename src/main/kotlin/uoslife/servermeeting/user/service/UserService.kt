@@ -6,6 +6,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uoslife.servermeeting.meetingteam.entity.MeetingTeam
+import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
+import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
+import uoslife.servermeeting.meetingteam.repository.PaymentRepository
+import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponseDto
 import uoslife.servermeeting.user.dto.response.toResponse
@@ -18,6 +23,9 @@ import uoslife.servermeeting.user.repository.UserRepository
 @Transactional
 class UserService(
     private val userRepository: UserRepository,
+    private val paymentRepository: PaymentRepository,
+    private val meetingTeamRepository: MeetingTeamRepository,
+    private val userDao: UserDao,
 ) {
 
     fun findUser(id: UUID): ResponseEntity<UserFindResponseDto> {
@@ -86,14 +94,27 @@ class UserService(
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
+    /**
+     * id로 유저를 삭제합니다. 유저를 삭제하기 전, 외부키로 연결되어 있는 Payment와 MeetingTeam을 삭제합니다. MeetingTeam은
+     * @ManyToOne이기 때문에 MeetingTeam에 있는 유저를 삭제합니다. 만약 삭제 시 MeetingTeam에 유저가 빈다면, MeetingTeam 또한
+     * 삭제합니다.
+     */
     @Transactional
     fun deleteUserById(id: UUID): Unit {
-        // 아이디가 존재하는지 확인
-        val user: User = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+        // 유저가 존재하는지 확인
+        val user: User =
+            userDao.findUserWithMeetingTeam(userId = id) ?: throw UserNotFoundException()
+        val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
-        // 삭제
+        // 유저 삭제
         userRepository.delete(user)
 
-        return
+        // Payment 삭제
+        paymentRepository.deleteByUser(user)
+
+        // 미팅팀 삭제(미팅팀에 유저가 혼자일 경우)
+        if (meetingTeam.users.size == 1) {
+            meetingTeamRepository.delete(meetingTeam)
+        }
     }
 }
