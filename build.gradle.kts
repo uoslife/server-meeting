@@ -151,10 +151,6 @@ tasks.test {
     outputs.dir(snippetsDir)
 }
 
-//asciidoctorj {
-//
-//}
-
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
     dokkaSourceSets {
         outputDirectory.set(file("build/dokka"))
