@@ -48,11 +48,19 @@ class PortOneService(
         paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest
     ): PaymentResponseDto.PaymentRequestResponse {
         val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
-
-        if (paymentRepository.existsByUser(user)) throw UserAlreadyHavePaymentException()
-
         val team = user.team ?: throw MeetingTeamNotFoundException()
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
+
+        if (paymentRepository.existsByUser(user)) {
+            val payment = paymentRepository.findByUser(user)
+            return PaymentResponseDto.PaymentRequestResponse(
+                payment.marchantUid!!,
+                payment.price!!,
+                phoneNumber,
+                user.name,
+                team.type
+            )
+        }
 
         val payment =
             Payment.createPayment(
