@@ -92,6 +92,21 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                                         )]
                             )]
                 ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저가 이미 결제함",
+                    content =
+                    [
+                        Content(
+                            schema = Schema(implementation = ErrorResponse::class),
+                            examples =
+                            [
+                                ExampleObject(
+                                    value =
+                                    "{message: User already have Payment., status: 400, code: P04}"
+                                )]
+                        )]
+                ),
             ]
     )
     @PostMapping("/request")
