@@ -127,6 +127,7 @@ class SingleMeetingService(
     override fun deleteMeetingTeam(userUUID: UUID) {
         val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
+        user.team = null
 
         meetingTeamRepository.delete(meetingTeam)
     }
