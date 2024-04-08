@@ -6,6 +6,10 @@ import uoslife.servermeeting.verification.dto.request.VerificationCodeSendReques
 import uoslife.servermeeting.verification.dto.response.VerificationCodeSendResponse
 
 interface VerificationService {
-    fun sendMail(verificationCodeSendRequest: VerificationCodeSendRequest): VerificationCodeSendResponse
-    fun verifyVerificationCode(verificationCodeCheckRequest: VerificationCodeCheckRequest): TokenResponse
+    fun sendMail(
+        verificationCodeSendRequest: VerificationCodeSendRequest
+    ): VerificationCodeSendResponse
+    fun verifyVerificationCode(
+        verificationCodeCheckRequest: VerificationCodeCheckRequest
+    ): TokenResponse
 }

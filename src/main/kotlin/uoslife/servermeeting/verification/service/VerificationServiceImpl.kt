@@ -16,7 +16,6 @@ import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckReque
 import uoslife.servermeeting.verification.dto.request.VerificationCodeSendRequest
 import uoslife.servermeeting.verification.dto.response.VerificationCodeSendResponse
 import uoslife.servermeeting.verification.entity.Verification
-import uoslife.servermeeting.verification.exception.EmailSendFailedException
 import uoslife.servermeeting.verification.exception.VerificationCodeNotMatchException
 import uoslife.servermeeting.verification.repository.VerificationRedisRepository
 
@@ -28,7 +27,7 @@ class VerificationServiceImpl(
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val tokenProvider: TokenProvider,
     @Value("\${cloud.aws.ses.from}") private val mailFrom: String
-): VerificationService {
+) : VerificationService {
     companion object {
         private val logger = LoggerFactory.getLogger(VerificationServiceImpl::class.java)
     }
@@ -48,7 +47,8 @@ class VerificationServiceImpl(
         verificationRedisRepository.save(verification)
 
         // 메일 전송
-        val sendEmailResponse: SendEmailResponse = emailService.sendEmail(verificationCodeSendRequest.email, code)
+        val sendEmailResponse: SendEmailResponse =
+            emailService.sendEmail(verificationCodeSendRequest.email, code)
 
         return VerificationCodeSendResponse(true)
     }

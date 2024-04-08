@@ -11,7 +11,7 @@ import uoslife.servermeeting.verification.exception.EmailSendFailedException
 class EmailServiceImpl(
     private val sesV2Client: SesV2Client,
     @Value("\${cloud.aws.ses.from}") private val mailFrom: String
-): EmailService {
+) : EmailService {
 
     companion object {
         const val SUBJECT: String = "[시대팅] 인증 메일 코드를 확인해주세요"
@@ -20,15 +20,12 @@ class EmailServiceImpl(
 
     override fun sendEmail(destination: String, code: String): SendEmailResponse {
         // 메일 내용 생성
-        val sendEmailRequest: SendEmailRequest =
-            createSendEmailRequest(destination, code)
+        val sendEmailRequest: SendEmailRequest = createSendEmailRequest(destination, code)
 
         // 메일 보내기
         try {
             val sendEmailResponse: SendEmailResponse = sesV2Client.sendEmail(sendEmailRequest)
-            logger.info(
-                "Verification mail is sended from $mailFrom to ${destination}"
-            )
+            logger.info("Verification mail is sended from $mailFrom to ${destination}")
 
             return sendEmailResponse
         } catch (e: SesV2Exception) {

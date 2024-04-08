@@ -1,6 +1,5 @@
 package uoslife.servermeeting.verification.service
 
-import software.amazon.awssdk.services.sesv2.model.SendEmailRequest
 import software.amazon.awssdk.services.sesv2.model.SendEmailResponse
 
 interface EmailService {
