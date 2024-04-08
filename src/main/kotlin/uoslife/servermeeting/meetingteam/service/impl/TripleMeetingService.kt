@@ -19,6 +19,7 @@ import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
+import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.meetingteam.util.Validator
@@ -37,6 +38,7 @@ class TripleMeetingService(
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val validator: Validator,
     private val meetingServiceUtils: MeetingServiceUtils,
+    private val paymentService: PaymentService,
     @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
 
@@ -172,6 +174,7 @@ class TripleMeetingService(
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         meetingTeamRepository.delete(meetingTeam)
+        paymentService.refundPaymentByPhoneNumber(user.phoneNumber)
     }
 
     @Transactional

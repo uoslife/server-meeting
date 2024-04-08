@@ -17,6 +17,7 @@ import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
+import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dao.UserDao
@@ -33,6 +34,7 @@ class SingleMeetingService(
     private val userDao: UserDao,
     private val meetingServiceUtils: MeetingServiceUtils,
     private val validator: Validator,
+    private val paymentService: PaymentService,
     @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
 
@@ -129,6 +131,7 @@ class SingleMeetingService(
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         meetingTeamRepository.delete(meetingTeam)
+        paymentService.refundPaymentByPhoneNumber(user.phoneNumber)
     }
 
     @Transactional

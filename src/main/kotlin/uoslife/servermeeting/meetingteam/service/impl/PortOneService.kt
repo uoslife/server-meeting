@@ -53,6 +53,8 @@ class PortOneService(
 
         if (paymentRepository.existsByUser(user)) {
             val payment = paymentRepository.findByUser(user)
+            if (payment.status.equals(PaymentStatus.SUCCESS))
+                throw UserAlreadyHavePaymentException()
             return PaymentResponseDto.PaymentRequestResponse(
                 payment.marchantUid!!,
                 payment.price!!,
