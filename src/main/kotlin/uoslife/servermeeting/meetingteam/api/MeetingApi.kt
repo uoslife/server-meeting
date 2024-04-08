@@ -663,7 +663,7 @@ class MeetingApi(
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @Operation(summary = "미팅 팀 삭제", description = "리더만 팀 삭제 가능")
+    @Operation(summary = "미팅 팀 삭제", description = "리더만 팀 삭제 가능, 미팅팀 삭제시 결제 정보 환불")
     @ApiResponses(
         value =
             [
