@@ -15,9 +15,11 @@ import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResp
 import uoslife.servermeeting.meetingteam.dto.vo.MeetingTeamUsers
 import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
+import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
+import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
@@ -38,7 +40,8 @@ class TripleMeetingService(
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val validator: Validator,
     private val meetingServiceUtils: MeetingServiceUtils,
-    private val paymentService: PaymentService,
+    private val paymentRepository: PaymentRepository,
+    @Qualifier("PortOneService") private val paymentService: PaymentService,
     @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
 
@@ -172,9 +175,22 @@ class TripleMeetingService(
     override fun deleteMeetingTeam(userUUID: UUID) {
         val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
+        user.team = null
 
         meetingTeamRepository.delete(meetingTeam)
-        paymentService.refundPaymentByPhoneNumber(user.phoneNumber)
+
+        val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
+
+        if (!payment.status.equals(PaymentStatus.SUCCESS)) {
+            throw PaymentInValidException()
+        }
+        val response = paymentService.refundPaymentByPortOne(payment)
+
+        if (response.code == 0) {
+            payment.status = PaymentStatus.REFUND
+        } else {
+            payment.status = PaymentStatus.FAILED
+        }
     }
 
     @Transactional

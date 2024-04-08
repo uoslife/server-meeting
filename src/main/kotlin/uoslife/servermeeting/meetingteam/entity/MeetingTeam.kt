@@ -23,12 +23,9 @@ class MeetingTeam(
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var compatibility: Compatibility? = null,
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "maleTeam", cascade = [CascadeType.REMOVE])
-    var maleMatch: Match? = null,
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "femaleTeam", cascade = [CascadeType.REMOVE])
-    var femaleMatch: Match? = null,
-    @OneToMany(mappedBy = "team", cascade = [CascadeType.REMOVE])
-    var users: MutableList<User> = mutableListOf(),
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "maleTeam") var maleMatch: Match? = null,
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "femaleTeam") var femaleMatch: Match? = null,
+    @OneToMany(mappedBy = "team") var users: MutableList<User> = mutableListOf(),
     @OneToOne
     @JoinColumn(name = "leader_id", referencedColumnName = "id", unique = true)
     var leader: User? = null,

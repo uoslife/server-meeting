@@ -142,7 +142,6 @@ class PortOneService(
         if (!payment.status.equals(PaymentStatus.SUCCESS)) {
             throw PaymentInValidException()
         }
-
         val response = refundPaymentByPortOne(payment)
 
         if (response.code == 0) {
@@ -154,7 +153,7 @@ class PortOneService(
         }
     }
 
-    fun refundPaymentByPortOne(payment: Payment): PortOneResponseDto.RefundResponse {
+    override fun refundPaymentByPortOne(payment: Payment): PortOneResponseDto.RefundResponse {
         val restTemplate = RestTemplate()
 
         val header =
