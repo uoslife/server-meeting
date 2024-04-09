@@ -6,7 +6,7 @@ import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.user.entity.User
 
 interface PaymentRepository : JpaRepository<Payment, UUID> {
-    fun findByUser(user: User): Payment?
+    fun findByUser(user: User): Payment
     fun existsByUser(user: User): Boolean
     fun deleteByUser(user: User): Long
 }

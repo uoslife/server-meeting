@@ -27,7 +27,10 @@ import uoslife.servermeeting.meetingteam.service.PaymentService
 @Tag(name = "Payment", description = "결제 API")
 class PaymentApi(@Qualifier("PortOneService") private val paymentService: PaymentService) {
 
-    @Operation(summary = "결제 요청 API", description = "결제를 요청하여 주문 번호를 반환합니다.")
+    @Operation(
+        summary = "결제 요청 API",
+        description = "결제를 요청하여 주문 번호를 반환합니다. 유저의 결제정보가 이미 존재하면 존재하는 결제정보를 반환합니다."
+    )
     @ApiResponses(
         value =
             [

@@ -170,6 +170,7 @@ class TripleMeetingService(
     override fun deleteMeetingTeam(userUUID: UUID) {
         val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
+        meetingTeam.users.forEach { it.team = null }
 
         meetingTeamRepository.delete(meetingTeam)
     }
