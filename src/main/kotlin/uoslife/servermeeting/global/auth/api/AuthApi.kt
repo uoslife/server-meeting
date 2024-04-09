@@ -8,11 +8,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
+import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.service.AuthService
 import uoslife.servermeeting.global.error.ErrorResponse
 
@@ -21,6 +26,7 @@ import uoslife.servermeeting.global.error.ErrorResponse
 @Tag(name = "Auth", description = "Auth API")
 class AuthApi(
     private val authService: AuthService,
+    private val tokenProvider: TokenProvider,
 ) {
     @Operation(summary = "토큰 갱신", description = "refresh 토큰으로 access 토큰 갱신")
     @ApiResponses(
@@ -64,10 +70,18 @@ class AuthApi(
             ]
     )
     @PostMapping("/refresh")
-    fun refreshToken(request: HttpServletRequest): ResponseEntity<TokenResponse> {
-        val tokenResponse: TokenResponse = authService.refreshAccessToken(request)
+    fun refreshToken(
+        @RequestHeader(value = "Cookie") refreshToken: String,
+        response: HttpServletResponse
+    ): ResponseEntity<AccessTokenResponse> {
+        val trimmedRefreshToken: String = tokenProvider.trimRefreshToken(refreshToken)
+        val tokenResponse: TokenResponse = authService.refreshAccessToken(trimmedRefreshToken)
+        val cookie: ResponseCookie = tokenProvider.createCookieWithRefreshToken(trimmedRefreshToken)
 
-        return ResponseEntity.ok().body(tokenResponse)
+        response.setHeader("Set-Cookie", cookie.toString())
+
+        return ResponseEntity.ok()
+            .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
     }
 
     @Operation(summary = "시대생 유저 회원가입 or 로그인", description = "시대생 토큰으로 회원가입(이미 되어 있으면 로그인)")
