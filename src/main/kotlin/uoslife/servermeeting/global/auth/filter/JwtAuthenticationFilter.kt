@@ -24,9 +24,24 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
+        setAuthentication(request, response)
+        filterChain.doFilter(request, response)
+    }
+
+    private fun setAuthentication(
+        request: HttpServletRequest,
+        response: HttpServletResponse
+        ) {
         try {
-            setAuthentication(request)
-            filterChain.doFilter(request, response)
+            val token = tokenProvider.resolveToken(request) ?: throw UnauthorizedException()
+
+            if (
+                StringUtils.hasText(token) &&
+                tokenProvider.validateJwtToken(token, TokenType.ACCESS_SECRET)
+            ) {
+                val authentication = tokenProvider.getAuthentication(token)
+                SecurityContextHolder.getContext().authentication = authentication
+            }
         } catch (e: Exception) {
             when (e) {
                 is InvalidTokenException,
@@ -42,18 +57,6 @@ class JwtAuthenticationFilter(
         }
     }
 
-    private fun setAuthentication(request: HttpServletRequest) {
-        val token = tokenProvider.resolveToken(request) ?: throw UnauthorizedException()
-
-        if (
-            StringUtils.hasText(token) &&
-                tokenProvider.validateJwtToken(token, TokenType.ACCESS_SECRET)
-        ) {
-            val authentication = tokenProvider.getAuthentication(token)
-            SecurityContextHolder.getContext().authentication = authentication
-        }
-    }
-
     private fun sendError(response: HttpServletResponse, errorResponse: ErrorResponse): Unit {
         response.status = errorResponse.status
         response.characterEncoding = "utf-8"
@@ -63,9 +66,9 @@ class JwtAuthenticationFilter(
 
     @Throws(JsonProcessingException::class)
     private fun convertObjectToJson(`object`: Any?): String? {
-        if (`object` == null) {
+        if (`object` == null)
             return null
-        }
+
         val mapper = ObjectMapper()
         return mapper.writeValueAsString(`object`)
     }
