@@ -79,7 +79,8 @@ class VerificationApi(
                 ApiResponse(
                     responseCode = "200",
                     description = "메일을 통한 본인 인증 성공, AccessToken 반환",
-                    content = [Content(schema = Schema(implementation = TokenResponse::class))]
+                    content =
+                        [Content(schema = Schema(implementation = AccessTokenResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",

@@ -11,6 +11,7 @@ import jakarta.validation.Valid
 import java.util.UUID
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -52,7 +53,12 @@ class MeetingApi(
                 ApiResponse(
                     responseCode = "201",
                     description = "1대1의 경우 빈 문자열을 반환, 3대3의 경우 팀 코드(A-Z0-9 4개)(String)를 반환",
-                    content = [Content(schema = Schema(implementation = String::class))]
+                    content =
+                        [
+                            Content(
+                                mediaType = MediaType.TEXT_PLAIN_VALUE,
+                                schema = Schema(implementation = String::class)
+                            )]
                 ),
                 ApiResponse(
                     responseCode = "400",
