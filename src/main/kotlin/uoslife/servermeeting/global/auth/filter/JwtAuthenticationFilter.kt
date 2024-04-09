@@ -28,16 +28,13 @@ class JwtAuthenticationFilter(
         filterChain.doFilter(request, response)
     }
 
-    private fun setAuthentication(
-        request: HttpServletRequest,
-        response: HttpServletResponse
-        ) {
+    private fun setAuthentication(request: HttpServletRequest, response: HttpServletResponse) {
         try {
             val token = tokenProvider.resolveToken(request) ?: throw UnauthorizedException()
 
             if (
                 StringUtils.hasText(token) &&
-                tokenProvider.validateJwtToken(token, TokenType.ACCESS_SECRET)
+                    tokenProvider.validateJwtToken(token, TokenType.ACCESS_SECRET)
             ) {
                 val authentication = tokenProvider.getAuthentication(token)
                 SecurityContextHolder.getContext().authentication = authentication
@@ -66,8 +63,7 @@ class JwtAuthenticationFilter(
 
     @Throws(JsonProcessingException::class)
     private fun convertObjectToJson(`object`: Any?): String? {
-        if (`object` == null)
-            return null
+        if (`object` == null) return null
 
         val mapper = ObjectMapper()
         return mapper.writeValueAsString(`object`)

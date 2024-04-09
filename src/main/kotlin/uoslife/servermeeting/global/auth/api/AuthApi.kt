@@ -125,10 +125,18 @@ class AuthApi(
                 )]
     )
     @PostMapping("/uos/signUpOrIn")
-    fun signUpOrInUOS(request: HttpServletRequest): ResponseEntity<TokenResponse> {
+    fun signUpOrInUOS(
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ): ResponseEntity<AccessTokenResponse> {
         val bearerToken: String = request.getHeader("Authorization")
         val tokenResponse: TokenResponse = authService.signUpOrInFromUoslife(bearerToken)
 
-        return ResponseEntity.ok().body(tokenResponse)
+        val cookie: ResponseCookie =
+            tokenProvider.createCookieWithRefreshToken(tokenResponse.refreshToken)
+        response.setHeader("Set-Cookie", cookie.toString())
+
+        return ResponseEntity.ok()
+            .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
     }
 }

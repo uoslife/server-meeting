@@ -24,6 +24,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
 
     // User - Token
     INVALID_TOKEN("T01", "Token is not valid.", HttpStatus.UNAUTHORIZED.value()),
+    INVALID_REFRESH_TOKEN("T02", "Refresh Token is not valid.", HttpStatus.UNAUTHORIZED.value()),
 
     // Meeting
     USER_TEAM_NOT_FOUND("M01", "User Team is not Found.", HttpStatus.BAD_REQUEST.value()),
