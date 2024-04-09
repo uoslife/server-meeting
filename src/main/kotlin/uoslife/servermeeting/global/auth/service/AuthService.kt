@@ -1,7 +1,6 @@
 package uoslife.servermeeting.global.auth.service
 
 import io.jsonwebtoken.Claims
-import jakarta.servlet.http.HttpServletRequest
 import java.util.*
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -17,7 +16,6 @@ import org.springframework.web.client.RestTemplate
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.dto.response.UserProfileVO
 import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
-import uoslife.servermeeting.global.auth.exception.InvalidTokenException
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.jwt.TokenType
 import uoslife.servermeeting.user.entity.User
@@ -36,11 +34,10 @@ class AuthService(
         private val logger = LoggerFactory.getLogger(AuthService::class.java)
     }
     @Transactional
-    fun refreshAccessToken(request: HttpServletRequest): TokenResponse {
-        val refreshToken: String =
-            tokenProvider.resolveToken(request) ?: throw InvalidTokenException()
-        val claims: Claims = tokenProvider.parseClaims(refreshToken, TokenType.REFRESH_SECRET)
+    fun refreshAccessToken(refreshToken: String): TokenResponse {
+        tokenProvider.validateJwtToken(refreshToken, TokenType.REFRESH_SECRET)
 
+        val claims: Claims = tokenProvider.parseClaims(refreshToken, TokenType.REFRESH_SECRET)
         val user: User =
             userRepository.findByIdOrNull(UUID.fromString(claims.subject))
                 ?: throw UserNotFoundException()
