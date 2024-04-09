@@ -7,13 +7,17 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
+import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
+import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationCodeSendRequest
@@ -23,7 +27,10 @@ import uoslife.servermeeting.verification.service.VerificationService
 @RestController
 @RequestMapping("/api/verification")
 @Tag(name = "Verification", description = "이메일 인증 API")
-class VerificationApi(private val verificationService: VerificationService) {
+class VerificationApi(
+    private val verificationService: VerificationService,
+    private val tokenProvider: TokenProvider,
+) {
     @Operation(summary = "메일 인증 코드 전송", description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다.")
     @ApiResponses(
         value =
@@ -92,9 +99,16 @@ class VerificationApi(private val verificationService: VerificationService) {
     )
     @PostMapping("/verify")
     fun verifyCode(
-        @RequestBody @Valid verificationCodeCheckRequest: VerificationCodeCheckRequest
-    ): ResponseEntity<TokenResponse> {
+        @RequestBody @Valid verificationCodeCheckRequest: VerificationCodeCheckRequest,
+        response: HttpServletResponse
+    ): ResponseEntity<AccessTokenResponse> {
+        val tokenResponse: TokenResponse =
+            verificationService.verifyVerificationCode(verificationCodeCheckRequest)
+        val cookie: ResponseCookie =
+            tokenProvider.createCookieWithRefreshToken(tokenResponse.refreshToken)
+        response.setHeader("Set-Cookie", cookie.toString())
+
         return ResponseEntity.ok()
-            .body(verificationService.verifyVerificationCode(verificationCodeCheckRequest))
+            .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
     }
 }
