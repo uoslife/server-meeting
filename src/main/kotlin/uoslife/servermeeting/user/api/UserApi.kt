@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import java.util.UUID
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -62,5 +63,85 @@ class UserApi(private val userService: UserService) {
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<Unit> {
         return userService.updateUser(requestBody, UUID.fromString(userDetails.username))
+    }
+
+    @Operation(summary = "User 계정 삭제", description = "유저 ID를 이용하여 삭제합니다.")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "204",
+                    description = "유저 삭제 성공",
+                    content = [Content(schema = Schema(implementation = Unit::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저 정보 찾기 실패",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status:400, code: U02}"
+                                        )]
+                            )]
+                )]
+    )
+    @DeleteMapping("/{userId}")
+    fun deleteUserById(@PathVariable("userId") userId: UUID): ResponseEntity<Unit> {
+        userService.deleteUserById(userId)
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @Operation(summary = "User 계정 삭제", description = "토큰을 이용하여 삭제합니다.")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "204",
+                    description = "유저 삭제 성공",
+                    content = [Content(schema = Schema(implementation = Unit::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "유저 정보 찾기 실패",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status:400, code: U02}"
+                                        )]
+                            )]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "미팅팀 정보 찾기 실패",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Meeting Team is not Found., status:400, code: M06}"
+                                        )]
+                            )]
+                )]
+    )
+    @DeleteMapping()
+    fun deleteUserByToken(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {
+        val userId: UUID = UUID.fromString(userDetails.username)
+        userService.deleteUserById(userId)
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
