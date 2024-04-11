@@ -35,7 +35,7 @@ data class UserProfile(
     @Schema(description = "종교", example = "CHRISTIAN") val religion: ReligionType?,
     @Schema(description = "한달 최소 음주량", example = "1") val drinkingMin: Int?,
     @Schema(description = "한달 최대 음주량", example = "10") val drinkingMax: Int?,
-    @Schema(description = "동물상", example = "[DOG, CAT]") val spiritAnimal: List<SpiritAnimalType>?,
+    @Schema(description = "동물상", example = "[\"DOG\", \"CAT\"]") val spiritAnimal: List<SpiritAnimalType>?,
     @Schema(description = "mbti", example = "ENFP") val mbti: String?,
-    @Schema(description = "흥미", example = "[BOOK, EXERCISE]") val interest: List<InterestType>?,
+    @Schema(description = "흥미", example = "[\"BOOK\", \"EXERCISE\"]") val interest: List<InterestType>?,
 )
