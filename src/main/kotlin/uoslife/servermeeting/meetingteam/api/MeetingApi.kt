@@ -11,7 +11,6 @@ import jakarta.validation.Valid
 import java.util.UUID
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -28,6 +27,7 @@ import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
+import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
@@ -54,11 +54,7 @@ class MeetingApi(
                     responseCode = "201",
                     description = "1대1의 경우 빈 문자열을 반환, 3대3의 경우 팀 코드(A-Z0-9 4개)(String)를 반환",
                     content =
-                        [
-                            Content(
-                                mediaType = MediaType.TEXT_PLAIN_VALUE,
-                                schema = Schema(implementation = String::class)
-                            )]
+                        [Content(schema = Schema(implementation = MeetingTeamCodeResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
@@ -128,14 +124,14 @@ class MeetingApi(
         @PathVariable teamType: TeamType,
         @PathVariable isTeamLeader: Boolean,
         @RequestParam(required = false) name: String?,
-    ): ResponseEntity<String?> {
+    ): ResponseEntity<MeetingTeamCodeResponse> {
         val userUUID = UUID.fromString(userDetails.username)
 
         if (!isTeamLeader) {
             throw OnlyTeamLeaderCanCreateTeamException()
         }
 
-        val code =
+        val meetingTeamCodeResponse =
             when (teamType) {
                 TeamType.SINGLE ->
                     singleMeetingService.createMeetingTeam(userUUID, name, teamType = teamType)
@@ -143,7 +139,7 @@ class MeetingApi(
                     tripleMeetingService.createMeetingTeam(userUUID, name, teamType = teamType)
             }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(code)
+        return ResponseEntity.status(HttpStatus.CREATED).body(meetingTeamCodeResponse)
     }
 
     @Operation(summary = "미팅 팀 참가", description = "1대1의 경우 지원되지 않음. 1대1은 미팅 팀 생성 시 자동으로 참가됨")
