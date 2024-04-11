@@ -139,7 +139,7 @@ class MeetingApi(
                     tripleMeetingService.createMeetingTeam(userUUID, name, teamType = teamType)
             }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(meetingTeamCodeResponse)
+        return ResponseEntity.ok(meetingTeamCodeResponse)
     }
 
     @Operation(summary = "미팅 팀 참가", description = "1대1의 경우 지원되지 않음. 1대1은 미팅 팀 생성 시 자동으로 참가됨")
