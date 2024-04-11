@@ -91,7 +91,8 @@ class SecurityConfig(
                 "https://uoslife.com",
                 "https://meeting.uoslife.com",
                 "https://meeting.alpha.uoslife.com",
-                "http://localhost:5173"
+                "http://localhost:5173",
+                "https://localhost:5173",
             )
         configuration.allowedMethods =
             mutableListOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
