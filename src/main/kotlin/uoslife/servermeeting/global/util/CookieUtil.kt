@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class CookieUtil(
     @Value("\${jwt.refresh.expiration}") private val refreshTokenExpiration: Long,
-){
+) {
     fun setCookieWithRefreshToken(response: HttpServletResponse, refreshToken: String): Unit {
         val cookie: ResponseCookie =
             ResponseCookie.from("refreshToken", refreshToken)
