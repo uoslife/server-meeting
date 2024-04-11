@@ -115,7 +115,8 @@ class TripleMeetingService(
         val information =
             Information(
                 gender = user.userPersonalInformation.gender,
-                meetingTeamInformationUpdateRequest.toMap()
+                questions = meetingTeamInformationUpdateRequest.toMap(),
+                preferredDays = meetingTeamInformationUpdateRequest.preferredDays
             )
         meetingTeam.information = information
     }

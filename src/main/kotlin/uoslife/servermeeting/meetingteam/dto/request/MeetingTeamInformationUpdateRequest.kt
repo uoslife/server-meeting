@@ -1,9 +1,11 @@
 package uoslife.servermeeting.meetingteam.dto.request
 
 import io.swagger.v3.oas.annotations.media.Schema
+import uoslife.servermeeting.meetingteam.entity.enums.Day
 
 class MeetingTeamInformationUpdateRequest(
-    @Schema(description = "질문에 대한 답안(5개)") val questions: List<Int>
+    @Schema(description = "질문에 대한 답안(5개)") val questions: List<Int>,
+    val preferredDays: List<Day>,
 ) {
     fun toMap(): Map<Int, Int> {
         return mapOf(
