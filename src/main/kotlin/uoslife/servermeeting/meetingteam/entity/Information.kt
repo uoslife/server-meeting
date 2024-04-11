@@ -1,7 +1,7 @@
 package uoslife.servermeeting.meetingteam.entity
 
-import uoslife.servermeeting.meetingteam.entity.enums.Day
 import java.io.Serializable
+import uoslife.servermeeting.meetingteam.entity.enums.Day
 import uoslife.servermeeting.user.entity.enums.GenderType
 
 data class Information(
