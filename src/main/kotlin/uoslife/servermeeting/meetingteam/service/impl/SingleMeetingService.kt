@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
+import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.meetingteam.entity.Information
@@ -37,14 +38,18 @@ class SingleMeetingService(
 ) : BaseMeetingService {
 
     @Transactional
-    override fun createMeetingTeam(userUUID: UUID, name: String?, teamType: TeamType): String? {
+    override fun createMeetingTeam(
+        userUUID: UUID,
+        name: String?,
+        teamType: TeamType
+    ): MeetingTeamCodeResponse {
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
         validator.isUserAlreadyHaveTeam(user)
 
         val meetingTeam = createDefaultMeetingTeam(leader = user, teamType = teamType)
 
         user.team = meetingTeam
-        return null
+        return MeetingTeamCodeResponse(code = null)
     }
 
     override fun joinMeetingTeam(
