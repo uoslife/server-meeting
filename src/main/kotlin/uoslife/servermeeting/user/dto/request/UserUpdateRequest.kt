@@ -7,14 +7,20 @@ import uoslife.servermeeting.user.entity.enums.*
 
 data class UserUpdateRequest(
     @Schema(description = "이름", example = "유현승", nullable = false) @field:NotNull val name: String,
-    @Schema(description = "성별", example = "MALE", nullable = false) @field:NotNull val gender: GenderType,
+    @Schema(description = "성별", example = "MALE", nullable = false)
+    @field:NotNull
+    val gender: GenderType,
     @Schema(description = "전화번호", example = "01047324348", nullable = false)
     @field:NotNull
     @field:Size(max = 11)
     val phoneNumber: String,
     @Schema(description = "나이", example = "26", nullable = false) @field:NotNull val age: Int,
-    @Schema(description = "카카오톡 아이디", example = "__uhyun", nullable = false) @field:NotNull val kakaoTalkId: String,
-    @Schema(description = "학과", example = "컴퓨터과학부", nullable = false) @field:NotNull val department: String,
+    @Schema(description = "카카오톡 아이디", example = "__uhyun", nullable = false)
+    @field:NotNull
+    val kakaoTalkId: String,
+    @Schema(description = "학과", example = "컴퓨터과학부", nullable = false)
+    @field:NotNull
+    val department: String,
     @Schema(description = "학생 타입(학부생, 대학원생, 졸업생", example = "UNDERGRADUATE", nullable = false)
     @field:NotNull
     val studentType: StudentType,

@@ -13,8 +13,10 @@ class Match(
     @Column(nullable = false, updatable = false, unique = true)
     var id: Long? = null,
     var date: LocalDateTime? = null,
-    @OneToOne(fetch = FetchType.LAZY) @JoinColumn(name = "male_team_id") var maleTeam: MeetingTeam,
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "female_team_id")
+    @JoinColumn(name = "male_team_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    var maleTeam: MeetingTeam,
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "female_team_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     var femaleTeam: MeetingTeam,
 ) : BaseEntity()
