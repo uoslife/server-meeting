@@ -14,7 +14,6 @@ import java.util.Date
 import javax.crypto.SecretKey
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.ResponseCookie
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
@@ -118,18 +117,6 @@ class TokenProvider(
         val refreshToken: String = generateRefreshTokenFromUserPrincipal(userDetails)
 
         return TokenResponse(accessToken = accessToken, refreshToken = refreshToken)
-    }
-
-    fun createCookieWithRefreshToken(refreshToken: String): ResponseCookie {
-        val cookie: ResponseCookie =
-            ResponseCookie.from("refreshToken", refreshToken)
-                .maxAge(refreshTokenExpiration)
-                .path("/")
-                .secure(true)
-                .httpOnly(true)
-                .build()
-
-        return cookie
     }
 
     fun trimRefreshToken(refreshToken: String): String {

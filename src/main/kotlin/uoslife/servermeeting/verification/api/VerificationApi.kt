@@ -19,6 +19,7 @@ import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.error.ErrorResponse
+import uoslife.servermeeting.global.util.CookieUtil
 import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationCodeSendRequest
 import uoslife.servermeeting.verification.dto.response.*
@@ -30,6 +31,7 @@ import uoslife.servermeeting.verification.service.VerificationService
 class VerificationApi(
     private val verificationService: VerificationService,
     private val tokenProvider: TokenProvider,
+    private val cookieUtil: CookieUtil,
 ) {
     @Operation(summary = "메일 인증 코드 전송", description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다.")
     @ApiResponses(
@@ -105,9 +107,7 @@ class VerificationApi(
     ): ResponseEntity<AccessTokenResponse> {
         val tokenResponse: TokenResponse =
             verificationService.verifyVerificationCode(verificationCodeCheckRequest)
-        val cookie: ResponseCookie =
-            tokenProvider.createCookieWithRefreshToken(tokenResponse.refreshToken)
-        response.setHeader("Set-Cookie", cookie.toString())
+        cookieUtil.setCookieWithRefreshToken(response, tokenResponse.refreshToken)
 
         return ResponseEntity.ok()
             .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
