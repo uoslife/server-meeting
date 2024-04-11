@@ -22,7 +22,7 @@ class CookieUtil(
         response.setHeader("Set-Cookie", cookie.toString())
     }
 
-    private fun millsToSecond(mills: Long): Long{
+    private fun millsToSecond(mills: Long): Long {
         return mills / 1000
     }
 }
