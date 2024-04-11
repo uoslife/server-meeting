@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
@@ -20,6 +19,7 @@ import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.service.AuthService
 import uoslife.servermeeting.global.error.ErrorResponse
+import uoslife.servermeeting.global.util.CookieUtil
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,6 +27,7 @@ import uoslife.servermeeting.global.error.ErrorResponse
 class AuthApi(
     private val authService: AuthService,
     private val tokenProvider: TokenProvider,
+    private val cookieUtil: CookieUtil,
 ) {
     @Operation(summary = "토큰 갱신", description = "refresh 토큰으로 access 토큰 갱신")
     @ApiResponses(
@@ -76,9 +77,7 @@ class AuthApi(
     ): ResponseEntity<AccessTokenResponse> {
         val trimmedRefreshToken: String = tokenProvider.trimRefreshToken(refreshToken)
         val tokenResponse: TokenResponse = authService.refreshAccessToken(trimmedRefreshToken)
-        val cookie: ResponseCookie = tokenProvider.createCookieWithRefreshToken(trimmedRefreshToken)
-
-        response.setHeader("Set-Cookie", cookie.toString())
+        cookieUtil.setCookieWithRefreshToken(response, trimmedRefreshToken)
 
         return ResponseEntity.ok()
             .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
@@ -132,9 +131,7 @@ class AuthApi(
         val bearerToken: String = request.getHeader("Authorization")
         val tokenResponse: TokenResponse = authService.signUpOrInFromUoslife(bearerToken)
 
-        val cookie: ResponseCookie =
-            tokenProvider.createCookieWithRefreshToken(tokenResponse.refreshToken)
-        response.setHeader("Set-Cookie", cookie.toString())
+        cookieUtil.setCookieWithRefreshToken(response, tokenResponse.refreshToken)
 
         return ResponseEntity.ok()
             .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
