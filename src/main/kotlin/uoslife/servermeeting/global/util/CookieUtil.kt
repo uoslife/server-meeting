@@ -12,7 +12,7 @@ class CookieUtil(
     fun setCookieWithRefreshToken(response: HttpServletResponse, refreshToken: String): Unit {
         val cookie: ResponseCookie =
             ResponseCookie.from("refreshToken", refreshToken)
-                .maxAge(refreshTokenExpiration / 1000) // millsecond -> second
+                .maxAge(millsToSecond(refreshTokenExpiration)) // millsecond -> second
                 .path("/")
                 .secure(true)
                 .httpOnly(true)
@@ -20,5 +20,9 @@ class CookieUtil(
                 .build()
 
         response.setHeader("Set-Cookie", cookie.toString())
+    }
+
+    private fun millsToSecond(mills: Long): Long {
+        return mills / 1000
     }
 }

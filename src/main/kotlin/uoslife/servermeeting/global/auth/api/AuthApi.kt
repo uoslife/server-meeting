@@ -77,7 +77,7 @@ class AuthApi(
     ): ResponseEntity<AccessTokenResponse> {
         val trimmedRefreshToken: String = tokenProvider.trimRefreshToken(refreshToken)
         val tokenResponse: TokenResponse = authService.refreshAccessToken(trimmedRefreshToken)
-        cookieUtil.setCookieWithRefreshToken(response, trimmedRefreshToken)
+        cookieUtil.setCookieWithRefreshToken(response, tokenResponse.refreshToken)
 
         return ResponseEntity.ok()
             .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
