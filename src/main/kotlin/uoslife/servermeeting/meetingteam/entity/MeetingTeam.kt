@@ -27,7 +27,12 @@ class MeetingTeam(
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "femaleTeam") var femaleMatch: Match? = null,
     @OneToMany(mappedBy = "team") var users: MutableList<User> = mutableListOf(),
     @OneToOne
-    @JoinColumn(name = "leader_id", referencedColumnName = "id", unique = true)
+    @JoinColumn(
+        name = "leader_id",
+        referencedColumnName = "id",
+        unique = true,
+        foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT)
+    )
     var leader: User? = null,
     @Column(nullable = false) @Enumerated(EnumType.STRING) var type: TeamType,
 )

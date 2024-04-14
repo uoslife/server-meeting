@@ -21,7 +21,9 @@ class User(
     @Column(columnDefinition = "jsonb")
     var userPersonalInformation: UserPersonalInformation = UserPersonalInformation(),
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user") var payment: Payment? = null,
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "team_id") var team: MeetingTeam? = null
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    var team: MeetingTeam? = null
 ) : BaseEntity() {
     companion object {
         fun create(email: String, university: University): User {
