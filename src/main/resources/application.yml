@@ -47,7 +47,7 @@ jwt:
 
     access:
         secret: ${JWT_ACCESS_SECRET}
-        expiration: 300000
+        expiration: 3600000
 
 springdoc:
     swagger-ui:
