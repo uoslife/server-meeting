@@ -3,7 +3,7 @@ package uoslife.servermeeting.user.dto.response
 import uoslife.servermeeting.user.entity.enums.*
 import uoslife.servermeeting.verification.dto.University
 
-data class UserFindResponseDto(
+data class UserFindResponse(
     val name: String?,
     val genderType: GenderType?,
     val phoneNumber: String?,

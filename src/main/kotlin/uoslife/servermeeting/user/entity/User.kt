@@ -7,7 +7,7 @@ import org.hibernate.annotations.Type
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Payment
-import uoslife.servermeeting.user.dto.response.UserFindResponseDto
+import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.verification.dto.University
 
 @Entity
@@ -37,9 +37,9 @@ class User(
             return user
         }
 
-        fun toResponse(user: User): UserFindResponseDto {
-            val userFindResponseDto: UserFindResponseDto =
-                UserFindResponseDto(
+        fun toResponse(user: User): UserFindResponse {
+            val userFindResponse: UserFindResponse =
+                UserFindResponse(
                     name = user.name,
                     genderType = user.userPersonalInformation.gender,
                     phoneNumber = user.phoneNumber,
@@ -58,7 +58,7 @@ class User(
                     university = user.userPersonalInformation.university,
                 )
 
-            return userFindResponseDto
+            return userFindResponse
         }
     }
 }
