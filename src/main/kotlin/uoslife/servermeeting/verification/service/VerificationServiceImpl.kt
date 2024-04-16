@@ -35,7 +35,7 @@ class VerificationServiceImpl(
     @Transactional
     override fun sendMail(
         verificationCodeSendRequest: VerificationCodeSendRequest
-    ): VerificationCodeSendResponse {
+    ): Unit {
         // verification을 DB에 이미 존재하면 재발급하고, 없으면 새로 생성함
         val verification: Verification = getOrCreateVerification(verificationCodeSendRequest.email)
 
@@ -49,8 +49,6 @@ class VerificationServiceImpl(
         // 메일 전송
         val sendEmailResponse: SendEmailResponse =
             emailService.sendEmail(verificationCodeSendRequest.email, code)
-
-        return VerificationCodeSendResponse(true)
     }
 
     private fun getOrCreateVerification(email: String): Verification {

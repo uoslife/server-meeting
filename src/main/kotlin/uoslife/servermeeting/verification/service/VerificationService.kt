@@ -8,7 +8,7 @@ import uoslife.servermeeting.verification.dto.response.VerificationCodeSendRespo
 interface VerificationService {
     fun sendMail(
         verificationCodeSendRequest: VerificationCodeSendRequest
-    ): VerificationCodeSendResponse
+    ): Unit
     fun verifyVerificationCode(
         verificationCodeCheckRequest: VerificationCodeCheckRequest
     ): TokenResponse
