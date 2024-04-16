@@ -14,7 +14,6 @@ import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
 import uoslife.servermeeting.verification.dto.request.VerificationCodeCheckRequest
 import uoslife.servermeeting.verification.dto.request.VerificationCodeSendRequest
-import uoslife.servermeeting.verification.dto.response.VerificationCodeSendResponse
 import uoslife.servermeeting.verification.entity.Verification
 import uoslife.servermeeting.verification.exception.VerificationCodeNotMatchException
 import uoslife.servermeeting.verification.repository.VerificationRedisRepository
@@ -33,9 +32,7 @@ class VerificationServiceImpl(
     }
 
     @Transactional
-    override fun sendMail(
-        verificationCodeSendRequest: VerificationCodeSendRequest
-    ): Unit {
+    override fun sendMail(verificationCodeSendRequest: VerificationCodeSendRequest): Unit {
         // verification을 DB에 이미 존재하면 재발급하고, 없으면 새로 생성함
         val verification: Verification = getOrCreateVerification(verificationCodeSendRequest.email)
 

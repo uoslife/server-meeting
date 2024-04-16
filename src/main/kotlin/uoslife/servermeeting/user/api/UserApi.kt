@@ -30,8 +30,7 @@ class UserApi(private val userService: UserService) {
                 ApiResponse(
                     responseCode = "200",
                     description = "유저 정보 조회 성공",
-                    content =
-                        [Content(schema = Schema(implementation = UserFindResponse::class))]
+                    content = [Content(schema = Schema(implementation = UserFindResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
