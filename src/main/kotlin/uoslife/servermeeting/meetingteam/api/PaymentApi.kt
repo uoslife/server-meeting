@@ -49,7 +49,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음",
                     content =
                         [
                             Content(
@@ -57,44 +57,34 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 일치하는 팀 정보 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M06",
+                                            description = "유저가 일치하는 팀 정보 없음",
                                             value =
                                                 "{message: Meeting Team is not Found., status: 400, code: M06}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "유저의 전화번호 없음(결제 불가)",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "U06",
+                                            description = "유저의 전화번호 없음(결제 불가)",
                                             value =
                                                 "{message: Phone Number is not found, status: 400, code: U06}"
+                                        ),
+                                        ExampleObject(
+                                            name = "P04",
+                                            description = "유저가 이미 결제함",
+                                            value =
+                                                "{message: User already have Payment., status: 400, code: P04}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 이미 결제함",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -103,7 +93,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: User already have Payment., status: 400, code: P04}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
@@ -139,7 +129,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음",
                     content =
                         [
                             Content(
@@ -147,14 +137,22 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
+                                        ),
+                                        ExampleObject(
+                                            name = "P01",
+                                            description = "결제 정보 없음",
+                                            value =
+                                                "{message: Payment is not Found., status: 400, code: P01}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "결제 정보 없음",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -163,7 +161,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: Payment is not Found., status: 400, code: P01}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
@@ -199,7 +197,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음",
                     content =
                         [
                             Content(
@@ -207,29 +205,28 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "결제 정보 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "P01",
+                                            description = "결제 정보 없음",
                                             value =
                                                 "{message: Payment is not Found., status: 400, code: P01}"
+                                        ),
+                                        ExampleObject(
+                                            name = "P03",
+                                            description = "결제 정보가 부적절함(결제 상태가 아님)",
+                                            value =
+                                                "{message: Payment is Invalid., status: 400, code: P03}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "결제 정보가 부적절함(결제 상태가 아님)",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -238,7 +235,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: Payment is Invalid., status: 400, code: P03}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
@@ -282,6 +279,21 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                                         ExampleObject(
                                             value =
                                                 "{message: Payment is not Found., status: 400, code: P01}"
+                                        )]
+                            )]
+                ),
+                ApiResponse(
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
