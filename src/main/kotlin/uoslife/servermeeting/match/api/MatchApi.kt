@@ -37,7 +37,7 @@ class MatchApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음.",
                     content =
                         [
                             Content(
@@ -45,59 +45,40 @@ class MatchApi(
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 속한 팀이 매칭되어있지않음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "MT01",
+                                            description = "유저가 속한 팀이 매칭되어있지않음",
                                             value =
                                                 "{message: Match is not Found., status: 400, code: MT01}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 일치하는 팀 정보 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M06",
+                                            description = "유저가 일치하는 팀 정보 없음",
                                             value =
                                                 "{message: Meeting Team is not Found., status: 400, code: M06}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "매칭된 상대의 선호 상대방에 대한 응답값이 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M08",
+                                            description = "매칭된 상대의 선호 상대방에 대한 응답값이 없음",
                                             value =
                                                 "{message: Preference is not Found., status: 400, code: M08}"
+                                        ),
+                                        ExampleObject(
+                                            name = "M07",
+                                            description = "매칭된 상대의 질문 리스트 응답값이 없음",
+                                            value =
+                                                "{message: Information is not Found., status: 400, code: M07}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "매칭된 상대의 질문 리스트 응답값이 없음",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -106,7 +87,7 @@ class MatchApi(
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: Information is not Found., status: 400, code: M07}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
