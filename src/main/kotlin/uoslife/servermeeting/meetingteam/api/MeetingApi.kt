@@ -59,7 +59,7 @@ class MeetingApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음.",
                     content =
                         [
                             Content(
@@ -67,59 +67,53 @@ class MeetingApi(
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 이미 팀에 속해있음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M02",
+                                            description = "유저가 이미 팀에 속해있음",
                                             value =
                                                 "{message: User already have Team., status: 400, code: M02}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 이미 팀에 속해있음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M11",
+                                            description = "팀 이름이 적절하지 못함",
                                             value =
                                                 "{message: Team name is invalid., status: 400, code: M11}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 이미 팀에 속해있음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M12",
+                                            description = "팀 코드 생성에 실패함",
                                             value =
                                                 "{message: Team Code Generate is Failed., status: 500, code: M12}"
                                         )]
                             )]
                 ),
+                ApiResponse(
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Token is not valid., status: 401, code: T01}"
+                                        )]
+                            )]
+                ),
             ]
     )
-    @PostMapping("/{teamType}/{isTeamLeader}/create")
+    @PostMapping(
+        "/{teamType}/{isTeamLeader}/create",
+        produces = ["application/json"],
+        consumes = ["application/json"]
+    )
     fun createMeetingTeam(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
@@ -159,7 +153,7 @@ class MeetingApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음",
                     content =
                         [
                             Content(
@@ -167,89 +161,52 @@ class MeetingApi(
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 일치하는 팀 정보 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M06",
+                                            description = "유저가 일치하는 팀 정보 없음",
                                             value =
                                                 "{message: Meeting Team is not Found., status: 400, code: M06}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "해당 팀에 팀장이 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M16",
+                                            description = "해당 팀에 팀장이 없음",
                                             value =
                                                 "{message: Team Leader is not Found., status: 400, code: M16}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "팀 코드가 맞지않음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M13",
+                                            description = "팀 코드가 일치하지 않음",
                                             value =
                                                 "{message: Team Code is Invalid Format., status: 400, code: M13}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 이미 팀을 가지고 있음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M02",
+                                            description = "유저가 이미 팀을 가지고 있음",
                                             value =
                                                 "{message: User already have Team., status: 400, code: M02}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "해당 팀의 정원이 꽉참",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M14",
+                                            description = "해당 팀의 정원이 꽉참",
                                             value =
                                                 "{message: Team is Full., status: 400, code: M14}"
+                                        ),
+                                        ExampleObject(
+                                            name = "M17",
+                                            description = "다른 성별의 팀에 입장 불가",
+                                            value =
+                                                "{message: Team must consist of Same Gender, status: 400, code: M17}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "다른 성별의 팀에 입장 불가",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -258,7 +215,7 @@ class MeetingApi(
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: Team must consist of Same Gender, status: 400, code: M17}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
@@ -301,7 +258,7 @@ class MeetingApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음",
                     content =
                         [
                             Content(
@@ -309,29 +266,28 @@ class MeetingApi(
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 일치하는 팀 정보 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M06",
+                                            description = "유저가 일치하는 팀 정보 없음",
                                             value =
                                                 "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                        ),
+                                        ExampleObject(
+                                            name = "M05",
+                                            description = "1대1 팀의 경우는 팀에 속한 유저 리스트 조회 불가",
+                                            value =
+                                                "{message: In Single Meeting Team, only One User Exist., status: 400, code: M05}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "1대1 팀의 경우는 팀에 속한 유저 리스트 조회 불가",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -340,7 +296,7 @@ class MeetingApi(
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: In Single Meeting Team, only One User Exist., status: 400, code: M05}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
@@ -375,7 +331,7 @@ class MeetingApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음",
                     content =
                         [
                             Content(
@@ -383,14 +339,22 @@ class MeetingApi(
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
+                                        ),
+                                        ExampleObject(
+                                            name = "M06",
+                                            description = "유저가 일치하는 팀 정보 없음",
+                                            value =
+                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 일치하는 팀 정보 없음",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -399,7 +363,7 @@ class MeetingApi(
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
@@ -446,7 +410,7 @@ class MeetingApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음",
                     content =
                         [
                             Content(
@@ -454,14 +418,22 @@ class MeetingApi(
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
+                                        ),
+                                        ExampleObject(
+                                            name = "M06",
+                                            description = "유저가 일치하는 팀 정보 없음",
+                                            value =
+                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 일치하는 팀 정보 없음",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -470,7 +442,7 @@ class MeetingApi(
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
@@ -522,7 +494,7 @@ class MeetingApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음",
                     content =
                         [
                             Content(
@@ -530,44 +502,34 @@ class MeetingApi(
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 일치하는 팀 정보 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M06",
+                                            description = "유저가 일치하는 팀 정보 없음",
                                             value =
                                                 "{message: Meeting Team is not Found., status: 400, code: M06}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "매칭된 상대의 선호 상대방에 대한 응답값이 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
+                                        ),
                                         ExampleObject(
+                                            name = "M08",
+                                            description = "매칭된 상대의 선호 상대방에 대한 응답값이 없음",
                                             value =
                                                 "{message: Preference is not Found., status: 400, code: M08}"
+                                        ),
+                                        ExampleObject(
+                                            name = "M07",
+                                            description = "매칭된 상대의 질문 리스트 응답값이 없음",
+                                            value =
+                                                "{message: Information is not Found., status: 400, code: M07}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "매칭된 상대의 질문 리스트 응답값이 없음",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -576,7 +538,7 @@ class MeetingApi(
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: Information is not Found., status: 400, code: M07}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
@@ -608,7 +570,7 @@ class MeetingApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음",
                     content =
                         [
                             Content(
@@ -616,14 +578,22 @@ class MeetingApi(
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
+                                        ),
+                                        ExampleObject(
+                                            name = "M06",
+                                            description = "유저가 일치하는 팀 정보 없음",
+                                            value =
+                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 일치하는 팀 정보 없음",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -632,7 +602,7 @@ class MeetingApi(
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),
@@ -677,7 +647,7 @@ class MeetingApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 유저 정보 없음",
+                    description = "요청 값에 문제가 있음",
                     content =
                         [
                             Content(
@@ -685,14 +655,22 @@ class MeetingApi(
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
+                                        ),
+                                        ExampleObject(
+                                            name = "M06",
+                                            description = "유저가 일치하는 팀 정보 없음",
+                                            value =
+                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "유저가 일치하는 팀 정보 없음",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -701,7 +679,7 @@ class MeetingApi(
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
                 ),

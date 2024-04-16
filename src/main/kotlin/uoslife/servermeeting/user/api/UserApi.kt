@@ -36,8 +36,8 @@ class UserApi(private val userService: UserService) {
         value =
             [
                 ApiResponse(
-                    responseCode = "200",
-                    description = "유저 정보 업데이트 성공, 반환값 없음",
+                    responseCode = "204",
+                    description = "유저 정보 업데이트 성공",
                     content = [Content(schema = Schema(implementation = Unit::class))]
                 ),
                 ApiResponse(
@@ -62,7 +62,9 @@ class UserApi(private val userService: UserService) {
         @RequestBody(required = false) requestBody: UserUpdateRequest,
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<Unit> {
-        return userService.updateUser(requestBody, UUID.fromString(userDetails.username))
+        userService.updateUser(requestBody, UUID.fromString(userDetails.username))
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     @Operation(summary = "User 계정 삭제", description = "유저 ID를 이용하여 삭제합니다.")
@@ -76,7 +78,7 @@ class UserApi(private val userService: UserService) {
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "유저 정보 찾기 실패",
+                    description = "해당 유저 정보 없음",
                     content =
                         [
                             Content(
@@ -108,7 +110,7 @@ class UserApi(private val userService: UserService) {
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "유저 정보 찾기 실패",
+                    description = "해당 유저 정보 없음",
                     content =
                         [
                             Content(
@@ -122,8 +124,8 @@ class UserApi(private val userService: UserService) {
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "미팅팀 정보 찾기 실패",
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
                     content =
                         [
                             Content(
@@ -132,10 +134,11 @@ class UserApi(private val userService: UserService) {
                                     [
                                         ExampleObject(
                                             value =
-                                                "{message: Meeting Team is not Found., status:400, code: M06}"
+                                                "{message: Token is not valid., status: 401, code: T01}"
                                         )]
                             )]
-                )]
+                ),
+            ]
     )
     @DeleteMapping()
     fun deleteUserByToken(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {

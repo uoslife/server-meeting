@@ -34,7 +34,7 @@ class UserService(
     }
 
     @Transactional
-    fun updateUser(requestDto: UserUpdateRequest, id: UUID): ResponseEntity<Unit> {
+    fun updateUser(requestDto: UserUpdateRequest, id: UUID): Unit {
         val existingUser = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
         val userPersonalInformation: UserPersonalInformation =
@@ -44,7 +44,6 @@ class UserService(
         existingUser.phoneNumber = requestDto.phoneNumber ?: existingUser.phoneNumber
         existingUser.kakaoTalkId = requestDto.kakaoTalkId ?: existingUser.kakaoTalkId
         existingUser.userPersonalInformation = userPersonalInformation
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     private fun updateUserPersonalInformationWithDto(
