@@ -109,11 +109,7 @@ class MeetingApi(
                 ),
             ]
     )
-    @PostMapping(
-        "/{teamType}/{isTeamLeader}/create",
-        produces = ["application/json"],
-        consumes = ["application/json"]
-    )
+    @PostMapping("/{teamType}/{isTeamLeader}/create")
     fun createMeetingTeam(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
