@@ -24,11 +24,40 @@ import uoslife.servermeeting.user.service.UserService
 class UserApi(private val userService: UserService) {
 
     @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 정보를 조회합니다.")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "유저 정보 조회 성공",
+                    content =
+                        [Content(schema = Schema(implementation = UserFindResponseDto::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
+                            )]
+                ),
+            ]
+    )
     @GetMapping
     fun getUser(
         @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<UserFindResponseDto> {
-        return userService.findUser(UUID.fromString(userDetails.username))
+        val userFindResponseDto: UserFindResponseDto =
+            userService.findUser(UUID.fromString(userDetails.username))
+
+        return ResponseEntity.ok().body(userFindResponseDto)
     }
 
     @Operation(summary = "User 정보 업데이트", description = "유저의 정보를 업데이트합니다.")
