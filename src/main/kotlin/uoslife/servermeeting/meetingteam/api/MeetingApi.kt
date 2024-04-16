@@ -555,7 +555,7 @@ class MeetingApi(
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamInformationGetResponse)
     }
 
-    @Operation(summary = "상대에게 보내는 메세지 입력")
+    @Operation(summary = "상대에게 보내는 메세지 입력(10자 이상 입력)")
     @ApiResponses(
         value =
             [
@@ -584,6 +584,12 @@ class MeetingApi(
                                             description = "유저가 일치하는 팀 정보 없음",
                                             value =
                                                 "{message: Meeting Team is not Found., status: 400, code: M06}"
+                                        ),
+                                        ExampleObject(
+                                            name = "M18",
+                                            description = "메세지 길이는 10자 이상이여야 함",
+                                            value =
+                                                "{message: Message length must be over 10., status: 400, code: M18}"
                                         )]
                             )]
                 ),

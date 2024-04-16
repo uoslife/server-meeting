@@ -72,7 +72,11 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "Team must consist of Same Gender",
         HttpStatus.BAD_REQUEST.value()
     ),
-
+    INVALID_MESSAGE_LENGTH(
+        "M18",
+        "Message length must be over 10.",
+        HttpStatus.BAD_REQUEST.value()
+    ),
     // Match
     MATCH_NOT_FOUND("MT01", "Match is not Found.", HttpStatus.BAD_REQUEST.value()),
 
@@ -108,5 +112,5 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     USER_ALREADY_HAVE_PAYMENT("P04", "User already have Payment.", HttpStatus.BAD_REQUEST.value()),
 
     // Login
-    LOG_IN_FAILED("L01", "Login failed", HttpStatus.BAD_REQUEST.value())
+    LOG_IN_FAILED("L01", "Login failed", HttpStatus.BAD_REQUEST.value()),
 }
