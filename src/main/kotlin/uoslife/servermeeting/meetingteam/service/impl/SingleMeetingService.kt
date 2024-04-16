@@ -102,6 +102,7 @@ class SingleMeetingService(
         userUUID: UUID,
         meetingTeamMessageUpdateRequest: MeetingTeamMessageUpdateRequest
     ) {
+        validator.isMessageLengthIsValid(meetingTeamMessageUpdateRequest.message)
         val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 

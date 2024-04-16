@@ -37,4 +37,10 @@ class Validator() {
             throw TeamConsistOfSameGenderException()
         }
     }
+
+    fun isMessageLengthIsValid(message: String) {
+        if (message.length < 10) {
+            throw InvalidMessageLengthException()
+        }
+    }
 }
