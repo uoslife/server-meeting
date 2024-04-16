@@ -10,10 +10,9 @@ data class UserUpdateRequest(
     @Schema(description = "성별", example = "MALE", nullable = false)
     @field:NotNull
     val gender: GenderType,
-    @Schema(description = "전화번호", example = "01047324348", nullable = false)
-    @field:NotNull
+    @Schema(description = "전화번호", example = "01047324348")
     @field:Size(max = 11)
-    val phoneNumber: String,
+    val phoneNumber: String?,
     @Schema(description = "나이", example = "26", nullable = false) @field:NotNull val age: Int,
     @Schema(description = "카카오톡 아이디", example = "__uhyun", nullable = false)
     @field:NotNull

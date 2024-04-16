@@ -8,10 +8,10 @@ import uoslife.servermeeting.user.entity.enums.StudentType
 import uoslife.servermeeting.verification.dto.University
 
 data class Preference(
-    var ageMin: Int? = 0,
-    var ageMax: Int? = 0,
-    var heightMin: Int? = 0,
-    var heightMax: Int? = 0,
+    var ageMin: Int? = null,
+    var ageMax: Int? = null,
+    var heightMin: Int? = null,
+    var heightMax: Int? = null,
     var studentType: List<StudentType>? = null,
     var university: List<University>? = null,
     var religion: List<ReligionType>? = null,
