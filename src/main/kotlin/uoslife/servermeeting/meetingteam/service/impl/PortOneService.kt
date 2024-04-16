@@ -52,7 +52,7 @@ class PortOneService(
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
         if (paymentRepository.existsByUser(user)) {
-            val payment = paymentRepository.findByUser(user)
+            val payment = paymentRepository.findByUser(user)!!
             if (payment.status.equals(PaymentStatus.SUCCESS))
                 throw UserAlreadyHavePaymentException()
             return PaymentResponseDto.PaymentRequestResponse(

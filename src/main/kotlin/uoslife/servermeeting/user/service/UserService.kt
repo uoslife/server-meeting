@@ -53,16 +53,13 @@ class UserService(
     ): UserPersonalInformation {
         val userPersonalInformation =
             UserPersonalInformation(
-                age = requestDto.age ?: existingUser.userPersonalInformation.age,
-                gender = requestDto.gender ?: existingUser.userPersonalInformation.gender,
+                age = requestDto.age,
+                gender = requestDto.gender,
                 height = requestDto.height ?: existingUser.userPersonalInformation.height,
-                studentType = requestDto.studentType
-                        ?: existingUser.userPersonalInformation.studentType,
-                kakaoTalkId = requestDto.kakaoTalkId
-                        ?: existingUser.userPersonalInformation.kakaoTalkId,
+                studentType = requestDto.studentType,
+                kakaoTalkId = requestDto.kakaoTalkId,
                 university = existingUser.userPersonalInformation.university,
-                department = requestDto.department
-                        ?: existingUser.userPersonalInformation.department,
+                department = requestDto.department,
                 religion = requestDto.religion ?: existingUser.userPersonalInformation.religion,
                 drinkingMin = requestDto.drinkingMin
                         ?: existingUser.userPersonalInformation.drinkingMin,
