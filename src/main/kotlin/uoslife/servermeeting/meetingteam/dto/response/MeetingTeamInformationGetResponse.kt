@@ -20,9 +20,7 @@ data class MeetingTeamInformationGetResponse(
 
 data class UserProfile(
     @field:NotNull @Schema(description = "유저 이름", example = "이름") val name: String,
-    @field:NotNull
-    @Schema(description = "유저 전화번호", example = "01012341234")
-    val phoneNumber: String,
+    @Schema(description = "유저 전화번호", example = "01012341234") val phoneNumber: String?,
     @field:NotNull @Schema(description = "유저 나이", example = "20") val age: Int,
     @Schema(description = "유저 키", example = "180") val height: Int?,
     @Schema(description = "대학", example = "UOS") val university: University?,

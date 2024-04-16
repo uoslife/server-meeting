@@ -5,13 +5,13 @@ import uoslife.servermeeting.user.entity.enums.*
 import uoslife.servermeeting.verification.dto.University
 
 data class UserPersonalInformation(
-    var age: Int? = null,
-    var gender: GenderType? = null,
+    var age: Int = 0,
+    var gender: GenderType = GenderType.MALE,
     var height: Int? = null,
     var kakaoTalkId: String? = null,
-    var studentType: StudentType? = null,
+    var studentType: StudentType = StudentType.UNDERGRADUATE,
     var university: University? = null,
-    var department: String? = null,
+    var department: String = "",
     var religion: ReligionType? = null,
     var drinkingMin: Int? = null,
     var drinkingMax: Int? = null,
