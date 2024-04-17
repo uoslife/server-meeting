@@ -24,7 +24,7 @@ data class UserUpdateRequest(
     @field:NotNull
     val studentType: StudentType,
     @Schema(description = "키", example = "178") val height: Int?,
-    @Schema(description = "종교", example = "") val religion: ReligionType?,
+    @Schema(description = "종교", example = "CHRISTIAN") val religion: ReligionType?,
     @Schema(description = "최소 주량(병)", example = "1") val drinkingMin: Int?,
     @Schema(description = "최대 주량(병)", example = "3") val drinkingMax: Int?,
     @Schema(description = "흡연 여부", example = "FALSE") val smoking: SmokingType?,

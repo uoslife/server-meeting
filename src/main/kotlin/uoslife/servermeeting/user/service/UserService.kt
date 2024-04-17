@@ -12,8 +12,7 @@ import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
-import uoslife.servermeeting.user.dto.response.UserFindResponseDto
-import uoslife.servermeeting.user.dto.response.toResponse
+import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserPersonalInformation
 import uoslife.servermeeting.user.exception.UserNotFoundException
@@ -28,9 +27,10 @@ class UserService(
     private val userDao: UserDao,
 ) {
 
-    fun findUser(id: UUID): ResponseEntity<UserFindResponseDto> {
+    fun findUser(id: UUID): UserFindResponse {
         val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
-        return ResponseEntity.ok(user.toResponse())
+
+        return User.toResponse(user)
     }
 
     @Transactional

@@ -1,40 +1,27 @@
 package uoslife.servermeeting.user.dto.response
 
-import uoslife.servermeeting.user.entity.User
+import io.swagger.v3.oas.annotations.media.Schema
 import uoslife.servermeeting.user.entity.enums.*
 import uoslife.servermeeting.verification.dto.University
 
-data class UserFindResponseDto(
-    val name: String?,
-    val age: Int?,
-    val height: Int?,
-    val university: University?,
-    val department: String?,
+data class UserFindResponse(
+    @Schema(description = "이름", example = "유현승") val name: String?,
+    @Schema(description = "성별", example = "MALE") val genderType: GenderType?,
+    @Schema(description = "전화번호", example = "01047324348") val phoneNumber: String?,
+    @Schema(description = "나이", example = "26") val age: Int?,
+    @Schema(description = "카카오톡 아이디", example = "__uhyun") val kakaoTalkId: String?,
+    @Schema(description = "학과", example = "컴퓨터과학부") val department: String?,
+    @Schema(description = "학생 타입(학부생, 대학원생, 졸업생", example = "UNDERGRADUATE")
     val studentType: StudentType?,
-    val kakaoTalkId: String?,
-    val smoking: SmokingType?,
-    val religion: ReligionType?,
-    val drinkingMin: Int?,
-    val drinkingMax: Int?,
+    @Schema(description = "키", example = "178") val height: Int?,
+    @Schema(description = "종교", example = "CHRISTIAN") val religion: ReligionType?,
+    @Schema(description = "최소 주량(병)", example = "1") val drinkingMin: Int?,
+    @Schema(description = "최대 주량(병)", example = "3") val drinkingMax: Int?,
+    @Schema(description = "흡연 여부", example = "FALSE") val smoking: SmokingType?,
+    @Schema(description = "동물상", example = "[\"DOG\", \"CAT\"]")
     val spiritAnimal: List<SpiritAnimalType>?,
-    val mbti: String?,
+    @Schema(description = "MBTI", example = "INFP") val mbti: String?,
+    @Schema(description = "흥미", example = "[\"EXERCISE\", \"MUSIC\"]")
     val interest: List<InterestType>?,
+    @Schema(description = "대학", example = "UOS") val university: University?,
 )
-
-fun User.toResponse() =
-    UserFindResponseDto(
-        name = name,
-        age = userPersonalInformation.age,
-        height = userPersonalInformation.height,
-        university = userPersonalInformation.university,
-        department = userPersonalInformation.department,
-        studentType = userPersonalInformation.studentType,
-        kakaoTalkId = kakaoTalkId,
-        smoking = userPersonalInformation.smoking,
-        religion = userPersonalInformation.religion,
-        drinkingMin = userPersonalInformation.drinkingMin,
-        drinkingMax = userPersonalInformation.drinkingMax,
-        spiritAnimal = userPersonalInformation.spiritAnimal,
-        mbti = userPersonalInformation.mbti,
-        interest = userPersonalInformation.interest,
-    )

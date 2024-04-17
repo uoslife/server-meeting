@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Payment
+import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.verification.dto.University
 
 @Entity
@@ -34,6 +35,30 @@ class User(
                 )
             user.userPersonalInformation.university = university
             return user
+        }
+
+        fun toResponse(user: User): UserFindResponse {
+            val userFindResponse: UserFindResponse =
+                UserFindResponse(
+                    name = user.name,
+                    genderType = user.userPersonalInformation.gender,
+                    phoneNumber = user.phoneNumber,
+                    age = user.userPersonalInformation.age,
+                    kakaoTalkId = user.kakaoTalkId,
+                    department = user.userPersonalInformation.department,
+                    studentType = user.userPersonalInformation.studentType,
+                    height = user.userPersonalInformation.height,
+                    religion = user.userPersonalInformation.religion,
+                    drinkingMin = user.userPersonalInformation.drinkingMin,
+                    drinkingMax = user.userPersonalInformation.drinkingMax,
+                    smoking = user.userPersonalInformation.smoking,
+                    spiritAnimal = user.userPersonalInformation.spiritAnimal,
+                    mbti = user.userPersonalInformation.mbti,
+                    interest = user.userPersonalInformation.interest,
+                    university = user.userPersonalInformation.university,
+                )
+
+            return userFindResponse
         }
     }
 }
