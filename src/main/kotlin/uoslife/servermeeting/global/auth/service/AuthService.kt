@@ -14,7 +14,7 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestTemplate
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
-import uoslife.servermeeting.global.auth.dto.response.UserProfileVO
+import uoslife.servermeeting.global.auth.dto.response.UserMigrationVO
 import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.jwt.TokenType
@@ -50,17 +50,17 @@ class AuthService(
     @Transactional
     fun signUpOrInFromUoslife(bearerToken: String): TokenResponse {
         // rebuild-server에서 유저 데이터 가져오기
-        val userProfileVOFromUoslife: UserProfileVO = getUserProfileFromUoslife(bearerToken)
+        val userMigrationVOFromUoslife: UserMigrationVO = getUserProfileFromUoslife(bearerToken)
 
         // 회원가입 또는 이미 되어 있을 시 유저 반환
-        val savedUser: User = createOrGetUser(userProfileVOFromUoslife)
+        val savedUser: User = createOrGetUser(userMigrationVOFromUoslife)
 
         // 토큰 발급
         val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(savedUser)
         return tokenResponse
     }
 
-    private fun getUserProfileFromUoslife(bearerToken: String): UserProfileVO {
+    private fun getUserProfileFromUoslife(bearerToken: String): UserMigrationVO {
         val restTemplate: RestTemplate = RestTemplate()
 
         // request header
@@ -68,16 +68,16 @@ class AuthService(
 
         // 리빌드 서버에서 유저 정보 가져오기
         try {
-            val responseEntity: ResponseEntity<UserProfileVO> =
+            val responseEntity: ResponseEntity<UserMigrationVO> =
                 restTemplate.exchange(
                     UOSLIFE_URL,
                     HttpMethod.GET,
                     org.springframework.http.HttpEntity<Any>(headers),
-                    UserProfileVO::class.java
+                    UserMigrationVO::class.java
                 )
-            val userProfileVO: UserProfileVO = responseEntity.body!!
+            val userMigrationVO: UserMigrationVO = responseEntity.body!!
 
-            return userProfileVO
+            return userMigrationVO
         } catch (e: HttpClientErrorException) {
             logger.info("HttpClientErrorExcpetion: UosLife로부터 통신 에러")
             throw ExternalApiFailedException()
@@ -99,20 +99,20 @@ class AuthService(
         return headers
     }
 
-    private fun createOrGetUser(userProfileVO: UserProfileVO): User {
+    private fun createOrGetUser(userMigrationVO: UserMigrationVO): User {
         // DB에 검색해서 있으면 가져오고 없으면 생성(회원가입)
         val user: User =
-            userRepository.findByPhoneNumber(userProfileVO.phone) ?: createUser(userProfileVO)
+            userRepository.findByPhoneNumber(userMigrationVO.phone) ?: createUser(userMigrationVO)
 
         return user
     }
 
-    private fun createUser(userProfileVO: UserProfileVO): User {
+    private fun createUser(userMigrationVO: UserMigrationVO): User {
         val user: User =
             User(
                 id = UUID.randomUUID(),
-                phoneNumber = userProfileVO.phone,
-                name = userProfileVO.name
+                phoneNumber = userMigrationVO.phone,
+                name = userMigrationVO.name
             )
         user.userPersonalInformation.university = University.UOS
         val savedUser: User = userRepository.save(user)

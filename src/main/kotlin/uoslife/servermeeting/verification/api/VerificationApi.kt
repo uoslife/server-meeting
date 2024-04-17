@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -37,7 +38,7 @@ class VerificationApi(
         value =
             [
                 ApiResponse(
-                    responseCode = "200",
+                    responseCode = "204",
                     description = "메일로 인증 코드 전송 성공",
                     content =
                         [
@@ -65,8 +66,10 @@ class VerificationApi(
     @PostMapping("/send")
     fun sendMail(
         @RequestBody @Valid verificationCodeSendRequest: VerificationCodeSendRequest
-    ): ResponseEntity<VerificationCodeSendResponse> {
-        return ResponseEntity.ok().body(verificationService.sendMail(verificationCodeSendRequest))
+    ): ResponseEntity<Unit> {
+        verificationService.sendMail(verificationCodeSendRequest)
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     @Operation(
