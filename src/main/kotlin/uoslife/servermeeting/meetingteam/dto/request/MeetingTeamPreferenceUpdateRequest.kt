@@ -11,8 +11,8 @@ import uoslife.servermeeting.user.entity.enums.StudentType
 import uoslife.servermeeting.verification.dto.University
 
 class MeetingTeamPreferenceUpdateRequest(
-    @Schema(description = "최소 나이", example = "20", nullable = false) val ageMin: Int,
-    @Schema(description = "최대 나이", example = "30", nullable = false) val ageMax: Int,
+    @Schema(description = "최소 나이", example = "20", nullable = false) @field:NotNull val ageMin: Int,
+    @Schema(description = "최대 나이", example = "30", nullable = false) @field:NotNull val ageMax: Int,
     @Schema(description = "최소 키", example = "130") val heightMin: Int?,
     @Schema(description = "최대 키", example = "210") val heightMax: Int?,
     @Schema(description = "신분", example = "[\"UNDERGRADUATE\", \"POSTGRADUATE\"]")
