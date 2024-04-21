@@ -254,18 +254,9 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
         value =
             [
                 ApiResponse(
-                    responseCode = "200",
-                    description = "환볼 성공/실패 수, 각 환불정보 제공료",
-                    content =
-                        [
-                            Content(
-                                schema =
-                                    Schema(
-                                        implementation =
-                                            PaymentResponseDto
-                                                .PaymentNotMatchingRefundResponse::class
-                                    )
-                            )]
+                    responseCode = "204",
+                    description = "반환값 없음",
+                    content = [Content(schema = Schema(implementation = Unit::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
@@ -300,7 +291,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
             ]
     )
     @PostMapping("/refund/match")
-    fun refundPayment(): ResponseEntity<PaymentResponseDto.PaymentNotMatchingRefundResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(paymentService.refundPayment())
+    fun refundPayment(): ResponseEntity<Unit> {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }

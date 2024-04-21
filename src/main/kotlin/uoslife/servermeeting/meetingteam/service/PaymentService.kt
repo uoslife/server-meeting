@@ -14,5 +14,5 @@ interface PaymentService {
         paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
     ): PaymentResponseDto.PaymentCheckResponse
     fun refundPaymentByPhoneNumber(phoneNumber: String): PaymentResponseDto.PaymentRefundResponse
-    fun refundPayment(): PaymentResponseDto.PaymentNotMatchingRefundResponse
+    fun refundPayment(): Unit
 }

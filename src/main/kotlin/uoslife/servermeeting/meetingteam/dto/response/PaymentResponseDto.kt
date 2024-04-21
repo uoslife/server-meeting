@@ -29,11 +29,4 @@ class PaymentResponseDto {
         var cancelSuccess: Boolean,
         @Schema(description = "환불 실패 시 메세지", example = "") var message: String,
     )
-
-    data class PaymentNotMatchingRefundResponse(
-        @Schema(description = "환불 성공 수", example = "10") @field:NotNull val successCount: Int,
-        @Schema(description = "환불 실패 수", example = "10") @field:NotNull val failedCount: Int,
-        @Schema(description = "환불 실패 시 메세지", example = "")
-        val refundList: List<PaymentRefundResponse>,
-    )
 }
