@@ -97,15 +97,15 @@ class PortOneService(
         val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
         val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
 
-        val response = checkPaymentByPortOne(paymentCheckRequest.impUid)
+        try {
+            checkPaymentByPortOne(paymentCheckRequest.impUid)
 
-        if (response.code == 0) {
             payment.impUid = paymentCheckRequest.impUid
             payment.status = PaymentStatus.SUCCESS
             return PaymentResponseDto.PaymentCheckResponse(true, "")
-        } else {
+        } catch (e: Exception) {
             payment.status = PaymentStatus.FAILED
-            return PaymentResponseDto.PaymentCheckResponse(false, response.message!!)
+            return PaymentResponseDto.PaymentCheckResponse(false, "")
         }
     }
 
@@ -143,14 +143,14 @@ class PortOneService(
             throw PaymentInValidException()
         }
 
-        val response = refundPaymentByPortOne(payment)
+        try {
+            refundPaymentByPortOne(payment)
 
-        if (response.code == 0) {
             payment.status = PaymentStatus.REFUND
             return PaymentResponseDto.PaymentRefundResponse(true, "")
-        } else {
-            payment.status = PaymentStatus.FAILED
-            return PaymentResponseDto.PaymentRefundResponse(false, response.message!!)
+        } catch (e: Exception) {
+            payment.status = PaymentStatus.REFUND_FAILED
+            return PaymentResponseDto.PaymentRefundResponse(false, "")
         }
     }
 
@@ -176,35 +176,22 @@ class PortOneService(
     }
 
     @Transactional
-    override fun refundPayment(): PaymentResponseDto.PaymentNotMatchingRefundResponse {
+    override fun refundPayment(): Unit {
         val userList =
             userDao.findNotMatchedUserInMeetingTeam(
                 meetingTeamDao.findNotMatchedMaleMeetingTeam() +
                     meetingTeamDao.findNotMatchedFeMaleMeetingTeam()
             )
 
-        val refundList =
-            userList.map { user ->
-                val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
-                val response = refundPaymentByPortOne(payment)
-
-                if (response.code == 0) {
-                    payment.status = PaymentStatus.REFUND
-                    PaymentResponseDto.PaymentRefundResponse(true, "")
-                } else {
-                    payment.status = PaymentStatus.FAILED
-                    PaymentResponseDto.PaymentRefundResponse(false, response.message!!)
-                }
+        userList.map { user ->
+            val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
+            try {
+                refundPaymentByPortOne(payment)
+                payment.status = PaymentStatus.REFUND
+            } catch (e: Exception) {
+                payment.status = PaymentStatus.REFUND_FAILED
             }
-
-        val successCount = refundList.count { it.cancelSuccess }
-        val failedCount = refundList.size - successCount
-
-        return PaymentResponseDto.PaymentNotMatchingRefundResponse(
-            successCount,
-            failedCount,
-            refundList
-        )
+        }
     }
 
     fun findAccessToken(): String {
@@ -222,10 +209,6 @@ class PortOneService(
         val responseEntity =
             restTemplate.exchange(requestEntity, PortOneResponseDto.AccessTokenResponse::class.java)
         val responseBody = responseEntity.body!!
-
-        if (responseBody.code != 0) {
-            throw AccessTokenNotFoundException()
-        }
         return "Bearer " + responseBody.response!!.access_token
     }
 }
