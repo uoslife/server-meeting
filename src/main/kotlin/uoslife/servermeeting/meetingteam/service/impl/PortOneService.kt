@@ -22,6 +22,7 @@ import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
+import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.user.dao.UserDao
@@ -35,6 +36,7 @@ class PortOneService(
     private val userDao: UserDao,
     private val meetingTeamDao: MeetingTeamDao,
     private val paymentRepository: PaymentRepository,
+    private val meetingTeamRepository: MeetingTeamRepository,
     @Value("\${portone.api.url}") private val url: String,
     @Value("\${portone.api.price.single}") private val singlePrice: Int,
     @Value("\${portone.api.price.triple}") private val triplePrice: Int,
@@ -133,15 +135,22 @@ class PortOneService(
     }
 
     @Transactional
-    override fun refundPaymentByPhoneNumber(
-        phoneNumber: String
+    override fun refundPaymentByToken(
+        userUUID: UUID,
     ): PaymentResponseDto.PaymentRefundResponse {
-        val user = userRepository.findByPhoneNumber(phoneNumber) ?: throw UserNotFoundException()
+        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
         val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
+        val team = user.team ?: throw MeetingTeamNotFoundException()
 
         if (!payment.status.equals(PaymentStatus.SUCCESS)) {
             throw PaymentInValidException()
         }
+
+        when (team.type) {
+            TeamType.SINGLE -> user.team = null
+            TeamType.TRIPLE -> team.users.forEach { it.team = null }
+        }
+        meetingTeamRepository.delete(team)
 
         try {
             refundPaymentByPortOne(payment)
