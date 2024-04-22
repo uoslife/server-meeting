@@ -203,6 +203,32 @@ class PortOneService(
         }
     }
 
+    override fun verifyPayment(userUUID: UUID): PaymentResponseDto.PaymentRequestResponse {
+        // 미팅팀이 없으면, 신청하기 버튼
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val team = user.team ?: throw MeetingTeamNotFoundException()
+        val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
+
+        val payment =
+            when (team.type) {
+                TeamType.SINGLE -> paymentRepository.findByUser(user)
+                TeamType.TRIPLE -> paymentRepository.findByUser(team.leader!!)
+            }
+                ?: throw PaymentNotFoundException()
+
+        // 결제가 이미 성공했다면, 신청 정보 확인하기 버튼
+        if (payment.status.equals(PaymentStatus.SUCCESS)) throw UserAlreadyHavePaymentException()
+
+        // 결제가 저장되어 있지만 결제 승인 확인 안됐다면, 결제 검증
+        return PaymentResponseDto.PaymentRequestResponse(
+            payment.marchantUid!!,
+            payment.price!!,
+            phoneNumber,
+            user.name,
+            team.type
+        )
+    }
+
     fun findAccessToken(): String {
         val restTemplate = RestTemplate()
 

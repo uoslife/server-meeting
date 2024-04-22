@@ -15,4 +15,5 @@ interface PaymentService {
     ): PaymentResponseDto.PaymentCheckResponse
     fun refundPaymentByToken(userUUID: UUID): PaymentResponseDto.PaymentRefundResponse
     fun refundPayment(): Unit
+    fun verifyPayment(userUUID: UUID): PaymentResponseDto.PaymentRequestResponse
 }
