@@ -27,7 +27,10 @@ class UserDao(
             .leftJoin(user.team, meetingTeam)
             .fetchJoin()
             .where(
-                user.payment.status.eq(PaymentStatus.SUCCESS).and(meetingTeam.`in`(meetingTeamList))
+                user.payment.status
+                    .eq(PaymentStatus.SUCCESS)
+                    .or(user.payment.status.eq(PaymentStatus.REFUND_FAILED))
+                    .and(meetingTeam.`in`(meetingTeamList))
             )
             .fetch()
     }

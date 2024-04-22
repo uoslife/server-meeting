@@ -5,5 +5,6 @@ enum class PaymentStatus {
     REQUEST,
     SUCCESS,
     FAILED,
+    REFUND_FAILED,
     REFUND,
 }
