@@ -146,13 +146,13 @@ class PortOneService(
             throw PaymentInValidException()
         }
 
-        when (team.type) {
-            TeamType.SINGLE -> user.team = null
-            TeamType.TRIPLE -> team.users.forEach { it.team = null }
-        }
-        meetingTeamRepository.delete(team)
-
         try {
+            when (team.type) {
+                TeamType.SINGLE -> user.team = null
+                TeamType.TRIPLE -> team.users.forEach { it.team = null }
+            }
+            meetingTeamRepository.delete(team)
+
             refundPaymentByPortOne(payment)
 
             payment.status = PaymentStatus.REFUND
