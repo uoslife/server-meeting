@@ -22,6 +22,7 @@ import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
+import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.user.dao.UserDao
@@ -35,6 +36,7 @@ class PortOneService(
     private val userDao: UserDao,
     private val meetingTeamDao: MeetingTeamDao,
     private val paymentRepository: PaymentRepository,
+    private val meetingTeamRepository: MeetingTeamRepository,
     @Value("\${portone.api.url}") private val url: String,
     @Value("\${portone.api.price.single}") private val singlePrice: Int,
     @Value("\${portone.api.price.triple}") private val triplePrice: Int,
@@ -133,17 +135,24 @@ class PortOneService(
     }
 
     @Transactional
-    override fun refundPaymentByPhoneNumber(
-        phoneNumber: String
+    override fun refundPaymentByToken(
+        userUUID: UUID,
     ): PaymentResponseDto.PaymentRefundResponse {
-        val user = userRepository.findByPhoneNumber(phoneNumber) ?: throw UserNotFoundException()
+        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
         val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
+        val team = user.team ?: throw MeetingTeamNotFoundException()
 
         if (!payment.status.equals(PaymentStatus.SUCCESS)) {
             throw PaymentInValidException()
         }
 
         try {
+            when (team.type) {
+                TeamType.SINGLE -> user.team = null
+                TeamType.TRIPLE -> team.users.forEach { it.team = null }
+            }
+            meetingTeamRepository.delete(team)
+
             refundPaymentByPortOne(payment)
 
             payment.status = PaymentStatus.REFUND
@@ -192,6 +201,32 @@ class PortOneService(
                 payment.status = PaymentStatus.REFUND_FAILED
             }
         }
+    }
+
+    override fun verifyPayment(userUUID: UUID): PaymentResponseDto.PaymentRequestResponse {
+        // 미팅팀이 없으면, 신청하기 버튼
+        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val team = user.team ?: throw MeetingTeamNotFoundException()
+        val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
+
+        val payment =
+            when (team.type) {
+                TeamType.SINGLE -> paymentRepository.findByUser(user)
+                TeamType.TRIPLE -> paymentRepository.findByUser(team.leader!!)
+            }
+                ?: throw PaymentNotFoundException()
+
+        // 결제가 이미 성공했다면, 신청 정보 확인하기 버튼
+        if (payment.status.equals(PaymentStatus.SUCCESS)) throw UserAlreadyHavePaymentException()
+
+        // 결제가 저장되어 있지만 결제 승인 확인 안됐다면, 결제 검증
+        return PaymentResponseDto.PaymentRequestResponse(
+            payment.marchantUid!!,
+            payment.price!!,
+            phoneNumber,
+            user.name,
+            team.type
+        )
     }
 
     fun findAccessToken(): String {

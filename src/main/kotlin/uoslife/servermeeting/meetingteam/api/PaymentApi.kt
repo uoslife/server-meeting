@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -242,11 +243,13 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
             ]
     )
     @PostMapping("/refund")
-    fun refundPaymentByPhoneNumber(
-        @RequestBody paymentRefundRequest: PaymentRequestDto.PaymentRefundRequest
+    fun refundPaymentByToken(
+        @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<PaymentResponseDto.PaymentRefundResponse> {
+        val userUUID = UUID.fromString(userDetails.username)
+
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.refundPaymentByPhoneNumber(paymentRefundRequest.phoneNumber))
+            .body(paymentService.refundPaymentByToken(userUUID))
     }
 
     @Operation(summary = "매칭 안된 유저 결제 취소 API", description = "매칭이 되지않은 모든 유저에 대해 환불합니다")
@@ -292,6 +295,91 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
     )
     @PostMapping("/refund/match")
     fun refundPayment(): ResponseEntity<Unit> {
+        paymentService.refundPayment()
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @Operation(summary = "결제 여부 확인 API", description = "결제 여부를 확인할 수 있습니다")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "결제 요청은 했지만 결제 검증안됨",
+                    content =
+                        [
+                            Content(
+                                schema =
+                                    Schema(
+                                        implementation =
+                                            PaymentResponseDto.PaymentRequestResponse::class
+                                    )
+                            )]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "적절한 정보 없음",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            name = "U02",
+                                            description = "해당 유저 정보 없음",
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        ),
+                                        ExampleObject(
+                                            name = "U02",
+                                            description = "미팅팀 정보 없음",
+                                            value =
+                                                "{message: User is not Found., status: 400, code: M06}"
+                                        ),
+                                        ExampleObject(
+                                            name = "M06",
+                                            description = "유저 전화번호 정보 없음",
+                                            value =
+                                                "{message: Phone Number is not found., status: 400, code: U06}"
+                                        ),
+                                        ExampleObject(
+                                            name = "P01",
+                                            description = "결제 정보 없음",
+                                            value =
+                                                "{message: Payment is not Found., status: 400, code: P01}"
+                                        ),
+                                        ExampleObject(
+                                            name = "P04",
+                                            description = "이미 결제 완료함",
+                                            value =
+                                                "{message: User already have Payment., status: 400, code: P04}"
+                                        )]
+                            )]
+                ),
+                ApiResponse(
+                    responseCode = "401",
+                    description = "부적절한 토큰 정보",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Token is not valid., status: 401, code: T01}"
+                                        )]
+                            )]
+                ),
+            ]
+    )
+    @GetMapping("/verify")
+    fun verifyPayment(
+        @AuthenticationPrincipal userDetails: UserDetails
+    ): ResponseEntity<PaymentResponseDto.PaymentRequestResponse> {
+        val userUUID = UUID.fromString(userDetails.username)
+
+        return ResponseEntity.status(HttpStatus.OK).body(paymentService.verifyPayment(userUUID))
     }
 }
