@@ -36,7 +36,7 @@ class AuthApi(
                 ApiResponse(
                     responseCode = "200",
                     description = "토큰 반환",
-                    content = [Content(schema = Schema(implementation = TokenResponse::class))]
+                    content = [Content(schema = Schema(implementation = AccessTokenResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
@@ -90,7 +90,7 @@ class AuthApi(
                 ApiResponse(
                     responseCode = "200",
                     description = "토큰 반환",
-                    content = [Content(schema = Schema(implementation = TokenResponse::class))]
+                    content = [Content(schema = Schema(implementation = AccessTokenResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "401",
