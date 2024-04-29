@@ -6,11 +6,7 @@ import java.util.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.RequestEntity
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
@@ -25,6 +21,7 @@ import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
+import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
@@ -37,12 +34,16 @@ class PortOneService(
     private val meetingTeamDao: MeetingTeamDao,
     private val paymentRepository: PaymentRepository,
     private val meetingTeamRepository: MeetingTeamRepository,
+    private val validator: Validator,
     @Value("\${portone.api.url}") private val url: String,
     @Value("\${portone.api.price.single}") private val singlePrice: Int,
     @Value("\${portone.api.price.triple}") private val triplePrice: Int,
     @Value("\${portone.api.imp.key}") private val impKey: String,
     @Value("\${portone.api.imp.secret}") private val impSecret: String,
 ) : PaymentService {
+    companion object {
+        val restTemplate = RestTemplate()
+    }
 
     @Transactional
     override fun requestPayment(
@@ -53,13 +54,11 @@ class PortOneService(
         val team = user.team ?: throw MeetingTeamNotFoundException()
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
-        if (paymentRepository.existsByUser(user)) {
-            val payment = paymentRepository.findByUser(user)!!
-            if (payment.status.equals(PaymentStatus.SUCCESS))
-                throw UserAlreadyHavePaymentException()
+        paymentRepository.findByUser(user)?.let {
+            if (validator.isAlreadyPaid(it)) throw UserAlreadyHavePaymentException()
             return PaymentResponseDto.PaymentRequestResponse(
-                payment.marchantUid!!,
-                payment.price!!,
+                it.marchantUid!!,
+                it.price!!,
                 phoneNumber,
                 user.name,
                 team.type
@@ -68,16 +67,15 @@ class PortOneService(
 
         val payment =
             Payment.createPayment(
-                user = user,
-                pg = paymentRequestPaymentRequest.pg,
-                payMethod = paymentRequestPaymentRequest.payMethod,
-                marchantUid = UUID.randomUUID().toString(),
-                price =
-                    when (team.type) {
-                        TeamType.SINGLE -> singlePrice
-                        TeamType.TRIPLE -> triplePrice
-                    },
-                status = PaymentStatus.REQUEST,
+                user,
+                paymentRequestPaymentRequest.pg,
+                paymentRequestPaymentRequest.payMethod,
+                UUID.randomUUID().toString(),
+                when (team.type) {
+                    TeamType.SINGLE -> singlePrice
+                    TeamType.TRIPLE -> triplePrice
+                },
+                PaymentStatus.REQUEST,
             )
 
         paymentRepository.save(payment)
@@ -111,29 +109,6 @@ class PortOneService(
         }
     }
 
-    fun checkPaymentByPortOne(impUid: String): PortOneResponseDto.SingleHistoryResponse {
-        val restTemplate = RestTemplate()
-        val header =
-            HttpHeaders().apply {
-                set("Authorization", findAccessToken())
-                set("Content-Type", "application/json")
-            }
-
-        val requestEntity = HttpEntity(null, header)
-
-        val uri = url + "/payments/" + impUid
-
-        val responseEntity: ResponseEntity<PortOneResponseDto.SingleHistoryResponse> =
-            restTemplate.exchange(
-                uri,
-                HttpMethod.GET,
-                requestEntity,
-                PortOneResponseDto.SingleHistoryResponse::class.java
-            )
-
-        return responseEntity.body!!
-    }
-
     @Transactional
     override fun refundPaymentByToken(
         userUUID: UUID,
@@ -142,9 +117,7 @@ class PortOneService(
         val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
         val team = user.team ?: throw MeetingTeamNotFoundException()
 
-        if (!payment.status.equals(PaymentStatus.SUCCESS)) {
-            throw PaymentInValidException()
-        }
+        if (!validator.isAlreadyPaid(payment)) throw PaymentInValidException()
 
         try {
             when (team.type) {
@@ -163,29 +136,8 @@ class PortOneService(
         }
     }
 
-    fun refundPaymentByPortOne(payment: Payment): PortOneResponseDto.RefundResponse {
-        val restTemplate = RestTemplate()
-
-        val header =
-            HttpHeaders().apply {
-                set("Authorization", findAccessToken())
-                set("Content-Type", "application/json")
-            }
-
-        val requestBody = PortOneRequestDto.RefundRequest(payment.impUid, 0)
-
-        val requestEntity: RequestEntity<PortOneRequestDto.RefundRequest> =
-            RequestEntity.post(URI.create(url + "/payments/cancel"))
-                .headers(header)
-                .body(requestBody)
-
-        val responseEntity =
-            restTemplate.exchange(requestEntity, PortOneResponseDto.RefundResponse::class.java)
-        return responseEntity.body!!
-    }
-
     @Transactional
-    override fun refundPayment(): Unit {
+    override fun refundPayment() {
         val userList =
             userDao.findNotMatchedUserInMeetingTeam(
                 meetingTeamDao.findNotMatchedMaleMeetingTeam() +
@@ -217,7 +169,7 @@ class PortOneService(
                 ?: throw PaymentNotFoundException()
 
         // 결제가 이미 성공했다면, 신청 정보 확인하기 버튼
-        if (payment.status.equals(PaymentStatus.SUCCESS)) throw UserAlreadyHavePaymentException()
+        if (validator.isAlreadyPaid(payment)) throw UserAlreadyHavePaymentException()
 
         // 결제가 저장되어 있지만 결제 승인 확인 안됐다면, 결제 검증
         return PaymentResponseDto.PaymentRequestResponse(
@@ -229,9 +181,48 @@ class PortOneService(
         )
     }
 
-    fun findAccessToken(): String {
-        val restTemplate = RestTemplate()
+    fun checkPaymentByPortOne(impUid: String): PortOneResponseDto.SingleHistoryResponse {
+        val header =
+            HttpHeaders().apply {
+                set("Authorization", findAccessToken())
+                set("Content-Type", "application/json")
+            }
 
+        val requestEntity = HttpEntity(null, header)
+
+        val uri = url + "/payments/" + impUid
+
+        val responseEntity: ResponseEntity<PortOneResponseDto.SingleHistoryResponse> =
+            restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                requestEntity,
+                PortOneResponseDto.SingleHistoryResponse::class.java
+            )
+
+        return responseEntity.body!!
+    }
+
+    fun refundPaymentByPortOne(payment: Payment): PortOneResponseDto.RefundResponse {
+        val header =
+            HttpHeaders().apply {
+                set("Authorization", findAccessToken())
+                set("Content-Type", "application/json")
+            }
+
+        val requestBody = PortOneRequestDto.RefundRequest(payment.impUid, 0)
+
+        val requestEntity: RequestEntity<PortOneRequestDto.RefundRequest> =
+            RequestEntity.post(URI.create(url + "/payments/cancel"))
+                .headers(header)
+                .body(requestBody)
+
+        val responseEntity =
+            restTemplate.exchange(requestEntity, PortOneResponseDto.RefundResponse::class.java)
+        return responseEntity.body!!
+    }
+
+    fun findAccessToken(): String {
         val header = HttpHeaders().apply { set("Content-Type", "application/json") }
 
         val requestBody = PortOneRequestDto.AccessTokenRequest(impKey, impSecret)

@@ -14,7 +14,6 @@ import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetR
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUser
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.meetingteam.dto.vo.MeetingTeamUsers
-import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
@@ -118,10 +117,8 @@ class TripleMeetingService(
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val information =
-            Information(
-                gender = user.userPersonalInformation.gender,
-                meetingTeamInformationUpdateRequest.toMap()
-            )
+            meetingTeamInformationUpdateRequest.toInformation(user.userPersonalInformation.gender)
+
         meetingTeam.information = information
     }
 

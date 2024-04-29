@@ -12,7 +12,6 @@ import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdate
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
-import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
@@ -76,10 +75,7 @@ class SingleMeetingService(
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val information =
-            Information(
-                gender = user.userPersonalInformation.gender,
-                meetingTeamInformationUpdateRequest.toMap()
-            )
+            meetingTeamInformationUpdateRequest.toInformation(user.userPersonalInformation.gender)
 
         meetingTeam.information = information
     }

@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Payment
+import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.verification.dto.University
 
@@ -60,5 +61,11 @@ class User(
 
             return userFindResponse
         }
+    }
+    fun update(requestDto: UserUpdateRequest, newUserPersonalInformation: UserPersonalInformation) {
+        name = requestDto.name
+        phoneNumber = requestDto.phoneNumber ?: phoneNumber
+        kakaoTalkId = requestDto.kakaoTalkId
+        userPersonalInformation = newUserPersonalInformation
     }
 }
