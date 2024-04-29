@@ -40,36 +40,14 @@ class UserService(
         val userPersonalInformation: UserPersonalInformation =
             updateUserPersonalInformationWithDto(existingUser, requestDto)
 
-        existingUser.name = requestDto.name ?: existingUser.name
-        existingUser.phoneNumber = requestDto.phoneNumber ?: existingUser.phoneNumber
-        existingUser.kakaoTalkId = requestDto.kakaoTalkId ?: existingUser.kakaoTalkId
-        existingUser.userPersonalInformation = userPersonalInformation
+        existingUser.update(requestDto, userPersonalInformation)
     }
 
     private fun updateUserPersonalInformationWithDto(
         existingUser: User,
         requestDto: UserUpdateRequest
     ): UserPersonalInformation {
-        val userPersonalInformation =
-            UserPersonalInformation(
-                age = requestDto.age,
-                gender = requestDto.gender,
-                height = requestDto.height ?: existingUser.userPersonalInformation.height,
-                studentType = requestDto.studentType,
-                kakaoTalkId = requestDto.kakaoTalkId,
-                university = existingUser.userPersonalInformation.university,
-                department = requestDto.department,
-                religion = requestDto.religion ?: existingUser.userPersonalInformation.religion,
-                drinkingMin = requestDto.drinkingMin
-                        ?: existingUser.userPersonalInformation.drinkingMin,
-                drinkingMax = requestDto.drinkingMax
-                        ?: existingUser.userPersonalInformation.drinkingMax,
-                smoking = requestDto.smoking ?: existingUser.userPersonalInformation.smoking,
-                spiritAnimal = requestDto.spiritAnimal
-                        ?: existingUser.userPersonalInformation.spiritAnimal,
-                mbti = requestDto.mbti ?: existingUser.userPersonalInformation.mbti,
-                interest = requestDto.interest ?: existingUser.userPersonalInformation.interest,
-            )
+        val userPersonalInformation = requestDto.toUserPersonalInformation(existingUser)
 
         return userPersonalInformation
     }
