@@ -44,7 +44,6 @@ class PortOneService(
     companion object {
         val restTemplate = RestTemplate()
     }
-
     @Transactional
     override fun requestPayment(
         userUUID: UUID,
