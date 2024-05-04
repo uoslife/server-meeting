@@ -71,9 +71,7 @@ class UserService(
         existingUser: User,
         requestDto: UserUpdateRequest
     ): UserPersonalInformation {
-        val userPersonalInformation = requestDto.toUserPersonalInformation(existingUser)
-
-        return userPersonalInformation
+        return requestDto.toUserPersonalInformation(existingUser)
     }
 
     @Transactional
