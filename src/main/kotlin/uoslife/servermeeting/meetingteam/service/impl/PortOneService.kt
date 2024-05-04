@@ -9,7 +9,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
 import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
 import uoslife.servermeeting.global.error.RestTemplateErrorHandler
 import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
@@ -182,9 +181,7 @@ class PortOneService(
     }
 
     fun checkPaymentByPortOne(impUid: String): PortOneResponseDto.SingleHistoryResponse {
-        val restTemplate = RestTemplateBuilder()
-            .errorHandler(restTemplateErrorHandler)
-            .build()
+        val restTemplate = RestTemplateBuilder().errorHandler(restTemplateErrorHandler).build()
 
         val header =
             HttpHeaders().apply {
@@ -208,9 +205,7 @@ class PortOneService(
     }
 
     fun refundPaymentByPortOne(payment: Payment): PortOneResponseDto.RefundResponse {
-        val restTemplate = RestTemplateBuilder()
-            .errorHandler(restTemplateErrorHandler)
-            .build()
+        val restTemplate = RestTemplateBuilder().errorHandler(restTemplateErrorHandler).build()
 
         val header =
             HttpHeaders().apply {
@@ -231,9 +226,7 @@ class PortOneService(
     }
 
     fun findAccessToken(): String {
-        val restTemplate = RestTemplateBuilder()
-            .errorHandler(restTemplateErrorHandler)
-            .build()
+        val restTemplate = RestTemplateBuilder().errorHandler(restTemplateErrorHandler).build()
 
         val header = HttpHeaders().apply { set("Content-Type", "application/json") }
 

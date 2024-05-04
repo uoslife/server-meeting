@@ -6,8 +6,6 @@ import org.springframework.http.client.ClientHttpResponse
 import org.springframework.stereotype.Component
 import org.springframework.web.client.ResponseErrorHandler
 import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
-import uoslife.servermeeting.global.error.exception.BusinessException
-import uoslife.servermeeting.global.error.exception.ErrorCode
 
 @Component
 class RestTemplateErrorHandler : ResponseErrorHandler {

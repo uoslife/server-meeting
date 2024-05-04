@@ -1,12 +1,11 @@
 package uoslife.servermeeting.user.service
 
-import org.springframework.boot.web.client.RestTemplateBuilder
 import java.util.*
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.client.RestTemplate
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.error.RestTemplateErrorHandler
@@ -114,9 +113,7 @@ class UserService(
     }
 
     private fun findUserByAccount(accessToken: String): AccountResponse {
-        val restTemplate = RestTemplateBuilder()
-            .errorHandler(restTemplateErrorHandler)
-            .build()
+        val restTemplate = RestTemplateBuilder().errorHandler(restTemplateErrorHandler).build()
 
         val header =
             HttpHeaders().apply {
