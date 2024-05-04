@@ -5,11 +5,13 @@ import java.net.URI
 import java.util.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
+import uoslife.servermeeting.global.error.RestTemplateErrorHandler
 import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.PaymentRequestDto
 import uoslife.servermeeting.meetingteam.dto.request.PortOneRequestDto
@@ -36,15 +38,13 @@ class PortOneService(
     private val paymentRepository: PaymentRepository,
     private val meetingTeamRepository: MeetingTeamRepository,
     private val validator: Validator,
+    private val restTemplateErrorHandler: RestTemplateErrorHandler,
     @Value("\${portone.api.url}") private val url: String,
     @Value("\${portone.api.price.single}") private val singlePrice: Int,
     @Value("\${portone.api.price.triple}") private val triplePrice: Int,
     @Value("\${portone.api.imp.key}") private val impKey: String,
     @Value("\${portone.api.imp.secret}") private val impSecret: String,
 ) : PaymentService {
-    companion object {
-        val restTemplate = RestTemplate()
-    }
     @Transactional
     override fun requestPayment(
         userUUID: UUID,
@@ -182,6 +182,10 @@ class PortOneService(
     }
 
     fun checkPaymentByPortOne(impUid: String): PortOneResponseDto.SingleHistoryResponse {
+        val restTemplate = RestTemplateBuilder()
+            .errorHandler(restTemplateErrorHandler)
+            .build()
+
         val header =
             HttpHeaders().apply {
                 set("Authorization", findAccessToken())
@@ -204,6 +208,10 @@ class PortOneService(
     }
 
     fun refundPaymentByPortOne(payment: Payment): PortOneResponseDto.RefundResponse {
+        val restTemplate = RestTemplateBuilder()
+            .errorHandler(restTemplateErrorHandler)
+            .build()
+
         val header =
             HttpHeaders().apply {
                 set("Authorization", findAccessToken())
@@ -223,6 +231,10 @@ class PortOneService(
     }
 
     fun findAccessToken(): String {
+        val restTemplate = RestTemplateBuilder()
+            .errorHandler(restTemplateErrorHandler)
+            .build()
+
         val header = HttpHeaders().apply { set("Content-Type", "application/json") }
 
         val requestBody = PortOneRequestDto.AccessTokenRequest(impKey, impSecret)

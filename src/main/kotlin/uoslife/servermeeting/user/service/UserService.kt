@@ -1,5 +1,6 @@
 package uoslife.servermeeting.user.service
 
+import org.springframework.boot.web.client.RestTemplateBuilder
 import java.util.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
 import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
+import uoslife.servermeeting.global.error.RestTemplateErrorHandler
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
@@ -30,12 +32,9 @@ class UserService(
     private val paymentRepository: PaymentRepository,
     private val meetingTeamRepository: MeetingTeamRepository,
     private val userDao: UserDao,
-    private val tokenProvider: TokenProvider
+    private val tokenProvider: TokenProvider,
+    private val restTemplateErrorHandler: RestTemplateErrorHandler
 ) {
-    companion object {
-        val restTemplate = RestTemplate()
-    }
-
     @Transactional
     fun createUser(createUserRequest: CreateUserRequest): TokenResponse {
         // 계정 서비스에서 유저 정보 받아오기
@@ -115,6 +114,10 @@ class UserService(
     }
 
     private fun findUserByAccount(accessToken: String): AccountResponse {
+        val restTemplate = RestTemplateBuilder()
+            .errorHandler(restTemplateErrorHandler)
+            .build()
+
         val header =
             HttpHeaders().apply {
                 set("Authorization", "Bearer" + accessToken)
