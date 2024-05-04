@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
+import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
 import uoslife.servermeeting.global.error.ErrorResponse
+import uoslife.servermeeting.user.dto.request.CreateUserRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.service.UserService
@@ -23,6 +25,42 @@ import uoslife.servermeeting.user.service.UserService
 @RequestMapping("/api/user")
 class UserApi(private val userService: UserService) {
 
+    @Operation(summary = "User 생성", description = "계정 서비스에 있는 User를 조회하여 User를 생성합니다")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "유저 생성 성공",
+                    content =
+                        [Content(schema = Schema(implementation = AccessTokenResponse::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status: 400, code: U02}"
+                                        )]
+                            )]
+                ),
+            ]
+    )
+    @PostMapping
+    fun createUser(
+        @RequestBody createUserRequest: CreateUserRequest
+    ): ResponseEntity<AccessTokenResponse> {
+        val tokenResponse = userService.createUser(createUserRequest)
+
+        return ResponseEntity.ok()
+            .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
+    }
     @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 정보를 조회합니다.")
     @ApiResponses(
         value =

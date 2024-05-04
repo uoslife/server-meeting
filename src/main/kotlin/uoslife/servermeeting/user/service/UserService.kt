@@ -2,21 +2,26 @@ package uoslife.servermeeting.user.service
 
 import java.util.*
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.client.RestTemplate
+import uoslife.servermeeting.global.auth.dto.response.TokenResponse
+import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.user.dao.UserDao
+import uoslife.servermeeting.user.dto.request.CreateUserRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
+import uoslife.servermeeting.user.dto.response.AccountResponse
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserPersonalInformation
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
+import uoslife.servermeeting.verification.dto.University
 
 @Service
 @Transactional
@@ -25,7 +30,36 @@ class UserService(
     private val paymentRepository: PaymentRepository,
     private val meetingTeamRepository: MeetingTeamRepository,
     private val userDao: UserDao,
+    private val tokenProvider: TokenProvider
 ) {
+    companion object {
+        val restTemplate = RestTemplate()
+    }
+
+    @Transactional
+    fun createUser(createUserRequest: CreateUserRequest): TokenResponse {
+        // 계정 서비스에서 유저 정보 받아오기
+        val accountUser = findUserByAccount(createUserRequest.accessToken)
+        if (accountUser.email.isNullOrBlank() || accountUser.realm == null)
+            throw UserNotFoundException()
+
+        // 해당 유저가 처음 이용하는 유저면 유저 생성
+        // 그렇지 않으면 유저 조회
+        val savedUser =
+            getOrCreateUser(
+                accountUser.email,
+                when (accountUser.realm.code) {
+                    "UOS" -> University.UOS
+                    "KHU" -> University.KHU
+                    "HUFS" -> University.HUFS
+                    else -> throw UserNotFoundException()
+                }
+            )
+        // 해당 유저 정보를 갖고 토큰 발급
+        val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(savedUser)
+
+        return tokenResponse
+    }
 
     fun findUser(id: UUID): UserFindResponse {
         val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
@@ -90,5 +124,30 @@ class UserService(
         if (meetingTeam.users.size == 1) {
             meetingTeamRepository.delete(meetingTeam)
         }
+    }
+
+    private fun findUserByAccount(accessToken: String): AccountResponse {
+        val header =
+            HttpHeaders().apply {
+                set("Authorization", "Bearer" + accessToken)
+                set("Content-Type", "application/json")
+            }
+
+        val requestEntity = HttpEntity(null, header)
+
+        val uri = "https://account.uoslife.com/v1/users/me"
+
+        val responseEntity: ResponseEntity<AccountResponse> =
+            restTemplate.exchange(uri, HttpMethod.GET, requestEntity, AccountResponse::class.java)
+
+        return responseEntity.body!!
+    }
+
+    private fun getOrCreateUser(email: String, university: University): User {
+        val user: User =
+            userRepository.findByEmail(email)
+                ?: userRepository.save(User.create(email = email, university = university))
+
+        return user
     }
 }

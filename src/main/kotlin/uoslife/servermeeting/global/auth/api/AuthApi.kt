@@ -84,7 +84,10 @@ class AuthApi(
             .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
     }
 
-    @Operation(summary = "시대생 유저 회원가입 or 로그인", description = "시대생 토큰으로 회원가입(이미 되어 있으면 로그인)")
+    @Operation(
+        summary = "시대생 유저 회원가입 or 로그인(계정 서비스 생성으로 미사용)",
+        description = "시대생 토큰으로 회원가입(이미 되어 있으면 로그인)"
+    )
     @ApiResponses(
         value =
             [

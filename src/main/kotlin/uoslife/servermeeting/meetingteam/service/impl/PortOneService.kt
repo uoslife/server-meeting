@@ -9,6 +9,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
 import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.PaymentRequestDto
 import uoslife.servermeeting.meetingteam.dto.request.PortOneRequestDto
@@ -102,7 +103,7 @@ class PortOneService(
             payment.impUid = paymentCheckRequest.impUid
             payment.status = PaymentStatus.SUCCESS
             return PaymentResponseDto.PaymentCheckResponse(true, "")
-        } catch (e: Exception) {
+        } catch (e: ExternalApiFailedException) {
             payment.status = PaymentStatus.FAILED
             return PaymentResponseDto.PaymentCheckResponse(false, "")
         }
@@ -118,18 +119,18 @@ class PortOneService(
 
         if (!validator.isAlreadyPaid(payment)) throw PaymentInValidException()
 
-        try {
-            when (team.type) {
-                TeamType.SINGLE -> user.team = null
-                TeamType.TRIPLE -> team.users.forEach { it.team = null }
-            }
-            meetingTeamRepository.delete(team)
+        when (team.type) {
+            TeamType.SINGLE -> user.team = null
+            TeamType.TRIPLE -> team.users.forEach { it.team = null }
+        }
+        meetingTeamRepository.delete(team)
 
+        try {
             refundPaymentByPortOne(payment)
 
             payment.status = PaymentStatus.REFUND
             return PaymentResponseDto.PaymentRefundResponse(true, "")
-        } catch (e: Exception) {
+        } catch (e: ExternalApiFailedException) {
             payment.status = PaymentStatus.REFUND_FAILED
             return PaymentResponseDto.PaymentRefundResponse(false, "")
         }
@@ -148,7 +149,7 @@ class PortOneService(
             try {
                 refundPaymentByPortOne(payment)
                 payment.status = PaymentStatus.REFUND
-            } catch (e: Exception) {
+            } catch (e: ExternalApiFailedException) {
                 payment.status = PaymentStatus.REFUND_FAILED
             }
         }
