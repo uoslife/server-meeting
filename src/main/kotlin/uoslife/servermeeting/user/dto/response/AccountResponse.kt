@@ -1,5 +1,7 @@
 package uoslife.servermeeting.user.dto.response
 
+import uoslife.servermeeting.verification.dto.University
+
 data class AccountResponse(
     val id: Int,
     val nickname: String,
@@ -14,7 +16,7 @@ data class AccountResponse(
 )
 
 data class Realm(
-    val code: String,
+    val code: University,
     val name: String,
 )
 

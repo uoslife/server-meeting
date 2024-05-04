@@ -45,20 +45,10 @@ class UserService(
 
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
-        val savedUser =
-            getOrCreateUser(
-                accountUser.email,
-                when (accountUser.realm.code) {
-                    "UOS" -> University.UOS
-                    "KHU" -> University.KHU
-                    "HUFS" -> University.HUFS
-                    else -> throw UserNotFoundException()
-                }
-            )
+        val savedUser = getOrCreateUser(accountUser.email, accountUser.realm.code)
         // 해당 유저 정보를 갖고 토큰 발급
-        val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(savedUser)
 
-        return tokenResponse
+        return tokenProvider.getTokenByUser(savedUser)
     }
 
     fun findUser(id: UUID): UserFindResponse {
@@ -144,10 +134,7 @@ class UserService(
     }
 
     private fun getOrCreateUser(email: String, university: University): User {
-        val user: User =
-            userRepository.findByEmail(email)
-                ?: userRepository.save(User.create(email = email, university = university))
-
-        return user
+        return userRepository.findByEmail(email)
+            ?: userRepository.save(User.create(email = email, university = university))
     }
 }
