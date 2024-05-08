@@ -33,7 +33,10 @@ class VerificationApi(
     private val tokenProvider: TokenProvider,
     private val cookieUtil: CookieUtil,
 ) {
-    @Operation(summary = "메일 인증 코드 전송", description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다.")
+    @Operation(
+        summary = "메일 인증 코드 전송(계정 서비스 생성으로 미사용)",
+        description = "메일 인증을 위해 인증 코드를 내포한 메일을 대학 메일로 보냅니다."
+    )
     @ApiResponses(
         value =
             [
@@ -73,7 +76,7 @@ class VerificationApi(
     }
 
     @Operation(
-        summary = "인증 코드 확인",
+        summary = "인증 코드 확인(계정 서비스 생성으로 미사용)",
         description =
             "verification 테이블의 인증 코드와 사용자가 입력한 인증 코드를 비교합니다. 일치하면 회원가입(이미 존재하면 로그인) 후 토큰을 발급합니다. (인증코드 000000이면 확인 안 하고 토큰 발급)"
     )

@@ -3,6 +3,7 @@ package uoslife.servermeeting.global.config
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
@@ -60,6 +61,8 @@ class SecurityConfig(
             .authorizeHttpRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest)
             .permitAll() // CORS preflight 요청 허용
+            .requestMatchers(HttpMethod.POST, "/api/user")
+            .permitAll()
             .requestMatchers("/api/auth/refresh", "/api/auth/uos/migrate", "/api/auth/uos/login")
             .permitAll()
             .requestMatchers("/api/verification/send", "/api/verification/verify")
@@ -121,6 +124,7 @@ class SecurityConfig(
         // 토큰 검사 미실시 리스트
         return WebSecurityCustomizer { web: WebSecurity ->
             web.ignoring()
+                .requestMatchers(HttpMethod.POST, "/api/user")
                 .requestMatchers(
                     "/api/verification/send", // 인증코드 전송
                     "/api/verification/verify", // 인증코드 검증
