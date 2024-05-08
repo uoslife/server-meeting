@@ -112,6 +112,9 @@ dependencies {
 
     // actuator
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+    // OpenFegin
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3")
 }
 
 tasks.withType<KotlinCompile> {

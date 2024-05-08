@@ -1,4 +1,4 @@
-package uoslife.servermeeting.user.dto.response
+package uoslife.servermeeting.global.auth.dto.response
 
 import uoslife.servermeeting.verification.dto.University
 
