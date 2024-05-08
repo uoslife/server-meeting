@@ -92,7 +92,7 @@ management:
             enabled: false
 
 account:
-    url: https://account.uoslife.com
+    url: ${ACCOUNT_API_URL}
     access:
         id: ${ACCOUNT_API_ACCESS_ID}
         secret: ${ACCOUNT_API_ACCESS_SECRET}
