@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletResponse
 import java.util.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
 import uoslife.servermeeting.global.error.ErrorResponse
+import uoslife.servermeeting.global.util.CookieUtil
 import uoslife.servermeeting.user.dto.request.CreateUserRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
@@ -23,7 +25,10 @@ import uoslife.servermeeting.user.service.UserService
 @Tag(name = "User", description = "User API")
 @RestController
 @RequestMapping("/api/user")
-class UserApi(private val userService: UserService) {
+class UserApi(
+    private val userService: UserService,
+    private val cookieUtil: CookieUtil,
+) {
 
     @Operation(summary = "User 생성", description = "계정 서비스에 있는 User를 조회하여 User를 생성합니다")
     @ApiResponses(
@@ -54,9 +59,11 @@ class UserApi(private val userService: UserService) {
     )
     @PostMapping
     fun createUser(
-        @RequestBody createUserRequest: CreateUserRequest
+        @RequestBody createUserRequest: CreateUserRequest,
+        response: HttpServletResponse
     ): ResponseEntity<AccessTokenResponse> {
         val tokenResponse = userService.createUser(createUserRequest)
+        cookieUtil.setCookieWithRefreshToken(response, tokenResponse.refreshToken)
 
         return ResponseEntity.ok()
             .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
