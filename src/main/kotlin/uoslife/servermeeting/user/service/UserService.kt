@@ -1,5 +1,7 @@
 package uoslife.servermeeting.user.service
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
@@ -32,8 +34,25 @@ class UserService(
     private val tokenProvider: TokenProvider,
     private val accountService: AccountService,
 ) {
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(UserService::class.java)
+        const val BY_PASS_CODE: Long = 971124L
+        const val BY_PASS_EMAIL: String = "test@khu.ac.kr"
+        const val BY_PASS_UNIVERSITY: String = "KHU";
+    }
+
     @Transactional
     fun createUser(createUserRequest: CreateUserRequest): TokenResponse {
+        /**
+         * 임시로 토큰 발급
+         * BY_PASS_EMAIL: String = "test@khu.ac.kr"
+         * BY_PASS_UNIVERSITY: String = "KHU";
+         */
+        if(createUserRequest.userId.equals(BY_PASS_CODE)){
+            val savedUser = getOrCreateUser(BY_PASS_EMAIL, University.valueOf(BY_PASS_UNIVERSITY))
+            return tokenProvider.getTokenByUser(savedUser)
+        }
+
         // 계정 서비스에서 유저 정보 받아오기
         val accountUser = accountService.getUserProfile(createUserRequest.userId)
         if (accountUser.email.isNullOrBlank() || accountUser.realm == null)
