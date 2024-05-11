@@ -125,6 +125,7 @@ class SecurityConfig(
         return WebSecurityCustomizer { web: WebSecurity ->
             web.ignoring()
                 .requestMatchers(HttpMethod.POST, "/api/user")
+                .requestMatchers("/api/user/email")
                 .requestMatchers(
                     "/api/verification/send", // 인증코드 전송
                     "/api/verification/verify", // 인증코드 검증
