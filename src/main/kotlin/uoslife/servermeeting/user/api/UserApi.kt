@@ -30,7 +30,11 @@ class UserApi(
     private val cookieUtil: CookieUtil,
 ) {
 
-    @Operation(summary = "User 생성", description = "계정 서비스에 있는 User를 조회하여 User를 생성합니다")
+    @Operation(
+        summary = "User 생성",
+        description =
+            "계정 서비스에 있는 User를 조회하여 User를 생성합니다. userId가 971124일 경우 임의로 test@khu.ac.kr로 생성됩니다.(이미 회원가입 되어있을 경우 로그인만)"
+    )
     @ApiResponses(
         value =
             [
