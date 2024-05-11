@@ -98,7 +98,7 @@ constructor(
                 savedUser.id!!,
                 teamType = TeamType.TRIPLE,
                 name = "TEST"
-            )!!
+            )
         tripleMeetingService.joinMeetingTeam(savedUser2.id!!, code.code!!, false)
 
         // when
