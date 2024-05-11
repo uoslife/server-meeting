@@ -11,7 +11,6 @@ import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.service.AccountService
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.user.dao.UserDao
