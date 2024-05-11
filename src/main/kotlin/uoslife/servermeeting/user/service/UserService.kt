@@ -131,4 +131,21 @@ class UserService(
         return userRepository.findByEmail(email)
             ?: userRepository.save(User.create(email = email, university = university))
     }
+
+    @Transactional
+    fun deleteUserByEmail(email: String): Unit {
+        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException()
+        val findUserWithMeetingTeam =
+            userDao.findUserWithMeetingTeam(user.id!!) ?: throw UserNotFoundException()
+
+        userRepository.delete(findUserWithMeetingTeam)
+        paymentRepository.deleteByUser(findUserWithMeetingTeam)
+
+        val meetingTeam: MeetingTeam = findUserWithMeetingTeam.team ?: return
+
+        // 미팅팀 삭제(미팅팀에 유저가 혼자일 경우)
+        if (meetingTeam.users.size == 1) {
+            meetingTeamRepository.delete(meetingTeam)
+        }
+    }
 }
