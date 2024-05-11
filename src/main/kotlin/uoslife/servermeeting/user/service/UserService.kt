@@ -11,7 +11,6 @@ import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.service.AccountService
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.user.dao.UserDao
@@ -113,13 +112,14 @@ class UserService(
         // 유저가 존재하는지 확인
         val user: User =
             userDao.findUserWithMeetingTeam(userId = id) ?: throw UserNotFoundException()
-        val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         // 유저 삭제
         userRepository.delete(user)
 
         // Payment 삭제
         paymentRepository.deleteByUser(user)
+
+        val meetingTeam: MeetingTeam = user.team ?: return
 
         // 미팅팀 삭제(미팅팀에 유저가 혼자일 경우)
         if (meetingTeam.users.size == 1) {
