@@ -1,11 +1,11 @@
 package uoslife.servermeeting.user.service
 
+import java.util.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
@@ -15,15 +15,12 @@ import uoslife.servermeeting.meetingteam.entity.enums.PayMethod
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentGateway
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
-import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
 import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
-import uoslife.servermeeting.user.dto.request.CreateUserRequest
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.verification.dto.University
-import java.util.*
 
 @SpringBootTest
 class UserServiceTest
@@ -111,27 +108,27 @@ constructor(
         assertEquals(userRepository.findById(savedUser.id!!).isPresent, false)
     }
 
-//    @Test
-//    @DisplayName("유저 email unique(false)가 잘 작동하는지 확인한다.")
-//    fun userEmailUniqueTest(){
-//        // given
-//        val user1: User = User(
-//            id = UUID.randomUUID(),
-//            name = "현승",
-//            email = "gustmd5715@uos.ac.kr"
-//        )
-//        val user2: User = User(
-//            id = UUID.randomUUID(),
-//            name = "인규",
-//            email = "gustmd5715@uos.ac.kr"
-//        )
-//
-//        // when
-//        userRepository.save(user1)
-//        userRepository.save(user2)
-//
-//
-//        // then
-//
-//    }
+    //    @Test
+    //    @DisplayName("유저 email unique(false)가 잘 작동하는지 확인한다.")
+    //    fun userEmailUniqueTest(){
+    //        // given
+    //        val user1: User = User(
+    //            id = UUID.randomUUID(),
+    //            name = "현승",
+    //            email = "gustmd5715@uos.ac.kr"
+    //        )
+    //        val user2: User = User(
+    //            id = UUID.randomUUID(),
+    //            name = "인규",
+    //            email = "gustmd5715@uos.ac.kr"
+    //        )
+    //
+    //        // when
+    //        userRepository.save(user1)
+    //        userRepository.save(user2)
+    //
+    //
+    //        // then
+    //
+    //    }
 }
