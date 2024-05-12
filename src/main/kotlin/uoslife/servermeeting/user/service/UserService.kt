@@ -36,7 +36,7 @@ class UserService(
     companion object {
         val logger: Logger = LoggerFactory.getLogger(UserService::class.java)
         const val BY_PASS_CODE: Long = 971124L
-        const val BY_PASS_EMAIL: String = "test@khu.ac.kr"
+        const val BY_PASS_EMAIL: String = "test2@khu.ac.kr"
         const val BY_PASS_UNIVERSITY: String = "KHU"
     }
 
