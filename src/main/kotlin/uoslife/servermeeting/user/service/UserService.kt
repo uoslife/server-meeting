@@ -1,6 +1,8 @@
 package uoslife.servermeeting.user.service
 
 import java.util.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.stereotype.Service
@@ -9,7 +11,6 @@ import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.service.AccountService
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.user.dao.UserDao
@@ -32,8 +33,23 @@ class UserService(
     private val tokenProvider: TokenProvider,
     private val accountService: AccountService,
 ) {
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(UserService::class.java)
+        const val BY_PASS_CODE: Long = 971124L
+        const val BY_PASS_EMAIL: String = "test2@khu.ac.kr"
+        const val BY_PASS_UNIVERSITY: String = "KHU"
+    }
+
     @Transactional
     fun createUser(createUserRequest: CreateUserRequest): TokenResponse {
+        /**
+         * 임시로 토큰 발급 BY_PASS_EMAIL: String = "test@khu.ac.kr" BY_PASS_UNIVERSITY: String = "KHU";
+         */
+        if (createUserRequest.userId.equals(BY_PASS_CODE)) {
+            val savedUser = getOrCreateUser(BY_PASS_EMAIL, University.valueOf(BY_PASS_UNIVERSITY))
+            return tokenProvider.getTokenByUser(savedUser)
+        }
+
         // 계정 서비스에서 유저 정보 받아오기
         val accountUser = accountService.getUserProfile(createUserRequest.userId)
         if (accountUser.email.isNullOrBlank() || accountUser.realm == null)
@@ -96,13 +112,14 @@ class UserService(
         // 유저가 존재하는지 확인
         val user: User =
             userDao.findUserWithMeetingTeam(userId = id) ?: throw UserNotFoundException()
-        val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         // 유저 삭제
         userRepository.delete(user)
 
         // Payment 삭제
         paymentRepository.deleteByUser(user)
+
+        val meetingTeam: MeetingTeam = user.team ?: return
 
         // 미팅팀 삭제(미팅팀에 유저가 혼자일 경우)
         if (meetingTeam.users.size == 1) {
@@ -113,5 +130,22 @@ class UserService(
     private fun getOrCreateUser(email: String, university: University): User {
         return userRepository.findByEmail(email)
             ?: userRepository.save(User.create(email = email, university = university))
+    }
+
+    @Transactional
+    fun deleteUserByEmail(email: String): Unit {
+        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException()
+        val findUserWithMeetingTeam =
+            userDao.findUserWithMeetingTeam(user.id!!) ?: throw UserNotFoundException()
+
+        userRepository.delete(findUserWithMeetingTeam)
+        paymentRepository.deleteByUser(findUserWithMeetingTeam)
+
+        val meetingTeam: MeetingTeam = findUserWithMeetingTeam.team ?: return
+
+        // 미팅팀 삭제(미팅팀에 유저가 혼자일 경우)
+        if (meetingTeam.users.size == 1) {
+            meetingTeamRepository.delete(meetingTeam)
+        }
     }
 }
