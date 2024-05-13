@@ -1,8 +1,6 @@
 package uoslife.servermeeting.user.service
 
 import java.util.*
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.stereotype.Service
