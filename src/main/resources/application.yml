@@ -34,8 +34,8 @@ portone:
     api:
         url: https://api.iamport.kr
         price:
-            single: 1000
-            triple: 3000
+            single: 2000
+            triple: 6000
         imp:
             key: ${PORTONE_API_IMP_KEY}
             secret: ${PORTONE_API_IMP_SECRET}
@@ -66,7 +66,7 @@ cloud:
         region:
             static: ${CLOUD_AWS_SES_REGION}
         ses:
-            isLocal: false
+            isLocal: true
             from: support@uoslife.team
             iam:
                 role-arn: ${CLOUD_AWS_SES_ROLE_ARN}
