@@ -25,9 +25,9 @@ data class Identity(
     val type: String,
     val status: String,
     val idNumber: String,
-    val university: String,
-    val department: String,
-    val major: String
+    val university: String?,
+    val department: String?,
+    val major: String?
 )
 
 data class Moderator(
