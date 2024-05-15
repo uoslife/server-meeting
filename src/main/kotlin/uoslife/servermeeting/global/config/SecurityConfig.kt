@@ -67,7 +67,7 @@ class SecurityConfig(
             .permitAll()
             .requestMatchers("/api/verification/send", "/api/verification/verify")
             .permitAll()
-            .requestMatchers("/api/payment/refund/**")
+            .requestMatchers("/api/payment/refund/match")
             .permitAll()
             .requestMatchers("/swagger-ui/**")
             .permitAll()
@@ -130,7 +130,7 @@ class SecurityConfig(
                     "/api/verification/send", // 인증코드 전송
                     "/api/verification/verify", // 인증코드 검증
                     "/api/auth/refresh", // 토큰 재발급
-                    "/api/payment/refund/**", // 유저 환불
+                    "/api/payment/refund/match", // 유저 환불
                 )
                 .requestMatchers("/swagger-ui/**")
                 .requestMatchers("/meeting/actuator/**")
