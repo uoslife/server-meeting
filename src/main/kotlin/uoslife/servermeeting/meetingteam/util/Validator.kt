@@ -50,4 +50,18 @@ class Validator() {
         if (payment.status.equals(PaymentStatus.SUCCESS)) return true
         return false
     }
+
+    fun setValidMBTI(mbti: String?): String? {
+        if (mbti == null) return null
+        // EI, SN, TF, JP
+        var validMBTI = ""
+        val mbtiList = listOf("E", "I", "S", "N", "T", "F", "J", "P")
+
+        for (value in mbtiList) {
+            if (mbti.contains(value)) {
+                validMBTI += value
+            }
+        }
+        return validMBTI
+    }
 }

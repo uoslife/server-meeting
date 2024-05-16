@@ -30,7 +30,7 @@ class MeetingTeamPreferenceUpdateRequest(
     @Schema(description = "MBTI", example = "EINTFJP") val mbti: String?,
     @Schema(description = "미팅 분위기", example = "ACTIVE") val mood: TeamMood?,
 ) {
-    fun toSinglePreference(): Preference {
+    fun toSinglePreference(validMBTI: String?): Preference {
         return Preference(
             ageMin = ageMin,
             ageMax = ageMax,
@@ -43,7 +43,7 @@ class MeetingTeamPreferenceUpdateRequest(
             drinkingMin = drinkingMin,
             drinkingMax = drinkingMax,
             spiritAnimal = spiritAnimal,
-            mbti = mbti,
+            mbti = validMBTI,
         )
     }
 
