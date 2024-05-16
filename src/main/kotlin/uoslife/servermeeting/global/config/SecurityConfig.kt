@@ -63,6 +63,8 @@ class SecurityConfig(
             .permitAll() // CORS preflight 요청 허용
             .requestMatchers(HttpMethod.POST, "/api/user")
             .permitAll()
+            .requestMatchers(HttpMethod.DELETE, "/api/user/email")
+            .permitAll()
             .requestMatchers("/api/auth/refresh", "/api/auth/uos/migrate", "/api/auth/uos/login")
             .permitAll()
             .requestMatchers("/api/verification/send", "/api/verification/verify")
@@ -125,6 +127,7 @@ class SecurityConfig(
         return WebSecurityCustomizer { web: WebSecurity ->
             web.ignoring()
                 .requestMatchers(HttpMethod.POST, "/api/user")
+                .requestMatchers(HttpMethod.DELETE, "/api/user/email")
                 .requestMatchers("/api/user/email")
                 .requestMatchers(
                     "/api/verification/send", // 인증코드 전송
