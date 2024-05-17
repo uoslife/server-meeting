@@ -88,7 +88,8 @@ class SingleMeetingService(
         val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
-        val preference = meetingTeamPreferenceUpdateRequest.toSinglePreference()
+        val validMBTI = validator.setValidMBTI(meetingTeamPreferenceUpdateRequest.mbti)
+        val preference = meetingTeamPreferenceUpdateRequest.toSinglePreference(validMBTI)
 
         meetingTeam.preference = preference
     }

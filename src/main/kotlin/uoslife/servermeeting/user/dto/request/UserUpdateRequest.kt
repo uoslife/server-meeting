@@ -36,7 +36,7 @@ data class UserUpdateRequest(
     @Schema(description = "흥미", example = "[\"EXERCISE\", \"MUSIC\"]")
     val interest: List<InterestType>?,
 ) {
-    fun toUserPersonalInformation(existingUser: User): UserPersonalInformation {
+    fun toUserPersonalInformation(existingUser: User, validMBTI: String?): UserPersonalInformation {
         return UserPersonalInformation(
             age = age,
             gender = gender,
@@ -50,7 +50,7 @@ data class UserUpdateRequest(
             drinkingMax = drinkingMax ?: existingUser.userPersonalInformation.drinkingMax,
             smoking = smoking ?: existingUser.userPersonalInformation.smoking,
             spiritAnimal = spiritAnimal ?: existingUser.userPersonalInformation.spiritAnimal,
-            mbti = mbti ?: existingUser.userPersonalInformation.mbti,
+            mbti = validMBTI ?: existingUser.userPersonalInformation.mbti,
             interest = interest ?: existingUser.userPersonalInformation.interest,
         )
     }

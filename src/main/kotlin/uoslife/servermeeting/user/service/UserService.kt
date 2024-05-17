@@ -11,6 +11,7 @@ import uoslife.servermeeting.global.auth.service.AccountService
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
+import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.dto.request.CreateUserRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
@@ -30,6 +31,7 @@ class UserService(
     private val userDao: UserDao,
     private val tokenProvider: TokenProvider,
     private val accountService: AccountService,
+    private val validator: Validator
 ) {
     @Transactional
     fun createUser(createUserRequest: CreateUserRequest): TokenResponse {
@@ -66,7 +68,8 @@ class UserService(
         existingUser: User,
         requestDto: UserUpdateRequest
     ): UserPersonalInformation {
-        return requestDto.toUserPersonalInformation(existingUser)
+        val validMBTI = validator.setValidMBTI(requestDto.mbti)
+        return requestDto.toUserPersonalInformation(existingUser, validMBTI)
     }
 
     @Transactional
