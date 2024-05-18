@@ -42,8 +42,7 @@ class UserService(
 
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
-        val savedUser =
-            getOrCreateUser(accountUser.id.toLong(), accountUser.realm.code)
+        val savedUser = getOrCreateUser(accountUser.id.toLong(), accountUser.realm.code)
     }
 
     fun findUser(id: Long): UserFindResponse {
@@ -112,8 +111,6 @@ class UserService(
 
     private fun getOrCreateUser(userId: Long, university: University): User {
         return userRepository.findByIdOrNull(userId)
-            ?: userRepository.save(
-                User.create(userId = userId, university = university)
-            )
+            ?: userRepository.save(User.create(userId = userId, university = university))
     }
 }

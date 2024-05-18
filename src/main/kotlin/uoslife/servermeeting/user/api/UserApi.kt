@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.global.util.CookieUtil
-import uoslife.servermeeting.user.dto.request.CreateUserRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.service.UserService
