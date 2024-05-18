@@ -65,12 +65,10 @@ class UserApi(
     fun createUser(
         @RequestBody createUserRequest: CreateUserRequest,
         response: HttpServletResponse
-    ): ResponseEntity<AccessTokenResponse> {
+    ): ResponseEntity<Unit> {
         val tokenResponse = userService.createUser(createUserRequest)
-        cookieUtil.setCookieWithRefreshToken(response, tokenResponse.refreshToken)
 
-        return ResponseEntity.ok()
-            .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
     @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 정보를 조회합니다.")
     @ApiResponses(

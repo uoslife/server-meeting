@@ -8,10 +8,12 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.util.StringUtils
 import org.springframework.web.filter.OncePerRequestFilter
+import uoslife.servermeeting.global.auth.dto.response.AccountResponse
 import uoslife.servermeeting.global.auth.exception.InvalidTokenException
 import uoslife.servermeeting.global.auth.exception.UnauthorizedException
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.jwt.TokenType
+import uoslife.servermeeting.global.auth.service.AccountService
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.global.error.exception.ErrorCode
 
@@ -32,13 +34,8 @@ class JwtAuthenticationFilter(
         try {
             val token = tokenProvider.resolveToken(request) ?: throw UnauthorizedException()
 
-            if (
-                StringUtils.hasText(token) &&
-                    tokenProvider.validateJwtToken(token, TokenType.ACCESS_SECRET)
-            ) {
-                val authentication = tokenProvider.getAuthentication(token)
-                SecurityContextHolder.getContext().authentication = authentication
-            }
+            val authentication = tokenProvider.getAuthentication(token)
+            SecurityContextHolder.getContext().authentication = authentication
         } catch (e: Exception) {
             when (e) {
                 is InvalidTokenException,

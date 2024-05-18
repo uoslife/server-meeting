@@ -34,7 +34,7 @@ class UserService(
     private val validator: Validator
 ) {
     @Transactional
-    fun createUser(createUserRequest: CreateUserRequest): TokenResponse {
+    fun createUser(createUserRequest: CreateUserRequest): Unit {
         // 계정 서비스에서 유저 정보 받아오기
         val accountUser = accountService.getUserProfile(createUserRequest.userId)
         if (accountUser.email.isNullOrBlank() || accountUser.realm == null)
@@ -43,9 +43,6 @@ class UserService(
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
         val savedUser = getOrCreateUser(accountUser.email, accountUser.realm.code)
-
-        // 해당 유저 정보를 갖고 토큰 발급
-        return tokenProvider.getTokenByUser(savedUser)
     }
 
     fun findUser(id: UUID): UserFindResponse {

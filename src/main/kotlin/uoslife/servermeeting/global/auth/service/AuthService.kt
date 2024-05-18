@@ -27,69 +27,10 @@ import uoslife.servermeeting.verification.dto.University
 @Transactional
 class AuthService(
     private val userRepository: UserRepository,
-    private val tokenProvider: TokenProvider,
 ) {
     companion object {
-        const val UOSLIFE_URL = "https://api.uoslife.com/core/users"
         private val logger = LoggerFactory.getLogger(AuthService::class.java)
     }
-    @Transactional
-    fun refreshAccessToken(refreshToken: String): TokenResponse {
-        tokenProvider.validateJwtToken(refreshToken, TokenType.REFRESH_SECRET)
-
-        val claims: Claims = tokenProvider.parseClaims(refreshToken, TokenType.REFRESH_SECRET)
-        val user: User =
-            userRepository.findByIdOrNull(UUID.fromString(claims.subject))
-                ?: throw UserNotFoundException()
-        val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(user)
-
-        return tokenResponse
-    }
-
-    // 시대생 앱 토큰으로 요청 시 회원가입(or 로그인) 후 토큰 발급
-    @Transactional
-    fun signUpOrInFromUoslife(bearerToken: String): TokenResponse {
-        // rebuild-server에서 유저 데이터 가져오기
-        val userMigrationVOFromUoslife: UserMigrationVO = getUserProfileFromUoslife(bearerToken)
-
-        // 회원가입 또는 이미 되어 있을 시 유저 반환
-        val savedUser: User = createOrGetUser(userMigrationVOFromUoslife)
-
-        // 토큰 발급
-        val tokenResponse: TokenResponse = tokenProvider.getTokenByUser(savedUser)
-        return tokenResponse
-    }
-
-    private fun getUserProfileFromUoslife(bearerToken: String): UserMigrationVO {
-        val restTemplate: RestTemplate = RestTemplate()
-
-        // request header
-        val headers: MultiValueMap<String, String> = createHeader(bearerToken)
-
-        // 리빌드 서버에서 유저 정보 가져오기
-        try {
-            val responseEntity: ResponseEntity<UserMigrationVO> =
-                restTemplate.exchange(
-                    UOSLIFE_URL,
-                    HttpMethod.GET,
-                    org.springframework.http.HttpEntity<Any>(headers),
-                    UserMigrationVO::class.java
-                )
-            val userMigrationVO: UserMigrationVO = responseEntity.body!!
-
-            return userMigrationVO
-        } catch (e: HttpClientErrorException) {
-            logger.info("HttpClientErrorExcpetion: UosLife로부터 통신 에러")
-            throw ExternalApiFailedException()
-        } catch (e: HttpServerErrorException) {
-            logger.info("HttpServerErrorExcpetion: UosLife로부터 통신 에러")
-            throw ExternalApiFailedException()
-        } catch (e: Exception) {
-            logger.info("Exception: UosLife로부터 통신 에러")
-            throw ExternalApiFailedException()
-        }
-    }
-
     private fun createHeader(bearerToken: String): MultiValueMap<String, String> {
         val headers: MultiValueMap<String, String> = LinkedMultiValueMap()
         headers.add("Content-type", "application/json")
@@ -110,7 +51,6 @@ class AuthService(
     private fun createUser(userMigrationVO: UserMigrationVO): User {
         val user: User =
             User(
-                id = UUID.randomUUID(),
                 phoneNumber = userMigrationVO.phone,
                 name = userMigrationVO.name
             )

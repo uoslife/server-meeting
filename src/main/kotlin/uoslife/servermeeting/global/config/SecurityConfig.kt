@@ -30,7 +30,7 @@ import uoslife.servermeeting.global.auth.jwt.TokenProvider
 @EnableWebSecurity
 class SecurityConfig(
     private val authProvider: JwtAuthenticationProvider,
-    private val jwtUtils: TokenProvider,
+    private val tokenProvider: TokenProvider,
     @Qualifier("handlerExceptionResolver") private val resolver: HandlerExceptionResolver,
 ) {
     @Bean
@@ -79,7 +79,7 @@ class SecurityConfig(
             .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
         http.addFilterBefore(
-            JwtAuthenticationFilter(jwtUtils),
+            JwtAuthenticationFilter(tokenProvider),
             UsernamePasswordAuthenticationFilter::class.java
         )
 

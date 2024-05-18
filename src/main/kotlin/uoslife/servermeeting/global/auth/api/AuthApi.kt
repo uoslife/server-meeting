@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
@@ -75,70 +76,16 @@ class AuthApi(
     fun refreshToken(
         @RequestHeader(value = "Cookie") refreshToken: String,
         response: HttpServletResponse
-    ): ResponseEntity<AccessTokenResponse> {
+//    ): ResponseEntity<AccessTokenResponse> {
+    ): ResponseEntity<Unit> {
         val trimmedRefreshToken: String = tokenProvider.trimRefreshToken(refreshToken)
-        val tokenResponse: TokenResponse = authService.refreshAccessToken(trimmedRefreshToken)
-        cookieUtil.setCookieWithRefreshToken(response, tokenResponse.refreshToken)
+//        val tokenResponse: TokenResponse = authService.refreshAccessToken(trimmedRefreshToken)
+//        cookieUtil.setCookieWithRefreshToken(response, tokenResponse.refreshToken)
 
-        return ResponseEntity.ok()
-            .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
+//        return ResponseEntity.ok()
+//            .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @Operation(
-        summary = "시대생 유저 회원가입 or 로그인(계정 서비스 생성으로 미사용)",
-        description = "시대생 토큰으로 회원가입(이미 되어 있으면 로그인)"
-    )
-    @ApiResponses(
-        value =
-            [
-                ApiResponse(
-                    responseCode = "200",
-                    description = "토큰 반환",
-                    content =
-                        [Content(schema = Schema(implementation = AccessTokenResponse::class))]
-                ),
-                ApiResponse(
-                    responseCode = "401",
-                    description = "부적절한 토큰 정보",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: Token is not valid., status: 401, code: T01}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "500",
-                    description = "외부 API 통신 에러 (UOSLIFE)",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: External API Request is failed., status: 500, code: E01}"
-                                        )]
-                            )]
-                )]
-    )
-    @PostMapping("/uos/signUpOrIn")
-    fun signUpOrInUOS(
-        request: HttpServletRequest,
-        response: HttpServletResponse
-    ): ResponseEntity<AccessTokenResponse> {
-        val bearerToken: String = request.getHeader("Authorization")
-        val tokenResponse: TokenResponse = authService.signUpOrInFromUoslife(bearerToken)
-
-        cookieUtil.setCookieWithRefreshToken(response, tokenResponse.refreshToken)
-
-        return ResponseEntity.ok()
-            .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
-    }
 }
