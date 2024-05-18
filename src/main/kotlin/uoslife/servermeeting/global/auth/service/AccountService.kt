@@ -8,14 +8,15 @@ import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import uoslife.servermeeting.global.auth.dto.response.AccountResponse
 
 @Service
 class AccountService {
-    @Autowired lateinit var serverClient: ServerClient
+    @Autowired lateinit var userClient: UserClient
 
-    fun getUserProfile(userId: Long): AccountResponse {
-        return serverClient.getUserProfile(userId)
+    fun getAuthenticatedUserProfile(authorizationHeader: String): AccountResponse {
+        return userClient.getAuthenticatedUserProfile(authorizationHeader)
     }
 }
 
@@ -37,4 +38,15 @@ interface ServerClient {
             return BasicAuthRequestInterceptor(accessKeyId, accessKeySecret)
         }
     }
+}
+
+@FeignClient(
+    name = "uoslife-account-api-user",
+    url = "\${account.url}",
+)
+interface UserClient {
+    @GetMapping("/v1/users/me")
+    fun getAuthenticatedUserProfile(
+        @RequestHeader("Authorization") authorization: String
+    ): AccountResponse
 }

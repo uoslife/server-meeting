@@ -42,7 +42,6 @@ data class UserUpdateRequest(
             gender = gender,
             height = height ?: existingUser.userPersonalInformation.height,
             studentType = studentType,
-            kakaoTalkId = kakaoTalkId,
             university = existingUser.userPersonalInformation.university,
             department = department,
             religion = religion ?: existingUser.userPersonalInformation.religion,

@@ -1,6 +1,5 @@
 package uoslife.servermeeting.meetingteam.service
 
-import java.util.UUID
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
@@ -20,29 +19,29 @@ interface BaseMeetingService {
      * @return
      */
     fun createMeetingTeam(
-        userUUID: UUID,
+        userId: Long,
         name: String? = null,
         teamType: TeamType
     ): MeetingTeamCodeResponse
     fun joinMeetingTeam(
-        userUUID: UUID,
+        userId: Long,
         code: String,
         isJoin: Boolean
     ): MeetingTeamUserListGetResponse?
-    fun getMeetingTeamUserList(userUUID: UUID, code: String): MeetingTeamUserListGetResponse
+    fun getMeetingTeamUserList(userId: Long, code: String): MeetingTeamUserListGetResponse
     fun updateMeetingTeamInformation(
-        userUUID: UUID,
+        userId: Long,
         meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
     )
     fun updateMeetingTeamPreference(
-        userUUID: UUID,
+        userId: Long,
         meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
     )
 
     fun updateMeetingTeamMessage(
-        userUUID: UUID,
+        userId: Long,
         meetingTeamMessageUpdateRequest: MeetingTeamMessageUpdateRequest
     )
-    fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse
-    fun deleteMeetingTeam(userUUID: UUID)
+    fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse
+    fun deleteMeetingTeam(userId: Long)
 }

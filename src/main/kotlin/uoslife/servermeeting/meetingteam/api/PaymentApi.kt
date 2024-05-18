@@ -105,10 +105,10 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
         @AuthenticationPrincipal userDetails: UserDetails,
         @RequestBody paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest
     ): ResponseEntity<PaymentResponseDto.PaymentRequestResponse> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.requestPayment(userUUID, paymentRequestPaymentRequest))
+            .body(paymentService.requestPayment(userId, paymentRequestPaymentRequest))
     }
 
     @Operation(summary = "결제 검증 API", description = "결제가 되었는지 검증합니다.")
@@ -173,10 +173,10 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
         @AuthenticationPrincipal userDetails: UserDetails,
         @RequestBody paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
     ): ResponseEntity<PaymentResponseDto.PaymentCheckResponse> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.checkPayment(userUUID, paymentCheckRequest))
+            .body(paymentService.checkPayment(userId, paymentCheckRequest))
     }
 
     @Operation(summary = "결제 취소 API", description = "이메일을 입력하면 특정한 유저에게 환불해줍니다.")
@@ -246,10 +246,10 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
     fun refundPaymentByToken(
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<PaymentResponseDto.PaymentRefundResponse> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.refundPaymentByToken(userUUID))
+            .body(paymentService.refundPaymentByToken(userId))
     }
 
     @Operation(summary = "매칭 안된 유저 결제 취소 API", description = "매칭이 되지않은 모든 유저에 대해 환불합니다")
@@ -378,8 +378,8 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
     fun verifyPayment(
         @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<PaymentResponseDto.PaymentRequestResponse> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
-        return ResponseEntity.status(HttpStatus.OK).body(paymentService.verifyPayment(userUUID))
+        return ResponseEntity.status(HttpStatus.OK).body(paymentService.verifyPayment(userId))
     }
 }

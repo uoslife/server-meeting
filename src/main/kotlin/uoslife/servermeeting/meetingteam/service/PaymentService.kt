@@ -6,14 +6,14 @@ import uoslife.servermeeting.meetingteam.dto.response.PaymentResponseDto
 
 interface PaymentService {
     fun requestPayment(
-        userUUID: UUID,
+        userId: Long,
         paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest
     ): PaymentResponseDto.PaymentRequestResponse
     fun checkPayment(
-        userUUID: UUID,
+        userId: Long,
         paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
     ): PaymentResponseDto.PaymentCheckResponse
-    fun refundPaymentByToken(userUUID: UUID): PaymentResponseDto.PaymentRefundResponse
+    fun refundPaymentByToken(userId: Long): PaymentResponseDto.PaymentRefundResponse
     fun refundPayment(): Unit
-    fun verifyPayment(userUUID: UUID): PaymentResponseDto.PaymentRequestResponse
+    fun verifyPayment(userId: Long): PaymentResponseDto.PaymentRequestResponse
 }

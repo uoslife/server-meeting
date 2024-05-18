@@ -14,10 +14,9 @@ import uoslife.servermeeting.verification.dto.University
 @Entity
 @Table(name = "`user`")
 class User(
-    @Id @Column(nullable = false, unique = true) var id: UUID? = null,
+    @Id @Column(nullable = false, unique = true) var id: Long? = null,
     var phoneNumber: String? = null,
     var name: String = "",
-    @Column(nullable = true, unique = false) val email: String? = null,
     var kakaoTalkId: String = "",
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
@@ -28,11 +27,10 @@ class User(
     var team: MeetingTeam? = null
 ) : BaseEntity() {
     companion object {
-        fun create(email: String, university: University): User {
+        fun create(userId: Long, university: University): User {
             val user: User =
                 User(
-                    id = UUID.randomUUID(),
-                    email = email,
+                    id = userId,
                 )
             user.userPersonalInformation.university = university
             return user
