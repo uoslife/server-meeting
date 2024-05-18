@@ -66,14 +66,10 @@ class MatchingService(
     ): MeetingTeamInformationGetResponse {
         return when (meetingTeam.type) {
             SINGLE -> {
-                singleMeetingService.getMeetingTeamInformation(
-                    opponentUser.id!!
-                )
+                singleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
             }
             TRIPLE -> {
-                tripleMeetingService.getMeetingTeamInformation(
-                    opponentUser.id!!
-                )
+                tripleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
             }
         }
     }

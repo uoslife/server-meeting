@@ -5,7 +5,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.service.AccountService
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
@@ -42,7 +41,8 @@ class UserService(
 
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
-        val savedUser = getOrCreateUser(createUserRequest.userId, accountUser.email, accountUser.realm.code)
+        val savedUser =
+            getOrCreateUser(createUserRequest.userId, accountUser.email, accountUser.realm.code)
     }
 
     fun findUser(id: Long): UserFindResponse {
@@ -112,7 +112,9 @@ class UserService(
 
     private fun getOrCreateUser(userId: Long, email: String, university: University): User {
         return userRepository.findByEmail(email)
-            ?: userRepository.save(User.create(userId = userId, email = email, university = university))
+            ?: userRepository.save(
+                User.create(userId = userId, email = email, university = university)
+            )
     }
 
     @Transactional

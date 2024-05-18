@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.context.annotation.Bean
-import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -21,7 +20,7 @@ class AccountService {
         return serverClient.getUserProfile(userId)
     }
 
-    fun getMyProfile(authorizationHeader: String): AccountResponse{
+    fun getMyProfile(authorizationHeader: String): AccountResponse {
         return userClient.getMyProfile(authorizationHeader)
     }
 }

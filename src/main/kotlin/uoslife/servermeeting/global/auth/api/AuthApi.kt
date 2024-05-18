@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
-import uoslife.servermeeting.global.auth.dto.response.TokenResponse
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.service.AuthService
 import uoslife.servermeeting.global.error.ErrorResponse
@@ -76,16 +74,16 @@ class AuthApi(
     fun refreshToken(
         @RequestHeader(value = "Cookie") refreshToken: String,
         response: HttpServletResponse
-//    ): ResponseEntity<AccessTokenResponse> {
-    ): ResponseEntity<Unit> {
+        //    ): ResponseEntity<AccessTokenResponse> {
+        ): ResponseEntity<Unit> {
         val trimmedRefreshToken: String = tokenProvider.trimRefreshToken(refreshToken)
-//        val tokenResponse: TokenResponse = authService.refreshAccessToken(trimmedRefreshToken)
-//        cookieUtil.setCookieWithRefreshToken(response, tokenResponse.refreshToken)
+        //        val tokenResponse: TokenResponse =
+        // authService.refreshAccessToken(trimmedRefreshToken)
+        //        cookieUtil.setCookieWithRefreshToken(response, tokenResponse.refreshToken)
 
-//        return ResponseEntity.ok()
-//            .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
+        //        return ResponseEntity.ok()
+        //            .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
-
 }

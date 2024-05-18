@@ -6,14 +6,10 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.util.StringUtils
 import org.springframework.web.filter.OncePerRequestFilter
-import uoslife.servermeeting.global.auth.dto.response.AccountResponse
 import uoslife.servermeeting.global.auth.exception.InvalidTokenException
 import uoslife.servermeeting.global.auth.exception.UnauthorizedException
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
-import uoslife.servermeeting.global.auth.jwt.TokenType
-import uoslife.servermeeting.global.auth.service.AccountService
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.global.error.exception.ErrorCode
 
