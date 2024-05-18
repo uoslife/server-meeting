@@ -4,7 +4,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
-import uoslife.servermeeting.global.auth.dto.response.AccountResponse
 import uoslife.servermeeting.global.auth.jwt.JwtUserDetails
 import uoslife.servermeeting.global.auth.service.AccountService
 

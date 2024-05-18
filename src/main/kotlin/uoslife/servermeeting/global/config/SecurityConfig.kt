@@ -24,7 +24,6 @@ import uoslife.servermeeting.global.auth.filter.JwtAccessDeniedHandler
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationEntryPoint
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationFilter
 import uoslife.servermeeting.global.auth.jwt.JwtAuthenticationProvider
-import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.service.AccountService
 
 @Configuration

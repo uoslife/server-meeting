@@ -2,7 +2,6 @@ package uoslife.servermeeting.global.auth.jwt
 
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Component
 import uoslife.servermeeting.global.auth.security.JwtUserDetailsService
 

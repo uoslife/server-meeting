@@ -46,5 +46,7 @@ interface ServerClient {
 )
 interface UserClient {
     @GetMapping("/v1/users/me")
-    fun getAuthenticatedUserProfile(@RequestHeader("Authorization") authorization: String): AccountResponse
+    fun getAuthenticatedUserProfile(
+        @RequestHeader("Authorization") authorization: String
+    ): AccountResponse
 }
