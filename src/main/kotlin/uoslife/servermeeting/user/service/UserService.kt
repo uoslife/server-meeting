@@ -42,7 +42,7 @@ class UserService(
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
         val savedUser =
-            getOrCreateUser(createUserRequest.userId, accountUser.email, accountUser.realm.code)
+            getOrCreateUser(createUserRequest.userId, accountUser.realm.code)
     }
 
     fun findUser(id: Long): UserFindResponse {
@@ -76,7 +76,6 @@ class UserService(
         val updatingUser: User =
             User(
                 id = user.id,
-                email = user.email,
                 payment = user.payment,
             )
         updatingUser.userPersonalInformation.university = user.userPersonalInformation.university
@@ -110,27 +109,10 @@ class UserService(
         }
     }
 
-    private fun getOrCreateUser(userId: Long, email: String, university: University): User {
-        return userRepository.findByEmail(email)
+    private fun getOrCreateUser(userId: Long, university: University): User {
+        return userRepository.findByIdOrNull(userId)
             ?: userRepository.save(
-                User.create(userId = userId, email = email, university = university)
+                User.create(userId = userId, university = university)
             )
-    }
-
-    @Transactional
-    fun deleteUserByEmail(email: String): Unit {
-        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException()
-        val findUserWithMeetingTeam =
-            userDao.findUserWithMeetingTeam(user.id!!) ?: throw UserNotFoundException()
-
-        userRepository.delete(findUserWithMeetingTeam)
-        paymentRepository.deleteByUser(findUserWithMeetingTeam)
-
-        val meetingTeam: MeetingTeam = findUserWithMeetingTeam.team ?: return
-
-        // 미팅팀 삭제(미팅팀에 유저가 혼자일 경우)
-        if (meetingTeam.users.size == 1) {
-            meetingTeamRepository.delete(meetingTeam)
-        }
     }
 }
