@@ -36,10 +36,6 @@ $ ./gradlew build testClasses -x test
 $ java -jar build/libs/server-meeting-0.0.1-SNAPSHOT.jar
 ```
 
-### ERD
-
-![시대팅 ERD](docsource/Sidaeting-erd-2.png)
-
 ## Infrastructure
 
 - application.yml 파일은 notion에서 관리합니다.

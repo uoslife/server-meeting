@@ -8,7 +8,6 @@ data class UserPersonalInformation(
     var age: Int = 0,
     var gender: GenderType = GenderType.MALE,
     var height: Int? = null,
-    var kakaoTalkId: String? = null,
     var studentType: StudentType = StudentType.UNDERGRADUATE,
     var university: University? = null,
     var department: String = "",

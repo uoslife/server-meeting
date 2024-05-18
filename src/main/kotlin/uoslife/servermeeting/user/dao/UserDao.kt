@@ -13,7 +13,7 @@ import uoslife.servermeeting.user.entity.User
 class UserDao(
     private val queryFactory: JPAQueryFactory,
 ) {
-    fun findUserWithMeetingTeam(userId: UUID): User? {
+    fun findUserWithMeetingTeam(userId: Long): User? {
         return queryFactory
             .selectFrom(user)
             .leftJoin(user.team, meetingTeam)
