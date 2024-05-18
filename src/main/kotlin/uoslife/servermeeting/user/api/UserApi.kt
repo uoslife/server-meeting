@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.util.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.global.util.CookieUtil
-import uoslife.servermeeting.user.dto.request.CreateUserRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.service.UserService
@@ -63,14 +62,12 @@ class UserApi(
     )
     @PostMapping
     fun createUser(
-        @RequestBody createUserRequest: CreateUserRequest,
+        requset: HttpServletRequest,
         response: HttpServletResponse
-    ): ResponseEntity<AccessTokenResponse> {
-        val tokenResponse = userService.createUser(createUserRequest)
-        cookieUtil.setCookieWithRefreshToken(response, tokenResponse.refreshToken)
+    ): ResponseEntity<Unit> {
+        userService.createUser(requset)
 
-        return ResponseEntity.ok()
-            .body(AccessTokenResponse(accessToken = tokenResponse.accessToken))
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
     @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 정보를 조회합니다.")
     @ApiResponses(
@@ -103,7 +100,7 @@ class UserApi(
         @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<UserFindResponse> {
         val userFindResponseDto: UserFindResponse =
-            userService.findUser(UUID.fromString(userDetails.username))
+            userService.findUser(userDetails.username.toLong())
 
         return ResponseEntity.ok().body(userFindResponseDto)
     }
@@ -139,7 +136,7 @@ class UserApi(
         @RequestBody(required = false) requestBody: UserUpdateRequest,
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<Unit> {
-        userService.updateUser(requestBody, UUID.fromString(userDetails.username))
+        userService.updateUser(requestBody, userDetails.username.toLong())
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
@@ -170,7 +167,7 @@ class UserApi(
                 )]
     )
     @DeleteMapping("/{userId}")
-    fun deleteUserById(@PathVariable("userId") userId: UUID): ResponseEntity<Unit> {
+    fun deleteUserById(@PathVariable("userId") userId: Long): ResponseEntity<Unit> {
         userService.deleteUserById(userId)
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
@@ -219,40 +216,8 @@ class UserApi(
     )
     @DeleteMapping()
     fun deleteUserByToken(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {
-        val userId: UUID = UUID.fromString(userDetails.username)
+        val userId: Long = userDetails.username.toLong()
         userService.deleteUserById(userId)
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-    }
-
-    @Operation(summary = "User 계정 삭제", description = "유저 email을 이용하여 삭제합니다.")
-    @ApiResponses(
-        value =
-            [
-                ApiResponse(
-                    responseCode = "204",
-                    description = "유저 삭제 성공",
-                    content = [Content(schema = Schema(implementation = Unit::class))]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "해당 유저 정보 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: User is not Found., status:400, code: U02}"
-                                        )]
-                            )]
-                )]
-    )
-    @DeleteMapping("/email")
-    fun deleteUserByEmail(@RequestBody email: String): ResponseEntity<Unit> {
-        userService.deleteUserByEmail(email)
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
