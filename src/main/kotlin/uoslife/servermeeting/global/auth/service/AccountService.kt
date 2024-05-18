@@ -15,8 +15,8 @@ import uoslife.servermeeting.global.auth.dto.response.AccountResponse
 class AccountService {
     @Autowired lateinit var userClient: UserClient
 
-    fun getMyProfile(authorizationHeader: String): AccountResponse {
-        return userClient.getMyProfile(authorizationHeader)
+    fun getAuthenticatedUserProfile(authorizationHeader: String): AccountResponse {
+        return userClient.getAuthenticatedUserProfile(authorizationHeader)
     }
 }
 
@@ -46,5 +46,5 @@ interface ServerClient {
 )
 interface UserClient {
     @GetMapping("/v1/users/me")
-    fun getMyProfile(@RequestHeader("Authorization") authorization: String): AccountResponse
+    fun getAuthenticatedUserProfile(@RequestHeader("Authorization") authorization: String): AccountResponse
 }

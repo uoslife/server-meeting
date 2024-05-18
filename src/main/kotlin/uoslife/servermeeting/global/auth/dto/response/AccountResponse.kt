@@ -3,7 +3,7 @@ package uoslife.servermeeting.global.auth.dto.response
 import uoslife.servermeeting.verification.dto.University
 
 data class AccountResponse(
-    val id: Int,
+    val id: String,
     val nickname: String,
     val name: String?,
     val email: String?,

@@ -16,18 +16,9 @@ class TokenProvider(
         private val bearerPrefix: String = "Bearer "
     }
 
-    fun getAuthentication(accessToken: String): UsernamePasswordAuthenticationToken {
-        val principal: JwtUserDetails = jwtUserDetailsService.loadUserByUsername(accessToken)
-        return UsernamePasswordAuthenticationToken(principal, "", principal.authorities)
-    }
-
-    fun resolveToken(request: HttpServletRequest): String {
+    fun resolveToken(request: HttpServletRequest): String? {
         val bearerToken = request.getHeader(authorizationHeader)
 
         return bearerToken
-    }
-
-    fun trimRefreshToken(refreshToken: String): String {
-        return refreshToken.substring(13)
     }
 }

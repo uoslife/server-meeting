@@ -16,11 +16,9 @@ class JwtUserDetailsService(
     companion object {
         private val logger = LoggerFactory.getLogger(JwtUserDetailsService::class.java)
     }
-    override fun loadUserByUsername(accessToken: String): JwtUserDetails {
-        val profile: AccountResponse = accountService.getMyProfile(accessToken)
-
+    override fun loadUserByUsername(userId: String): JwtUserDetails {
         return JwtUserDetails(
-            id = profile.id.toString(),
+            id = userId,
             authorities = MutableList<GrantedAuthority>(1) { GrantedAuthority { "ROLE_USER" } },
         )
     }

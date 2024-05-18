@@ -5,6 +5,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uoslife.servermeeting.global.auth.exception.UnauthorizedException
 import uoslife.servermeeting.global.auth.jwt.TokenProvider
 import uoslife.servermeeting.global.auth.service.AccountService
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
@@ -33,10 +34,10 @@ class UserService(
 ) {
     @Transactional
     fun createUser(requset: HttpServletRequest): Unit {
-        val resolvedToken = tokenProvider.resolveToken(requset)
+        val resolvedToken = tokenProvider.resolveToken(requset) ?: throw UnauthorizedException()
 
         // 계정 서비스에서 유저 정보 받아오기
-        val accountUser = accountService.getMyProfile(resolvedToken)
+        val accountUser = accountService.getAuthenticatedUserProfile(resolvedToken)
         if (accountUser.email.isNullOrBlank() || accountUser.realm == null)
             throw UserNotFoundException()
 
