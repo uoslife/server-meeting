@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.stereotype.Service
+import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
 import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.PaymentRequestDto
 import uoslife.servermeeting.meetingteam.dto.response.PaymentResponseDto
@@ -100,7 +101,7 @@ class PortOneService(
             payment.impUid = paymentCheckRequest.impUid
             payment.status = PaymentStatus.SUCCESS
             return PaymentResponseDto.PaymentCheckResponse(true, "")
-        } catch (e: Exception) {
+        } catch (e: ExternalApiFailedException) {
             payment.status = PaymentStatus.FAILED
             return PaymentResponseDto.PaymentCheckResponse(false, "")
         }
@@ -132,7 +133,7 @@ class PortOneService(
 
             payment.status = PaymentStatus.REFUND
             return PaymentResponseDto.PaymentRefundResponse(true, "")
-        } catch (e: Exception) {
+        } catch (e: ExternalApiFailedException) {
             payment.status = PaymentStatus.REFUND_FAILED
             return PaymentResponseDto.PaymentRefundResponse(false, "")
         }
@@ -157,7 +158,7 @@ class PortOneService(
                 )
 
                 payment.status = PaymentStatus.REFUND
-            } catch (e: Exception) {
+            } catch (e: ExternalApiFailedException) {
                 payment.status = PaymentStatus.REFUND_FAILED
             }
         }
