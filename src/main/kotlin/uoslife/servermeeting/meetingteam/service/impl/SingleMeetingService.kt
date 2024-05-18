@@ -38,11 +38,11 @@ class SingleMeetingService(
 
     @Transactional
     override fun createMeetingTeam(
-        userUUID: UUID,
+        userId: Long,
         name: String?,
         teamType: TeamType
     ): MeetingTeamCodeResponse {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         validator.isUserAlreadyHaveTeam(user)
 
         val meetingTeam = createDefaultMeetingTeam(leader = user, teamType = teamType)
@@ -52,7 +52,7 @@ class SingleMeetingService(
     }
 
     override fun joinMeetingTeam(
-        userUUID: UUID,
+        userId: Long,
         code: String,
         isJoin: Boolean
     ): MeetingTeamUserListGetResponse? {
@@ -60,7 +60,7 @@ class SingleMeetingService(
     }
 
     override fun getMeetingTeamUserList(
-        userUUID: UUID,
+        userId: Long,
         code: String
     ): MeetingTeamUserListGetResponse {
         throw InSingleMeetingTeamOnlyOneUserException()
@@ -68,10 +68,10 @@ class SingleMeetingService(
 
     @Transactional
     override fun updateMeetingTeamInformation(
-        userUUID: UUID,
+        userId: Long,
         meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
     ) {
-        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userId = userId) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val information =
@@ -82,10 +82,10 @@ class SingleMeetingService(
 
     @Transactional
     override fun updateMeetingTeamPreference(
-        userUUID: UUID,
+        userId: Long,
         meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
     ) {
-        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val validMBTI = validator.setValidMBTI(meetingTeamPreferenceUpdateRequest.mbti)
@@ -96,11 +96,11 @@ class SingleMeetingService(
 
     @Transactional
     override fun updateMeetingTeamMessage(
-        userUUID: UUID,
+        userId: Long,
         meetingTeamMessageUpdateRequest: MeetingTeamMessageUpdateRequest
     ) {
         validator.isMessageLengthIsValid(meetingTeamMessageUpdateRequest.message)
-        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val message = meetingTeamMessageUpdateRequest.message
@@ -108,8 +108,8 @@ class SingleMeetingService(
         meetingTeam.message = message
     }
 
-    override fun getMeetingTeamInformation(userUUID: UUID): MeetingTeamInformationGetResponse {
-        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+    override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {
+        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val information = meetingTeam.information ?: throw InformationNotFoundException()
@@ -127,8 +127,8 @@ class SingleMeetingService(
     }
 
     @Transactional
-    override fun deleteMeetingTeam(userUUID: UUID) {
-        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+    override fun deleteMeetingTeam(userId: Long) {
+        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = user.team ?: throw MeetingTeamNotFoundException()
         user.team = null
 

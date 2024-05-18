@@ -116,7 +116,7 @@ class MeetingApi(
         @PathVariable isTeamLeader: Boolean,
         @RequestParam(required = false) name: String?,
     ): ResponseEntity<MeetingTeamCodeResponse> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
         if (!isTeamLeader) {
             throw OnlyTeamLeaderCanCreateTeamException()
@@ -125,9 +125,9 @@ class MeetingApi(
         val meetingTeamCodeResponse =
             when (teamType) {
                 TeamType.SINGLE ->
-                    singleMeetingService.createMeetingTeam(userUUID, name, teamType = teamType)
+                    singleMeetingService.createMeetingTeam(userId, name, teamType = teamType)
                 TeamType.TRIPLE ->
-                    tripleMeetingService.createMeetingTeam(userUUID, name, teamType = teamType)
+                    tripleMeetingService.createMeetingTeam(userId, name, teamType = teamType)
             }
 
         return ResponseEntity.ok(meetingTeamCodeResponse)
@@ -224,14 +224,14 @@ class MeetingApi(
         @PathVariable code: String,
         @RequestParam isJoin: Boolean,
     ): ResponseEntity<MeetingTeamUserListGetResponse?> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
         if (teamType == TeamType.SINGLE) {
             throw InSingleMeetingTeamNoJoinTeamException()
         }
 
         val meetingTeamUserListGetResponse =
-            tripleMeetingService.joinMeetingTeam(userUUID, code, isJoin)
+            tripleMeetingService.joinMeetingTeam(userId, code, isJoin)
         return ResponseEntity.ok(meetingTeamUserListGetResponse)
     }
 
@@ -304,14 +304,14 @@ class MeetingApi(
         @PathVariable code: String,
         @PathVariable teamType: TeamType,
     ): ResponseEntity<MeetingTeamUserListGetResponse> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
         if (teamType == TeamType.SINGLE) {
             throw InSingleMeetingTeamOnlyOneUserException()
         }
 
         val meetingTeamUserListGetResponse =
-            tripleMeetingService.getMeetingTeamUserList(userUUID, code)
+            tripleMeetingService.getMeetingTeamUserList(userId, code)
 
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamUserListGetResponse)
     }
@@ -374,7 +374,7 @@ class MeetingApi(
         @Valid
         meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest,
     ): ResponseEntity<Unit> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
         if (!isTeamLeader) {
             throw OnlyTeamLeaderCanUpdateTeamInformationException()
@@ -383,12 +383,12 @@ class MeetingApi(
         when (teamType) {
             TeamType.SINGLE ->
                 singleMeetingService.updateMeetingTeamInformation(
-                    userUUID,
+                    userId,
                     meetingTeamInformationUpdateRequest,
                 )
             TeamType.TRIPLE ->
                 tripleMeetingService.updateMeetingTeamInformation(
-                    userUUID,
+                    userId,
                     meetingTeamInformationUpdateRequest,
                 )
         }
@@ -451,7 +451,7 @@ class MeetingApi(
         @PathVariable isTeamLeader: Boolean,
         @RequestBody @Valid meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest,
     ): ResponseEntity<Unit> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
         if (!isTeamLeader) {
             throw OnlyTeamLeaderCanUpdateTeamInformationException()
@@ -460,12 +460,12 @@ class MeetingApi(
         when (teamType) {
             TeamType.SINGLE ->
                 singleMeetingService.updateMeetingTeamPreference(
-                    userUUID,
+                    userId,
                     meetingTeamPreferenceUpdateRequest,
                 )
             TeamType.TRIPLE ->
                 tripleMeetingService.updateMeetingTeamPreference(
-                    userUUID,
+                    userId,
                     meetingTeamPreferenceUpdateRequest,
                 )
         }
@@ -545,12 +545,12 @@ class MeetingApi(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
     ): ResponseEntity<MeetingTeamInformationGetResponse> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
         val meetingTeamInformationGetResponse =
             when (teamType) {
-                TeamType.SINGLE -> singleMeetingService.getMeetingTeamInformation(userUUID)
-                TeamType.TRIPLE -> tripleMeetingService.getMeetingTeamInformation(userUUID)
+                TeamType.SINGLE -> singleMeetingService.getMeetingTeamInformation(userId)
+                TeamType.TRIPLE -> tripleMeetingService.getMeetingTeamInformation(userId)
             }
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamInformationGetResponse)
     }
@@ -617,7 +617,7 @@ class MeetingApi(
         @PathVariable isTeamLeader: Boolean,
         @RequestBody @Valid meetingTeamMessageUpdateRequest: MeetingTeamMessageUpdateRequest,
     ): ResponseEntity<Unit> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
         if (!isTeamLeader) {
             throw OnlyTeamLeaderCanUpdateTeamInformationException()
@@ -626,12 +626,12 @@ class MeetingApi(
         when (teamType) {
             TeamType.SINGLE ->
                 singleMeetingService.updateMeetingTeamMessage(
-                    userUUID,
+                    userId,
                     meetingTeamMessageUpdateRequest,
                 )
             TeamType.TRIPLE ->
                 tripleMeetingService.updateMeetingTeamMessage(
-                    userUUID,
+                    userId,
                     meetingTeamMessageUpdateRequest,
                 )
         }
@@ -693,15 +693,15 @@ class MeetingApi(
         @PathVariable teamType: TeamType,
         @PathVariable isTeamLeader: Boolean,
     ): ResponseEntity<Unit> {
-        val userUUID = UUID.fromString(userDetails.username)
+        val userId = userDetails.username.toLong()
 
         if (!isTeamLeader) {
             throw OnlyTeamLeaderCanDeleteTeamException()
         }
 
         when (teamType) {
-            TeamType.SINGLE -> singleMeetingService.deleteMeetingTeam(userUUID)
-            TeamType.TRIPLE -> tripleMeetingService.deleteMeetingTeam(userUUID)
+            TeamType.SINGLE -> singleMeetingService.deleteMeetingTeam(userId)
+            TeamType.TRIPLE -> tripleMeetingService.deleteMeetingTeam(userId)
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }

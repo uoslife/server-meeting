@@ -28,8 +28,8 @@ class MatchingService(
     private val tripleMeetingService: TripleMeetingService,
 ) {
     @Transactional
-    fun getMatchedMeetingTeam(userUUID: UUID): MatchInformationResponse {
-        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+    fun getMatchedMeetingTeam(userId: Long): MatchInformationResponse {
+        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
         val meetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
         val match = getMatchByGender(user, meetingTeam)
@@ -67,12 +67,12 @@ class MatchingService(
         return when (meetingTeam.type) {
             SINGLE -> {
                 singleMeetingService.getMeetingTeamInformation(
-                    UUID.fromString(opponentUser.id.toString())
+                    opponentUser.id!!
                 )
             }
             TRIPLE -> {
                 tripleMeetingService.getMeetingTeamInformation(
-                    UUID.fromString(opponentUser.id.toString())
+                    opponentUser.id!!
                 )
             }
         }

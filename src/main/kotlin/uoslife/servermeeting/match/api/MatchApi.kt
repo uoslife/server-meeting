@@ -97,8 +97,7 @@ class MatchApi(
     fun getMatchedMeetingTeamInformation(
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<MatchInformationResponse> {
-        val userUUID = UUID.fromString(userDetails.username)
         return ResponseEntity.status(HttpStatus.OK)
-            .body(matchingService.getMatchedMeetingTeam(userUUID))
+            .body(matchingService.getMatchedMeetingTeam(userDetails.username.toLong()))
     }
 }

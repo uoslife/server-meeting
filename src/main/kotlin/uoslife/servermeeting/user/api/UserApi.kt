@@ -101,7 +101,7 @@ class UserApi(
         @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<UserFindResponse> {
         val userFindResponseDto: UserFindResponse =
-            userService.findUser(UUID.fromString(userDetails.username))
+            userService.findUser(userDetails.username.toLong())
 
         return ResponseEntity.ok().body(userFindResponseDto)
     }
@@ -137,7 +137,7 @@ class UserApi(
         @RequestBody(required = false) requestBody: UserUpdateRequest,
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<Unit> {
-        userService.updateUser(requestBody, UUID.fromString(userDetails.username))
+        userService.updateUser(requestBody, userDetails.username.toLong())
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
@@ -168,7 +168,7 @@ class UserApi(
                 )]
     )
     @DeleteMapping("/{userId}")
-    fun deleteUserById(@PathVariable("userId") userId: UUID): ResponseEntity<Unit> {
+    fun deleteUserById(@PathVariable("userId") userId: Long): ResponseEntity<Unit> {
         userService.deleteUserById(userId)
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
@@ -217,7 +217,7 @@ class UserApi(
     )
     @DeleteMapping()
     fun deleteUserByToken(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {
-        val userId: UUID = UUID.fromString(userDetails.username)
+        val userId: Long = userDetails.username.toLong()
         userService.deleteUserById(userId)
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()

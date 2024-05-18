@@ -46,10 +46,10 @@ class PortOneService(
 ) : PaymentService {
     @Transactional
     override fun requestPayment(
-        userUUID: UUID,
+        userId: Long,
         paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest
     ): PaymentResponseDto.PaymentRequestResponse {
-        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
         val team = user.team ?: throw MeetingTeamNotFoundException()
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
@@ -90,10 +90,10 @@ class PortOneService(
 
     @Transactional
     override fun checkPayment(
-        userUUID: UUID,
+        userId: Long,
         paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
     ): PaymentResponseDto.PaymentCheckResponse {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
 
         try {
@@ -110,9 +110,9 @@ class PortOneService(
 
     @Transactional
     override fun refundPaymentByToken(
-        userUUID: UUID,
+        userId: Long,
     ): PaymentResponseDto.PaymentRefundResponse {
-        val user = userRepository.findByIdOrNull(userUUID) ?: throw UserNotFoundException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
         val team = user.team ?: throw MeetingTeamNotFoundException()
 
@@ -154,9 +154,9 @@ class PortOneService(
         }
     }
 
-    override fun verifyPayment(userUUID: UUID): PaymentResponseDto.PaymentRequestResponse {
+    override fun verifyPayment(userId: Long): PaymentResponseDto.PaymentRequestResponse {
         // 미팅팀이 없으면, 신청하기 버튼
-        val user = userDao.findUserWithMeetingTeam(userUUID) ?: throw UserNotFoundException()
+        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
         val team = user.team ?: throw MeetingTeamNotFoundException()
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 

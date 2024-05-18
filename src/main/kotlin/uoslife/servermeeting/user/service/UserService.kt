@@ -42,17 +42,17 @@ class UserService(
 
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
-        val savedUser = getOrCreateUser(accountUser.email, accountUser.realm.code)
+        val savedUser = getOrCreateUser(createUserRequest.userId, accountUser.email, accountUser.realm.code)
     }
 
-    fun findUser(id: UUID): UserFindResponse {
+    fun findUser(id: Long): UserFindResponse {
         val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
         return User.toResponse(user)
     }
 
     @Transactional
-    fun updateUser(requestDto: UserUpdateRequest, id: UUID): Unit {
+    fun updateUser(requestDto: UserUpdateRequest, id: Long): Unit {
         val existingUser = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
         val userPersonalInformation: UserPersonalInformation =
@@ -70,7 +70,7 @@ class UserService(
     }
 
     @Transactional
-    fun resetUser(id: UUID): ResponseEntity<Unit> {
+    fun resetUser(id: Long): ResponseEntity<Unit> {
         val user: User = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
         val updatingUser: User =
@@ -91,7 +91,7 @@ class UserService(
      * 삭제합니다.
      */
     @Transactional
-    fun deleteUserById(id: UUID): Unit {
+    fun deleteUserById(id: Long): Unit {
         // 유저가 존재하는지 확인
         val user: User =
             userDao.findUserWithMeetingTeam(userId = id) ?: throw UserNotFoundException()
@@ -110,9 +110,9 @@ class UserService(
         }
     }
 
-    private fun getOrCreateUser(email: String, university: University): User {
+    private fun getOrCreateUser(userId: Long, email: String, university: University): User {
         return userRepository.findByEmail(email)
-            ?: userRepository.save(User.create(email = email, university = university))
+            ?: userRepository.save(User.create(userId = userId, email = email, university = university))
     }
 
     @Transactional
