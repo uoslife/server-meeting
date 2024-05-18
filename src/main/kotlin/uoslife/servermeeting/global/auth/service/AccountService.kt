@@ -13,12 +13,7 @@ import uoslife.servermeeting.global.auth.dto.response.AccountResponse
 
 @Service
 class AccountService {
-    @Autowired lateinit var serverClient: ServerClient
     @Autowired lateinit var userClient: UserClient
-
-    fun getUserProfile(userId: Long): AccountResponse {
-        return serverClient.getUserProfile(userId)
-    }
 
     fun getMyProfile(authorizationHeader: String): AccountResponse {
         return userClient.getMyProfile(authorizationHeader)

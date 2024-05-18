@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -62,10 +63,10 @@ class UserApi(
     )
     @PostMapping
     fun createUser(
-        @RequestBody createUserRequest: CreateUserRequest,
+        requset: HttpServletRequest,
         response: HttpServletResponse
     ): ResponseEntity<Unit> {
-        val tokenResponse = userService.createUser(createUserRequest)
+        userService.createUser(requset)
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }

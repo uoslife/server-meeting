@@ -28,7 +28,7 @@ class JwtAuthenticationFilter(
 
     private fun setAuthentication(request: HttpServletRequest, response: HttpServletResponse) {
         try {
-            val token = tokenProvider.resolveToken(request) ?: throw UnauthorizedException()
+            val token = tokenProvider.resolveToken(request)
 
             val authentication = tokenProvider.getAuthentication(token)
             SecurityContextHolder.getContext().authentication = authentication

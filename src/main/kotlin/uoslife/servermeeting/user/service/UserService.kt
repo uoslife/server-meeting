@@ -1,6 +1,6 @@
 package uoslife.servermeeting.user.service
 
-import java.util.*
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.stereotype.Service
@@ -12,7 +12,6 @@ import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dao.UserDao
-import uoslife.servermeeting.user.dto.request.CreateUserRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.User
@@ -33,16 +32,18 @@ class UserService(
     private val validator: Validator
 ) {
     @Transactional
-    fun createUser(createUserRequest: CreateUserRequest): Unit {
+    fun createUser(requset: HttpServletRequest): Unit {
+        val resolvedToken = tokenProvider.resolveToken(requset)
+
         // 계정 서비스에서 유저 정보 받아오기
-        val accountUser = accountService.getUserProfile(createUserRequest.userId)
+        val accountUser = accountService.getMyProfile(resolvedToken)
         if (accountUser.email.isNullOrBlank() || accountUser.realm == null)
             throw UserNotFoundException()
 
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
         val savedUser =
-            getOrCreateUser(createUserRequest.userId, accountUser.realm.code)
+            getOrCreateUser(accountUser.id.toLong(), accountUser.realm.code)
     }
 
     fun findUser(id: Long): UserFindResponse {

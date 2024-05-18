@@ -21,14 +21,10 @@ class TokenProvider(
         return UsernamePasswordAuthenticationToken(principal, "", principal.authorities)
     }
 
-    fun resolveToken(request: HttpServletRequest): String? {
+    fun resolveToken(request: HttpServletRequest): String {
         val bearerToken = request.getHeader(authorizationHeader)
 
         return bearerToken
-        //        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(bearerPrefix)) {
-        //            return bearerToken.substring(7)
-        //        }
-        //        return null
     }
 
     fun trimRefreshToken(refreshToken: String): String {
