@@ -20,6 +20,7 @@ import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dao.UserDao
+import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 
@@ -188,5 +189,10 @@ class PortOneService(
             user.name,
             team.type
         )
+    }
+
+    @Transactional
+    override fun deleteUserPayment(user: User) {
+        paymentRepository.deleteByUser(user)
     }
 }

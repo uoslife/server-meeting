@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
-import uoslife.servermeeting.meetingteam.repository.PaymentRepository
+import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
@@ -22,7 +22,7 @@ import uoslife.servermeeting.verification.dto.University
 @Transactional
 class UserService(
     private val userRepository: UserRepository,
-    private val paymentRepository: PaymentRepository,
+    private val paymentService: PaymentService,
     private val meetingTeamRepository: MeetingTeamRepository,
     private val userDao: UserDao,
     private val uoslifeAccountService: UOSLIFEAccountService,
@@ -94,7 +94,7 @@ class UserService(
         userRepository.delete(user)
 
         // Payment 삭제
-        paymentRepository.deleteByUser(user)
+        paymentService.deleteUserPayment(user)
 
         val meetingTeam: MeetingTeam = user.team ?: return
 
