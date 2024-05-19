@@ -11,7 +11,7 @@ spring:
             initialization-fail-timeout: 3600
     jpa:
         hibernate:
-            ddl-auto: create
+            ddl-auto: validate
         database-platform: org.hibernate.dialect.PostgreSQLDialect
         generate-ddl: false
         open-in-view: false
@@ -96,3 +96,4 @@ account:
     access:
         id: ${ACCOUNT_API_ACCESS_ID}
         secret: ${ACCOUNT_API_ACCESS_SECRET}
+
