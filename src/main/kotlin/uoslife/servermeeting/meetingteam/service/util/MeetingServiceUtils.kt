@@ -7,8 +7,8 @@ import uoslife.servermeeting.meetingteam.dto.response.UserProfile
 import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
-import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.entity.enums.GenderType
 
 @Service
 @Transactional(readOnly = true)

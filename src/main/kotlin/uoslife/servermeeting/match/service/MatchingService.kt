@@ -14,8 +14,8 @@ import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
 import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
 import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.user.dao.UserDao
-import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.exception.UserNotFoundException
 
 @Service
