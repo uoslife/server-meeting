@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 
-@FeignClient(name = "uoslife-account-api-user", url = "\${uoslife.services.account.url}")
+@FeignClient(name = "uoslife-account-api-user", url = "\${account.url}")
 interface UserClient {
     @GetMapping("/v1/users/me")
     fun getAuthenticatedUserProfile(
@@ -19,7 +19,7 @@ interface UserClient {
 
 @FeignClient(
     name = "uoslife-account-api-server",
-    url = "\${uoslife.services.account.url}",
+    url = "\${account.url}",
     configuration = [ServerClient.BasicAuthConfiguration::class]
 )
 interface ServerClient {
@@ -33,9 +33,8 @@ interface ServerClient {
     fun getUserPushTokens(@RequestParam("userIds") userId: List<Long>): List<String>
 
     class BasicAuthConfiguration(
-        @Value("\${uoslife.services.account.access-key-id}") private val accessKeyId: String,
-        @Value("\${uoslife.services.account.access-key-secret}")
-        private val accessKeySecret: String,
+        @Value("\${account.access.id}") private val accessKeyId: String,
+        @Value("\${account.access.secret}") private val accessKeySecret: String,
     ) {
         @Bean
         fun basicAuthRequestInterceptor(): BasicAuthRequestInterceptor {
