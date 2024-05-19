@@ -9,11 +9,12 @@ import uoslife.servermeeting.meetingteam.service.impl.MeetingTeamService
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
+import uoslife.servermeeting.user.entity.University
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserPersonalInformation
+import uoslife.servermeeting.user.exception.EmailUnauthorizedException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
-import uoslife.servermeeting.verification.dto.University
 
 @Service
 @Transactional
@@ -29,7 +30,7 @@ class UserService(
         // 계정 서비스에서 유저 정보 받아오기
         val userProfile = uoslifeAccountService.getUserProfile(id)
         if (userProfile.email.isNullOrBlank() || userProfile.realm == null)
-            throw UserNotFoundException()
+            throw EmailUnauthorizedException()
 
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
@@ -77,6 +78,17 @@ class UserService(
         paymentService.deleteUserPayment(user)
 
         meetingTeamService.deleteEmptyMeetingTeam(user.team ?: return)
+    }
+
+    fun getKakaoTalkId(id: Long): String {
+        val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+
+        return user.kakaoTalkId
+    }
+
+    fun isDuplicatedKakaoTalkId(kakaoTalkId: String): Boolean {
+        if (userRepository.existsByKakaoTalkId(kakaoTalkId)) return true
+        return false
     }
 
     private fun getOrCreateUser(userId: Long, university: University): User {

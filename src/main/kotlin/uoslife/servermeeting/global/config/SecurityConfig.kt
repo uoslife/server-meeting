@@ -113,6 +113,7 @@ class SecurityConfig(
             web.ignoring()
                 .requestMatchers("/swagger-ui/**")
                 .requestMatchers("/meeting/actuator/health/**")
+                .requestMatchers("/api/user/isDuplicatedKakaoTalkId") // 카카오톡 중복 확인
         }
     }
 

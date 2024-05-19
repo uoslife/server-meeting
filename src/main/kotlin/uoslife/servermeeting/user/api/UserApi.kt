@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
-import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
@@ -34,10 +33,9 @@ class UserApi(
         value =
             [
                 ApiResponse(
-                    responseCode = "200",
+                    responseCode = "204",
                     description = "유저 생성 성공",
-                    content =
-                        [Content(schema = Schema(implementation = AccessTokenResponse::class))]
+                    content = [Content(schema = Schema(implementation = Unit::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
@@ -51,6 +49,21 @@ class UserApi(
                                         ExampleObject(
                                             value =
                                                 "{message: User is not Found., status: 400, code: U02}"
+                                        )]
+                            )]
+                ),
+                ApiResponse(
+                    responseCode = "401",
+                    description = "이메일 미인증 유저",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Email is not authorized., status: 401, code: U08}"
                                         )]
                             )]
                 ),
@@ -213,5 +226,35 @@ class UserApi(
         val userId: Long = userDetails.username.toLong()
         userService.deleteUserById(userId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @Operation(summary = "카카오톡 아이디 중복 확인", description = "카카오톡 아이디 중복 확인합니다.")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "카카오톡 아이디 중복 결과값",
+                    content = [Content(schema = Schema(implementation = Boolean::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status:400, code: U02}"
+                                        )]
+                            )]
+                )]
+    )
+    @GetMapping("/isDuplicatedKakaoTalkId")
+    fun isDuplicatedKakaoTalkId(@RequestParam kakaoTalkId: String): ResponseEntity<Boolean> {
+        return ResponseEntity.ok(userService.isDuplicatedKakaoTalkId(kakaoTalkId))
     }
 }

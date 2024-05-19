@@ -1,6 +1,6 @@
 package uoslife.servermeeting.global.auth.dto.response
 
-import uoslife.servermeeting.verification.dto.University
+import uoslife.servermeeting.user.entity.University
 
 data class AccountResponse(
     val id: String,
