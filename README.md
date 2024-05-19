@@ -1,10 +1,10 @@
 # server-meeting
 
-서울시립대학교 학생들을 위한 미팅 서비스를 제공하는 프로젝트 시대팅의 서버 레포지토리입니다.
+서울시립대학교 학생들을 위한 미팅 서비스를 제공하는 프로젝트 시대팅의 서버 레포지토리입니다. (최신 버전: 4)
 
 [![codecov](https://codecov.io/gh/uoslife/server-meeting/branch/main/graph/badge.svg?token=5ZBiZirJdI)](https://codecov.io/gh/uoslife/server-meeting)
 
-- API Docs : [swagger](https://meeting.uoslife.com/api/swagger-ui/index.html)
+- API Docs : [swagger](https://meeting.uoslife.com/swagger-ui/swagger-ui/index.html#/)
 
 ## Environment
 
@@ -38,6 +38,5 @@ $ java -jar build/libs/server-meeting-0.0.1-SNAPSHOT.jar
 
 ## Infrastructure
 
-- application.yml 파일은 notion에서 관리합니다.
 - season 값은 application.yml에서 관리합니다.
 - Production Database에 접근하기 위해서는 VPN을 사용해야 합니다.
