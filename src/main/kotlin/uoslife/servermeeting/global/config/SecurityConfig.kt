@@ -24,13 +24,13 @@ import uoslife.servermeeting.global.auth.filter.JwtAccessDeniedHandler
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationEntryPoint
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationFilter
 import uoslife.servermeeting.global.auth.jwt.JwtAuthenticationProvider
-import uoslife.servermeeting.global.auth.service.AccountService
+import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
     private val authProvider: JwtAuthenticationProvider,
-    private val accountService: AccountService,
+    private val accountService: UOSLIFEAccountService,
     @Qualifier("handlerExceptionResolver") private val resolver: HandlerExceptionResolver,
 ) {
     @Bean

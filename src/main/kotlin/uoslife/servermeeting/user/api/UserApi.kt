@@ -7,8 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -16,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
 import uoslife.servermeeting.global.error.ErrorResponse
-import uoslife.servermeeting.global.util.CookieUtil
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.service.UserService
@@ -26,7 +23,6 @@ import uoslife.servermeeting.user.service.UserService
 @RequestMapping("/api/user")
 class UserApi(
     private val userService: UserService,
-    private val cookieUtil: CookieUtil,
 ) {
 
     @Operation(
@@ -61,11 +57,9 @@ class UserApi(
             ]
     )
     @PostMapping
-    fun createUser(
-        requset: HttpServletRequest,
-        response: HttpServletResponse
-    ): ResponseEntity<Unit> {
-        userService.createUser(requset)
+    fun createUser(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {
+        val id = userDetails.username.toLong()
+        userService.createUser(id)
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
@@ -218,7 +212,6 @@ class UserApi(
     fun deleteUserByToken(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {
         val userId: Long = userDetails.username.toLong()
         userService.deleteUserById(userId)
-
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
