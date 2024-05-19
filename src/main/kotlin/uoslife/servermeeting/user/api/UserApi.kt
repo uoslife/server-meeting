@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
 import uoslife.servermeeting.global.error.ErrorResponse
-import uoslife.servermeeting.global.util.CookieUtil
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.service.UserService
@@ -24,7 +23,6 @@ import uoslife.servermeeting.user.service.UserService
 @RequestMapping("/api/user")
 class UserApi(
     private val userService: UserService,
-    private val cookieUtil: CookieUtil,
 ) {
 
     @Operation(
@@ -214,7 +212,6 @@ class UserApi(
     fun deleteUserByToken(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {
         val userId: Long = userDetails.username.toLong()
         userService.deleteUserById(userId)
-
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
