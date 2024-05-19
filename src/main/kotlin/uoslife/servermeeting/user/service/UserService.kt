@@ -87,8 +87,7 @@ class UserService(
     }
 
     fun isDuplicatedKakaoTalkId(kakaoTalkId: String): Boolean {
-        if(userRepository.existsByKakaoTalkId(kakaoTalkId))
-            return true
+        if (userRepository.existsByKakaoTalkId(kakaoTalkId)) return true
         return false
     }
 
