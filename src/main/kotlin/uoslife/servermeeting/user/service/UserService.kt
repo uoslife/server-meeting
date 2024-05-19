@@ -5,11 +5,9 @@ import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
-import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
+import uoslife.servermeeting.meetingteam.service.impl.MeetingTeamService
 import uoslife.servermeeting.meetingteam.util.Validator
-import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.User
@@ -23,8 +21,7 @@ import uoslife.servermeeting.verification.dto.University
 class UserService(
     private val userRepository: UserRepository,
     private val paymentService: PaymentService,
-    private val meetingTeamRepository: MeetingTeamRepository,
-    private val userDao: UserDao,
+    private val meetingTeamService: MeetingTeamService,
     private val uoslifeAccountService: UOSLIFEAccountService,
     private val validator: Validator
 ) {
@@ -87,8 +84,7 @@ class UserService(
     @Transactional
     fun deleteUserById(id: Long): Unit {
         // 유저가 존재하는지 확인
-        val user: User =
-            userDao.findUserWithMeetingTeam(userId = id) ?: throw UserNotFoundException()
+        val user: User = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
         // 유저 삭제
         userRepository.delete(user)
@@ -96,12 +92,7 @@ class UserService(
         // Payment 삭제
         paymentService.deleteUserPayment(user)
 
-        val meetingTeam: MeetingTeam = user.team ?: return
-
-        // 미팅팀 삭제(미팅팀에 유저가 혼자일 경우)
-        if (meetingTeam.users.size == 1) {
-            meetingTeamRepository.delete(meetingTeam)
-        }
+        meetingTeamService.deleteEmptyMeetingTeam(user.team ?: return)
     }
 
     private fun getOrCreateUser(userId: Long, university: University): User {
