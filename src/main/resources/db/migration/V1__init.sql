@@ -51,3 +51,4 @@ create table "user" (
 
 alter table if exists meeting_team
     add constraint UK_91houb7fbd63y3ev5fpldjl0y unique (leader_id)
+
