@@ -80,12 +80,6 @@ class UserService(
         meetingTeamService.deleteEmptyMeetingTeam(user.team ?: return)
     }
 
-    fun getKakaoTalkId(id: Long): String {
-        val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
-
-        return user.kakaoTalkId
-    }
-
     fun isDuplicatedKakaoTalkId(kakaoTalkId: String): Boolean {
         if (userRepository.existsByKakaoTalkId(kakaoTalkId)) return true
         return false
