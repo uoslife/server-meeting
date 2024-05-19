@@ -15,7 +15,10 @@ import uoslife.servermeeting.global.auth.service.AccountService
 class JwtAuthenticationFilter(
     private val accountService: AccountService,
 ) : OncePerRequestFilter() {
-    private val logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
+    }
 
     override fun doFilterInternal(
         request: HttpServletRequest,

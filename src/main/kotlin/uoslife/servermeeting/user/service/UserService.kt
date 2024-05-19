@@ -1,13 +1,10 @@
 package uoslife.servermeeting.user.service
 
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uoslife.servermeeting.global.auth.exception.UnauthorizedException
-import uoslife.servermeeting.global.auth.jwt.TokenProvider
-import uoslife.servermeeting.global.auth.service.AccountService
+import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
@@ -28,22 +25,19 @@ class UserService(
     private val paymentRepository: PaymentRepository,
     private val meetingTeamRepository: MeetingTeamRepository,
     private val userDao: UserDao,
-    private val tokenProvider: TokenProvider,
-    private val accountService: AccountService,
+    private val uoslifeAccountService: UOSLIFEAccountService,
     private val validator: Validator
 ) {
     @Transactional
-    fun createUser(requset: HttpServletRequest): Unit {
-        val resolvedToken = tokenProvider.resolveToken(requset) ?: throw UnauthorizedException()
-
+    fun createUser(id: Long) {
         // 계정 서비스에서 유저 정보 받아오기
-        val accountUser = accountService.getAuthenticatedUserProfile(resolvedToken)
-        if (accountUser.email.isNullOrBlank() || accountUser.realm == null)
+        val userProfile = uoslifeAccountService.getUserProfile(id)
+        if (userProfile.email.isNullOrBlank() || userProfile.realm == null)
             throw UserNotFoundException()
 
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
-        val savedUser = getOrCreateUser(accountUser.id.toLong(), accountUser.realm.code)
+        getOrCreateUser(id, University.valueOf(userProfile.realm.code))
     }
 
     fun findUser(id: Long): UserFindResponse {
@@ -53,7 +47,7 @@ class UserService(
     }
 
     @Transactional
-    fun updateUser(requestDto: UserUpdateRequest, id: Long): Unit {
+    fun updateUser(requestDto: UserUpdateRequest, id: Long) {
         val existingUser = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
         val userPersonalInformation: UserPersonalInformation =
