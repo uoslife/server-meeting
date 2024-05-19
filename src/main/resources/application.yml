@@ -22,10 +22,6 @@ spring:
                 format_sql: true
     flyway:
         enabled: true
-    data:
-        redis:
-            host: ${REDIS_HOST}
-            port: ${REDIS_PORT}
 
 app:
     season: 4
@@ -40,15 +36,6 @@ portone:
             key: ${PORTONE_API_IMP_KEY}
             secret: ${PORTONE_API_IMP_SECRET}
 
-jwt:
-    refresh:
-        secret: ${JWT_REFRESH_SECRET}
-        expiration: 1209600000
-
-    access:
-        secret: ${JWT_ACCESS_SECRET}
-        expiration: 3600000
-
 springdoc:
     swagger-ui:
         path: /swagger-ui/swagger-ui.html
@@ -60,17 +47,6 @@ springdoc:
     show-actuator: true
     default-consumes-media-type: application/json
     default-produces-media-type: application/json
-
-cloud:
-    aws:
-        region:
-            static: ${CLOUD_AWS_SES_REGION}
-        ses:
-            isLocal: false
-            from: support@uoslife.team
-            iam:
-                role-arn: ${CLOUD_AWS_SES_ROLE_ARN}
-                role-session-name: UOSLIFEMeetingSES
 
 management:
     endpoints:

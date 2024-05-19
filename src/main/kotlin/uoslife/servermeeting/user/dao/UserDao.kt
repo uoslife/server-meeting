@@ -1,7 +1,6 @@
 package uoslife.servermeeting.user.dao
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import java.util.*
 import org.springframework.stereotype.Repository
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam

@@ -3,9 +3,9 @@ package uoslife.servermeeting.user.dto.request
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
-import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserPersonalInformation
 import uoslife.servermeeting.user.entity.enums.*
+import uoslife.servermeeting.user.entity.User
 
 data class UserUpdateRequest(
     @Schema(description = "이름", example = "유현승", nullable = false) @field:NotNull val name: String,
