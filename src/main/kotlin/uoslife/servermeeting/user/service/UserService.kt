@@ -61,21 +61,6 @@ class UserService(
         return requestDto.toUserPersonalInformation(existingUser, validMBTI)
     }
 
-    @Transactional
-    fun resetUser(id: Long): ResponseEntity<Unit> {
-        val user: User = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
-
-        val updatingUser: User =
-            User(
-                id = user.id,
-                payment = user.payment,
-            )
-        updatingUser.userPersonalInformation.university = user.userPersonalInformation.university
-        userRepository.save(updatingUser)
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-    }
-
     /**
      * id로 유저를 삭제합니다. 유저를 삭제하기 전, 외부키로 연결되어 있는 Payment와 MeetingTeam을 삭제합니다. MeetingTeam은
      * @ManyToOne이기 때문에 MeetingTeam에 있는 유저를 삭제합니다. 만약 삭제 시 MeetingTeam에 유저가 빈다면, MeetingTeam 또한
