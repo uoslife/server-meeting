@@ -229,4 +229,34 @@ class UserApi(
         userService.deleteUserById(userId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
+
+    @Operation(summary = "카카오톡 아이디 중복 확인", description = "카카오톡 아이디 중복 확인합니다.")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "카카오톡 아이디 중복 결과값",
+                content = [Content(schema = Schema(implementation = Boolean::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "해당 유저 정보 없음",
+                content =
+                [
+                    Content(
+                        schema = Schema(implementation = ErrorResponse::class),
+                        examples =
+                        [
+                            ExampleObject(
+                                value =
+                                "{message: User is not Found., status:400, code: U02}"
+                            )]
+                    )]
+            )
+        ]
+    )
+    @GetMapping("/isDuplicatedKakaoTalkId")
+    fun isDuplicatedKakaoTalkId(@RequestParam kakaoTalkId: String): ResponseEntity<Boolean>{
+        return ResponseEntity.ok(userService.isDuplicatedKakaoTalkId(kakaoTalkId))
+    }
 }
