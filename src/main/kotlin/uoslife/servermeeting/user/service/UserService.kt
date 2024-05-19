@@ -1,7 +1,6 @@
 package uoslife.servermeeting.user.service
 
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
