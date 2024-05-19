@@ -35,8 +35,7 @@ class UserApi(
                 ApiResponse(
                     responseCode = "204",
                     description = "유저 생성 성공",
-                    content =
-                        [Content(schema = Schema(implementation = Unit::class))]
+                    content = [Content(schema = Schema(implementation = Unit::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
