@@ -1,5 +1,0 @@
-ALTER TABLE "user"
-    DROP COLUMN "nickname";
-
-ALTER TABLE "user"
-    ADD COLUMN "nickname" VARCHAR(255) NOT NULL UNIQUE;
