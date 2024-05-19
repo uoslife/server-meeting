@@ -115,6 +115,9 @@ dependencies {
 
     // OpenFegin
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3")
+
+    implementation("me.paulschwarz:spring-dotenv:4.0.0")
+
 }
 
 tasks.withType<KotlinCompile> {

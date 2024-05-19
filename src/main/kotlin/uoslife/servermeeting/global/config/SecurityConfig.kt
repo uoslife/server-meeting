@@ -3,7 +3,6 @@ package uoslife.servermeeting.global.config
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
@@ -61,20 +60,6 @@ class SecurityConfig(
             .authorizeHttpRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest)
             .permitAll() // CORS preflight 요청 허용
-            .requestMatchers(HttpMethod.POST, "/api/user")
-            .permitAll()
-            .requestMatchers(HttpMethod.DELETE, "/api/user/email")
-            .permitAll()
-            .requestMatchers("/api/auth/refresh", "/api/auth/uos/migrate", "/api/auth/uos/login")
-            .permitAll()
-            .requestMatchers("/api/verification/send", "/api/verification/verify")
-            .permitAll()
-            .requestMatchers("/api/payment/refund/match")
-            .permitAll()
-            .requestMatchers("/swagger-ui/**")
-            .permitAll()
-            .requestMatchers("/meeting/actuator/**")
-            .permitAll()
             .requestMatchers("/api/**")
             .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
@@ -126,17 +111,8 @@ class SecurityConfig(
         // 토큰 검사 미실시 리스트
         return WebSecurityCustomizer { web: WebSecurity ->
             web.ignoring()
-                .requestMatchers(HttpMethod.POST, "/api/user")
-                .requestMatchers(HttpMethod.DELETE, "/api/user/email")
-                .requestMatchers("/api/user/email")
-                .requestMatchers(
-                    "/api/verification/send", // 인증코드 전송
-                    "/api/verification/verify", // 인증코드 검증
-                    "/api/auth/refresh", // 토큰 재발급
-                    "/api/payment/refund/match", // 유저 환불
-                )
                 .requestMatchers("/swagger-ui/**")
-                .requestMatchers("/meeting/actuator/**")
+                .requestMatchers("/meeting/actuator/health/**")
         }
     }
 
