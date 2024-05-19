@@ -14,7 +14,7 @@ interface UserClient {
     @GetMapping("/v1/users/me")
     fun getAuthenticatedUserProfile(
         @RequestHeader("Authorization") token: String,
-    ): UOSLIFEUserProfileResponse
+    ): UOSLIFEUserProfileResponse?
 }
 
 @FeignClient(

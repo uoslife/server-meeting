@@ -21,6 +21,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     USER_ALREADY_RESET("U05", "User data is already reset.", HttpStatus.BAD_REQUEST.value()),
     PHONE_NUMBER_NOT_FOUND("U06", "Phone Number is not found.", HttpStatus.BAD_REQUEST.value()),
     USER_ALREADY_EXISTING("U07", "User is already Existing.", HttpStatus.BAD_REQUEST.value()),
+    EMAIL_UNAUTHORIZATION("U08", "Email is not authorized.", HttpStatus.UNAUTHORIZED.value()),
 
     // User - Token
     INVALID_TOKEN("T01", "Token is not valid.", HttpStatus.UNAUTHORIZED.value()),
