@@ -1,8 +1,8 @@
 package uoslife.servermeeting.user.dto.response
 
 import io.swagger.v3.oas.annotations.media.Schema
+import uoslife.servermeeting.user.entity.University
 import uoslife.servermeeting.user.entity.enums.*
-import uoslife.servermeeting.verification.dto.University
 
 data class UserFindResponse(
     @Schema(description = "이름", example = "유현승") val name: String?,

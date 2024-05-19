@@ -2,14 +2,12 @@ package uoslife.servermeeting.user.entity
 
 import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.*
-import java.util.*
 import org.hibernate.annotations.Type
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
-import uoslife.servermeeting.verification.dto.University
 
 @Entity
 @Table(name = "`user`")

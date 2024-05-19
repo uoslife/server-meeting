@@ -1,4 +1,4 @@
-package uoslife.servermeeting.verification.dto
+package uoslife.servermeeting.user.entity
 
 enum class University(
     val displayName: String,

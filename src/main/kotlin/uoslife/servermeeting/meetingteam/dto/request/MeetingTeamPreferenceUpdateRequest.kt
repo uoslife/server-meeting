@@ -4,11 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamMood
+import uoslife.servermeeting.user.entity.University
 import uoslife.servermeeting.user.entity.enums.ReligionType
 import uoslife.servermeeting.user.entity.enums.SmokingType
 import uoslife.servermeeting.user.entity.enums.SpiritAnimalType
 import uoslife.servermeeting.user.entity.enums.StudentType
-import uoslife.servermeeting.verification.dto.University
 
 class MeetingTeamPreferenceUpdateRequest(
     @Schema(description = "최소 나이", example = "20", nullable = false) @field:NotNull val ageMin: Int,
