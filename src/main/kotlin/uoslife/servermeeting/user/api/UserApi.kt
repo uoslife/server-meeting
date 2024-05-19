@@ -54,6 +54,21 @@ class UserApi(
                                         )]
                             )]
                 ),
+                ApiResponse(
+                    responseCode = "401",
+                    description = "이메일 미인증 유저",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: Email is not authorized., status: 401, code: U08}"
+                                        )]
+                            )]
+                ),
             ]
     )
     @PostMapping
