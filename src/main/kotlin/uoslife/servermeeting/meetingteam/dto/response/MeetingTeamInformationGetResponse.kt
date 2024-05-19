@@ -6,7 +6,7 @@ import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.user.entity.enums.*
-import uoslife.servermeeting.verification.dto.University
+import uoslife.servermeeting.user.entity.University
 
 data class MeetingTeamInformationGetResponse(
     @field:NotNull @Schema(description = "팀 타입", example = "SINGLE") val teamType: TeamType,
@@ -19,23 +19,23 @@ data class MeetingTeamInformationGetResponse(
 )
 
 data class UserProfile(
-    @field:NotNull @Schema(description = "유저 이름", example = "이름") val name: String,
-    @Schema(description = "유저 전화번호", example = "01012341234") val phoneNumber: String?,
-    @field:NotNull @Schema(description = "유저 나이", example = "20") val age: Int,
-    @Schema(description = "유저 키", example = "180") val height: Int?,
-    @Schema(description = "대학", example = "UOS") val university: University?,
-    @field:NotNull @Schema(description = "학과", example = "경영학부") val department: String,
-    @field:NotNull
+        @field:NotNull @Schema(description = "유저 이름", example = "이름") val name: String,
+        @Schema(description = "유저 전화번호", example = "01012341234") val phoneNumber: String?,
+        @field:NotNull @Schema(description = "유저 나이", example = "20") val age: Int,
+        @Schema(description = "유저 키", example = "180") val height: Int?,
+        @Schema(description = "대학", example = "UOS") val university: University?,
+        @field:NotNull @Schema(description = "학과", example = "경영학부") val department: String,
+        @field:NotNull
     @Schema(description = "학생 신분", example = "UNDERGRADUATE")
     val studentType: StudentType,
-    @field:NotNull @Schema(description = "카카오톡 ID", example = "kakaoId") val kakaoTalkId: String,
-    @Schema(description = "흡연 여부", example = "TRUE") val smoking: SmokingType?,
-    @Schema(description = "종교", example = "CHRISTIAN") val religion: ReligionType?,
-    @Schema(description = "한달 최소 음주량", example = "1") val drinkingMin: Int?,
-    @Schema(description = "한달 최대 음주량", example = "10") val drinkingMax: Int?,
-    @Schema(description = "동물상", example = "[\"DOG\", \"CAT\"]")
+        @field:NotNull @Schema(description = "카카오톡 ID", example = "kakaoId") val kakaoTalkId: String,
+        @Schema(description = "흡연 여부", example = "TRUE") val smoking: SmokingType?,
+        @Schema(description = "종교", example = "CHRISTIAN") val religion: ReligionType?,
+        @Schema(description = "한달 최소 음주량", example = "1") val drinkingMin: Int?,
+        @Schema(description = "한달 최대 음주량", example = "10") val drinkingMax: Int?,
+        @Schema(description = "동물상", example = "[\"DOG\", \"CAT\"]")
     val spiritAnimal: List<SpiritAnimalType>?,
-    @Schema(description = "mbti", example = "ENFP") val mbti: String?,
-    @Schema(description = "흥미", example = "[\"BOOK\", \"EXERCISE\"]")
+        @Schema(description = "mbti", example = "ENFP") val mbti: String?,
+        @Schema(description = "흥미", example = "[\"BOOK\", \"EXERCISE\"]")
     val interest: List<InterestType>?,
 )

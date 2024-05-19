@@ -14,7 +14,7 @@ import uoslife.servermeeting.user.entity.UserPersonalInformation
 import uoslife.servermeeting.user.exception.EmailUnauthorizedException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
-import uoslife.servermeeting.verification.dto.University
+import uoslife.servermeeting.user.entity.University
 
 @Service
 @Transactional

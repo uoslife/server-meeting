@@ -5,7 +5,7 @@ import uoslife.servermeeting.user.entity.enums.ReligionType
 import uoslife.servermeeting.user.entity.enums.SmokingType
 import uoslife.servermeeting.user.entity.enums.SpiritAnimalType
 import uoslife.servermeeting.user.entity.enums.StudentType
-import uoslife.servermeeting.verification.dto.University
+import uoslife.servermeeting.user.entity.University
 
 data class Preference(
     var ageMin: Int? = null,

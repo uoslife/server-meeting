@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
-import uoslife.servermeeting.global.auth.dto.response.AccessTokenResponse
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
@@ -34,10 +33,10 @@ class UserApi(
         value =
             [
                 ApiResponse(
-                    responseCode = "200",
+                    responseCode = "204",
                     description = "유저 생성 성공",
                     content =
-                        [Content(schema = Schema(implementation = AccessTokenResponse::class))]
+                        [Content(schema = Schema(implementation = Unit::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
