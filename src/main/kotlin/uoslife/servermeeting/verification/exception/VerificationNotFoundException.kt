@@ -1,6 +1,0 @@
-package uoslife.servermeeting.verification.exception
-
-import uoslife.servermeeting.global.error.exception.EntityNotFoundException
-import uoslife.servermeeting.global.error.exception.ErrorCode
-
-class VerificationNotFoundException : EntityNotFoundException(ErrorCode.VERIFICATION_NOT_FOUND)
