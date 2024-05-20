@@ -36,7 +36,7 @@ class UserService(
 
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
-        getOrCreateUser(id, University.valueOf(userProfile.realm.code))
+        getOrCreateUser(id, University.valueOf(userProfile.realm!!.code))
     }
 
     fun findUser(id: Long): UserFindResponse {
@@ -87,7 +87,7 @@ class UserService(
         return false
     }
 
-    private fun getOrCreateUser(userId: Long, university: University): User {
+    private fun getOrCreateUser(userId: Long, university: University = University.UOS): User {
         return userRepository.findByIdOrNull(userId)
             ?: userRepository.save(User.create(userId = userId, university = university))
     }
