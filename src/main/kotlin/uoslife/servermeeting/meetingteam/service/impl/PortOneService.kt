@@ -48,11 +48,12 @@ class PortOneService(
         val team = user.team ?: throw MeetingTeamNotFoundException()
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
-        paymentRepository.findByUser(user)?.let {
-            if (validator.isAlreadyPaid(it)) throw UserAlreadyHavePaymentException()
+        if (paymentRepository.existsByUser(user)) {
+            val payment = paymentRepository.findByUser(user)
+            if (validator.isAlreadyPaid(payment!!)) throw UserAlreadyHavePaymentException()
             return PaymentResponseDto.PaymentRequestResponse(
-                it.marchantUid!!,
-                it.price!!,
+                payment.marchantUid!!,
+                payment.price!!,
                 phoneNumber,
                 user.name,
                 team.type
