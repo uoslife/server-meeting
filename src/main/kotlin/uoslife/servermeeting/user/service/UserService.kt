@@ -12,7 +12,7 @@ import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.University
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserPersonalInformation
-import uoslife.servermeeting.user.exception.EmailUnauthorizedException
+import uoslife.servermeeting.user.exception.UserNotAuthorizedException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 
@@ -29,12 +29,13 @@ class UserService(
     fun createUser(id: Long) {
         // 계정 서비스에서 유저 정보 받아오기
         val userProfile = uoslifeAccountService.getUserProfile(id)
-        if (userProfile.email.isNullOrBlank() || userProfile.realm == null)
-            throw EmailUnauthorizedException()
+
+        // 인증(포털 인증, 이메일 인증) 안 된 경우
+        if (!userProfile.isVerified) throw UserNotAuthorizedException()
 
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
-        getOrCreateUser(id, University.valueOf(userProfile.realm.code))
+        getOrCreateUser(id, University.valueOf(userProfile.realm!!.code))
     }
 
     fun findUser(id: Long): UserFindResponse {
@@ -85,7 +86,7 @@ class UserService(
         return false
     }
 
-    private fun getOrCreateUser(userId: Long, university: University): User {
+    private fun getOrCreateUser(userId: Long, university: University = University.UOS): User {
         return userRepository.findByIdOrNull(userId)
             ?: userRepository.save(User.create(userId = userId, university = university))
     }

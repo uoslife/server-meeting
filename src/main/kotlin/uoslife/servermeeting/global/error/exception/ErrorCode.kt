@@ -17,7 +17,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     USER_ACCESS_DENIED("U01", "User Access is Denied.", HttpStatus.UNAUTHORIZED.value()),
     USER_NOT_FOUND("U02", "User is not Found.", HttpStatus.BAD_REQUEST.value()),
     PHONE_NUMBER_NOT_FOUND("U06", "Phone Number is not found.", HttpStatus.BAD_REQUEST.value()),
-    EMAIL_UNAUTHORIZATION("U08", "Email is not authorized.", HttpStatus.UNAUTHORIZED.value()),
+    USER_NOT_AUTHORIZED("U08", "User is not authorized.", HttpStatus.UNAUTHORIZED.value()),
 
     // User - Token
     INVALID_TOKEN("T01", "Token is not valid.", HttpStatus.UNAUTHORIZED.value()),
