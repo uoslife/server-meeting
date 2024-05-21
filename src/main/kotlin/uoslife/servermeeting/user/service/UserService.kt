@@ -12,7 +12,6 @@ import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.University
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserPersonalInformation
-import uoslife.servermeeting.user.exception.UserNotAuthorizedException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 
