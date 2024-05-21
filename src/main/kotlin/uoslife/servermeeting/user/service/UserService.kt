@@ -30,9 +30,6 @@ class UserService(
         // 계정 서비스에서 유저 정보 받아오기
         val userProfile = uoslifeAccountService.getUserProfile(id)
 
-        // 인증(포털 인증, 이메일 인증) 안 된 경우
-        if (!userProfile.isVerified) throw UserNotAuthorizedException()
-
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
         getOrCreateUser(id, University.valueOf(userProfile.realm!!.code))
