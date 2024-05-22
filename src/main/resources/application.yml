@@ -18,7 +18,7 @@ spring:
         properties:
             hibernate:
                 default_batch_fetch_size: 1000
-                show_sql: true
+                show_sql: false
                 format_sql: true
     flyway:
         enabled: true
@@ -72,3 +72,10 @@ account:
     access:
         id: ${ACCOUNT_API_ACCESS_ID}
         secret: ${ACCOUNT_API_ACCESS_SECRET}
+
+logging:
+    level:
+        org:
+            springframework:
+                web:
+                    filter: DEBUG
