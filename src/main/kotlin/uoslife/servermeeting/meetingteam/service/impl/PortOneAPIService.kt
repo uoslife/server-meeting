@@ -30,4 +30,11 @@ class PortOneAPIService(private val paymentClient: PaymentClient) {
             PortOneRequestDto.RefundRequest(imp_uid = impUid, amount = price)
         )
     }
+
+    fun findPaymentByMID(
+        accessToken: String,
+        merchantUid: String,
+    ): PortOneResponseDto.SingleHistoryResponse {
+        return paymentClient.findPaymentByMID(accessToken = accessToken, merchantUid = merchantUid)
+    }
 }
