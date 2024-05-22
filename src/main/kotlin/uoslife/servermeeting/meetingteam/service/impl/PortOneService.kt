@@ -192,6 +192,24 @@ class PortOneService(
     }
 
     @Transactional
+    override fun verifyPaymentError() {
+        val paymentList = paymentRepository.findByStatus(PaymentStatus.REQUEST)
+        val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
+        for (payment in paymentList) {
+            val result =
+                portOneAPIService.findPaymentByMID(
+                    accessToken.response!!.access_token,
+                    payment.marchantUid!!
+                )
+
+            if (result.response!!.failed_at == 0) {
+                payment.impUid = result.response!!.imp_uid
+                payment.status = PaymentStatus.SUCCESS // 결제 성공
+            }
+        }
+    }
+
+    @Transactional
     override fun deleteUserPayment(user: User) {
         paymentRepository.deleteByUser(user)
     }
