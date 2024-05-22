@@ -132,7 +132,7 @@ class PortOneService(
                 payment.price
             )
 
-            payment.status = PaymentStatus.REFUND
+            paymentRepository.delete(payment)
             return PaymentResponseDto.PaymentRefundResponse(true, "")
         } catch (e: ExternalApiFailedException) {
             payment.status = PaymentStatus.REFUND_FAILED
