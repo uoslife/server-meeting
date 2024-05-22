@@ -5,7 +5,6 @@ import java.util.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.*
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
 import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
@@ -49,11 +48,12 @@ class PortOneService(
         val team = user.team ?: throw MeetingTeamNotFoundException()
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
-        paymentRepository.findByUser(user)?.let {
-            if (validator.isAlreadyPaid(it)) throw UserAlreadyHavePaymentException()
+        if (paymentRepository.existsByUser(user)) {
+            val payment = paymentRepository.findByUser(user)
+            if (validator.isAlreadyPaid(payment!!)) throw UserAlreadyHavePaymentException()
             return PaymentResponseDto.PaymentRequestResponse(
-                it.marchantUid!!,
-                it.price!!,
+                payment.marchantUid!!,
+                payment.price!!,
                 phoneNumber,
                 user.name,
                 team.type

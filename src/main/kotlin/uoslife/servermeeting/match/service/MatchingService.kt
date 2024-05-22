@@ -1,6 +1,5 @@
 package uoslife.servermeeting.match.service
 
-import java.util.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.match.dao.MatchedDao
