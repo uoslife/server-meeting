@@ -28,4 +28,10 @@ interface PaymentClient {
         @RequestHeader("Authorization") accessToken: String,
         @RequestBody request: PortOneRequestDto.RefundRequest
     ): PortOneResponseDto.RefundResponse
+
+    @GetMapping("/payments/find/{merchant_uid}/{payment_status}", consumes = ["application/json"])
+    fun findPaymentByMID(
+        @RequestHeader("Authorization") accessToken: String,
+        @PathVariable("merchant_uid") merchantUid: String,
+    ): PortOneResponseDto.SingleHistoryResponse
 }

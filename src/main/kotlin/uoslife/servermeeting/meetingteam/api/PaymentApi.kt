@@ -382,4 +382,10 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
 
         return ResponseEntity.status(HttpStatus.OK).body(paymentService.verifyPayment(userId))
     }
+
+    @PostMapping("/verify/error")
+    fun verifyPaymentError(): ResponseEntity<Unit> {
+        paymentService.verifyPaymentError()
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
 }
