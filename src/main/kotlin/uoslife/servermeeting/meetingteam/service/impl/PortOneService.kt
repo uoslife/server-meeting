@@ -2,6 +2,7 @@ package uoslife.servermeeting.meetingteam.service.impl
 
 import jakarta.transaction.Transactional
 import java.util.*
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
@@ -39,6 +40,9 @@ class PortOneService(
     @Value("\${portone.api.imp.key}") private val impKey: String,
     @Value("\${portone.api.imp.secret}") private val impSecret: String,
 ) : PaymentService {
+    companion object {
+        private val logger = LoggerFactory.getLogger(PaymentService::class.java)
+    }
     @Transactional
     override fun requestPayment(
         userId: Long,
@@ -196,15 +200,18 @@ class PortOneService(
         val paymentList = paymentRepository.findByStatus(PaymentStatus.REQUEST)
         val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
         for (payment in paymentList) {
-            val result =
-                portOneAPIService.findPaymentByMID(
-                    accessToken.response!!.access_token,
-                    payment.marchantUid!!
-                )
-
-            if (result.response!!.failed_at == 0) {
-                payment.impUid = result.response!!.imp_uid
-                payment.status = PaymentStatus.SUCCESS // 결제 성공
+            try {
+                val result =
+                    portOneAPIService.findPaymentByMID(
+                        accessToken.response!!.access_token,
+                        payment.marchantUid!!
+                    )
+                if (result.response!!.failed_at == 0) {
+                    payment.impUid = result.response!!.imp_uid
+                    payment.status = PaymentStatus.SUCCESS // 결제 성공
+                }
+            } catch (e: ExternalApiFailedException) {
+                logger.info("MarchantUid-Name: " + payment.marchantUid + " " + payment.user!!.name)
             }
         }
     }
