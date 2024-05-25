@@ -3,7 +3,6 @@ package uoslife.servermeeting.global.config
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
@@ -24,13 +23,13 @@ import uoslife.servermeeting.global.auth.filter.JwtAccessDeniedHandler
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationEntryPoint
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationFilter
 import uoslife.servermeeting.global.auth.jwt.JwtAuthenticationProvider
-import uoslife.servermeeting.global.auth.jwt.TokenProvider
+import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
     private val authProvider: JwtAuthenticationProvider,
-    private val jwtUtils: TokenProvider,
+    private val accountService: UOSLIFEAccountService,
     @Qualifier("handlerExceptionResolver") private val resolver: HandlerExceptionResolver,
 ) {
     @Bean
@@ -61,23 +60,11 @@ class SecurityConfig(
             .authorizeHttpRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest)
             .permitAll() // CORS preflight 요청 허용
-            .requestMatchers(HttpMethod.POST, "/api/user")
-            .permitAll()
-            .requestMatchers("/api/auth/refresh", "/api/auth/uos/migrate", "/api/auth/uos/login")
-            .permitAll()
-            .requestMatchers("/api/verification/send", "/api/verification/verify")
-            .permitAll()
-            .requestMatchers("/api/payment/refund/**")
-            .permitAll()
-            .requestMatchers("/swagger-ui/**")
-            .permitAll()
-            .requestMatchers("/meeting/actuator/**")
-            .permitAll()
             .requestMatchers("/api/**")
             .hasRole("USER") // 모든 api 요청에 대해 권한 필요
 
         http.addFilterBefore(
-            JwtAuthenticationFilter(jwtUtils),
+            JwtAuthenticationFilter(accountService),
             UsernamePasswordAuthenticationFilter::class.java
         )
 
@@ -124,16 +111,10 @@ class SecurityConfig(
         // 토큰 검사 미실시 리스트
         return WebSecurityCustomizer { web: WebSecurity ->
             web.ignoring()
-                .requestMatchers(HttpMethod.POST, "/api/user")
-                .requestMatchers("/api/user/email")
-                .requestMatchers(
-                    "/api/verification/send", // 인증코드 전송
-                    "/api/verification/verify", // 인증코드 검증
-                    "/api/auth/refresh", // 토큰 재발급
-                    "/api/payment/refund/**", // 유저 환불
-                )
                 .requestMatchers("/swagger-ui/**")
-                .requestMatchers("/meeting/actuator/**")
+                .requestMatchers("/meeting/actuator/health/**")
+                .requestMatchers("/api/payment/verify/error")
+                .requestMatchers("/api/user/isDuplicatedKakaoTalkId") // 카카오톡 중복 확인
         }
     }
 

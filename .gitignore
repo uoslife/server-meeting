@@ -43,3 +43,5 @@ application-test.yml
 
 # h2 example
 src/main/resources/db.h2.example
+
+.env

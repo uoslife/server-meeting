@@ -2,23 +2,20 @@ package uoslife.servermeeting.user.entity
 
 import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.*
-import java.util.*
 import org.hibernate.annotations.Type
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
-import uoslife.servermeeting.verification.dto.University
 
 @Entity
 @Table(name = "`user`")
 class User(
-    @Id @Column(nullable = false, unique = true) var id: UUID? = null,
+    @Id @Column(nullable = false, unique = true) var id: Long? = null,
     var phoneNumber: String? = null,
     var name: String = "",
-    @Column(nullable = true, unique = false) val email: String? = null,
-    var kakaoTalkId: String = "",
+    @Column(unique = true) var kakaoTalkId: String = "",
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var userPersonalInformation: UserPersonalInformation = UserPersonalInformation(),
@@ -28,11 +25,10 @@ class User(
     var team: MeetingTeam? = null
 ) : BaseEntity() {
     companion object {
-        fun create(email: String, university: University): User {
+        fun create(userId: Long, university: University): User {
             val user: User =
                 User(
-                    id = UUID.randomUUID(),
-                    email = email,
+                    id = userId,
                 )
             user.userPersonalInformation.university = university
             return user

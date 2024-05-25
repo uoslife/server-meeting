@@ -1,7 +1,6 @@
 package uoslife.servermeeting.user.dao
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import java.util.*
 import org.springframework.stereotype.Repository
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
@@ -13,7 +12,7 @@ import uoslife.servermeeting.user.entity.User
 class UserDao(
     private val queryFactory: JPAQueryFactory,
 ) {
-    fun findUserWithMeetingTeam(userId: UUID): User? {
+    fun findUserWithMeetingTeam(userId: Long): User? {
         return queryFactory
             .selectFrom(user)
             .leftJoin(user.team, meetingTeam)

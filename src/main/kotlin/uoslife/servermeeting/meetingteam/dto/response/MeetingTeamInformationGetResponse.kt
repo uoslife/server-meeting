@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotNull
 import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.user.entity.University
 import uoslife.servermeeting.user.entity.enums.*
-import uoslife.servermeeting.verification.dto.University
 
 data class MeetingTeamInformationGetResponse(
     @field:NotNull @Schema(description = "팀 타입", example = "SINGLE") val teamType: TeamType,

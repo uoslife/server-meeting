@@ -1,10 +1,9 @@
-package uoslife.servermeeting.global.auth.dto.response
+package uoslife.servermeeting.global.external
 
-import uoslife.servermeeting.user.entity.University
-
-data class AccountResponse(
+data class UOSLIFEUserProfileResponse(
     val id: String,
     val nickname: String,
+    val phone: String,
     val name: String?,
     val email: String?,
     val realm: Realm?,
@@ -15,8 +14,20 @@ data class AccountResponse(
     val verificationMethod: String?,
 )
 
+data class UOSLIFEUserDeviceResponse(
+    val id: String,
+    val model: String,
+    val os: String,
+    val osVersion: String,
+    val appVersion: String,
+    val codePushVersion: String,
+    val firebasePushToken: String?,
+    val lastUsedAt: String,
+    val createdAt: String,
+)
+
 data class Realm(
-    val code: University,
+    val code: String,
     val name: String,
 )
 
@@ -25,9 +36,9 @@ data class Identity(
     val type: String,
     val status: String,
     val idNumber: String,
-    val university: String?,
-    val department: String?,
-    val major: String?
+    val university: String,
+    val department: String,
+    val major: String?,
 )
 
 data class Moderator(
