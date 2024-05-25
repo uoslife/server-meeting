@@ -18,4 +18,5 @@ interface PaymentService {
     fun verifyPayment(userId: Long): PaymentResponseDto.PaymentRequestResponse
     fun deleteUserPayment(user: User)
     fun verifyPaymentError(): Unit
+    fun verifyPaymentErrorRefundedButSuccess(): Unit
 }
