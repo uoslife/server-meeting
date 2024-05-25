@@ -216,9 +216,7 @@ class PortOneService(
         }
     }
 
-    /**
-     * 결제취소지만 DB에는 SUCCESS로 남아있는 데이터 REFUND로 변경
-     */
+    /** 결제취소지만 DB에는 SUCCESS로 남아있는 데이터 REFUND로 변경 */
     @Transactional
     override fun verifyPaymentErrorRefundedButSuccess() {
         val paymentList = paymentRepository.findByStatus(PaymentStatus.SUCCESS)
@@ -232,11 +230,23 @@ class PortOneService(
                         payment.marchantUid!!
                     )
                 if (result.response!!.cancelled_at != 0) { // DB에는 SUCCESS이지만 결제취소한 경우
-                    logger.info("결제취소 MarchantUid-Name: " + payment.marchantUid + " " + payment.user!!.name + " " + payment.status)
+                    logger.info(
+                        "결제취소 MarchantUid-Name: " +
+                            payment.marchantUid +
+                            " " +
+                            payment.user!!.name +
+                            " " +
+                            payment.status
+                    )
                     payment.status = PaymentStatus.REFUND // 결제취소로 변경
                 }
             } catch (e: ExternalApiFailedException) {
-                logger.info("[Exception] MarchantUid-Name: " + payment.marchantUid + " " + payment.user!!.name)
+                logger.info(
+                    "[Exception] MarchantUid-Name: " +
+                        payment.marchantUid +
+                        " " +
+                        payment.user!!.name
+                )
             }
         }
     }
