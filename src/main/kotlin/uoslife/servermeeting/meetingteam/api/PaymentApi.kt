@@ -388,4 +388,11 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
         paymentService.verifyPaymentError()
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
+
+    @Operation(summary = "결제취소 에러 검증", description = "결제취소가 적용되지 않은 데이터 RFUND로 변경(결제취소 했음에도 불구하고 DB 상에서 SUCCESS로 남아있는 경우)")
+    @PostMapping("/verify/error/cancel")
+    fun verifyPaymentErrorRefundedButSuccess(): ResponseEntity<Unit> {
+        paymentService.verifyPaymentErrorRefundedButSuccess()
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
 }
