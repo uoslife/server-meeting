@@ -2,6 +2,7 @@ package uoslife.servermeeting.meetingteam.dto.response
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
+import uoslife.servermeeting.match.dto.response.MatchedMeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
@@ -16,7 +17,18 @@ data class MeetingTeamInformationGetResponse(
     @Schema(description = "질문 응답값") val information: Information?,
     @Schema(description = "상대방 선호 응답값") val preference: Preference?,
     @Schema(description = "상대에게 전하는 메세지") val message: String?
-)
+) {
+    fun toMatchedMeetingTeamInformationGetResponse(): MatchedMeetingTeamInformationGetResponse {
+        return MatchedMeetingTeamInformationGetResponse(
+            teamType = teamType,
+            teamName = teamName,
+            gender = gender,
+            teamUserList = teamUserList,
+            information = information,
+            message = message
+        )
+    }
+}
 
 data class UserProfile(
     @field:NotNull @Schema(description = "유저 이름", example = "이름") val name: String,
