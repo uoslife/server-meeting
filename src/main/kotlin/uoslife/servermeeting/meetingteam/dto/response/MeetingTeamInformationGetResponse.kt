@@ -24,7 +24,7 @@ data class MeetingTeamInformationGetResponse(
             teamName = teamName,
             gender = gender,
             teamUserList = teamUserList,
-            information = information,
+            information = information?.toMatchedInformation(),
             message = message
         )
     }
