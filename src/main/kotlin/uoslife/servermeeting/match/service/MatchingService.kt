@@ -11,18 +11,20 @@ import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.SINGLE
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.TRIPLE
 import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
+import uoslife.servermeeting.meetingteam.exception.OnlyTeamLeaderCanGetMatchException
 import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
 import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.exception.UserNotFoundException
+import uoslife.servermeeting.user.service.UserService
 
 @Service
 @Transactional(readOnly = true)
 class MatchingService(
-    private val userDao: UserDao,
     private val matchedDao: MatchedDao,
+    private val userDao: UserDao,
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
 ) {
@@ -31,10 +33,11 @@ class MatchingService(
         val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
         val meetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
+        if(!isLeader(user))
+            throw OnlyTeamLeaderCanGetMatchException()
+
         val match = getMatchByGender(user, meetingTeam)
-
         val opponentTeam = getOpponentTeamByGender(user, match)
-
         val opponentUser = opponentTeam.leader ?: throw UserNotFoundException()
 
         return MatchInformationResponse(
@@ -71,5 +74,11 @@ class MatchingService(
                 tripleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
             }
         }
+    }
+
+    private fun isLeader(user: User): Boolean{
+        if(user.team!!.leader!!.id == user.id)
+            return true
+        return false
     }
 }
