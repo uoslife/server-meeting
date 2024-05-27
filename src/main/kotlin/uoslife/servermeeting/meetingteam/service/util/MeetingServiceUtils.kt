@@ -27,20 +27,21 @@ class MeetingServiceUtils {
             teamType = teamType,
             teamName = teamName,
             gender = gender,
-            opponentLeaderProfile = UserProfile(
-                name = user.name,
-                age = user.userPersonalInformation.age,
-                university = user.userPersonalInformation.university,
-                department = user.userPersonalInformation.department,
-                studentType = user.userPersonalInformation.studentType,
-                kakaoTalkId = user.kakaoTalkId,
-                smoking = user.userPersonalInformation.smoking,
-                drinkingMin = user.userPersonalInformation.drinkingMin,
-                drinkingMax = user.userPersonalInformation.drinkingMax,
-                spiritAnimal = user.userPersonalInformation.spiritAnimal,
-                mbti = user.userPersonalInformation.mbti,
-                interest = user.userPersonalInformation.interest
-            ),
+            opponentLeaderProfile =
+                UserProfile(
+                    name = user.name,
+                    age = user.userPersonalInformation.age,
+                    university = user.userPersonalInformation.university,
+                    department = user.userPersonalInformation.department,
+                    studentType = user.userPersonalInformation.studentType,
+                    kakaoTalkId = user.kakaoTalkId,
+                    smoking = user.userPersonalInformation.smoking,
+                    drinkingMin = user.userPersonalInformation.drinkingMin,
+                    drinkingMax = user.userPersonalInformation.drinkingMax,
+                    spiritAnimal = user.userPersonalInformation.spiritAnimal,
+                    mbti = user.userPersonalInformation.mbti,
+                    interest = user.userPersonalInformation.interest
+                ),
             information = information,
             preference = preference,
             message = message

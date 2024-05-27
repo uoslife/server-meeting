@@ -18,7 +18,6 @@ import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.exception.UserNotFoundException
-import uoslife.servermeeting.user.service.UserService
 
 @Service
 @Transactional(readOnly = true)
@@ -33,8 +32,7 @@ class MatchingService(
         val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
         val meetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
-        if(!isLeader(user))
-            throw OnlyTeamLeaderCanGetMatchException()
+        if (!isLeader(user)) throw OnlyTeamLeaderCanGetMatchException()
 
         val match = getMatchByGender(user, meetingTeam)
         val opponentTeam = getOpponentTeamByGender(user, match)
@@ -78,9 +76,8 @@ class MatchingService(
         return meetingTeamInformationGetResponse.toMatchedMeetingTeamInformationGetResponse()
     }
 
-    private fun isLeader(user: User): Boolean{
-        if(user.team!!.leader!!.id == user.id)
-            return true
+    private fun isLeader(user: User): Boolean {
+        if (user.team!!.leader!!.id == user.id) return true
         return false
     }
 }
