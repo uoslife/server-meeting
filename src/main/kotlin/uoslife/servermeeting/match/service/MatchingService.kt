@@ -4,9 +4,9 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.match.dao.MatchedDao
 import uoslife.servermeeting.match.dto.response.MatchInformationResponse
+import uoslife.servermeeting.match.dto.response.MatchedMeetingTeamInformationGetResponse
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.SINGLE
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.TRIPLE
@@ -62,14 +62,16 @@ class MatchingService(
     fun getOpponentUserInformationByTeamType(
         meetingTeam: MeetingTeam,
         opponentUser: User
-    ): MeetingTeamInformationGetResponse {
-        return when (meetingTeam.type) {
-            SINGLE -> {
-                singleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
+    ): MatchedMeetingTeamInformationGetResponse {
+        val meetingTeamInformationGetResponse =
+            when (meetingTeam.type) {
+                SINGLE -> {
+                    singleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
+                }
+                TRIPLE -> {
+                    tripleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
+                }
             }
-            TRIPLE -> {
-                tripleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
-            }
-        }
+        return meetingTeamInformationGetResponse.toMatchedMeetingTeamInformationGetResponse()
     }
 }
