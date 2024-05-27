@@ -73,6 +73,9 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     ),
     // Match
     MATCH_NOT_FOUND("MT01", "Match is not Found.", HttpStatus.BAD_REQUEST.value()),
+    ONLY_TEAM_LEADER_CAN_GET_MATCH(
+        "MT02", "Only Team Leader Can Get Match.", HttpStatus.BAD_REQUEST.value()
+    ),
 
     // External API
     EXTERNAL_API_FAILED(
