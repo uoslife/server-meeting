@@ -160,7 +160,7 @@ class TripleMeetingService(
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
             user.userPersonalInformation.gender,
             TeamType.TRIPLE,
-            userList,
+            user,
             information,
             preference,
             meetingTeam.name,

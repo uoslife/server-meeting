@@ -4,13 +4,14 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.match.dao.MatchedDao
 import uoslife.servermeeting.match.dto.response.MatchInformationResponse
+import uoslife.servermeeting.match.dto.response.MatchedMeetingTeamInformationGetResponse
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.SINGLE
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.TRIPLE
 import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
+import uoslife.servermeeting.meetingteam.exception.OnlyTeamLeaderCanGetMatchException
 import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
 import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.user.dao.UserDao
@@ -21,8 +22,8 @@ import uoslife.servermeeting.user.exception.UserNotFoundException
 @Service
 @Transactional(readOnly = true)
 class MatchingService(
-    private val userDao: UserDao,
     private val matchedDao: MatchedDao,
+    private val userDao: UserDao,
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
 ) {
@@ -31,10 +32,10 @@ class MatchingService(
         val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
         val meetingTeam = user.team ?: throw MeetingTeamNotFoundException()
 
+        if (!isLeader(user)) throw OnlyTeamLeaderCanGetMatchException()
+
         val match = getMatchByGender(user, meetingTeam)
-
         val opponentTeam = getOpponentTeamByGender(user, match)
-
         val opponentUser = opponentTeam.leader ?: throw UserNotFoundException()
 
         return MatchInformationResponse(
@@ -62,14 +63,21 @@ class MatchingService(
     fun getOpponentUserInformationByTeamType(
         meetingTeam: MeetingTeam,
         opponentUser: User
-    ): MeetingTeamInformationGetResponse {
-        return when (meetingTeam.type) {
-            SINGLE -> {
-                singleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
+    ): MatchedMeetingTeamInformationGetResponse {
+        val meetingTeamInformationGetResponse =
+            when (meetingTeam.type) {
+                SINGLE -> {
+                    singleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
+                }
+                TRIPLE -> {
+                    tripleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
+                }
             }
-            TRIPLE -> {
-                tripleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
-            }
-        }
+        return meetingTeamInformationGetResponse.toMatchedMeetingTeamInformationGetResponse()
+    }
+
+    private fun isLeader(user: User): Boolean {
+        if (user.team!!.leader!!.id == user.id) return true
+        return false
     }
 }
