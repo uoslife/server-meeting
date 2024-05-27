@@ -2,6 +2,7 @@ package uoslife.servermeeting.meetingteam.service.impl
 
 import jakarta.transaction.Transactional
 import java.util.*
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
@@ -39,6 +40,9 @@ class PortOneService(
     @Value("\${portone.api.imp.key}") private val impKey: String,
     @Value("\${portone.api.imp.secret}") private val impSecret: String,
 ) : PaymentService {
+    companion object {
+        private val logger = LoggerFactory.getLogger(PaymentService::class.java)
+    }
     @Transactional
     override fun requestPayment(
         userId: Long,
@@ -196,15 +200,53 @@ class PortOneService(
         val paymentList = paymentRepository.findByStatus(PaymentStatus.REQUEST)
         val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
         for (payment in paymentList) {
-            val result =
-                portOneAPIService.findPaymentByMID(
-                    accessToken.response!!.access_token,
-                    payment.marchantUid!!
-                )
+            try {
+                val result =
+                    portOneAPIService.findPaymentByMID(
+                        accessToken.response!!.access_token,
+                        payment.marchantUid!!
+                    )
+                if (result.response!!.failed_at == 0) {
+                    payment.impUid = result.response!!.imp_uid
+                    payment.status = PaymentStatus.SUCCESS // 결제 성공
+                }
+            } catch (e: ExternalApiFailedException) {
+                logger.info("MarchantUid-Name: " + payment.marchantUid + " " + payment.user!!.name)
+            }
+        }
+    }
 
-            if (result.response!!.failed_at == 0) {
-                payment.impUid = result.response!!.imp_uid
-                payment.status = PaymentStatus.SUCCESS // 결제 성공
+    /** 결제취소지만 DB에는 SUCCESS로 남아있는 데이터 REFUND로 변경 */
+    @Transactional
+    override fun verifyPaymentErrorRefundedButSuccess() {
+        val paymentList = paymentRepository.findByStatus(PaymentStatus.SUCCESS)
+        val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
+
+        for (payment in paymentList) {
+            try {
+                val result =
+                    portOneAPIService.findPaymentByMID(
+                        accessToken.response!!.access_token,
+                        payment.marchantUid!!
+                    )
+                if (result.response!!.cancelled_at != 0) { // DB에는 SUCCESS이지만 결제취소한 경우
+                    logger.info(
+                        "결제취소 MarchantUid-Name: " +
+                            payment.marchantUid +
+                            " " +
+                            payment.user!!.name +
+                            " " +
+                            payment.status
+                    )
+                    payment.status = PaymentStatus.REFUND // 결제취소로 변경
+                }
+            } catch (e: ExternalApiFailedException) {
+                logger.info(
+                    "[Exception] MarchantUid-Name: " +
+                        payment.marchantUid +
+                        " " +
+                        payment.user!!.name
+                )
             }
         }
     }
