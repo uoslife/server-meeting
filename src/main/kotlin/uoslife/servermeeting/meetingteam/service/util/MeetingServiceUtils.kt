@@ -40,7 +40,10 @@ class MeetingServiceUtils {
                     drinkingMax = user.userPersonalInformation.drinkingMax,
                     spiritAnimal = user.userPersonalInformation.spiritAnimal,
                     mbti = user.userPersonalInformation.mbti,
-                    interest = user.userPersonalInformation.interest
+                    interest = user.userPersonalInformation.interest,
+                    height = user.userPersonalInformation.height,
+                    phoneNumber = user.phoneNumber,
+                    religion = user.userPersonalInformation.religion
                 ),
             information = information,
             preference = preference,
