@@ -20,9 +20,11 @@ import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dao.UserDao
+import uoslife.servermeeting.user.entity.NotMatchedUser
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
+import uoslife.servermeeting.user.service.NotMatchedUserService
 
 @Service
 @Qualifier("PortOneService")
@@ -34,6 +36,7 @@ class PortOneService(
     private val meetingTeamRepository: MeetingTeamRepository,
     private val validator: Validator,
     private val portOneAPIService: PortOneAPIService,
+    private val notMatchedUserService: NotMatchedUserService,
     @Value("\${portone.api.url}") private val url: String,
     @Value("\${portone.api.price.single}") private val singlePrice: Int,
     @Value("\${portone.api.price.triple}") private val triplePrice: Int,
@@ -146,25 +149,21 @@ class PortOneService(
 
     @Transactional
     override fun refundPayment() {
-        val userList =
-            userDao.findNotMatchedUserInMeetingTeam(
-                meetingTeamDao.findNotMatchedMaleMeetingTeam() +
-                    meetingTeamDao.findNotMatchedFeMaleMeetingTeam()
-            )
+        val notMatchedUserList: List<NotMatchedUser> = notMatchedUserService.findAll()
+        val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
 
-        userList.map { user ->
-            val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
+        notMatchedUserList.forEachIndexed{ index, user ->
+            logger.info("[${index+1} 번째 환불] " + user)
             try {
-                val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
                 portOneAPIService.refundPayment(
                     accessToken.response!!.access_token,
-                    payment.impUid,
-                    payment.price
+                    user.impUid,
+                    user.price
                 )
 
-                payment.status = PaymentStatus.REFUND
+                user.status = PaymentStatus.REFUND
             } catch (e: ExternalApiFailedException) {
-                payment.status = PaymentStatus.REFUND_FAILED
+                logger.info("[${index+1} 번째 환불 실패] " + user)
             }
         }
     }
