@@ -117,7 +117,7 @@ class SingleMeetingService(
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
             user.userPersonalInformation.gender,
             TeamType.SINGLE,
-            listOf(user),
+            user,
             information,
             preference,
             null,

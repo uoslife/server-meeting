@@ -17,7 +17,7 @@ class MeetingServiceUtils {
     fun toMeetingTeamInformationGetResponse(
         gender: GenderType,
         teamType: TeamType,
-        userList: List<User>,
+        user: User,
         information: Information,
         preference: Preference,
         teamName: String?,
@@ -27,26 +27,24 @@ class MeetingServiceUtils {
             teamType = teamType,
             teamName = teamName,
             gender = gender,
-            teamUserList =
-                userList.map {
-                    UserProfile(
-                        name = it.name,
-                        phoneNumber = it.phoneNumber,
-                        age = it.userPersonalInformation.age,
-                        height = it.userPersonalInformation.height,
-                        university = it.userPersonalInformation.university,
-                        department = it.userPersonalInformation.department,
-                        studentType = it.userPersonalInformation.studentType,
-                        kakaoTalkId = it.kakaoTalkId,
-                        smoking = it.userPersonalInformation.smoking,
-                        religion = it.userPersonalInformation.religion,
-                        drinkingMin = it.userPersonalInformation.drinkingMin,
-                        drinkingMax = it.userPersonalInformation.drinkingMax,
-                        spiritAnimal = it.userPersonalInformation.spiritAnimal,
-                        mbti = it.userPersonalInformation.mbti,
-                        interest = it.userPersonalInformation.interest
-                    )
-                },
+            opponentLeaderProfile =
+                UserProfile(
+                    name = user.name,
+                    age = user.userPersonalInformation.age,
+                    university = user.userPersonalInformation.university,
+                    department = user.userPersonalInformation.department,
+                    studentType = user.userPersonalInformation.studentType,
+                    kakaoTalkId = user.kakaoTalkId,
+                    smoking = user.userPersonalInformation.smoking,
+                    drinkingMin = user.userPersonalInformation.drinkingMin,
+                    drinkingMax = user.userPersonalInformation.drinkingMax,
+                    spiritAnimal = user.userPersonalInformation.spiritAnimal,
+                    mbti = user.userPersonalInformation.mbti,
+                    interest = user.userPersonalInformation.interest,
+                    height = user.userPersonalInformation.height,
+                    phoneNumber = user.phoneNumber,
+                    religion = user.userPersonalInformation.religion
+                ),
             information = information,
             preference = preference,
             message = message
