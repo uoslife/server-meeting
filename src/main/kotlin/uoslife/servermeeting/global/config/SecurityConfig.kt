@@ -113,7 +113,11 @@ class SecurityConfig(
             web.ignoring()
                 .requestMatchers("/swagger-ui/**")
                 .requestMatchers("/meeting/actuator/health/**")
-                .requestMatchers("/api/payment/verify/error", "/api/payment/verify/error/cancel", "/api/payment/refund/match")
+                .requestMatchers(
+                    "/api/payment/verify/error",
+                    "/api/payment/verify/error/cancel",
+                    "/api/payment/refund/match"
+                )
                 .requestMatchers("/api/user/isDuplicatedKakaoTalkId") // 카카오톡 중복 확인
         }
     }

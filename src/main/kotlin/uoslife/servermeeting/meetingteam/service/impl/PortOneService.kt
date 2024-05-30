@@ -152,7 +152,7 @@ class PortOneService(
         val notMatchedUserList: List<NotMatchedUser> = notMatchedUserService.findAll()
         val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
 
-        notMatchedUserList.forEachIndexed{ index, user ->
+        notMatchedUserList.forEachIndexed { index, user ->
             logger.info("[${index+1} 번째 환불] " + user)
             try {
                 portOneAPIService.refundPayment(

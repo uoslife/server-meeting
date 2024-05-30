@@ -9,7 +9,7 @@ class NotMatchedUserService(
     private val notMatchedUserRepository: NotMatchedUserRepository,
 ) {
 
-    fun findAll(): List<NotMatchedUser>{
+    fun findAll(): List<NotMatchedUser> {
         return notMatchedUserRepository.findAll()
     }
 }
