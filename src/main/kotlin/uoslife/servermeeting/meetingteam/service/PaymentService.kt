@@ -14,9 +14,7 @@ interface PaymentService {
         paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
     ): PaymentResponseDto.PaymentCheckResponse
     fun refundPaymentByToken(userId: Long): PaymentResponseDto.PaymentRefundResponse
-    fun refundPayment(): Unit
+    fun refundPayment(): PaymentResponseDto.NotMatchedPaymentRefundResponse
     fun verifyPayment(userId: Long): PaymentResponseDto.PaymentRequestResponse
     fun deleteUserPayment(user: User)
-    fun verifyPaymentError(): Unit
-    fun verifyPaymentErrorRefundedButSuccess(): Unit
 }
