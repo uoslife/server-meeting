@@ -145,28 +145,30 @@ class PortOneService(
     }
 
     @Transactional
-    override fun refundPayment() {
+    override fun refundPayment(): PaymentResponseDto.NotMatchedPaymentRefundResponse {
         val userList =
-            userDao.findNotMatchedUserInMeetingTeam(
-                meetingTeamDao.findNotMatchedMaleMeetingTeam() +
-                    meetingTeamDao.findNotMatchedFeMaleMeetingTeam()
-            )
+            meetingTeamDao
+                .findUserIdWithMaleMeetingTeam()
+                .plus(meetingTeamDao.findUserIdWithFeMaleMeetingTeam())
+        val paymentList = userDao.findNotMatchedPayment(userList)
+        logger.info("Total payment count: " + paymentList.size)
 
-        userList.map { user ->
-            val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
+        val refundFailedList: MutableList<String> = mutableListOf()
+        val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
+        paymentList.map { payment ->
             try {
-                val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
                 portOneAPIService.refundPayment(
                     accessToken.response!!.access_token,
                     payment.impUid,
                     payment.price
                 )
-
                 payment.status = PaymentStatus.REFUND
             } catch (e: ExternalApiFailedException) {
+                refundFailedList.add(payment.id.toString())
                 payment.status = PaymentStatus.REFUND_FAILED
             }
         }
+        return PaymentResponseDto.NotMatchedPaymentRefundResponse(refundFailedList)
     }
 
     override fun verifyPayment(userId: Long): PaymentResponseDto.PaymentRequestResponse {
@@ -193,62 +195,6 @@ class PortOneService(
             user.name,
             team.type
         )
-    }
-
-    @Transactional
-    override fun verifyPaymentError() {
-        val paymentList = paymentRepository.findByStatus(PaymentStatus.REQUEST)
-        val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
-        for (payment in paymentList) {
-            try {
-                val result =
-                    portOneAPIService.findPaymentByMID(
-                        accessToken.response!!.access_token,
-                        payment.marchantUid!!
-                    )
-                if (result.response!!.failed_at == 0) {
-                    payment.impUid = result.response!!.imp_uid
-                    payment.status = PaymentStatus.SUCCESS // 결제 성공
-                }
-            } catch (e: ExternalApiFailedException) {
-                logger.info("MarchantUid-Name: " + payment.marchantUid + " " + payment.user!!.name)
-            }
-        }
-    }
-
-    /** 결제취소지만 DB에는 SUCCESS로 남아있는 데이터 REFUND로 변경 */
-    @Transactional
-    override fun verifyPaymentErrorRefundedButSuccess() {
-        val paymentList = paymentRepository.findByStatus(PaymentStatus.SUCCESS)
-        val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
-
-        for (payment in paymentList) {
-            try {
-                val result =
-                    portOneAPIService.findPaymentByMID(
-                        accessToken.response!!.access_token,
-                        payment.marchantUid!!
-                    )
-                if (result.response!!.cancelled_at != 0) { // DB에는 SUCCESS이지만 결제취소한 경우
-                    logger.info(
-                        "결제취소 MarchantUid-Name: " +
-                            payment.marchantUid +
-                            " " +
-                            payment.user!!.name +
-                            " " +
-                            payment.status
-                    )
-                    payment.status = PaymentStatus.REFUND // 결제취소로 변경
-                }
-            } catch (e: ExternalApiFailedException) {
-                logger.info(
-                    "[Exception] MarchantUid-Name: " +
-                        payment.marchantUid +
-                        " " +
-                        payment.user!!.name
-                )
-            }
-        }
     }
 
     @Transactional

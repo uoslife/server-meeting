@@ -29,4 +29,6 @@ class PaymentResponseDto {
         var cancelSuccess: Boolean,
         @Schema(description = "환불 실패 시 메세지", example = "") var message: String,
     )
+
+    data class NotMatchedPaymentRefundResponse(val refundFailedList: MutableList<String>?)
 }

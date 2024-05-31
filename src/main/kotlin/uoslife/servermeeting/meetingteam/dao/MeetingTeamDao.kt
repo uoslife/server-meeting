@@ -2,29 +2,29 @@ package uoslife.servermeeting.meetingteam.dao
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
-import uoslife.servermeeting.match.entity.QMatch
-import uoslife.servermeeting.meetingteam.entity.MeetingTeam
+import uoslife.servermeeting.match.entity.QMatch.match
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
+import uoslife.servermeeting.user.entity.QUser.user
 
 @Repository
 class MeetingTeamDao(
     private val queryFactory: JPAQueryFactory,
 ) {
-    fun findNotMatchedMaleMeetingTeam(): List<MeetingTeam> {
+    fun findUserIdWithMaleMeetingTeam(): List<Long> {
         return queryFactory
-            .selectFrom(meetingTeam)
-            .leftJoin(meetingTeam.maleMatch, QMatch.match)
-            .fetchJoin()
-            .where(QMatch.match.id.isNull)
+            .select(user.id)
+            .from(user)
+            .innerJoin(user.team, meetingTeam)
+            .innerJoin(meetingTeam.maleMatch, match)
             .fetch()
     }
 
-    fun findNotMatchedFeMaleMeetingTeam(): List<MeetingTeam> {
+    fun findUserIdWithFeMaleMeetingTeam(): List<Long> {
         return queryFactory
-            .selectFrom(meetingTeam)
-            .leftJoin(meetingTeam.femaleMatch, QMatch.match)
-            .fetchJoin()
-            .where(QMatch.match.id.isNull)
+            .select(user.id)
+            .from(user)
+            .innerJoin(user.team, meetingTeam)
+            .innerJoin(meetingTeam.femaleMatch, match)
             .fetch()
     }
 }
