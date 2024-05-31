@@ -156,6 +156,9 @@ class PortOneService(
         val refundFailedList: MutableList<String> = mutableListOf()
         val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
         paymentList.map { payment ->
+            logger.info(
+                "[환불 성공] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.marchantUid}"
+            )
             try {
                 portOneAPIService.refundPayment(
                     accessToken.response!!.access_token,
@@ -164,6 +167,9 @@ class PortOneService(
                 )
                 payment.status = PaymentStatus.REFUND
             } catch (e: ExternalApiFailedException) {
+                logger.info(
+                    "[환불 실패] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.marchantUid}"
+                )
                 refundFailedList.add(payment.id.toString())
                 payment.status = PaymentStatus.REFUND_FAILED
             }
