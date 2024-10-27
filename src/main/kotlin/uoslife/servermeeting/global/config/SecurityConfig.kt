@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
@@ -36,18 +35,24 @@ class SecurityConfig(
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
         http
-            .httpBasic{http-> http.disable()}
-            .csrf{csrf -> csrf.disable() }
-            .cors{cors -> cors.configurationSource(configurationSource())}
-            .formLogin{formLogin->formLogin.disable()}
-            .sessionManagement{sessionPolicy -> sessionPolicy.sessionCreationPolicy(SessionCreationPolicy.STATELESS)}
-            .headers{headers->headers.frameOptions().disable()}
-            .exceptionHandling{
+            .httpBasic { http -> http.disable() }
+            .csrf { csrf -> csrf.disable() }
+            .cors { cors -> cors.configurationSource(configurationSource()) }
+            .formLogin { formLogin -> formLogin.disable() }
+            .sessionManagement { sessionPolicy ->
+                sessionPolicy.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .headers { headers -> headers.frameOptions().disable() }
+            .exceptionHandling {
                 it.authenticationEntryPoint(JwtAuthenticationEntryPoint(resolver))
-                    .accessDeniedHandler(JwtAccessDeniedHandler())} // 인증, 인가가 되지 않은 요청 발생시
-            .authorizeHttpRequests{
-                it.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                    .requestMatchers("/api/**").hasRole("USER")}// CORS preflight 요청 허용
+                    .accessDeniedHandler(JwtAccessDeniedHandler())
+            } // 인증, 인가가 되지 않은 요청 발생시
+            .authorizeHttpRequests {
+                it.requestMatchers(CorsUtils::isPreFlightRequest)
+                    .permitAll()
+                    .requestMatchers("/api/**")
+                    .hasRole("USER")
+            } // CORS preflight 요청 허용
 
         http.addFilterBefore(
             JwtAuthenticationFilter(accountService),
