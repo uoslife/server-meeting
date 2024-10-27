@@ -10,7 +10,7 @@ import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 
 @Entity
-@Table(name = "`user`")
+@Table(name = "meetingUser")
 class User(
     @Id @Column(nullable = false, unique = true) var id: Long? = null,
     var phoneNumber: String? = null,

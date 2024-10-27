@@ -88,7 +88,7 @@ dependencies {
     // mail
     implementation("org.springframework.boot:spring-boot-starter-mail")
 
-    // reids
+    // redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     // jwt

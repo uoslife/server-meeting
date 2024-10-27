@@ -24,7 +24,7 @@ spring:
         enabled: true
 
 app:
-    season: 4
+    season: 5
 
 portone:
     api:
@@ -78,4 +78,4 @@ logging:
         org:
             springframework:
                 web:
-                    filter: DEBUG
+                    filter: INFO

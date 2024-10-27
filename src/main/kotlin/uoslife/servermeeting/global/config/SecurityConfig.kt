@@ -35,33 +35,19 @@ class SecurityConfig(
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
-        http.cors().configurationSource(configurationSource())
         http
-            .httpBasic()
-            .disable()
-            .csrf()
-            .disable()
-            .cors()
-            .configurationSource(configurationSource())
-            .and()
-            .formLogin()
-            .disable()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .headers()
-            .frameOptions()
-            .disable()
-            .and()
-            .exceptionHandling() // 인증, 인가가 되지 않은 요청 발생시
-            .authenticationEntryPoint(JwtAuthenticationEntryPoint(resolver))
-            .accessDeniedHandler(JwtAccessDeniedHandler())
-            .and()
-            .authorizeHttpRequests()
-            .requestMatchers(CorsUtils::isPreFlightRequest)
-            .permitAll() // CORS preflight 요청 허용
-            .requestMatchers("/api/**")
-            .hasRole("USER") // 모든 api 요청에 대해 권한 필요
+            .httpBasic{http-> http.disable()}
+            .csrf{csrf -> csrf.disable() }
+            .cors{cors -> cors.configurationSource(configurationSource())}
+            .formLogin{formLogin->formLogin.disable()}
+            .sessionManagement{sessionPolicy -> sessionPolicy.sessionCreationPolicy(SessionCreationPolicy.STATELESS)}
+            .headers{headers->headers.frameOptions().disable()}
+            .exceptionHandling{
+                it.authenticationEntryPoint(JwtAuthenticationEntryPoint(resolver))
+                    .accessDeniedHandler(JwtAccessDeniedHandler())} // 인증, 인가가 되지 않은 요청 발생시
+            .authorizeHttpRequests{
+                it.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                    .requestMatchers("/api/**").hasRole("USER")}// CORS preflight 요청 허용
 
         http.addFilterBefore(
             JwtAuthenticationFilter(accountService),
@@ -116,10 +102,5 @@ class SecurityConfig(
                 .requestMatchers("/api/user/isDuplicatedKakaoTalkId") // 카카오톡 중복 확인
                 .requestMatchers("/api/payment/refund/match")
         }
-    }
-
-    @Bean
-    fun bCryptPasswordEncoder(): BCryptPasswordEncoder? {
-        return BCryptPasswordEncoder()
     }
 }
