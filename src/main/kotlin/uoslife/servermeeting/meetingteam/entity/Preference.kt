@@ -1,7 +1,6 @@
 package uoslife.servermeeting.meetingteam.entity
 
 import uoslife.servermeeting.meetingteam.entity.enums.TeamMood
-import uoslife.servermeeting.user.entity.University
 import uoslife.servermeeting.user.entity.enums.ReligionType
 import uoslife.servermeeting.user.entity.enums.SmokingType
 import uoslife.servermeeting.user.entity.enums.SpiritAnimalType
@@ -13,7 +12,6 @@ data class Preference(
     var heightMin: Int? = null,
     var heightMax: Int? = null,
     var studentType: List<StudentType>? = null,
-    var university: List<University>? = null,
     var religion: List<ReligionType>? = null,
     var smoking: List<SmokingType>? = null,
     var drinkingMin: Int? = null,
