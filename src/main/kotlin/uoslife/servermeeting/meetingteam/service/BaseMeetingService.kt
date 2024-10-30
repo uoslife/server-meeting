@@ -6,7 +6,6 @@ import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdate
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
-import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 
 interface BaseMeetingService {
     /**
@@ -21,7 +20,6 @@ interface BaseMeetingService {
     fun createMeetingTeam(
         userId: Long,
         name: String? = null,
-        teamType: TeamType
     ): MeetingTeamCodeResponse
     fun joinMeetingTeam(
         userId: Long,

@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamMood
-import uoslife.servermeeting.user.entity.University
 import uoslife.servermeeting.user.entity.enums.ReligionType
 import uoslife.servermeeting.user.entity.enums.SmokingType
 import uoslife.servermeeting.user.entity.enums.SpiritAnimalType
@@ -17,9 +16,6 @@ class MeetingTeamPreferenceUpdateRequest(
     @Schema(description = "최대 키", example = "210") val heightMax: Int?,
     @Schema(description = "신분", example = "[\"UNDERGRADUATE\", \"POSTGRADUATE\"]")
     val studentType: List<StudentType>?,
-    @Schema(description = "대학", example = "[\"UOS\", \"KHU\"]", nullable = false)
-    @field:NotNull
-    val university: List<University>,
     @Schema(description = "종교", example = "[\"CHRISTIAN\", \"CATHOLIC\"]")
     val religion: List<ReligionType>?,
     @Schema(description = "흡연 여부", example = "[\"TRUE\"]") val smoking: List<SmokingType>?,
@@ -37,7 +33,6 @@ class MeetingTeamPreferenceUpdateRequest(
             heightMin = heightMin,
             heightMax = heightMax,
             studentType = studentType,
-            university = university,
             religion = religion,
             smoking = smoking,
             drinkingMin = drinkingMin,
@@ -51,7 +46,6 @@ class MeetingTeamPreferenceUpdateRequest(
         return Preference(
             ageMin = ageMin,
             ageMax = ageMax,
-            university = university,
             mood = mood,
         )
     }

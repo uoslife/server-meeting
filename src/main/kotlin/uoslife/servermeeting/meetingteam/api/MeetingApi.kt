@@ -52,7 +52,7 @@ class MeetingApi(
                 ApiResponse(
                     responseCode = "201",
                     description =
-                        "1대1의 경우 빈 문자열을 반환, 3대3의 경우 팀 코드(A-Z0-9 4개)(String)를 반환 (팀 이름은 2~8글자)",
+                        "1대1의 경우 빈 문자열을 반환, 3대3의 경우 팀 코드(A-Z,0-9 4개)(String)를 반환 (팀 이름은 2~8글자)",
                     content =
                         [Content(schema = Schema(implementation = MeetingTeamCodeResponse::class))]
                 ),
@@ -123,10 +123,8 @@ class MeetingApi(
 
         val meetingTeamCodeResponse =
             when (teamType) {
-                TeamType.SINGLE ->
-                    singleMeetingService.createMeetingTeam(userId, name, teamType = teamType)
-                TeamType.TRIPLE ->
-                    tripleMeetingService.createMeetingTeam(userId, name, teamType = teamType)
+                TeamType.SINGLE -> singleMeetingService.createMeetingTeam(userId, name)
+                TeamType.TRIPLE -> tripleMeetingService.createMeetingTeam(userId, name)
             }
 
         return ResponseEntity.ok(meetingTeamCodeResponse)
