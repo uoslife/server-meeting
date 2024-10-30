@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
 import uoslife.servermeeting.meetingteam.service.PaymentService
-import uoslife.servermeeting.meetingteam.service.impl.MeetingTeamService
+import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
+import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
-import uoslife.servermeeting.user.entity.University
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.UserPersonalInformation
+import uoslife.servermeeting.user.entity.UserAdditionInformation
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 
@@ -20,7 +20,8 @@ import uoslife.servermeeting.user.repository.UserRepository
 class UserService(
     private val userRepository: UserRepository,
     private val paymentService: PaymentService,
-    private val meetingTeamService: MeetingTeamService,
+    private val singleMeetingService: SingleMeetingService,
+    private val tripleMeetingService: TripleMeetingService,
     private val uoslifeAccountService: UOSLIFEAccountService,
     private val validator: Validator
 ) {
@@ -31,7 +32,7 @@ class UserService(
 
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
-        getOrCreateUser(id, University.valueOf(userProfile.realm!!.code))
+        getOrCreateUser(id)
     }
 
     fun findUser(id: Long): UserFindResponse {
@@ -44,16 +45,16 @@ class UserService(
     fun updateUser(requestDto: UserUpdateRequest, id: Long) {
         val existingUser = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
-        val userPersonalInformation: UserPersonalInformation =
+        val userAdditionInformation: UserAdditionInformation =
             updateUserPersonalInformationWithDto(existingUser, requestDto)
 
-        existingUser.update(requestDto, userPersonalInformation)
+        existingUser.update(requestDto, userAdditionInformation)
     }
 
     private fun updateUserPersonalInformationWithDto(
         existingUser: User,
         requestDto: UserUpdateRequest
-    ): UserPersonalInformation {
+    ): UserAdditionInformation {
         val validMBTI = validator.setValidMBTI(requestDto.mbti)
         return requestDto.toUserPersonalInformation(existingUser, validMBTI)
     }
@@ -68,13 +69,17 @@ class UserService(
         // 유저가 존재하는지 확인
         val user: User = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
+        if (user.singleTeam != null) {
+            singleMeetingService.deleteMeetingTeam(id)
+        }
+        if (user.tripleTeam != null) {
+            tripleMeetingService.deleteMeetingTeam(id)
+        }
         // 유저 삭제
         userRepository.delete(user)
 
         // Payment 삭제
         paymentService.deleteUserPayment(user)
-
-        meetingTeamService.deleteEmptyMeetingTeam(user.team ?: return)
     }
 
     fun isDuplicatedKakaoTalkId(kakaoTalkId: String): Boolean {
@@ -82,8 +87,8 @@ class UserService(
         return false
     }
 
-    private fun getOrCreateUser(userId: Long, university: University = University.UOS): User {
+    private fun getOrCreateUser(userId: Long): User {
         return userRepository.findByIdOrNull(userId)
-            ?: userRepository.save(User.create(userId = userId, university = university))
+            ?: userRepository.save(User.create(userId = userId))
     }
 }
