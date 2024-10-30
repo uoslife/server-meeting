@@ -3,7 +3,7 @@ package uoslife.servermeeting.meetingteam.dao
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
 import uoslife.servermeeting.match.entity.QMatch.match
-import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
+import uoslife.servermeeting.meetingteam.entity.QSingleMeetingTeam.singleMeetingTeam
 import uoslife.servermeeting.user.entity.QUser.user
 
 @Repository
@@ -14,8 +14,8 @@ class MeetingTeamDao(
         return queryFactory
             .select(user.id)
             .from(user)
-            .innerJoin(user.team, meetingTeam)
-            .innerJoin(meetingTeam.maleMatch, match)
+            .innerJoin(user.singleTeam, singleMeetingTeam)
+            .innerJoin(singleMeetingTeam.maleMatch, match)
             .fetch()
     }
 
@@ -23,8 +23,8 @@ class MeetingTeamDao(
         return queryFactory
             .select(user.id)
             .from(user)
-            .innerJoin(user.team, meetingTeam)
-            .innerJoin(meetingTeam.femaleMatch, match)
+            .innerJoin(user.singleTeam, singleMeetingTeam)
+            .innerJoin(singleMeetingTeam.femaleMatch, match)
             .fetch()
     }
 }

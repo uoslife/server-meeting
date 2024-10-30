@@ -1,8 +1,8 @@
 package uoslife.servermeeting.meetingteam.util
 
 import org.springframework.stereotype.Component
-import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Payment
+import uoslife.servermeeting.meetingteam.entity.TripleMeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.user.entity.User
@@ -10,12 +10,17 @@ import uoslife.servermeeting.user.entity.User
 @Component
 class Validator() {
 
-    fun isUserAlreadyHaveTeam(user: User) {
-        if (user.team != null) {
+    fun isUserAlreadyHaveSingleTeam(user: User) {
+        if (user.singleTeam != null) {
             throw UserAlreadyHaveTeamException()
         }
     }
 
+    fun isUserAlreadyHaveTripleTeam(user: User) {
+        if (user.tripleTeam != null) {
+            throw UserAlreadyHaveTeamException()
+        }
+    }
     fun isTeamNameInvalid(name: String?) {
         if (name == null || name.length < 2 || name.length > 8) {
             throw InvalidTeamNameException()
@@ -28,14 +33,14 @@ class Validator() {
         }
     }
 
-    fun isTeamFull(team: MeetingTeam) {
+    fun isTeamFull(team: TripleMeetingTeam) {
         if (team.users.size >= 3) {
             throw TeamFullException()
         }
     }
 
     fun isUserSameGenderWithTeamLeader(user: User, teamLeaderUser: User) {
-        if (user.userPersonalInformation.gender != teamLeaderUser.userPersonalInformation.gender) {
+        if (user.gender != teamLeaderUser.gender) {
             throw TeamConsistOfSameGenderException()
         }
     }
