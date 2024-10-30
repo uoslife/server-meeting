@@ -15,7 +15,6 @@ import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
-import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PaymentRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.util.Validator
@@ -31,7 +30,6 @@ class PortOneService(
     private val userDao: UserDao,
     private val meetingTeamDao: MeetingTeamDao,
     private val paymentRepository: PaymentRepository,
-    private val meetingTeamRepository: MeetingTeamRepository,
     private val validator: Validator,
     private val portOneAPIService: PortOneAPIService,
     @Value("\${portone.api.url}") private val url: String,
@@ -46,10 +44,11 @@ class PortOneService(
     @Transactional
     override fun requestPayment(
         userId: Long,
-        paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest
+        paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest,
+        teamType: TeamType
     ): PaymentResponseDto.PaymentRequestResponse {
         val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
-        val team = user.team ?: throw MeetingTeamNotFoundException()
+        val team = user.singleTeam ?: throw MeetingTeamNotFoundException()
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
         if (paymentRepository.existsByUser(user)) {
@@ -60,7 +59,7 @@ class PortOneService(
                 payment.price!!,
                 phoneNumber,
                 user.name,
-                team.type
+                teamType
             )
         }
 
@@ -70,7 +69,7 @@ class PortOneService(
                 paymentRequestPaymentRequest.pg,
                 paymentRequestPaymentRequest.payMethod,
                 UUID.randomUUID().toString(),
-                when (team.type) {
+                when (teamType) {
                     TeamType.SINGLE -> singlePrice
                     TeamType.TRIPLE -> triplePrice
                 },
@@ -84,7 +83,7 @@ class PortOneService(
             payment.price!!,
             phoneNumber,
             user.name,
-            team.type
+            teamType
         )
     }
 
@@ -115,18 +114,19 @@ class PortOneService(
     @Transactional
     override fun refundPaymentByToken(
         userId: Long,
+        teamType: TeamType
     ): PaymentResponseDto.PaymentRefundResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
-        val team = user.team ?: throw MeetingTeamNotFoundException()
+        val team = user.singleTeam ?: throw MeetingTeamNotFoundException() // 수정필요
 
         if (!validator.isAlreadyPaid(payment)) throw PaymentInValidException()
 
-        when (team.type) {
-            TeamType.SINGLE -> user.team = null
-            TeamType.TRIPLE -> team.users.forEach { it.team = null }
+        when (teamType) {
+            TeamType.SINGLE -> user.singleTeam = null
+            TeamType.TRIPLE -> null /* team.users.forEach { it.team = null } */
         }
-        meetingTeamRepository.delete(team)
+        //        meetingTeamRepository.delete(team)
 
         try {
             val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
@@ -177,14 +177,17 @@ class PortOneService(
         return PaymentResponseDto.NotMatchedPaymentRefundResponse(refundFailedList)
     }
 
-    override fun verifyPayment(userId: Long): PaymentResponseDto.PaymentRequestResponse {
+    override fun verifyPayment(
+        userId: Long,
+        teamType: TeamType
+    ): PaymentResponseDto.PaymentRequestResponse {
         // 미팅팀이 없으면, 신청하기 버튼
         val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
-        val team = user.team ?: throw MeetingTeamNotFoundException()
+        val team = user.singleTeam ?: throw MeetingTeamNotFoundException()
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
         val payment =
-            when (team.type) {
+            when (teamType) {
                 TeamType.SINGLE -> paymentRepository.findByUser(user)
                 TeamType.TRIPLE -> paymentRepository.findByUser(team.leader!!)
             }
@@ -199,7 +202,7 @@ class PortOneService(
             payment.price!!,
             phoneNumber,
             user.name,
-            team.type
+            teamType
         )
     }
 

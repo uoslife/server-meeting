@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.meetingteam.dto.request.PaymentRequestDto
 import uoslife.servermeeting.meetingteam.dto.response.PaymentResponseDto
+import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.service.PaymentService
 
 @RestController
@@ -108,7 +109,13 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
         val userId = userDetails.username.toLong()
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.requestPayment(userId, paymentRequestPaymentRequest))
+            .body(
+                paymentService.requestPayment(
+                    userId,
+                    paymentRequestPaymentRequest,
+                    teamType = TeamType.SINGLE
+                )
+            )
     }
 
     @Operation(summary = "결제 검증 API", description = "결제가 되었는지 검증합니다.")
@@ -249,7 +256,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
         val userId = userDetails.username.toLong()
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.refundPaymentByToken(userId))
+            .body(paymentService.refundPaymentByToken(userId, teamType = TeamType.SINGLE))
     }
 
     @Operation(summary = "매칭 안된 유저 결제 취소 API", description = "매칭이 되지않은 모든 유저에 대해 환불합니다")
@@ -380,6 +387,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
     ): ResponseEntity<PaymentResponseDto.PaymentRequestResponse> {
         val userId = userDetails.username.toLong()
 
-        return ResponseEntity.status(HttpStatus.OK).body(paymentService.verifyPayment(userId))
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(paymentService.verifyPayment(userId, teamType = TeamType.SINGLE))
     }
 }
