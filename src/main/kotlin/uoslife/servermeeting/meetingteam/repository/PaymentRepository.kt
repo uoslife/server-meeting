@@ -11,4 +11,5 @@ interface PaymentRepository : JpaRepository<Payment, UUID> {
     fun existsByUser(user: User): Boolean
     fun deleteByUser(user: User): Long
     fun findByStatus(status: PaymentStatus): List<Payment>
+    fun findByMarchantUid(marchantUid: String): Payment?
 }

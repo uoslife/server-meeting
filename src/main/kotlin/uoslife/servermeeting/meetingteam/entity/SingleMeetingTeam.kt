@@ -18,7 +18,7 @@ class SingleMeetingTeam(
     @Type(JsonType::class) @Column(columnDefinition = "jsonb") var preference: Preference? = null,
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "maleTeam") var maleMatch: Match? = null,
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "femaleTeam") var femaleMatch: Match? = null,
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "leader_id",
         referencedColumnName = "id",
@@ -26,4 +26,5 @@ class SingleMeetingTeam(
         foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT)
     )
     var leader: User? = null,
+    @OneToOne(fetch = FetchType.LAZY) @JoinColumn(name = "payment_id") var payment: Payment? = null
 ) : BaseEntity()

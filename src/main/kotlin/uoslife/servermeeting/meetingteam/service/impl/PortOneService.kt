@@ -40,6 +40,7 @@ class PortOneService(
 ) : PaymentService {
     companion object {
         private val logger = LoggerFactory.getLogger(PaymentService::class.java)
+        const val PAYMENT_SUCCESS = "paid"
     }
     @Transactional
     override fun requestPayment(
@@ -209,5 +210,20 @@ class PortOneService(
     @Transactional
     override fun deleteUserPayment(user: User) {
         paymentRepository.deleteByUser(user)
+    }
+
+    @Transactional
+    override fun synchronizePayment(
+        paymentWebhookResponse: PaymentResponseDto.PaymentWebhookResponse
+    ) {
+        if (paymentWebhookResponse.status != PAYMENT_SUCCESS) {
+            return
+        }
+        val payment =
+            paymentRepository.findByMarchantUid(paymentWebhookResponse.merchant_uid)
+                ?: throw PaymentNotFoundException()
+
+        payment.updatePayment(paymentWebhookResponse.imp_uid, PaymentStatus.SUCCESS)
+        logger.info("[결제 성공] marchantUid : ${payment.marchantUid}")
     }
 }

@@ -390,4 +390,14 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
         return ResponseEntity.status(HttpStatus.OK)
             .body(paymentService.verifyPayment(userId, teamType = TeamType.SINGLE))
     }
+
+    @Operation(summary = "결제 여부 웹훅 API", description = "포트원에서 전달한 결제 정보 웹훅을 처리합니다")
+    @PostMapping("/portone-webhook")
+    fun synchronizePayment(
+        @RequestBody paymentWebhookResponse: PaymentResponseDto.PaymentWebhookResponse
+    ): ResponseEntity<Void> {
+        paymentService.synchronizePayment(paymentWebhookResponse)
+
+        return ResponseEntity.status(HttpStatus.OK).build()
+    }
 }

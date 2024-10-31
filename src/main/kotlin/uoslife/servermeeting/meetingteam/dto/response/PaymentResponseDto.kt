@@ -31,4 +31,10 @@ class PaymentResponseDto {
     )
 
     data class NotMatchedPaymentRefundResponse(val refundFailedList: MutableList<String>?)
+
+    data class PaymentWebhookResponse(
+        var imp_uid: String,
+        var merchant_uid: String,
+        var status: String,
+    )
 }

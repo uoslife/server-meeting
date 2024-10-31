@@ -30,4 +30,5 @@ class TripleMeetingTeam(
         foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT)
     )
     var leader: User? = null,
+    @OneToOne(fetch = FetchType.LAZY) @JoinColumn(name = "payment_id") var payment: Payment? = null
 ) : BaseEntity()

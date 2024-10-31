@@ -22,4 +22,6 @@ interface PaymentService {
     fun refundPayment(): PaymentResponseDto.NotMatchedPaymentRefundResponse
     fun verifyPayment(userId: Long, teamType: TeamType): PaymentResponseDto.PaymentRequestResponse
     fun deleteUserPayment(user: User)
+
+    fun synchronizePayment(paymentWebhookResponse: PaymentResponseDto.PaymentWebhookResponse)
 }

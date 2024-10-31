@@ -106,6 +106,7 @@ class SecurityConfig(
                 .requestMatchers("/meeting/actuator/health/**")
                 .requestMatchers("/api/user/isDuplicatedKakaoTalkId") // 카카오톡 중복 확인
                 .requestMatchers("/api/payment/refund/match")
+                .requestMatchers("/api/payment/portone-webhook")
         }
     }
 }

@@ -1,7 +1,6 @@
 package uoslife.servermeeting.meetingteam.entity
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
 import java.util.UUID
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.enums.PayMethod
@@ -16,7 +15,7 @@ class Payment(
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null,
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     var user: User? = null,
     @Enumerated(EnumType.STRING) var pg: PaymentGateway? = null,
@@ -24,8 +23,11 @@ class Payment(
     var marchantUid: String? = null,
     var price: Int? = null,
     var impUid: String? = null,
-    var paidDate: LocalDateTime? = null,
     @Enumerated(EnumType.STRING) var status: PaymentStatus = PaymentStatus.NONE,
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "payment")
+    var singleMeetingTeam: SingleMeetingTeam? = null,
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "payment")
+    var tripleMeetingTeam: TripleMeetingTeam? = null,
 ) : BaseEntity() {
     companion object {
         fun createPayment(
@@ -43,9 +45,12 @@ class Payment(
                 marchantUid = marchantUid,
                 price = price,
                 impUid = null,
-                paidDate = null,
                 status = status,
             )
         }
+    }
+    fun updatePayment(impUid: String, status: PaymentStatus) {
+        this.impUid = impUid
+        this.status = status
     }
 }
