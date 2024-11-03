@@ -1,4 +1,4 @@
-package uoslife.servermeeting.auth.config
+package uoslife.servermeeting.global.config
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
