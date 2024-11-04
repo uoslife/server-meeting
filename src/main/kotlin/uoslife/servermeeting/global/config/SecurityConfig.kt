@@ -22,13 +22,12 @@ import uoslife.servermeeting.global.auth.filter.JwtAccessDeniedHandler
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationEntryPoint
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationFilter
 import uoslife.servermeeting.global.auth.jwt.JwtAuthenticationProvider
-import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
     private val authProvider: JwtAuthenticationProvider,
-    private val accountService: UOSLIFEAccountService,
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
     @Qualifier("handlerExceptionResolver") private val resolver: HandlerExceptionResolver,
 ) {
     @Bean
@@ -55,7 +54,7 @@ class SecurityConfig(
             } // CORS preflight 요청 허용
 
         http.addFilterBefore(
-            JwtAuthenticationFilter(accountService),
+            jwtAuthenticationFilter,
             UsernamePasswordAuthenticationFilter::class.java
         )
 
