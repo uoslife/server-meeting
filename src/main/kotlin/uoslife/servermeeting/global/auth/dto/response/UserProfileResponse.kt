@@ -1,4 +1,4 @@
-package uoslife.servermeeting.auth.dto.response
+package uoslife.servermeeting.global.auth.dto.response
 
 data class UserProfileResponse(
     val id: Long,
