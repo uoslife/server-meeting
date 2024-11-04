@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -38,7 +39,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
             [
                 ApiResponse(
                     responseCode = "200",
-                    description = "marchantUid 정상 반환",
+                    description = "merchantUid 정상 반환",
                     content =
                         [
                             Content(
@@ -101,21 +102,16 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                 ),
             ]
     )
-    @PostMapping("/request")
+    @PostMapping("/{teamType}/request")
     fun requestPayment(
         @AuthenticationPrincipal userDetails: UserDetails,
+        @PathVariable teamType: TeamType,
         @RequestBody paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest
     ): ResponseEntity<PaymentResponseDto.PaymentRequestResponse> {
         val userId = userDetails.username.toLong()
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(
-                paymentService.requestPayment(
-                    userId,
-                    paymentRequestPaymentRequest,
-                    teamType = TeamType.SINGLE
-                )
-            )
+            .body(paymentService.verifyPayment(userId, teamType))
     }
 
     @Operation(summary = "결제 검증 API", description = "결제가 되었는지 검증합니다.")
@@ -175,15 +171,16 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                 ),
             ]
     )
-    @PostMapping("/check")
+    @PostMapping("/{teamType}/check")
     fun checkPayment(
         @AuthenticationPrincipal userDetails: UserDetails,
+        @PathVariable teamType: TeamType,
         @RequestBody paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
     ): ResponseEntity<PaymentResponseDto.PaymentCheckResponse> {
         val userId = userDetails.username.toLong()
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.checkPayment(userId, paymentCheckRequest))
+            .body(paymentService.checkPayment(userId, teamType, paymentCheckRequest))
     }
 
     @Operation(summary = "결제 취소 API", description = "이메일을 입력하면 특정한 유저에게 환불해줍니다.")
@@ -381,14 +378,15 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                 ),
             ]
     )
-    @GetMapping("/verify")
+    @GetMapping("/{teamType}/verify")
     fun verifyPayment(
-        @AuthenticationPrincipal userDetails: UserDetails
+        @AuthenticationPrincipal userDetails: UserDetails,
+        @PathVariable teamType: TeamType,
     ): ResponseEntity<PaymentResponseDto.PaymentRequestResponse> {
         val userId = userDetails.username.toLong()
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.verifyPayment(userId, teamType = TeamType.SINGLE))
+            .body(paymentService.verifyPayment(userId, teamType))
     }
 
     @Operation(summary = "결제 여부 웹훅 API", description = "포트원에서 전달한 결제 정보 웹훅을 처리합니다")

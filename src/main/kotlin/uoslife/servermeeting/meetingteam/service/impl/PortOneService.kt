@@ -42,7 +42,6 @@ class PortOneService(
 ) : PaymentService {
     companion object {
         private val logger = LoggerFactory.getLogger(PaymentService::class.java)
-        const val PAYMENT_SUCCESS = "paid"
     }
     @Transactional
     override fun createPayment(teamType: TeamType): Payment {
