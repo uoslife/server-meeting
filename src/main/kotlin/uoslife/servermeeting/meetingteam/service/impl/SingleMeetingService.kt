@@ -16,6 +16,7 @@ import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.SingleMeetingTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
+import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dao.UserDao
@@ -32,6 +33,7 @@ class SingleMeetingService(
     private val userDao: UserDao,
     private val meetingServiceUtils: MeetingServiceUtils,
     private val validator: Validator,
+    @Qualifier("PortOneService") private val portOneService: PaymentService,
     @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
 
@@ -44,8 +46,11 @@ class SingleMeetingService(
         validator.isUserAlreadyHaveSingleTeam(user)
 
         val meetingTeam = createSingleMeetingTeam(leader = user)
-
         user.singleTeam = meetingTeam
+
+        val payment = portOneService.createPayment(TeamType.SINGLE)
+        meetingTeam.payment = payment
+
         return MeetingTeamCodeResponse(code = null)
     }
 
