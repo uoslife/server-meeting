@@ -4,7 +4,6 @@ import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.*
 import org.hibernate.annotations.Type
 import uoslife.servermeeting.global.common.BaseEntity
-import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.meetingteam.entity.SingleMeetingTeam
 import uoslife.servermeeting.meetingteam.entity.TripleMeetingTeam
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
@@ -26,8 +25,6 @@ class User(
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var userAdditionInformation: UserAdditionInformation = UserAdditionInformation(),
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    var payments: MutableList<Payment>? = mutableListOf(),
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "triple_team_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     var tripleTeam: TripleMeetingTeam? = null,
