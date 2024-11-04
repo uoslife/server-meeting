@@ -6,13 +6,16 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import uoslife.servermeeting.global.auth.exception.UnauthorizedException
 import uoslife.servermeeting.global.auth.jwt.JwtUserDetails
+import uoslife.servermeeting.global.auth.service.AuthService
 import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
 
+@Component
 class JwtAuthenticationFilter(
-    private val accountService: UOSLIFEAccountService,
+    private val authService: AuthService,
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -24,7 +27,7 @@ class JwtAuthenticationFilter(
         val token = request.getHeader("Authorization") ?: throw UnauthorizedException()
 
         try {
-            val profile = accountService.getAuthenticatedUserProfile(token)
+            val profile = authService.authenticateToken(token)
 
             val principal =
                 JwtUserDetails(

@@ -22,6 +22,10 @@ spring:
                 format_sql: true
     flyway:
         enabled: true
+    data:
+        redis:
+            host: ${REDIS_HOST}
+            port: ${REDIS_PORT}
 
 app:
     season: 5
@@ -79,3 +83,29 @@ logging:
             springframework:
                 web:
                     filter: INFO
+
+jwt:
+    access:
+        secret: ${JWT_ACCESS_SECRET}
+        expiration: 3600000 # 1시간
+    refresh:
+        secret: ${JWT_REFRESH_SECRET}
+        expiration: 604800000 # 7일
+
+aws:
+    ses:
+        access-key: ${AWS_SES_ACCESS_KEY}
+        secret-key: ${AWS_SES_SECRET_KEY}
+        region: ap-northeast-2
+        role-arn: arn:aws:iam::755333364809:role/uoslife-v2--ses
+        role-session-name: uoslife-v2--ses
+        email:
+            title: UOSLIFE 인증 메일입니다.
+            from: 시대생팀 <no-reply@uoslife.team>
+            reply-to: 시대생팀 <support@uoslife.team>
+            verify-url: https://api.uoslife.com/v1/verification/email/verify
+
+auth:
+    email:
+        verification-code-expiry: 180  # 3분
+        daily-send-limit: 5  # 하루 최대 발송 횟수

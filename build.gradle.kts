@@ -92,12 +92,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     // jwt
-    compileOnly("io.jsonwebtoken:jjwt-api:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
-    testImplementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
-    testImplementation("io.jsonwebtoken:jjwt-impl:0.11.5")
-    testImplementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    compileOnly("io.jsonwebtoken:jjwt-api:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+    testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
+    testImplementation("io.jsonwebtoken:jjwt-impl:0.12.6")
+    testImplementation("io.jsonwebtoken:jjwt-api:0.12.6")
 
     // aws
     implementation(platform("software.amazon.awssdk:bom:2.17.230"))
@@ -108,7 +108,7 @@ dependencies {
     implementation("software.amazon.awssdk:sesv2:2.17.230")
 
     // aws sdk
-    implementation("com.amazonaws:aws-java-sdk-ses:1.12.3")
+    implementation("com.amazonaws:aws-java-sdk-ses:1.12.777")
 
     // actuator
     implementation("org.springframework.boot:spring-boot-starter-actuator")
