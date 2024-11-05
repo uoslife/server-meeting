@@ -17,7 +17,8 @@ class UserDao(
     private val queryFactory: JPAQueryFactory,
 ) {
     fun findByUserWithMeetingTeam(user: User, teamType: TeamType): UserTeam? {
-        return queryFactory.selectFrom(userTeam)
+        return queryFactory
+            .selectFrom(userTeam)
             .join(userTeam.team)
             .fetchJoin()
             .where(userTeam.user.eq(user))

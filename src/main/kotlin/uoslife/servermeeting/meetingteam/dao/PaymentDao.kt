@@ -21,7 +21,6 @@ class PaymentDao(private val queryFactory: JPAQueryFactory) {
                     .on(userTeam.user.eq(user))
                     .where(meetingTeam.type.eq(TeamType.SINGLE))
                     .fetchOne()
-
             TeamType.TRIPLE ->
                 queryFactory
                     .selectFrom(payment)

@@ -36,7 +36,7 @@ class SingleMeetingService(
     private val meetingServiceUtils: MeetingServiceUtils,
     private val validator: Validator,
     private val userTeamRepository: UserTeamRepository,
-    private val userTeamDao : UserTeamDao,
+    private val userTeamDao: UserTeamDao,
     @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
 
@@ -77,11 +77,12 @@ class SingleMeetingService(
         meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
     ) {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val userTeam: UserTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE) ?: throw MeetingTeamNotFoundException()
+        val userTeam: UserTeam =
+            userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE)
+                ?: throw MeetingTeamNotFoundException()
         val meetingTeam = userTeam.team
 
-        val information =
-            meetingTeamInformationUpdateRequest.toInformation(user.gender)
+        val information = meetingTeamInformationUpdateRequest.toInformation(user.gender)
 
         meetingTeam.information = information
     }
@@ -108,7 +109,7 @@ class SingleMeetingService(
         validator.isMessageLengthIsValid(meetingTeamMessageUpdateRequest.message)
 
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val meetingTeam: MeetingTeam =getUserSingleMeetingTeam(user)
+        val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
         val message = meetingTeamMessageUpdateRequest.message
 
@@ -138,7 +139,6 @@ class SingleMeetingService(
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
-
         meetingTeamRepository.delete(meetingTeam)
     }
 
@@ -152,8 +152,10 @@ class SingleMeetingService(
         )
     }
 
-    private fun getUserSingleMeetingTeam(user:User): MeetingTeam{
-        val userTeam: UserTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE) ?: throw MeetingTeamNotFoundException()
+    private fun getUserSingleMeetingTeam(user: User): MeetingTeam {
+        val userTeam: UserTeam =
+            userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE)
+                ?: throw MeetingTeamNotFoundException()
         return userTeam.team
     }
 }

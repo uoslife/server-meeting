@@ -6,8 +6,6 @@ import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
-import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
-import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
@@ -70,7 +68,7 @@ class UserService(
         val user: User = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
         if (user.userTeams.isNotEmpty()) {
-            user.userTeams.forEach{it ->userTeamRepository.delete(it)}
+            user.userTeams.forEach { it -> userTeamRepository.delete(it) }
         }
         // 유저 삭제
         userRepository.delete(user)

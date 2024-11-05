@@ -10,17 +10,17 @@ import uoslife.servermeeting.user.entity.User
 
 @Component
 class Validator() {
-    fun isUserAlreadyHaveTeam(user: User){
+    fun isUserAlreadyHaveTeam(user: User) {
         val user = user.userTeams.filter { it.team.type == TeamType.SINGLE }
 
-        if (user.isNotEmpty()){
+        if (user.isNotEmpty()) {
             throw UserAlreadyHaveTeamException()
         }
     }
     fun isUserAlreadyHaveSingleTeam(user: User) {
         val userSingleTeam = user.userTeams.filter { it.team.type == TeamType.SINGLE }
 
-        if (userSingleTeam.isNotEmpty()){
+        if (userSingleTeam.isNotEmpty()) {
             throw UserAlreadyHaveTeamException()
         }
     }
@@ -28,7 +28,7 @@ class Validator() {
     fun isUserAlreadyHaveTripleTeam(user: User) {
         val userTripleTeam = user.userTeams.filter { it.team.type == TeamType.TRIPLE }
 
-        if (userTripleTeam.isNotEmpty()){
+        if (userTripleTeam.isNotEmpty()) {
             throw UserAlreadyHaveTeamException()
         }
     }

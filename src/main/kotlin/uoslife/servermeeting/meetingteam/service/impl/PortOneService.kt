@@ -2,6 +2,7 @@ package uoslife.servermeeting.meetingteam.service.impl
 
 import jakarta.transaction.Transactional
 import java.util.*
+import javax.naming.NameNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -25,7 +26,6 @@ import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
-import javax.naming.NameNotFoundException
 
 @Service
 @Qualifier("PortOneService")
@@ -127,8 +127,8 @@ class PortOneService(
                 userTeamRepository.delete(userTeam)
             }
             TeamType.TRIPLE -> {
-                val userTeam = user.userTeams.first{ it.team.type == TeamType.TRIPLE }
-                if(!userTeam.isLeader) throw OnlyTeamLeaderCanDeleteTeamException()
+                val userTeam = user.userTeams.first { it.team.type == TeamType.TRIPLE }
+                if (!userTeam.isLeader) throw OnlyTeamLeaderCanDeleteTeamException()
                 val userTeams = userTeamDao.findByTeam(userTeam.team)
                 userTeamRepository.deleteAll(userTeams)
             }
@@ -190,14 +190,14 @@ class PortOneService(
             payment.merchantUid!!,
             payment.price!!,
             phoneNumber,
-            user.name?: throw NameNotFoundException(),
+            user.name ?: throw NameNotFoundException(),
             teamType
         )
     }
 
     @Transactional
     override fun deleteUserPayment(user: User) {
-//        paymentRepository.
+        //        paymentRepository.
     }
 
     @Transactional

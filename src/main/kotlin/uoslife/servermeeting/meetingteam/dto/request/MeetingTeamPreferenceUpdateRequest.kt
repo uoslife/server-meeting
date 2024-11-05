@@ -32,7 +32,7 @@ class MeetingTeamPreferenceUpdateRequest(
             ageMax = ageMax,
             heightMin = heightMin,
             heightMax = heightMax,
-//            studentType = studentType,
+            //            studentType = studentType,
             smoking = smoking,
             spiritAnimal = spiritAnimal,
             mbti = validMBTI,

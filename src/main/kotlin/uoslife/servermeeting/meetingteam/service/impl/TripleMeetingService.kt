@@ -79,10 +79,10 @@ class TripleMeetingService(
 
         val meetingTeam =
             meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
-//        val leader = meetingTeam.leader ?: throw TeamLeaderNotFoundException()
+        //        val leader = meetingTeam.leader ?: throw TeamLeaderNotFoundException()
 
         validator.isTeamFull(meetingTeam)
-//        validator.isUserSameGenderWithTeamLeader(user, leader)  //todo : TeamGender 도입 여부
+        //        validator.isUserSameGenderWithTeamLeader(user, leader)  //todo : TeamGender 도입 여부
 
         val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, false)
         userTeamRepository.save(newUserTeam)
@@ -90,7 +90,8 @@ class TripleMeetingService(
         return if (isJoin) {
             null
         } else {
-            val meetingTeamUsers = MeetingTeamUsers(meetingTeam.userTeams.stream().map { it -> it.user }.toList())
+            val meetingTeamUsers =
+                MeetingTeamUsers(meetingTeam.userTeams.stream().map { it -> it.user }.toList())
             meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
         }
     }
@@ -105,7 +106,7 @@ class TripleMeetingService(
         val meetingTeam =
             meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
 
-        val meetingTeamUsers = meetingTeam.userTeams.stream().map { it->it.user }.toList()
+        val meetingTeamUsers = meetingTeam.userTeams.stream().map { it -> it.user }.toList()
         return MeetingTeamUserListGetResponse(
             teamName = meetingTeam.name!!,
             userList =
@@ -161,7 +162,7 @@ class TripleMeetingService(
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         val meetingTeam = getUserTripleMeetingTeam(user)
 
-//        val userList = meetingTeam.users
+        //        val userList = meetingTeam.users
 
         val information = meetingTeam.information ?: throw InformationNotFoundException()
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
@@ -188,19 +189,21 @@ class TripleMeetingService(
     }
 
     @Transactional
-    fun saveMeetingTeam(leader: User, name: String?, code: String, teamType: TeamType): MeetingTeam {
+    fun saveMeetingTeam(
+        leader: User,
+        name: String?,
+        code: String,
+        teamType: TeamType
+    ): MeetingTeam {
         return meetingTeamRepository.save(
-            MeetingTeam(
-                season = season,
-                name = name,
-                code = code,
-                type = teamType
-            ),
+            MeetingTeam(season = season, name = name, code = code, type = teamType),
         )
     }
 
-    private fun getUserTripleMeetingTeam(user:User): MeetingTeam{
-        val userTeam: UserTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE) ?: throw MeetingTeamNotFoundException()
+    private fun getUserTripleMeetingTeam(user: User): MeetingTeam {
+        val userTeam: UserTeam =
+            userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE)
+                ?: throw MeetingTeamNotFoundException()
         return userTeam.team
     }
 }

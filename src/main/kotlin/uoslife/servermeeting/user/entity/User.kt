@@ -24,7 +24,6 @@ class User(
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var userAdditionInformation: UserAdditionInformation = UserAdditionInformation(),
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     var userTeams: MutableList<UserTeam> = mutableListOf(),
 ) : BaseEntity() {
