@@ -3,10 +3,12 @@ package uoslife.servermeeting.user.dao
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
 import uoslife.servermeeting.meetingteam.entity.Payment
+import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QPayment.payment
-import uoslife.servermeeting.meetingteam.entity.QSingleMeetingTeam.singleMeetingTeam
-import uoslife.servermeeting.meetingteam.entity.QTripleMeetingTeam.tripleMeetingTeam
+import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
+import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
+import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.user.entity.QUser.user
 import uoslife.servermeeting.user.entity.User
 
@@ -14,13 +16,12 @@ import uoslife.servermeeting.user.entity.User
 class UserDao(
     private val queryFactory: JPAQueryFactory,
 ) {
-    fun findUserWithMeetingTeam(userId: Long): User? {
-        return queryFactory
-            .selectFrom(user)
-            .leftJoin(user.singleTeam, singleMeetingTeam)
-            .leftJoin(user.tripleTeam, tripleMeetingTeam)
+    fun findByUserWithMeetingTeam(user: User, teamType: TeamType): UserTeam? {
+        return queryFactory.selectFrom(userTeam)
+            .join(userTeam.team)
             .fetchJoin()
-            .where(user.id.eq(userId))
+            .where(userTeam.user.eq(user))
+            .where(meetingTeam.type.eq(teamType))
             .fetchOne()
     }
     fun findNotMatchedPayment(userIdList: List<Long>): List<Payment> {
