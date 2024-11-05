@@ -9,6 +9,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
 import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
+import uoslife.servermeeting.meetingteam.dao.PaymentDao
 import uoslife.servermeeting.meetingteam.dto.request.PaymentRequestDto
 import uoslife.servermeeting.meetingteam.dto.response.PaymentResponseDto
 import uoslife.servermeeting.meetingteam.entity.Payment
@@ -28,6 +29,7 @@ import uoslife.servermeeting.user.repository.UserRepository
 class PortOneService(
     private val userRepository: UserRepository,
     private val userDao: UserDao,
+    private val paymentDao: PaymentDao,
     private val meetingTeamDao: MeetingTeamDao,
     private val paymentRepository: PaymentRepository,
     private val validator: Validator,
@@ -40,61 +42,33 @@ class PortOneService(
 ) : PaymentService {
     companion object {
         private val logger = LoggerFactory.getLogger(PaymentService::class.java)
-        const val PAYMENT_SUCCESS = "paid"
     }
     @Transactional
-    override fun requestPayment(
-        userId: Long,
-        paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest,
-        teamType: TeamType
-    ): PaymentResponseDto.PaymentRequestResponse {
-        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
-        val team = user.singleTeam ?: throw MeetingTeamNotFoundException()
-        val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
-
-        if (paymentRepository.existsByUser(user)) {
-            val payment = paymentRepository.findByUser(user)
-            if (validator.isAlreadyPaid(payment!!)) throw UserAlreadyHavePaymentException()
-            return PaymentResponseDto.PaymentRequestResponse(
-                payment.marchantUid!!,
-                payment.price!!,
-                phoneNumber,
-                user.name,
-                teamType
-            )
-        }
-
+    override fun createPayment(teamType: TeamType): Payment {
         val payment =
             Payment.createPayment(
-                user,
-                paymentRequestPaymentRequest.pg,
-                paymentRequestPaymentRequest.payMethod,
                 UUID.randomUUID().toString(),
                 when (teamType) {
                     TeamType.SINGLE -> singlePrice
                     TeamType.TRIPLE -> triplePrice
                 },
-                PaymentStatus.REQUEST,
+                PaymentStatus.NONE,
             )
 
-        paymentRepository.save(payment)
-
-        return PaymentResponseDto.PaymentRequestResponse(
-            payment.marchantUid!!,
-            payment.price!!,
-            phoneNumber,
-            user.name,
-            teamType
-        )
+        return paymentRepository.save(payment)
     }
 
     @Transactional
     override fun checkPayment(
         userId: Long,
+        teamType: TeamType,
         paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
     ): PaymentResponseDto.PaymentCheckResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
+
+        val payment =
+            paymentDao.getPaymentWithUserAndTeamType(user, teamType)
+                ?: throw PaymentNotFoundException()
 
         try {
             val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
@@ -117,15 +91,19 @@ class PortOneService(
         userId: Long,
         teamType: TeamType
     ): PaymentResponseDto.PaymentRefundResponse {
-        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val payment = paymentRepository.findByUser(user) ?: throw PaymentNotFoundException()
-        val team = user.singleTeam ?: throw MeetingTeamNotFoundException() // 수정필요
+        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
+        val payment =
+            paymentDao.getPaymentWithUserAndTeamType(user, teamType)
+                ?: throw PaymentNotFoundException()
 
         if (!validator.isAlreadyPaid(payment)) throw PaymentInValidException()
 
         when (teamType) {
             TeamType.SINGLE -> user.singleTeam = null
-            TeamType.TRIPLE -> null /* team.users.forEach { it.team = null } */
+            TeamType.TRIPLE -> {
+                val team = user.tripleTeam ?: throw MeetingTeamNotFoundException() // 수정필요
+                team.users.forEach { it.tripleTeam = null }
+            }
         }
         //        meetingTeamRepository.delete(team)
 
@@ -158,7 +136,7 @@ class PortOneService(
         val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
         paymentList.map { payment ->
             logger.info(
-                "[환불 성공] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.marchantUid}"
+                "[환불 성공] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.merchantUid}"
             )
             try {
                 portOneAPIService.refundPayment(
@@ -169,7 +147,7 @@ class PortOneService(
                 payment.status = PaymentStatus.REFUND
             } catch (e: ExternalApiFailedException) {
                 logger.info(
-                    "[환불 실패] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.marchantUid}"
+                    "[환불 실패] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.merchantUid}"
                 )
                 refundFailedList.add(payment.id.toString())
                 payment.status = PaymentStatus.REFUND_FAILED
@@ -184,14 +162,10 @@ class PortOneService(
     ): PaymentResponseDto.PaymentRequestResponse {
         // 미팅팀이 없으면, 신청하기 버튼
         val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
-        val team = user.singleTeam ?: throw MeetingTeamNotFoundException()
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
         val payment =
-            when (teamType) {
-                TeamType.SINGLE -> paymentRepository.findByUser(user)
-                TeamType.TRIPLE -> paymentRepository.findByUser(team.leader!!)
-            }
+            paymentDao.getPaymentWithUserAndTeamType(user, teamType)
                 ?: throw PaymentNotFoundException()
 
         // 결제가 이미 성공했다면, 신청 정보 확인하기 버튼
@@ -199,7 +173,7 @@ class PortOneService(
 
         // 결제가 저장되어 있지만 결제 승인 확인 안됐다면, 결제 검증
         return PaymentResponseDto.PaymentRequestResponse(
-            payment.marchantUid!!,
+            payment.merchantUid!!,
             payment.price!!,
             phoneNumber,
             user.name,
@@ -209,21 +183,21 @@ class PortOneService(
 
     @Transactional
     override fun deleteUserPayment(user: User) {
-        paymentRepository.deleteByUser(user)
+        //        paymentRepository.deleteByUser(user)
     }
 
     @Transactional
     override fun synchronizePayment(
         paymentWebhookResponse: PaymentResponseDto.PaymentWebhookResponse
     ) {
-        if (paymentWebhookResponse.status != PAYMENT_SUCCESS) {
-            return
-        }
-        val payment =
-            paymentRepository.findByMarchantUid(paymentWebhookResponse.merchant_uid)
-                ?: throw PaymentNotFoundException()
+        if (paymentWebhookResponse.isSuccess()) {
+            val payment =
+                paymentRepository.findByMarchantUid(paymentWebhookResponse.merchant_uid)
+                    ?: throw PaymentNotFoundException()
 
-        payment.updatePayment(paymentWebhookResponse.imp_uid, PaymentStatus.SUCCESS)
-        logger.info("[결제 성공] marchantUid : ${payment.marchantUid}")
+            payment.updatePayment(paymentWebhookResponse.imp_uid, PaymentStatus.SUCCESS)
+            logger.info("[결제 성공] marchantUid : ${payment.merchantUid}")
+        }
+        return
     }
 }

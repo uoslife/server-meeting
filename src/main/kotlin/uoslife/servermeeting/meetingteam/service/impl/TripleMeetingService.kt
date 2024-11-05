@@ -36,6 +36,7 @@ class TripleMeetingService(
     private val uniqueCodeGenerator: UniqueCodeGenerator,
     private val validator: Validator,
     private val meetingServiceUtils: MeetingServiceUtils,
+    @Qualifier("PortOneService") private val portOneService: PortOneService,
     @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
 
@@ -53,6 +54,10 @@ class TripleMeetingService(
         val meetingTeam = saveMeetingTeam(user, name, code)
 
         user.tripleTeam = meetingTeam
+
+        val payment = portOneService.createPayment(TeamType.TRIPLE)
+        meetingTeam.payment = payment
+
         return MeetingTeamCodeResponse(code)
     }
 
