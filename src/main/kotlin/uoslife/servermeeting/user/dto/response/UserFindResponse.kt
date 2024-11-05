@@ -17,6 +17,4 @@ data class UserFindResponse(
     @Schema(description = "MBTI", example = "INFP") val mbti: String?,
     @Schema(description = "흥미", example = "[\"EXERCISE\", \"MUSIC\"]")
     val interest: List<InterestType>?,
-    val tripleTeam: Boolean,
-    val singleTeam: Boolean
 )

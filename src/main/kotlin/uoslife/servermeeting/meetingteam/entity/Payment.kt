@@ -20,10 +20,7 @@ class Payment(
     var price: Int? = null,
     var impUid: String? = null,
     @Enumerated(EnumType.STRING) var status: PaymentStatus = PaymentStatus.NONE,
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "payment")
-    var singleMeetingTeam: SingleMeetingTeam? = null,
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "payment")
-    var tripleMeetingTeam: TripleMeetingTeam? = null,
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "payment") var meetingTeam: MeetingTeam? = null,
 ) : BaseEntity() {
     companion object {
         fun createPayment(

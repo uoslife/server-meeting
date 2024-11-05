@@ -10,7 +10,6 @@ class MeetingTeamInformationUpdateRequest(
     fun toInformation(gender: GenderType): Information {
         return Information(
             gender = gender,
-            questions = questions.mapIndexed { index, value -> index to value }.toMap()
         )
     }
 }

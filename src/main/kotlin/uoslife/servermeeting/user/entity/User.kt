@@ -4,8 +4,7 @@ import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.*
 import org.hibernate.annotations.Type
 import uoslife.servermeeting.global.common.BaseEntity
-import uoslife.servermeeting.meetingteam.entity.SingleMeetingTeam
-import uoslife.servermeeting.meetingteam.entity.TripleMeetingTeam
+import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.enums.GenderType
@@ -25,12 +24,8 @@ class User(
     @Type(JsonType::class)
     @Column(columnDefinition = "jsonb")
     var userAdditionInformation: UserAdditionInformation = UserAdditionInformation(),
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "triple_team_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    var tripleTeam: TripleMeetingTeam? = null,
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "single_team_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    var singleTeam: SingleMeetingTeam? = null,
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    var userTeams: MutableList<UserTeam> = mutableListOf(),
 ) : BaseEntity() {
     companion object {
         fun create(userId: Long): User {
@@ -55,8 +50,6 @@ class User(
                     spiritAnimal = user.userAdditionInformation.spiritAnimal,
                     mbti = user.userAdditionInformation.mbti,
                     interest = user.userAdditionInformation.interest,
-                    tripleTeam = user.tripleTeam != null,
-                    singleTeam = user.singleTeam != null
                 )
 
             return userFindResponse
