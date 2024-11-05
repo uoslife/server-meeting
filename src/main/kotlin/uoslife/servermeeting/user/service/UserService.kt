@@ -4,6 +4,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
+import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
 import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
@@ -20,8 +21,7 @@ import uoslife.servermeeting.user.repository.UserRepository
 class UserService(
     private val userRepository: UserRepository,
     private val paymentService: PaymentService,
-    private val singleMeetingService: SingleMeetingService,
-    private val tripleMeetingService: TripleMeetingService,
+    private val userTeamRepository: UserTeamRepository,
     private val uoslifeAccountService: UOSLIFEAccountService,
     private val validator: Validator
 ) {
@@ -69,11 +69,8 @@ class UserService(
         // 유저가 존재하는지 확인
         val user: User = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
-        if (user.singleTeam != null) {
-            singleMeetingService.deleteMeetingTeam(id)
-        }
-        if (user.tripleTeam != null) {
-            tripleMeetingService.deleteMeetingTeam(id)
+        if (user.userTeams.isNotEmpty()) {
+            user.userTeams.forEach{it ->userTeamRepository.delete(it)}
         }
         // 유저 삭제
         userRepository.delete(user)

@@ -5,18 +5,20 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
-import uoslife.servermeeting.meetingteam.entity.SingleMeetingTeam
+import uoslife.servermeeting.meetingteam.entity.MeetingTeam
+import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
-import uoslife.servermeeting.meetingteam.repository.SingleMeetingTeamRepository
+import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
+import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
-import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dao.UserDao
@@ -29,11 +31,12 @@ import uoslife.servermeeting.user.repository.UserRepository
 @Qualifier("singleMeetingService")
 class SingleMeetingService(
     private val userRepository: UserRepository,
-    private val singleMeetingTeamRepository: SingleMeetingTeamRepository,
+    private val meetingTeamRepository: MeetingTeamRepository,
     private val userDao: UserDao,
     private val meetingServiceUtils: MeetingServiceUtils,
     private val validator: Validator,
-    @Qualifier("PortOneService") private val portOneService: PaymentService,
+    private val userTeamRepository: UserTeamRepository,
+    private val userTeamDao : UserTeamDao,
     @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
 
@@ -43,14 +46,13 @@ class SingleMeetingService(
         name: String?,
     ): MeetingTeamCodeResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        validator.isUserAlreadyHaveSingleTeam(user)
+        validator.isUserAlreadyHaveTeam(user)
 
-        val meetingTeam = createSingleMeetingTeam(leader = user)
-        user.singleTeam = meetingTeam
+        val meetingTeam = createDefaultMeetingTeam(leader = user, teamType = TeamType.SINGLE)
 
-        val payment = portOneService.createPayment(TeamType.SINGLE)
-        meetingTeam.payment = payment
+        val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, true)
 
+        userTeamRepository.save(newUserTeam)
         return MeetingTeamCodeResponse(code = null)
     }
 
@@ -74,10 +76,12 @@ class SingleMeetingService(
         userId: Long,
         meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
     ) {
-        val user = userDao.findUserWithMeetingTeam(userId = userId) ?: throw UserNotFoundException()
-        val meetingTeam = user.singleTeam ?: throw MeetingTeamNotFoundException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val userTeam: UserTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE) ?: throw MeetingTeamNotFoundException()
+        val meetingTeam = userTeam.team
 
-        val information = meetingTeamInformationUpdateRequest.toInformation(user.gender)
+        val information =
+            meetingTeamInformationUpdateRequest.toInformation(user.gender)
 
         meetingTeam.information = information
     }
@@ -87,8 +91,8 @@ class SingleMeetingService(
         userId: Long,
         meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
     ) {
-        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
-        val meetingTeam = user.singleTeam ?: throw MeetingTeamNotFoundException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
         val validMBTI = validator.setValidMBTI(meetingTeamPreferenceUpdateRequest.mbti)
         val preference = meetingTeamPreferenceUpdateRequest.toSinglePreference(validMBTI)
@@ -102,17 +106,18 @@ class SingleMeetingService(
         meetingTeamMessageUpdateRequest: MeetingTeamMessageUpdateRequest
     ) {
         validator.isMessageLengthIsValid(meetingTeamMessageUpdateRequest.message)
-        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
-        val meetingTeam = user.singleTeam ?: throw MeetingTeamNotFoundException()
+
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val meetingTeam: MeetingTeam =getUserSingleMeetingTeam(user)
 
         val message = meetingTeamMessageUpdateRequest.message
 
-        //        meetingTeam.message = message
+        meetingTeam.message = message
     }
 
     override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {
-        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
-        val meetingTeam = user.singleTeam ?: throw MeetingTeamNotFoundException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
         val information = meetingTeam.information ?: throw InformationNotFoundException()
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
@@ -124,26 +129,31 @@ class SingleMeetingService(
             information,
             preference,
             null,
-            null
+            meetingTeam.message
         )
     }
 
     @Transactional
     override fun deleteMeetingTeam(userId: Long) {
-        val user = userDao.findUserWithMeetingTeam(userId) ?: throw UserNotFoundException()
-        val meetingTeam = user.singleTeam ?: throw MeetingTeamNotFoundException()
-        user.singleTeam = null
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
-        singleMeetingTeamRepository.delete(meetingTeam)
+
+        meetingTeamRepository.delete(meetingTeam)
     }
 
     @Transactional
-    fun createSingleMeetingTeam(leader: User): SingleMeetingTeam {
-        return singleMeetingTeamRepository.save(
-            SingleMeetingTeam(
+    fun createDefaultMeetingTeam(leader: User, teamType: TeamType): MeetingTeam {
+        return meetingTeamRepository.save(
+            MeetingTeam(
                 season = season,
-                leader = leader,
+                type = teamType,
             ),
         )
+    }
+
+    private fun getUserSingleMeetingTeam(user:User): MeetingTeam{
+        val userTeam: UserTeam = userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE) ?: throw MeetingTeamNotFoundException()
+        return userTeam.team
     }
 }
