@@ -62,7 +62,7 @@ class EmailVerificationService(
 
     private fun validateVerificationCode(redisCode: String, code: String) {
         if (redisCode != code) {
-//            return Exception("인증번호가 올바르지 않습니다.") // TODO: 알맞은 예외 클래스로 변경
+//            throw Exception("인증번호가 올바르지 않습니다.") // TODO: 알맞은 예외 클래스로 변경
         }
     }
 
