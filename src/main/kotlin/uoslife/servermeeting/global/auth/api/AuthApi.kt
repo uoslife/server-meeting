@@ -18,4 +18,13 @@ class AuthApi(
         val response = emailVerificationService.sendVerificationEmail(email)
         return ResponseEntity.ok(response)
     }
+
+    @PostMapping("/verify-code")
+    fun verifyCode(
+        @RequestParam email: String,
+        @RequestParam code: String,
+    ) {
+        emailVerificationService.verifyCode(email, code)
+        // TODO: 토큰 반환
+    }
 }
