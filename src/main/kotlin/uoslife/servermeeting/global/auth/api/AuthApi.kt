@@ -25,6 +25,7 @@ class AuthApi(
         @RequestParam code: String,
     ) {
         emailVerificationService.verifyCode(email, code)
+        // TODO: 예외 처리 및 상태코드 설정
         // TODO: 토큰 반환
     }
 }

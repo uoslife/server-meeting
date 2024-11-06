@@ -47,6 +47,25 @@ class EmailVerificationService(
         )
     }
 
+    fun verifyCode(email: String, code: String) {
+        // Redis에서 인증 코드 조회
+        val redisCode = getVerificationCode(email)
+
+        // 인증 코드 검증
+        validateVerificationCode(redisCode, code)
+    }
+
+    private fun getVerificationCode(email: String): String {
+        val verificationCodeKey = "$codePrefix$email"
+        return redisTemplate.opsForValue().get(verificationCodeKey).toString()
+    }
+
+    private fun validateVerificationCode(redisCode: String, code: String) {
+        if (redisCode != code) {
+//            return Exception("인증번호가 올바르지 않습니다.") // TODO: 알맞은 예외 클래스로 변경
+        }
+    }
+
     private fun validateSendCount(email: String) {
         val sendCountKey = "$counterPrefix:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
         val currentCount = redisTemplate.opsForValue().get(sendCountKey)?.toString()?.toInt() ?: 0
