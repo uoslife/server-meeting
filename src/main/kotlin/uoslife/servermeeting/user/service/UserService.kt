@@ -22,17 +22,14 @@ class UserService(
     private val paymentService: PaymentService,
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
-    private val uoslifeAccountService: UOSLIFEAccountService,
     private val validator: Validator
 ) {
     @Transactional
-    fun createUser(id: Long) {
-        // 계정 서비스에서 유저 정보 받아오기
-        val userProfile = uoslifeAccountService.getUserProfile(id)
-
-        // 해당 유저가 처음 이용하는 유저면 유저 생성
-        // 그렇지 않으면 유저 조회
-        getOrCreateUser(id)
+    fun findOrCreateUserByEmail(email: String): User {
+        return userRepository.findByEmail(email).orElseGet {
+            val newUser = User(email = email)
+            userRepository.save(newUser)
+        }
     }
 
     fun findUser(id: Long): UserFindResponse {
