@@ -12,8 +12,6 @@ data class UserFindResponse(
     @Schema(description = "학과", example = "컴퓨터과학부") val department: String?,
     @Schema(description = "키", example = "178") val height: Int?,
     @Schema(description = "흡연 여부", example = "FALSE") val smoking: SmokingType?,
-    @Schema(description = "동물상", example = "[\"DOG\", \"CAT\"]")
-    val spiritAnimal: List<SpiritAnimalType>?,
     @Schema(description = "MBTI", example = "INFP") val mbti: String?,
     @Schema(description = "흥미", example = "[\"EXERCISE\", \"MUSIC\"]")
     val interest: List<InterestType>?,

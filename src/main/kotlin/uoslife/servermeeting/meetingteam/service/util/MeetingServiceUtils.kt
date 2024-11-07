@@ -34,7 +34,6 @@ class MeetingServiceUtils {
                     department = user.department,
                     kakaoTalkId = user.kakaoTalkId,
                     smoking = user.userAdditionInformation.smoking,
-                    spiritAnimal = user.userAdditionInformation.spiritAnimal,
                     mbti = user.userAdditionInformation.mbti,
                     interest = user.userAdditionInformation.interest,
                     height = user.height,

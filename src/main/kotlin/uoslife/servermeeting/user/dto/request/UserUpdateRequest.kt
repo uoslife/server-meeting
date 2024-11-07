@@ -25,8 +25,6 @@ data class UserUpdateRequest(
     @Schema(description = "학번", example = "18", nullable = false) val studentNumber: Int?,
     @Schema(description = "키", example = "178") val height: Int?,
     @Schema(description = "흡연 여부", example = "FALSE") val smoking: SmokingType?,
-    @Schema(description = "동물상", example = "[\"DOG\", \"CAT\"]")
-    val spiritAnimal: List<SpiritAnimalType>?,
     @Schema(description = "MBTI", example = "INFP") val mbti: String?,
     @Schema(description = "흥미", example = "[\"EXERCISE\", \"MUSIC\"]")
     val interest: List<InterestType>?,
@@ -34,7 +32,6 @@ data class UserUpdateRequest(
     fun toUserPersonalInformation(existingUser: User, validMBTI: String?): UserAdditionInformation {
         return UserAdditionInformation(
             smoking = smoking ?: existingUser.userAdditionInformation.smoking,
-            spiritAnimal = spiritAnimal ?: existingUser.userAdditionInformation.spiritAnimal,
             mbti = validMBTI ?: existingUser.userAdditionInformation.mbti,
             interest = interest ?: existingUser.userAdditionInformation.interest,
         )

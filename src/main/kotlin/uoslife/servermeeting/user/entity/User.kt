@@ -56,7 +56,6 @@ class User(
                     department = user.department,
                     height = user.height,
                     smoking = user.userAdditionInformation.smoking,
-                    spiritAnimal = user.userAdditionInformation.spiritAnimal,
                     mbti = user.userAdditionInformation.mbti,
                     interest = user.userAdditionInformation.interest,
                     tripleTeam = user.tripleTeam != null,

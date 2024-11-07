@@ -37,8 +37,6 @@ data class UserProfile(
     @field:NotNull @Schema(description = "학과", example = "경영학부") val department: String,
     @field:NotNull @Schema(description = "카카오톡 ID", example = "kakaoId") val kakaoTalkId: String,
     @Schema(description = "흡연 여부", example = "TRUE") val smoking: SmokingType?,
-    @Schema(description = "동물상", example = "[\"DOG\", \"CAT\"]")
-    val spiritAnimal: List<SpiritAnimalType>?,
     @Schema(description = "mbti", example = "ENFP") val mbti: String?,
     @Schema(description = "흥미", example = "[\"BOOK\", \"EXERCISE\"]")
     val interest: List<InterestType>?,
