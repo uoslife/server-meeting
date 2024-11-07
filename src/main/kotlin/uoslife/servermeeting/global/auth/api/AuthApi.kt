@@ -26,6 +26,7 @@ class AuthApi(
     ) {
         emailVerificationService.verifyCode(email, code)
         // TODO: 예외 처리 및 상태코드 설정
+        // TODO: 유저 생성
         // TODO: 토큰 반환
     }
 }
