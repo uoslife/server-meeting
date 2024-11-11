@@ -6,7 +6,6 @@ import uoslife.servermeeting.user.entity.enums.*
 data class UserAdditionInformation( // 시즌 정책에 따라 바뀌는 컬럼들
     var smoking: SmokingType? = null,
     var mbti: String? = null,
-    var interest: List<InterestType>? = null, // 취미
 
 /* 시즌 5에선 제외된 컬럼입니다.
 var studentType: StudentType = StudentType.UNDERGRADUATE,

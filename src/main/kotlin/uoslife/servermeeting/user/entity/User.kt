@@ -88,4 +88,17 @@ class User(
         height = requestDto.height
         userAdditionInformation = newUserAdditionInformation
     }
+
+    fun createProfile(requestDto: CreateProfileRequest) {
+        name = requestDto.name
+        isProfileCompleted = true
+        gender = requestDto.gender
+        age = requestDto.age
+        phoneNumber = requestDto.phoneNumber ?: phoneNumber
+        kakaoTalkId = requestDto.kakaoTalkId
+        studentStatus = requestDto.studentStatus
+        department = requestDto.department
+        studentNumber = requestDto.studentNumber
+        interests = requestDto.interests ?: mutableListOf()
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
+import uoslife.servermeeting.user.dto.request.CreateProfileRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.service.UserService
@@ -98,7 +99,7 @@ class UserApi(
 
     @PostMapping("/create-profile")
     fun createProfile(
-        @RequestBody() requestBody: UserUpdateRequest,
+        @RequestBody() requestBody: CreateProfileRequest,
         @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<Unit> {
         val id = userDetails.username.toLong()

@@ -7,6 +7,7 @@ import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
 import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.meetingteam.util.Validator
+import uoslife.servermeeting.user.dto.request.CreateProfileRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.User
@@ -89,19 +90,14 @@ class UserService(
     }
 
     @Transactional
-    fun createProfile(requestDto: UserUpdateRequest, id: Long) {
+    fun createProfile(requestDto: CreateProfileRequest, id: Long) {
         // 사용자 조회
         val user = userRepository.findById(id).orElseThrow {
             throw UserNotFoundException()
         }
 
         // 프로필 정보 업데이트
-        user.update(requestDto, user.userAdditionInformation)
-
-        // 프로필 완료 상태 변경
-        if (!user.isProfileCompleted) {
-            user.isProfileCompleted = true
-        }
+        user.createProfile(requestDto)
 
         // 변경된 사용자 저장
         userRepository.save(user)
