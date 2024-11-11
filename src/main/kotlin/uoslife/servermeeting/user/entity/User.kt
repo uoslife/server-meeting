@@ -52,6 +52,7 @@ class User(
             val userFindResponse: UserFindResponse =
                 UserFindResponse(
                     name = user.name,
+                    email = user.email,
                     genderType = user.gender,
                     phoneNumber = user.phoneNumber,
                     age = user.age,

@@ -5,6 +5,7 @@ import uoslife.servermeeting.user.entity.enums.*
 
 data class UserFindResponse(
     @Schema(description = "이름", example = "유현승") val name: String?,
+    @Schema(description = "이메일", example = "example@uos.ac.kr") val email: String?,
     @Schema(description = "성별", example = "MALE") val genderType: GenderType?,
     @Schema(description = "전화번호", example = "01047324348") val phoneNumber: String?,
     @Schema(description = "나이", example = "26") val age: Int?,
