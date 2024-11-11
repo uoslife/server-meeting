@@ -88,4 +88,23 @@ class UserService(
         return userRepository.findByIdOrNull(userId)
             ?: userRepository.save(User.create(userId = userId))
     }
+
+    @Transactional
+    fun createProfile(requestDto: UserUpdateRequest, id: Long) {
+        // 사용자 조회
+        val user = userRepository.findById(id).orElseThrow {
+            throw UserNotFoundException()
+        }
+
+        // 프로필 정보 업데이트
+        user.update(requestDto, user.userAdditionInformation)
+
+        // 프로필 완료 상태 변경
+        if (!user.isProfileCompleted) {
+            user.isProfileCompleted = true
+        }
+
+        // 변경된 사용자 저장
+        userRepository.save(user)
+    }
 }

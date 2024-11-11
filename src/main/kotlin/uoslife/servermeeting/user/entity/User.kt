@@ -15,6 +15,7 @@ import uoslife.servermeeting.user.entity.enums.GenderType
 @Table(name = "meetingUser")
 class User(
     @Id @Column(nullable = false, unique = true) var id: Long? = null,
+    @Column var isProfileCompleted: Boolean = false,
     @Column(unique = true) var email: String? = null,
     @Column(unique = true) var phoneNumber: String? = null,
     var name: String = "",

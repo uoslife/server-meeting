@@ -95,4 +95,15 @@ class UserApi(
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
+
+    @PostMapping("/create-profile")
+    fun createProfile(
+        @RequestBody() requestBody: UserUpdateRequest,
+        @AuthenticationPrincipal userDetails: UserDetails
+    ): ResponseEntity<Unit> {
+        val id = userDetails.username.toLong()
+        userService.createProfile(requestBody, id)
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
 }
