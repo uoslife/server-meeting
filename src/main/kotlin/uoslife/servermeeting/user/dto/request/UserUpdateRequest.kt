@@ -3,6 +3,7 @@ package uoslife.servermeeting.user.dto.request
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
+import uoslife.servermeeting.user.dto.Interest
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserAdditionInformation
 import uoslife.servermeeting.user.entity.enums.*
@@ -27,14 +28,13 @@ data class UserUpdateRequest(
     @Schema(description = "키", example = "178") val height: Int?,
     @Schema(description = "흡연 여부", example = "FALSE") val smoking: SmokingType?,
     @Schema(description = "MBTI", example = "INFP") val mbti: String?,
-    @Schema(description = "흥미", example = "[\"EXERCISE\", \"MUSIC\"]")
-    val interest: List<InterestType>?,
+    @Schema(description = "관심사", example = "[{ \"name\": \"여행\", \"isDefault\": true }, { \"name\": \"맛집 탐방하기\", \"isDefault\": false }]")
+    val interests: MutableList<Interest>?,
 ) {
     fun toUserPersonalInformation(existingUser: User, validMBTI: String?): UserAdditionInformation {
         return UserAdditionInformation(
             smoking = smoking ?: existingUser.userAdditionInformation.smoking,
             mbti = validMBTI ?: existingUser.userAdditionInformation.mbti,
-            interest = interest ?: existingUser.userAdditionInformation.interest,
         )
     }
 }

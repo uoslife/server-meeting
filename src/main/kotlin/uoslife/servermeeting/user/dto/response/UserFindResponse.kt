@@ -1,6 +1,7 @@
 package uoslife.servermeeting.user.dto.response
 
 import io.swagger.v3.oas.annotations.media.Schema
+import uoslife.servermeeting.user.dto.Interest
 import uoslife.servermeeting.user.entity.enums.*
 
 data class UserFindResponse(
@@ -14,8 +15,8 @@ data class UserFindResponse(
     @Schema(description = "키", example = "178") val height: Int?,
     @Schema(description = "흡연 여부", example = "FALSE") val smoking: SmokingType?,
     @Schema(description = "MBTI", example = "INFP") val mbti: String?,
-    @Schema(description = "흥미", example = "[\"EXERCISE\", \"MUSIC\"]")
-    val interest: List<InterestType>?,
+    @Schema(description = "관심사", example = "[{ \"name\": \"여행\", \"isDefault\": true }, { \"name\": \"맛집 탐방하기\", \"isDefault\": false }]")
+    val interests: MutableList<Interest>?,
     val tripleTeam: Boolean,
     val singleTeam: Boolean
 )
