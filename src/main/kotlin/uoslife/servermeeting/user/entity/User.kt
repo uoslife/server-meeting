@@ -10,6 +10,7 @@ import uoslife.servermeeting.meetingteam.entity.TripleMeetingTeam
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.enums.GenderType
+import uoslife.servermeeting.user.entity.enums.StudentType
 
 @Entity
 @Table(name = "meetingUser")
@@ -21,6 +22,7 @@ class User(
     var name: String = "",
     @Column(unique = true) var kakaoTalkId: String = "",
     @Enumerated(EnumType.STRING) var gender: GenderType = GenderType.MALE,
+    @Enumerated(EnumType.STRING) var studentStatus: StudentType = StudentType.UNDERGRADUATE,
     var department: String = "",
     var studentNumber: Int? = null,
     var height: Int? = null,
@@ -69,6 +71,7 @@ class User(
     fun update(requestDto: UserUpdateRequest, newUserAdditionInformation: UserAdditionInformation) {
         name = requestDto.name
         gender = requestDto.gender
+        studentStatus = requestDto.studentStatus
         department = requestDto.department
         studentNumber = requestDto.studentNumber
         phoneNumber = requestDto.phoneNumber ?: phoneNumber

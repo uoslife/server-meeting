@@ -19,10 +19,11 @@ data class UserUpdateRequest(
     @Schema(description = "카카오톡 아이디", example = "__uhyun", nullable = false)
     @field:NotNull
     val kakaoTalkId: String,
-    @Schema(description = "학과", example = "컴퓨터과학부", nullable = false)
-    @field:NotNull
+    @Schema(description = "학적 상태", example = "UNDERGRADUATE")
+    val studentStatus: StudentType,
+    @Schema(description = "학과", example = "컴퓨터과학부")
     val department: String,
-    @Schema(description = "학번", example = "18", nullable = false) val studentNumber: Int?,
+    @Schema(description = "학번", example = "18") val studentNumber: Int?,
     @Schema(description = "키", example = "178") val height: Int?,
     @Schema(description = "흡연 여부", example = "FALSE") val smoking: SmokingType?,
     @Schema(description = "MBTI", example = "INFP") val mbti: String?,
