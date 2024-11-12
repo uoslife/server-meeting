@@ -21,12 +21,10 @@ import org.springframework.web.servlet.HandlerExceptionResolver
 import uoslife.servermeeting.global.auth.filter.JwtAccessDeniedHandler
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationEntryPoint
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationFilter
-import uoslife.servermeeting.global.auth.jwt.JwtAuthenticationProvider
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-    private val authProvider: JwtAuthenticationProvider,
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
     @Qualifier("handlerExceptionResolver") private val resolver: HandlerExceptionResolver,
 ) {
@@ -90,10 +88,7 @@ class SecurityConfig(
         authConfig: AuthenticationConfiguration,
         http: HttpSecurity
     ): AuthenticationManager {
-        val authenticationManagerBuilder =
-            http.getSharedObject(AuthenticationManagerBuilder::class.java)
-        authenticationManagerBuilder.authenticationProvider(authProvider)
-        return authenticationManagerBuilder.build()
+        return authConfig.authenticationManager
     }
 
     @Bean
