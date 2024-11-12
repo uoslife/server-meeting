@@ -30,15 +30,13 @@ data class MeetingTeamInformationGetResponse(
 }
 
 data class UserProfile(
-    @field:NotNull @Schema(description = "유저 이름", example = "이름") val name: String,
+    @field:NotNull @Schema(description = "유저 이름", example = "이름") val name: String?,
     @Schema(description = "유저 전화번호", example = "01012341234") val phoneNumber: String?,
-    @field:NotNull @Schema(description = "유저 나이", example = "20") val age: Int,
+    @field:NotNull @Schema(description = "유저 나이", example = "20") val age: Int?,
     @Schema(description = "유저 키", example = "180") val height: Int?,
-    @field:NotNull @Schema(description = "학과", example = "경영학부") val department: String,
-    @field:NotNull @Schema(description = "카카오톡 ID", example = "kakaoId") val kakaoTalkId: String,
+    @field:NotNull @Schema(description = "학과", example = "경영학부") val department: String?,
+    @field:NotNull @Schema(description = "카카오톡 ID", example = "kakaoId") val kakaoTalkId: String?,
     @Schema(description = "흡연 여부", example = "TRUE") val smoking: SmokingType?,
-    @Schema(description = "동물상", example = "[\"DOG\", \"CAT\"]")
-    val spiritAnimal: List<SpiritAnimalType>?,
     @Schema(description = "mbti", example = "ENFP") val mbti: String?,
     @Schema(description = "흥미", example = "[\"BOOK\", \"EXERCISE\"]")
     val interest: List<InterestType>?,
