@@ -21,7 +21,7 @@ class User(
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     var userTeams: MutableList<UserTeam> = mutableListOf(),
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
-    var userInformation: UserInformation? = null,
+    var userInformation: UserInformation? = null
 ) : BaseEntity() {
     companion object {
         fun create(userId: Long): User {
