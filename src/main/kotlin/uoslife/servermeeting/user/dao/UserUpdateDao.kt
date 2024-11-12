@@ -4,7 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
 import uoslife.servermeeting.user.entity.QUser.user
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.UserAdditionInformation
+import uoslife.servermeeting.user.entity.UserInformation
 
 @Repository
 class UserUpdateDao(
@@ -14,7 +14,7 @@ class UserUpdateDao(
         name: String,
         phoneNumber: String,
         kakaoTalkId: String,
-        userAdditionInformation: UserAdditionInformation,
+        userInformation: UserInformation,
         existingUser: User
     ) {
         queryFactory
@@ -23,7 +23,7 @@ class UserUpdateDao(
             .set(user.name, name)
             .set(user.phoneNumber, phoneNumber)
             .set(user.kakaoTalkId, kakaoTalkId)
-            .set(user.userAdditionInformation, userAdditionInformation)
+            .set(user.userInformation, userInformation)
             .execute()
     }
 }
