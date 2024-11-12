@@ -10,8 +10,9 @@ import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.UserAdditionInformation
+import uoslife.servermeeting.user.entity.UserInformation
 import uoslife.servermeeting.user.exception.UserNotFoundException
+import uoslife.servermeeting.user.repository.UserInformationRepository
 import uoslife.servermeeting.user.repository.UserRepository
 
 @Service
@@ -20,6 +21,7 @@ class UserService(
     private val userRepository: UserRepository,
     private val paymentService: PaymentService,
     private val userTeamRepository: UserTeamRepository,
+    private val userInformationRepository: UserInformationRepository,
     private val uoslifeAccountService: UOSLIFEAccountService,
     private val validator: Validator
 ) {
@@ -30,29 +32,34 @@ class UserService(
 
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         // 그렇지 않으면 유저 조회
-        getOrCreateUser(id)
+        val user = getOrCreateUser(id)
+        if (user.userInformation == null) {
+            val newUserInformation = UserInformation(user = user)
+            userInformationRepository.save(newUserInformation)
+            user.userInformation = newUserInformation
+        }
     }
 
     fun findUser(id: Long): UserFindResponse {
         val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
-        return User.toResponse(user)
+        return UserFindResponse.valueOf(user)
     }
 
     @Transactional
     fun updateUser(requestDto: UserUpdateRequest, id: Long) {
         val existingUser = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+        existingUser.update(requestDto)
 
-        val userAdditionInformation: UserAdditionInformation =
-            updateUserPersonalInformationWithDto(existingUser, requestDto)
+        if (existingUser.userInformation == null) throw UserNotFoundException()
 
-        existingUser.update(requestDto, userAdditionInformation)
+        existingUser.userInformation?.updateUserAdditionInfo(requestDto)
     }
 
     private fun updateUserPersonalInformationWithDto(
         existingUser: User,
         requestDto: UserUpdateRequest
-    ): UserAdditionInformation {
+    ): UserInformation {
         val validMBTI = validator.setValidMBTI(requestDto.mbti)
         return requestDto.toUserPersonalInformation(existingUser, validMBTI)
     }
@@ -83,7 +90,10 @@ class UserService(
     }
 
     private fun getOrCreateUser(userId: Long): User {
-        return userRepository.findByIdOrNull(userId)
-            ?: userRepository.save(User.create(userId = userId))
+        val user = userRepository.findByIdOrNull(userId)
+        if (user != null) {
+            return user
+        }
+        return userRepository.save(User.create(userId = userId))
     }
 }

@@ -10,6 +10,7 @@ import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.user.entity.QUser.user
+import uoslife.servermeeting.user.entity.QUserInformation.userInformation
 import uoslife.servermeeting.user.entity.User
 
 @Repository
@@ -32,5 +33,15 @@ class UserDao(
             .fetchJoin()
             .where(payment.status.eq(PaymentStatus.SUCCESS).and(user.id.notIn(userIdList)))
             .fetch()
+    }
+
+    fun findUserAllInfo(userId: Long): User? {
+        return queryFactory
+            .selectFrom(user)
+            .join(userInformation)
+            .on(userInformation.user.eq(user))
+            .where(user.id.eq(userId))
+            .fetchJoin()
+            .fetchOne()
     }
 }

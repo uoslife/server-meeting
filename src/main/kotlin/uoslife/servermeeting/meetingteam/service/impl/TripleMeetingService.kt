@@ -126,7 +126,10 @@ class TripleMeetingService(
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         val meetingTeam = getUserTripleMeetingTeam(user)
 
-        val information = meetingTeamInformationUpdateRequest.toInformation(user.gender)
+        val information =
+            meetingTeamInformationUpdateRequest.toInformation(
+                user.gender ?: throw GenderNotFoundException()
+            )
 
         meetingTeam.information = information
     }
@@ -168,7 +171,7 @@ class TripleMeetingService(
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
-            user.gender,
+            user.gender ?: throw GenderNotFoundException(),
             TeamType.TRIPLE,
             user,
             information,
