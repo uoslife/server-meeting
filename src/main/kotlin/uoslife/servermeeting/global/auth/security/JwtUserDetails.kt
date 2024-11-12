@@ -1,4 +1,4 @@
-package uoslife.servermeeting.global.auth.jwt
+package uoslife.servermeeting.global.auth.security
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
