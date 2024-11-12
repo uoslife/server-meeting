@@ -9,9 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import uoslife.servermeeting.global.auth.exception.UnauthorizedException
-import uoslife.servermeeting.global.auth.jwt.JwtUserDetails
+import uoslife.servermeeting.global.auth.security.JwtUserDetails
+import uoslife.servermeeting.global.auth.security.SecurityConstants
 import uoslife.servermeeting.global.auth.service.AuthService
-import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
 
 @Component
 class JwtAuthenticationFilter(
@@ -23,15 +23,15 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
-        //        setAuthentication(request, response)
-        val token = request.getHeader("Authorization") ?: throw UnauthorizedException()
+        val token = request.getHeader(SecurityConstants.TOKEN_HEADER)
+            ?: return filterChain.doFilter(request, response)
 
         try {
-            val profile = authService.authenticateToken(token)
+            val userId = authService.authenticateToken(token)
 
             val principal =
                 JwtUserDetails(
-                    id = profile.id,
+                    id = userId.toString(),
                     authorities = MutableList(1) { GrantedAuthority { "ROLE_USER" } },
                 )
 
