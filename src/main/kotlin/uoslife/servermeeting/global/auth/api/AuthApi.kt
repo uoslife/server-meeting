@@ -1,10 +1,8 @@
 package uoslife.servermeeting.global.auth.api
 
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.auth.dto.response.JwtResponse
 import uoslife.servermeeting.global.auth.service.AuthService
 
@@ -14,7 +12,10 @@ class AuthApi(
     private val authService: AuthService,
 ) {
     @PostMapping("/reissue")
-    fun reissue(@RequestHeader("Authorization") refreshToken: String): ResponseEntity<JwtResponse> {
-        return ResponseEntity.ok(authService.reissue(refreshToken))
+    fun reissue(
+        @CookieValue("refresh_token") refreshToken: String,
+        response: HttpServletResponse
+    ): ResponseEntity<JwtResponse> {
+        return ResponseEntity.ok(authService.reissue(refreshToken, response))
     }
 }
