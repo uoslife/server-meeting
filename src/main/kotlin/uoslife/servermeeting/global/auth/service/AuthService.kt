@@ -14,11 +14,8 @@ class AuthService(
     private val cookieUtils: CookieUtils
 ) {
     fun authenticateToken(token: String): Long {
-        if (!token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            throw UnauthorizedException()
-        }
+        val jwt = extractToken(token)
 
-        val jwt = token.substring(SecurityConstants.TOKEN_PREFIX.length)
         if (!jwtTokenProvider.validateAccessToken(jwt)) {
             throw UnauthorizedException()
         }
@@ -43,11 +40,8 @@ class AuthService(
     }
 
     fun reissueAccessToken(refreshToken: String): JwtResponse {
-        if (!refreshToken.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            throw UnauthorizedException()
-        }
+        val jwt = extractToken(refreshToken)
 
-        val jwt = refreshToken.substring(SecurityConstants.TOKEN_PREFIX.length)
         if (!jwtTokenProvider.validateRefreshToken(jwt)) {
             throw UnauthorizedException()
         }
@@ -58,5 +52,12 @@ class AuthService(
         return JwtResponse(
             accessToken = SecurityConstants.TOKEN_PREFIX + accessToken
         )
+    }
+
+    private fun extractToken(token: String): String {
+        if (!token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+            throw UnauthorizedException()
+        }
+        return token.substring(SecurityConstants.TOKEN_PREFIX.length)
     }
 }
