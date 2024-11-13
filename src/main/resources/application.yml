@@ -109,4 +109,4 @@ auth:
     email:
         verification-code-expiry: 180  # 인증코드 유효시간 (3분)
         daily-send-limit: 5  # 하루 최대 발송 횟수
-        code-verify-limit: 5 # 인증코드당 최대 인증 횟수
+        code-verify-limit: 5 # 일일 최대 인증 횟수

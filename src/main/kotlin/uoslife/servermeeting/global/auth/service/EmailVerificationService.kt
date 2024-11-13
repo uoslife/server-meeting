@@ -57,11 +57,17 @@ class EmailVerificationService(
     }
 
     fun verifyCode(email: String, code: String) {
+        validateVerificationAttempts(email)
+        incrementVerificationAttempts(email)
+
         // Redis에서 인증 코드 조회
         val redisCode = getVerificationCode(email)
 
         // 인증 코드 검증
         validateVerificationCode(redisCode, code)
+
+        // 검증 성공한 코드 삭제
+        clearVerificationData(email)
     }
 
     private fun getVerificationCode(email: String): String {
@@ -132,6 +138,27 @@ class EmailVerificationService(
         } catch (e: Exception) {
 //            throw InvalidEmailFormatException("이메일 형식이 맞지 않습니다.")
         }
+    }
+
+    private fun validateVerificationAttempts(email: String) {
+        val attemptsKey = generateRedisKey(VERIFY_COUNT_PREFIX, email, true)
+        val attempts = redisTemplate.opsForValue().get(attemptsKey)?.toString()?.toInt() ?: 0
+        if (attempts >= codeVerifyLimit) {
+//            throw MaxVerificationAttemptsExceededException()
+        }
+    }
+
+    private fun incrementVerificationAttempts(email: String) {
+        val attemptsKey = generateRedisKey(VERIFY_COUNT_PREFIX, email, true)
+        redisTemplate.opsForValue().increment(attemptsKey)
+        redisTemplate.expire(attemptsKey, Duration.ofDays(1))
+    }
+
+    private fun clearVerificationData(email: String) {
+        val codeKey = generateRedisKey(CODE_PREFIX, email)
+        val attemptsKey = generateRedisKey(VERIFY_COUNT_PREFIX, email, true)
+        redisTemplate.delete(codeKey)
+        redisTemplate.delete(attemptsKey)
     }
 
     private fun generateRedisKey(prefix: String, email: String, isDate: Boolean = false): String {
