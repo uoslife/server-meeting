@@ -3,6 +3,7 @@ package uoslife.servermeeting.global.auth.service
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder
 import com.amazonaws.services.simpleemail.model.*
+import jakarta.mail.internet.InternetAddress
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
@@ -30,6 +31,9 @@ class EmailVerificationService(
     }
 
     fun sendVerificationEmail(email: String): SendVerificationEmailResponse {
+        // 이메일 형식 검증
+        validateEmail(email)
+
         // 발송 제한 확인
         validateSendCount(email)
 
@@ -119,4 +123,14 @@ class EmailVerificationService(
         return System.currentTimeMillis() + codeExpiry * 1000 // 현재 시간 + 유효 시간 (밀리초)
     }
 
+    private fun validateEmail(email: String) {
+        try {
+            InternetAddress(email).validate()
+            if (!email.endsWith(UOS_DOMAIN)) {
+//                throw InvalidEmailDomainException("@uos.ac.kr 도메인만 허용됩니다.")
+            }
+        } catch (e: Exception) {
+//            throw InvalidEmailFormatException("이메일 형식이 맞지 않습니다.")
+        }
+    }
 }
