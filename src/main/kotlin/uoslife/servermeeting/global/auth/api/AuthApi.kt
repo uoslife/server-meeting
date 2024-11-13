@@ -16,6 +16,6 @@ class AuthApi(
         @CookieValue("refresh_token") refreshToken: String,
         response: HttpServletResponse
     ): ResponseEntity<JwtResponse> {
-        return ResponseEntity.ok(authService.reissue(refreshToken, response))
+        return ResponseEntity.ok(authService.reissueAccessToken(refreshToken))
     }
 }

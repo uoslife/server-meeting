@@ -14,11 +14,8 @@ class AuthService(
     private val cookieUtils: CookieUtils
 ) {
     fun authenticateToken(token: String): Long {
-        if (!token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            throw UnauthorizedException()
-        }
+        val jwt = extractToken(token)
 
-        val jwt = token.substring(SecurityConstants.TOKEN_PREFIX.length)
         if (!jwtTokenProvider.validateAccessToken(jwt)) {
             throw UnauthorizedException()
         }
@@ -26,27 +23,37 @@ class AuthService(
         return jwtTokenProvider.getUserIdFromAccessToken(jwt)
     }
 
-    fun reissue(refreshToken: String, response: HttpServletResponse): JwtResponse {
-        if (!refreshToken.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            throw UnauthorizedException()
-        }
 
-        val jwt = refreshToken.substring(SecurityConstants.TOKEN_PREFIX.length)
+    fun issueTokens(userId: Long, response: HttpServletResponse): JwtResponse {
+        val accessToken = jwtTokenProvider.createAccessToken(userId)
+        val refreshToken = jwtTokenProvider.createRefreshToken(userId)
+
+        cookieUtils.addRefreshTokenCookie(
+            response,
+            SecurityConstants.TOKEN_PREFIX + refreshToken,
+            SecurityConstants.REFRESH_TOKEN_EXPIRATION
+        )
+
+        return JwtResponse(accessToken)
+    }
+
+    fun reissueAccessToken(refreshToken: String): JwtResponse {
+        val jwt = extractToken(refreshToken)
+
         if (!jwtTokenProvider.validateRefreshToken(jwt)) {
             throw UnauthorizedException()
         }
 
         val userId = jwtTokenProvider.getUserIdFromRefreshToken(jwt)
-        val newRefreshToken = jwtTokenProvider.createRefreshToken(userId)
+        val accessToken = jwtTokenProvider.createAccessToken(userId)
 
-        cookieUtils.addRefreshTokenCookie(
-            response,
-            SecurityConstants.TOKEN_PREFIX + newRefreshToken,
-            SecurityConstants.REFRESH_TOKEN_EXPIRATION
-        )
+        return JwtResponse(accessToken)
+    }
 
-        return JwtResponse(
-            accessToken = SecurityConstants.TOKEN_PREFIX + jwtTokenProvider.createAccessToken(userId)
-        )
+    private fun extractToken(token: String): String {
+        if (!token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+            throw UnauthorizedException()
+        }
+        return token.substring(SecurityConstants.TOKEN_PREFIX.length)
     }
 }
