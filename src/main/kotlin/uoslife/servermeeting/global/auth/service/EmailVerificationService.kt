@@ -65,7 +65,7 @@ class EmailVerificationService(
     }
 
     private fun getVerificationCode(email: String): String {
-        val verificationCodeKey = "$CODE_PREFIX$email"
+        val verificationCodeKey = generateRedisKey(CODE_PREFIX, email)
         return redisTemplate.opsForValue().get(verificationCodeKey).toString()
     }
 
@@ -76,7 +76,7 @@ class EmailVerificationService(
     }
 
     private fun validateSendCount(email: String) {
-        val sendCountKey = "$SEND_COUNT_PREFIX:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
+        val sendCountKey = generateRedisKey(SEND_COUNT_PREFIX, email, true)
         val currentCount = redisTemplate.opsForValue().get(sendCountKey)?.toString()?.toInt() ?: 0
         if (currentCount >= dailySendLimit) {
 //            throw Exception("일일 최대 발송 횟수를 초과했습니다.") // TODO 알맞은 예외 클래스로 변경
@@ -88,12 +88,12 @@ class EmailVerificationService(
     }
 
     private fun saveVerificationCode(email: String, verificationCode: String) {
-        val codeKey = "$CODE_PREFIX:$email"
+        val codeKey = generateRedisKey(CODE_PREFIX, email)
         redisTemplate.opsForValue().set(codeKey, verificationCode, codeExpiry, TimeUnit.SECONDS)
     }
 
     private fun incrementSendCount(email: String) {
-        val sendCountKey = "$SEND_COUNT_PREFIX:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
+        val sendCountKey = generateRedisKey(SEND_COUNT_PREFIX, email, true)
         redisTemplate.opsForValue().increment(sendCountKey)
         redisTemplate.expire(sendCountKey, Duration.ofDays(1))
     }
@@ -132,5 +132,12 @@ class EmailVerificationService(
         } catch (e: Exception) {
 //            throw InvalidEmailFormatException("이메일 형식이 맞지 않습니다.")
         }
+    }
+
+    private fun generateRedisKey(prefix: String, email: String, isDate: Boolean = false): String {
+        if (!isDate) {
+            return "$prefix:$email"
+        }
+        return "$prefix:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
     }
 }
