@@ -16,13 +16,18 @@ import java.util.concurrent.TimeUnit
 class EmailVerificationService(
     private val redisTemplate: RedisTemplate<String, Any>,
     private val sesClient: AmazonSimpleEmailService,
-    @Value("\${auth.email.daily-send-limit}") private val dailySendLimit: Int,
     @Value("\${auth.email.verification-code-expiry}") private val codeExpiry: Long,
+    @Value("\${auth.email.daily-send-limit}") private val dailySendLimit: Int,
+    @Value("\${auth.email.code-verify-limit}") private val codeVerifyLimit: Int,
     @Value("\${aws.ses.email.title}") private val emailTitle: String,
     @Value("\${aws.ses.email.from}") private val emailFrom: String,
 ) {
-    private val codePrefix = "email_verification_code:"
-    private val counterPrefix = "email_send_count"
+    companion object {
+        private const val CODE_PREFIX = "email_verification_code:"
+        private const val COUNTER_PREFIX = "email_send_count"
+        private const val ATTEMPTS_PREFIX = "verification_attempts:"
+        private const val UOS_DOMAIN = "@uos.ac.kr"
+    }
 
     fun sendVerificationEmail(email: String): SendVerificationEmailResponse {
         // 발송 제한 확인
@@ -56,7 +61,7 @@ class EmailVerificationService(
     }
 
     private fun getVerificationCode(email: String): String {
-        val verificationCodeKey = "$codePrefix$email"
+        val verificationCodeKey = "$CODE_PREFIX$email"
         return redisTemplate.opsForValue().get(verificationCodeKey).toString()
     }
 
@@ -67,7 +72,7 @@ class EmailVerificationService(
     }
 
     private fun validateSendCount(email: String) {
-        val sendCountKey = "$counterPrefix:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
+        val sendCountKey = "$COUNTER_PREFIX:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
         val currentCount = redisTemplate.opsForValue().get(sendCountKey)?.toString()?.toInt() ?: 0
         if (currentCount >= dailySendLimit) {
 //            throw Exception("일일 최대 발송 횟수를 초과했습니다.") // TODO 알맞은 예외 클래스로 변경
@@ -79,12 +84,12 @@ class EmailVerificationService(
     }
 
     private fun saveVerificationCode(email: String, verificationCode: String) {
-        val codeKey = "$codePrefix:$email"
+        val codeKey = "$CODE_PREFIX:$email"
         redisTemplate.opsForValue().set(codeKey, verificationCode, codeExpiry, TimeUnit.SECONDS)
     }
 
     private fun incrementSendCount(email: String) {
-        val sendCountKey = "$counterPrefix:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
+        val sendCountKey = "$COUNTER_PREFIX:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
         redisTemplate.opsForValue().increment(sendCountKey)
         redisTemplate.expire(sendCountKey, Duration.ofDays(1))
     }
