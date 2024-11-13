@@ -42,7 +42,7 @@ class AuthService(
         )
     }
 
-    fun reissue(refreshToken: String, response: HttpServletResponse): JwtResponse {
+    fun reissueAccessToken(refreshToken: String): JwtResponse {
         if (!refreshToken.startsWith(SecurityConstants.TOKEN_PREFIX)) {
             throw UnauthorizedException()
         }
@@ -53,16 +53,10 @@ class AuthService(
         }
 
         val userId = jwtTokenProvider.getUserIdFromRefreshToken(jwt)
-        val newRefreshToken = jwtTokenProvider.createRefreshToken(userId)
-
-        cookieUtils.addRefreshTokenCookie(
-            response,
-            SecurityConstants.TOKEN_PREFIX + newRefreshToken,
-            SecurityConstants.REFRESH_TOKEN_EXPIRATION
-        )
+        val accessToken = jwtTokenProvider.createAccessToken(userId)
 
         return JwtResponse(
-            accessToken = SecurityConstants.TOKEN_PREFIX + jwtTokenProvider.createAccessToken(userId)
+            accessToken = SecurityConstants.TOKEN_PREFIX + accessToken
         )
     }
 }
