@@ -97,8 +97,6 @@ aws:
         access-key: ${AWS_SES_ACCESS_KEY}
         secret-key: ${AWS_SES_SECRET_KEY}
         region: ap-northeast-2
-        role-arn: arn:aws:iam::755333364809:role/uoslife-v2--ses
-        role-session-name: uoslife-v2--ses
         email:
             title: UOSLIFE 인증 메일입니다.
             from: 시대생팀 <no-reply@uoslife.team>
