@@ -25,8 +25,8 @@ class EmailVerificationService(
 ) {
     companion object {
         private const val CODE_PREFIX = "email_verification_code:"
-        private const val COUNTER_PREFIX = "email_send_count"
-        private const val ATTEMPTS_PREFIX = "verification_attempts:"
+        private const val SEND_COUNT_PREFIX = "email_send_count"
+        private const val VERIFY_COUNT_PREFIX = "verification_attempts:"
         private const val UOS_DOMAIN = "@uos.ac.kr"
     }
 
@@ -76,7 +76,7 @@ class EmailVerificationService(
     }
 
     private fun validateSendCount(email: String) {
-        val sendCountKey = "$COUNTER_PREFIX:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
+        val sendCountKey = "$SEND_COUNT_PREFIX:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
         val currentCount = redisTemplate.opsForValue().get(sendCountKey)?.toString()?.toInt() ?: 0
         if (currentCount >= dailySendLimit) {
 //            throw Exception("일일 최대 발송 횟수를 초과했습니다.") // TODO 알맞은 예외 클래스로 변경
@@ -93,7 +93,7 @@ class EmailVerificationService(
     }
 
     private fun incrementSendCount(email: String) {
-        val sendCountKey = "$COUNTER_PREFIX:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
+        val sendCountKey = "$SEND_COUNT_PREFIX:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
         redisTemplate.opsForValue().increment(sendCountKey)
         redisTemplate.expire(sendCountKey, Duration.ofDays(1))
     }
