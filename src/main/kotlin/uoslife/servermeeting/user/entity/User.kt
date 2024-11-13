@@ -6,7 +6,7 @@ import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.entity.enums.StudentType
-import uoslife.servermeeting.user.exception.GenderNotUpdateException
+import uoslife.servermeeting.user.exception.GenderNotUpdatableException
 
 @Entity
 @Table(name = "meetingUser")
@@ -55,7 +55,7 @@ class User(
         phoneNumber = requestDto.phoneNumber ?: phoneNumber
         kakaoTalkId = requestDto.kakaoTalkId ?: kakaoTalkId
         if (requestDto.genderType != null && gender != null) {
-            throw GenderNotUpdateException()
+            throw GenderNotUpdatableException()
         }
         gender = requestDto.genderType
     }

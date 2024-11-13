@@ -84,7 +84,7 @@ class SingleMeetingService(
 
         val information =
             meetingTeamInformationUpdateRequest.toInformation(
-                user.gender ?: throw GenderNotFoundException()
+                user.gender ?: throw GenderNotUpdatedException()
             )
 
         meetingTeam.information = information
@@ -127,8 +127,8 @@ class SingleMeetingService(
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
-            user.gender ?: throw GenderNotFoundException(),
-            TeamType.SINGLE,
+            user.gender ?: throw GenderNotUpdatedException(),
+            meetingTeam.type,
             user,
             information,
             preference,
