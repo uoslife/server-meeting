@@ -34,9 +34,7 @@ class AuthService(
             SecurityConstants.REFRESH_TOKEN_EXPIRATION
         )
 
-        return JwtResponse(
-            accessToken = SecurityConstants.TOKEN_PREFIX + accessToken
-        )
+        return JwtResponse(accessToken)
     }
 
     fun reissueAccessToken(refreshToken: String): JwtResponse {
@@ -49,9 +47,7 @@ class AuthService(
         val userId = jwtTokenProvider.getUserIdFromRefreshToken(jwt)
         val accessToken = jwtTokenProvider.createAccessToken(userId)
 
-        return JwtResponse(
-            accessToken = SecurityConstants.TOKEN_PREFIX + accessToken
-        )
+        return JwtResponse(accessToken)
     }
 
     private fun extractToken(token: String): String {
