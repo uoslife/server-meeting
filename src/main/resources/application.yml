@@ -100,8 +100,6 @@ aws:
         access-key: ${AWS_SES_ACCESS_KEY}
         secret-key: ${AWS_SES_SECRET_KEY}
         region: ap-northeast-2
-        role-arn: arn:aws:iam::755333364809:role/uoslife-v2--ses
-        role-session-name: uoslife-v2--ses
         email:
             title: UOSLIFE 인증 메일입니다.
             from: 시대생팀 <no-reply@uoslife.team>
@@ -110,5 +108,6 @@ aws:
 
 auth:
     email:
-        verification-code-expiry: 180  # 3분
+        verification-code-expiry: 180  # 인증코드 유효시간 (3분)
         daily-send-limit: 5  # 하루 최대 발송 횟수
+        code-verify-limit: 5 # 일일 최대 인증 횟수
