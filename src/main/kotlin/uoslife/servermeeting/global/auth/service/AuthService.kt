@@ -26,6 +26,22 @@ class AuthService(
         return jwtTokenProvider.getUserIdFromAccessToken(jwt)
     }
 
+
+    fun issueTokens(userId: Long, response: HttpServletResponse): JwtResponse {
+        val accessToken = jwtTokenProvider.createAccessToken(userId)
+        val refreshToken = jwtTokenProvider.createRefreshToken(userId)
+
+        cookieUtils.addRefreshTokenCookie(
+            response,
+            SecurityConstants.TOKEN_PREFIX + refreshToken,
+            SecurityConstants.REFRESH_TOKEN_EXPIRATION
+        )
+
+        return JwtResponse(
+            accessToken = SecurityConstants.TOKEN_PREFIX + accessToken
+        )
+    }
+
     fun reissue(refreshToken: String, response: HttpServletResponse): JwtResponse {
         if (!refreshToken.startsWith(SecurityConstants.TOKEN_PREFIX)) {
             throw UnauthorizedException()
