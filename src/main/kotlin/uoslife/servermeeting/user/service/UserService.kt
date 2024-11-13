@@ -3,11 +3,11 @@ package uoslife.servermeeting.user.service
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
 import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.meetingteam.util.Validator
+import uoslife.servermeeting.user.dto.request.CreateProfileRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.User
@@ -22,17 +22,14 @@ class UserService(
     private val paymentService: PaymentService,
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
-    private val uoslifeAccountService: UOSLIFEAccountService,
     private val validator: Validator
 ) {
     @Transactional
-    fun createUser(id: Long) {
-        // 계정 서비스에서 유저 정보 받아오기
-        val userProfile = uoslifeAccountService.getUserProfile(id)
-
-        // 해당 유저가 처음 이용하는 유저면 유저 생성
-        // 그렇지 않으면 유저 조회
-        getOrCreateUser(id)
+    fun findOrCreateUserByEmail(email: String): User {
+        return userRepository.findByEmail(email).orElseGet {
+            val newUser = User(email = email)
+            userRepository.save(newUser)
+        }
     }
 
     fun findUser(id: Long): UserFindResponse {
@@ -90,5 +87,19 @@ class UserService(
     private fun getOrCreateUser(userId: Long): User {
         return userRepository.findByIdOrNull(userId)
             ?: userRepository.save(User.create(userId = userId))
+    }
+
+    @Transactional
+    fun createProfile(requestDto: CreateProfileRequest, id: Long) {
+        // 사용자 조회
+        val user = userRepository.findById(id).orElseThrow {
+            throw UserNotFoundException()
+        }
+
+        // 프로필 정보 업데이트
+        user.createProfile(requestDto)
+
+        // 변경된 사용자 저장
+        userRepository.save(user)
     }
 }

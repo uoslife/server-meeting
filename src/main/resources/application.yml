@@ -29,6 +29,9 @@ spring:
 
 app:
     season: 5
+    cookie:
+        domain: ${COOKIE_DOMAIN:}
+        secure: ${COOKIE_SECURE:false}
 
 portone:
     api:
