@@ -1,13 +1,14 @@
 package uoslife.servermeeting.global.auth.service
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder
 import com.amazonaws.services.simpleemail.model.*
+import jakarta.mail.internet.AddressException
 import jakarta.mail.internet.InternetAddress
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.global.auth.dto.response.SendVerificationEmailResponse
+import uoslife.servermeeting.global.auth.exception.*
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -77,7 +78,7 @@ class EmailVerificationService(
 
     private fun validateVerificationCode(redisCode: String, code: String) {
         if (redisCode != code) {
-//            throw Exception("인증번호가 올바르지 않습니다.") // TODO: 알맞은 예외 클래스로 변경
+            throw EmailVerificationCodeMismatchException()
         }
     }
 
@@ -85,7 +86,7 @@ class EmailVerificationService(
         val sendCountKey = generateRedisKey(SEND_COUNT_PREFIX, email, true)
         val currentCount = redisTemplate.opsForValue().get(sendCountKey)?.toString()?.toInt() ?: 0
         if (currentCount >= dailySendLimit) {
-//            throw Exception("일일 최대 발송 횟수를 초과했습니다.") // TODO 알맞은 예외 클래스로 변경
+            throw DailyEmailSendLimitExceededException()
         }
     }
 
@@ -121,7 +122,7 @@ class EmailVerificationService(
         try {
             sesClient.sendEmail(request)
         } catch (e: Exception) {
-//            throw Exception("메일 전송에 실패했습니다.") // TODO 알맞은 예외 클래스로 변경
+            throw EmailDeliveryFailedException()
         }
     }
 
@@ -133,10 +134,10 @@ class EmailVerificationService(
         try {
             InternetAddress(email).validate()
             if (!email.endsWith(UOS_DOMAIN)) {
-//                throw InvalidEmailDomainException("@uos.ac.kr 도메인만 허용됩니다.")
+                throw InvalidEmailDomainException()
             }
-        } catch (e: Exception) {
-//            throw InvalidEmailFormatException("이메일 형식이 맞지 않습니다.")
+        } catch (e: AddressException) {
+            throw InvalidEmailFormatException()
         }
     }
 
@@ -144,7 +145,7 @@ class EmailVerificationService(
         val attemptsKey = generateRedisKey(VERIFY_COUNT_PREFIX, email, true)
         val attempts = redisTemplate.opsForValue().get(attemptsKey)?.toString()?.toInt() ?: 0
         if (attempts >= codeVerifyLimit) {
-//            throw MaxVerificationAttemptsExceededException()
+            throw DailyVerificationAttemptLimitExceededException()
         }
     }
 
