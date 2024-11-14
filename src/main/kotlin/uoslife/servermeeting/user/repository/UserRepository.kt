@@ -8,5 +8,5 @@ interface UserRepository : JpaRepository<User, Long> {
 
     fun existsByKakaoTalkId(kakaoTalkId: String): Boolean
 
-    fun findByEmailOrNull(email: String): User?
+    fun findByEmail(email: String): User?
 }

@@ -105,7 +105,7 @@ class UserService(
     }
 
     private fun getOrCreateUserByEmail(email: String): User {
-        val user = userRepository.findByEmailOrNull(email)
+        val user = userRepository.findByEmail(email)
         if (user != null) {
             return user
         }
