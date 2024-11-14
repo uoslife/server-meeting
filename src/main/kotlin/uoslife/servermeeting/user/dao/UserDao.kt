@@ -3,7 +3,6 @@ package uoslife.servermeeting.user.dao
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
 import uoslife.servermeeting.meetingteam.entity.Payment
-import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QPayment.payment
 import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
@@ -23,7 +22,7 @@ class UserDao(
             .join(userTeam.team)
             .join(userTeam.user)
             .fetchJoin()
-            .where(userTeam.user.id.eq(userId).and(meetingTeam.type.eq(teamType)))
+            .where(userTeam.user.id.eq(userId).and(userTeam.team.type.eq(teamType)))
             .fetchOne()
     }
     fun findNotMatchedPayment(userIdList: List<Long>): List<Payment> {

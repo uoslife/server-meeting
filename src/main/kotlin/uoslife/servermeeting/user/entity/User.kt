@@ -2,6 +2,7 @@ package uoslife.servermeeting.user.entity
 
 import jakarta.persistence.*
 import uoslife.servermeeting.global.common.BaseEntity
+import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.user.dto.request.CreateProfileRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
@@ -23,6 +24,8 @@ class User(
     var userTeams: MutableList<UserTeam> = mutableListOf(),
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     var userInformation: UserInformation? = null,
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    var payments: MutableList<Payment>? = null,
 ) : BaseEntity() {
     companion object {
         fun create(userId: Long): User {

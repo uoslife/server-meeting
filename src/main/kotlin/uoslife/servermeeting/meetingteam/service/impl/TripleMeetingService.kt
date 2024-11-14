@@ -60,9 +60,6 @@ class TripleMeetingService(
 
         userTeamDao.saveUserTeam(meetingTeam, user, true)
 
-        val payment = portOneService.createPayment(TeamType.TRIPLE)
-        meetingTeam.payment = payment
-
         return MeetingTeamCodeResponse(code)
     }
 
@@ -106,7 +103,7 @@ class TripleMeetingService(
         val meetingTeam =
             meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
 
-        val meetingTeamUsers = meetingTeam.userTeams.stream().map { it -> it.user }.toList()
+        val meetingTeamUsers = meetingTeam.userTeams.stream().map { it.user }.toList()
         return MeetingTeamUserListGetResponse(
             teamName = meetingTeam.name!!,
             userList =
@@ -124,11 +121,12 @@ class TripleMeetingService(
         meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
     ) {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val meetingTeam = getUserTripleMeetingTeam(user)
+        val meetingTeam = getUserTripleMeetingUserTeam(user).team
 
         val information =
             meetingTeamInformationUpdateRequest.toInformation(
-                user.gender ?: throw GenderNotUpdatedException()
+                gender = user.gender ?: throw GenderNotUpdatedException(),
+                meetingTeam = meetingTeam
             )
 
         meetingTeam.information = information
@@ -140,9 +138,9 @@ class TripleMeetingService(
         meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
     ) {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val meetingTeam = getUserTripleMeetingTeam(user)
+        val meetingTeam = getUserTripleMeetingUserTeam(user).team
 
-        val preference = meetingTeamPreferenceUpdateRequest.toTriplePreference()
+        val preference = meetingTeamPreferenceUpdateRequest.toTriplePreference(meetingTeam)
 
         meetingTeam.preference = preference
     }
@@ -154,7 +152,7 @@ class TripleMeetingService(
     ) {
         validator.isMessageLengthIsValid(meetingTeamMessageUpdateRequest.message)
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val meetingTeam = getUserTripleMeetingTeam(user)
+        val meetingTeam = getUserTripleMeetingUserTeam(user).team
 
         val message = meetingTeamMessageUpdateRequest.message
 
@@ -163,9 +161,8 @@ class TripleMeetingService(
 
     override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val meetingTeam = getUserTripleMeetingTeam(user)
-
-        //        val userList = meetingTeam.users
+        val meetingUserTeam = getUserTripleMeetingUserTeam(user)
+        val meetingTeam = meetingUserTeam.team
 
         val information = meetingTeam.information ?: throw InformationNotFoundException()
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
@@ -184,10 +181,13 @@ class TripleMeetingService(
     @Transactional
     override fun deleteMeetingTeam(userId: Long) {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val meetingTeam = getUserTripleMeetingTeam(user)
+        val meetingUserTeam = getUserTripleMeetingUserTeam(user)
+
+        if (!meetingUserTeam.isLeader) throw OnlyTeamLeaderCanDeleteTeamException()
+
+        val meetingTeam = meetingUserTeam.team
 
         meetingTeam.userTeams.forEach { userTeamRepository.delete(it) }
-
         meetingTeamRepository.delete(meetingTeam)
     }
 
@@ -203,10 +203,8 @@ class TripleMeetingService(
         )
     }
 
-    private fun getUserTripleMeetingTeam(user: User): MeetingTeam {
-        val userTeam: UserTeam =
-            userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE)
-                ?: throw MeetingTeamNotFoundException()
-        return userTeam.team
+    private fun getUserTripleMeetingUserTeam(user: User): UserTeam {
+        return userTeamDao.findByUserWithMeetingTeam(user, TeamType.TRIPLE)
+            ?: throw MeetingTeamNotFoundException()
     }
 }

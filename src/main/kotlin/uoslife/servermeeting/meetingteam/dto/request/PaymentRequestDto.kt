@@ -11,7 +11,7 @@ class PaymentRequestDto {
         @Schema(description = "결제 플랫폼", example = "WELCOME_PAYMENTS", nullable = false)
         @field:NotNull
         val pg: PaymentGateway,
-        @Schema(description = "결제 수단", example = "card", nullable = false)
+        @Schema(description = "결제 수단", example = "CARD", nullable = false)
         @field:NotNull
         val payMethod: PayMethod,
     )
