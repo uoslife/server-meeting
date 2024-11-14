@@ -99,5 +99,13 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     EMAIL_VERIFICATION_CODE_MISMATCH("E03", "Verification code does not match.", HttpStatus.BAD_REQUEST.value()),
     EMAIL_DAILY_SEND_LIMIT_EXCEEDED("E04", "Daily email send limit exceeded.", HttpStatus.TOO_MANY_REQUESTS.value()),
     EMAIL_DAILY_VERIFY_LIMIT_EXCEEDED("E05", "Daily verification attempt limit exceeded.", HttpStatus.TOO_MANY_REQUESTS.value()),
-    EMAIL_SEND_FAILED("E06", "Failed to send email.", HttpStatus.INTERNAL_SERVER_ERROR.value())
+    EMAIL_SEND_FAILED("E06", "Failed to send email.", HttpStatus.INTERNAL_SERVER_ERROR.value()),
+
+    // JWT
+    JWT_TOKEN_NOT_FOUND("J001", "Token not found", HttpStatus.UNAUTHORIZED.value()),
+    JWT_TOKEN_EXPIRED("J002", "Token has expired", HttpStatus.UNAUTHORIZED.value()),
+    JWT_TOKEN_INVALID_FORMAT("J003", "Invalid token format", HttpStatus.UNAUTHORIZED.value()),
+    JWT_TOKEN_INVALID_SIGNATURE("J004", "Invalid token signature", HttpStatus.UNAUTHORIZED.value()),
+    JWT_REFRESH_TOKEN_NOT_FOUND("J005", "Refresh token not found", HttpStatus.UNAUTHORIZED.value()),
+    JWT_REFRESH_TOKEN_EXPIRED("J006", "Refresh token has expired", HttpStatus.UNAUTHORIZED.value()),
 }
