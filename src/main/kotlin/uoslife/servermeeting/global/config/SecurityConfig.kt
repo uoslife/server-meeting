@@ -101,6 +101,8 @@ class SecurityConfig(
                 .requestMatchers("/api/user/isDuplicatedKakaoTalkId") // 카카오톡 중복 확인
                 .requestMatchers("/api/payment/refund/match")
                 .requestMatchers("/api/payment/portone-webhook")
+                .requestMatchers("/api/auth/send-verification-email")
+                .requestMatchers("/api/auth/verify-code")
         }
     }
 }
