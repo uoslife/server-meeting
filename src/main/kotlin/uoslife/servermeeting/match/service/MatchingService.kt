@@ -19,7 +19,6 @@ import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.enums.GenderType
-import uoslife.servermeeting.user.exception.GenderNotUpdatableException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 
 @Service
@@ -32,7 +31,8 @@ class MatchingService(
 ) {
     @Transactional
     fun getMatchedMeetingTeamByType(userId: Long, teamType: TeamType): MatchInformationResponse {
-        val userTeam = userDao.findUserWithMeetingTeam(userId, teamType) ?: throw UserNotFoundException()
+        val userTeam =
+            userDao.findUserWithMeetingTeam(userId, teamType) ?: throw UserNotFoundException()
         val meetingTeam = userTeam.team ?: throw MeetingTeamNotFoundException()
 
         if (!userTeam.isLeader) throw OnlyTeamLeaderCanGetMatchException()
@@ -47,18 +47,21 @@ class MatchingService(
     }
 
     private fun getOpponentLeaderUser(opponentTeam: MeetingTeam): User {
-        val leader = opponentTeam.userTeams.stream()
-            .filter { userTeam -> userTeam.isLeader }
-            .findFirst().orElseThrow { UserNotFoundException() }
+        val leader =
+            opponentTeam.userTeams
+                .stream()
+                .filter { userTeam -> userTeam.isLeader }
+                .findFirst()
+                .orElseThrow { UserNotFoundException() }
 
         return leader.user
     }
     fun getMatchByGender(user: User, meetingTeam: MeetingTeam): Match {
         return when (user.gender) {
             GenderType.MALE -> matchedDao.findMatchByMaleTeamWithFemaleTeam(meetingTeam)
-                ?: throw MatchNotFoundException()
+                    ?: throw MatchNotFoundException()
             GenderType.FEMALE -> matchedDao.findMatchByFeMaleTeamWithMaleTeam(meetingTeam)
-                ?: throw MatchNotFoundException()
+                    ?: throw MatchNotFoundException()
             null -> throw GenderNotUpdatedException()
         }
     }
@@ -86,5 +89,4 @@ class MatchingService(
             }
         return meetingTeamInformationGetResponse.toMatchedMeetingTeamInformationGetResponse()
     }
-
 }

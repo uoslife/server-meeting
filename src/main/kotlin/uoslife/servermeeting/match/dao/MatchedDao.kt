@@ -8,7 +8,6 @@ import uoslife.servermeeting.match.entity.QMatch.match
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
-import uoslife.servermeeting.user.entity.QUser.user
 
 @Repository
 @Transactional
@@ -18,8 +17,7 @@ class MatchedDao(private val queryFactory: JPAQueryFactory) {
             .selectFrom(match)
             .join(match.femaleTeam, meetingTeam)
             .join(meetingTeam.userTeams, userTeam)
-            .where(match.maleTeam.eq(maleTeam)
-                .and(userTeam.isLeader.eq(true)))
+            .where(match.maleTeam.eq(maleTeam).and(userTeam.isLeader.eq(true)))
             .fetchOne()
     }
 
@@ -28,8 +26,7 @@ class MatchedDao(private val queryFactory: JPAQueryFactory) {
             .selectFrom(match)
             .join(match.maleTeam, meetingTeam)
             .join(meetingTeam.userTeams, userTeam)
-            .where(match.femaleTeam.eq(femaleTeam)
-                .and(userTeam.isLeader.eq(true)))
+            .where(match.femaleTeam.eq(femaleTeam).and(userTeam.isLeader.eq(true)))
             .fetchOne()
     }
 }
