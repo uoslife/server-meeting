@@ -3,6 +3,7 @@ package uoslife.servermeeting.user.entity
 import jakarta.persistence.*
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.UserTeam
+import uoslife.servermeeting.user.dto.request.CreateProfileRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.entity.enums.StudentType
@@ -11,7 +12,7 @@ import uoslife.servermeeting.user.exception.GenderNotUpdateException
 @Entity
 @Table(name = "meetingUser")
 class User(
-    @Id @Column(nullable = false, unique = true, updatable = false) var id: Long,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long? = null,
     @Column(unique = true) var phoneNumber: String? = null,
     var name: String? = null,
     @Column(unique = true) var kakaoTalkId: String? = null,
@@ -30,6 +31,10 @@ class User(
                     id = userId,
                 )
             return user
+        }
+
+        fun create(email: String): User {
+            return User(email = email)
         }
 
         //        fun toResponse(user: User): UserFindResponse {
@@ -58,5 +63,17 @@ class User(
             throw GenderNotUpdateException()
         }
         gender = requestDto.genderType
+    }
+
+    fun createProfile(requestDto: CreateProfileRequest) {
+        name = requestDto.name
+        gender = requestDto.gender
+        phoneNumber = requestDto.phoneNumber ?: phoneNumber
+        kakaoTalkId = requestDto.kakaoTalkId
+        studentType = requestDto.studentType
+        userInformation?.department = requestDto.department
+        userInformation?.studentNumber = requestDto.studentNumber
+        userInformation?.age = requestDto.age
+        userInformation?.interest = requestDto.interest
     }
 }
