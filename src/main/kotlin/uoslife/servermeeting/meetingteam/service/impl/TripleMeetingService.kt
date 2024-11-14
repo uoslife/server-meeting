@@ -128,7 +128,7 @@ class TripleMeetingService(
 
         val information =
             meetingTeamInformationUpdateRequest.toInformation(
-                user.gender ?: throw GenderNotFoundException()
+                user.gender ?: throw GenderNotUpdatedException()
             )
 
         meetingTeam.information = information
@@ -171,7 +171,7 @@ class TripleMeetingService(
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
-            user.gender ?: throw GenderNotFoundException(),
+            user.gender ?: throw GenderNotUpdatedException(),
             TeamType.TRIPLE,
             user,
             information,
