@@ -1,10 +1,10 @@
 package uoslife.servermeeting.global.auth.security
 
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.security.Key
+import java.security.PrivateKey
+import java.security.PublicKey
 import java.util.*
 
 @Component
@@ -12,45 +12,45 @@ class JwtTokenProvider(
     @Value("\${jwt.access.secret}") private val accessSecret: String,
     @Value("\${jwt.refresh.secret}") private val refreshSecret: String,
 ) {
-    private val accessSecretKey = Keys.hmacShaKeyFor(accessSecret.toByteArray())
-    private val refreshSecretKey = Keys.hmacShaKeyFor(refreshSecret.toByteArray())
+    private val accessKeyPair = Jwts.SIG.ES256.keyPair().build()
+    private val refreshKeyPair = Jwts.SIG.ES256.keyPair().build()
 
     fun createAccessToken(id: Long): String {
-        return createToken(id, accessSecretKey, SecurityConstants.ACCESS_TOKEN_EXPIRATION)
+        return createToken(id, accessKeyPair.private, SecurityConstants.ACCESS_TOKEN_EXPIRATION)
     }
 
     fun createRefreshToken(id: Long): String {
-        return createToken(id, refreshSecretKey, SecurityConstants.REFRESH_TOKEN_EXPIRATION)
+        return createToken(id, refreshKeyPair.private, SecurityConstants.REFRESH_TOKEN_EXPIRATION)
     }
 
-    private fun createToken(id: Long, secretKey: Key, expiration: Long): String {
+    private fun createToken(id: Long, privateKey: PrivateKey, expiration: Long): String {
         val now = Date()
         val validity = Date(now.time + expiration)
 
         return Jwts.builder()
-            .setSubject(id.toString())
-            .setIssuer(SecurityConstants.TOKEN_ISSUER)
-            .setAudience(SecurityConstants.TOKEN_AUDIENCE)
-            .setIssuedAt(now)
-            .setExpiration(validity)
-            .signWith(secretKey)
+            .subject(id.toString())
+            .issuer(SecurityConstants.TOKEN_ISSUER)
+            .audience().add(SecurityConstants.TOKEN_AUDIENCE).and()
+            .issuedAt(now)
+            .expiration(validity)
+            .signWith(privateKey, Jwts.SIG.ES256)
             .compact()
     }
 
     fun validateAccessToken(token: String): Boolean {
-        return validateToken(token, accessSecretKey)
+        return validateToken(token, accessKeyPair.public)
     }
 
     fun validateRefreshToken(token: String): Boolean {
-        return validateToken(token, refreshSecretKey)
+        return validateToken(token, refreshKeyPair.public)
     }
 
-    private fun validateToken(token: String, secretKey: Key): Boolean {
+    private fun validateToken(token: String, publicKey: PublicKey): Boolean {
         try {
             Jwts.parser()
-                .setSigningKey(secretKey)
+                .verifyWith(publicKey)
                 .build()
-                .parseClaimsJws(token)
+                .parseSignedClaims(token)
             return true
         } catch (e: Exception) {
             return false
@@ -58,19 +58,19 @@ class JwtTokenProvider(
     }
 
     fun getUserIdFromAccessToken(token: String): Long {
-        return getUserIdFromToken(token, accessSecretKey)
+        return getUserIdFromToken(token, accessKeyPair.public)
     }
 
     fun getUserIdFromRefreshToken(token: String): Long {
-        return getUserIdFromToken(token, refreshSecretKey)
+        return getUserIdFromToken(token, refreshKeyPair.public)
     }
 
-    private fun getUserIdFromToken(token: String, secretKey: Key): Long {
+    private fun getUserIdFromToken(token: String, publicKey: PublicKey): Long {
         val claims = Jwts.parser()
-            .setSigningKey(secretKey)
+            .verifyWith(publicKey)
             .build()
-            .parseClaimsJws(token)
-            .body
+            .parseSignedClaims(token)
+            .payload
         return claims.subject.toLong()
     }
 }
