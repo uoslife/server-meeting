@@ -7,6 +7,7 @@ import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.entity.enums.InterestType
 import uoslife.servermeeting.user.entity.enums.StudentType
 
+@Schema(description = "프로필 생성 요청")
 data class CreateProfileRequest(
     @Schema(description = "이름", example = "유현승", nullable = false) @field:NotNull val name: String,
     @Schema(description = "성별", example = "MALE", nullable = false)

@@ -2,7 +2,6 @@ package uoslife.servermeeting.user.api
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -41,12 +40,6 @@ class UserApi(
                         [
                             Content(
                                 schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: User is not Found., status: 400, code: U02}"
-                                        )]
                             )]
                 ),
             ]
@@ -77,12 +70,6 @@ class UserApi(
                         [
                             Content(
                                 schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: User is not Found., status: 400, code: U02}"
-                                        )]
                             )]
                 ),
             ]
@@ -97,6 +84,26 @@ class UserApi(
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
+    @Operation(summary = "프로필 생성", description = "사용자의 상세 프로필 정보를 생성합니다.")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(responseCode = "204", description = "프로필 생성 성공"),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "잘못된 요청 데이터",
+                    content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+                ),
+                ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                            )]
+                )]
+    )
     @PostMapping("/create-profile")
     fun createProfile(
         @RequestBody() requestBody: CreateProfileRequest,
