@@ -4,15 +4,15 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
 import com.amazonaws.services.simpleemail.model.*
 import jakarta.mail.internet.AddressException
 import jakarta.mail.internet.InternetAddress
+import java.time.Duration
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.global.auth.dto.response.SendVerificationEmailResponse
 import uoslife.servermeeting.global.auth.exception.*
-import java.time.Duration
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.concurrent.TimeUnit
 
 @Service
 class EmailVerificationService(
@@ -106,18 +106,15 @@ class EmailVerificationService(
     }
 
     private fun sendEmail(email: String, verificationCode: String) {
-        val request = SendEmailRequest()
-            .withDestination(Destination().withToAddresses(email))
-            .withMessage(
-                Message()
-                    .withSubject(Content(emailTitle))
-                    .withBody(
-                        Body().withText(
-                            Content("인증 코드: $verificationCode")
-                        )
-                    )
-            )
-            .withSource(emailFrom)
+        val request =
+            SendEmailRequest()
+                .withDestination(Destination().withToAddresses(email))
+                .withMessage(
+                    Message()
+                        .withSubject(Content(emailTitle))
+                        .withBody(Body().withText(Content("인증 코드: $verificationCode")))
+                )
+                .withSource(emailFrom)
 
         try {
             sesClient.sendEmail(request)

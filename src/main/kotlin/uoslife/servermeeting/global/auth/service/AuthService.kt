@@ -1,10 +1,10 @@
 package uoslife.servermeeting.global.auth.service
 
+import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.JwtException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Service
-import io.jsonwebtoken.ExpiredJwtException
-import io.jsonwebtoken.JwtException
 import uoslife.servermeeting.global.auth.dto.response.JwtResponse
 import uoslife.servermeeting.global.auth.exception.*
 import uoslife.servermeeting.global.auth.security.JwtTokenProvider
@@ -26,7 +26,6 @@ class AuthService(
         return jwtTokenProvider.getUserIdFromAccessToken(jwt)
     }
 
-
     fun issueTokens(userId: Long, response: HttpServletResponse): JwtResponse {
         val accessToken = jwtTokenProvider.createAccessToken(userId)
         val refreshToken = jwtTokenProvider.createRefreshToken(userId)
@@ -41,8 +40,9 @@ class AuthService(
     }
 
     fun reissueAccessToken(request: HttpServletRequest): JwtResponse {
-        val refreshToken = cookieUtils.getRefreshTokenFromCookie(request)
-            ?: throw JwtRefreshTokenNotFoundException()
+        val refreshToken =
+            cookieUtils.getRefreshTokenFromCookie(request)
+                ?: throw JwtRefreshTokenNotFoundException()
 
         try {
             val jwt = extractToken(refreshToken)

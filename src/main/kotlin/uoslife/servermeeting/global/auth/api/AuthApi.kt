@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import uoslife.servermeeting.global.auth.dto.response.SendVerificationEmailResponse
-import uoslife.servermeeting.global.auth.service.EmailVerificationService
 import uoslife.servermeeting.global.auth.dto.response.JwtResponse
+import uoslife.servermeeting.global.auth.dto.response.SendVerificationEmailResponse
 import uoslife.servermeeting.global.auth.service.AuthService
+import uoslife.servermeeting.global.auth.service.EmailVerificationService
 import uoslife.servermeeting.global.auth.util.CookieUtils
 import uoslife.servermeeting.global.error.exception.JwtAuthenticationException
 import uoslife.servermeeting.user.service.UserService
@@ -38,7 +38,9 @@ class AuthApi(
     }
 
     @PostMapping("/send-verification-email")
-    fun sendVerificationEmail(@RequestParam email: String): ResponseEntity<SendVerificationEmailResponse> {
+    fun sendVerificationEmail(
+        @RequestParam email: String
+    ): ResponseEntity<SendVerificationEmailResponse> {
         val response = emailVerificationService.sendVerificationEmail(email)
         return ResponseEntity.ok(response)
     }

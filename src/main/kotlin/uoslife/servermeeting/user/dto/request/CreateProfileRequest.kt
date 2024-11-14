@@ -3,7 +3,6 @@ package uoslife.servermeeting.user.dto.request
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
-import uoslife.servermeeting.user.dto.Interest
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.entity.enums.InterestType
 import uoslife.servermeeting.user.entity.enums.StudentType
@@ -20,11 +19,13 @@ data class CreateProfileRequest(
     @Schema(description = "카카오톡 아이디", example = "__uhyun", nullable = false)
     @field:NotNull
     val kakaoTalkId: String,
-    @Schema(description = "학적 상태", example = "UNDERGRADUATE")
-    val studentType: StudentType,
-    @Schema(description = "학과", example = "컴퓨터과학부")
-    val department: String,
+    @Schema(description = "학적 상태", example = "UNDERGRADUATE") val studentType: StudentType,
+    @Schema(description = "학과", example = "컴퓨터과학부") val department: String,
     @Schema(description = "학번", example = "18") val studentNumber: Int?,
-    @Schema(description = "관심사", example = "[{ \"name\": \"여행\", \"isDefault\": true }, { \"name\": \"맛집 탐방하기\", \"isDefault\": false }]")
+    @Schema(
+        description = "관심사",
+        example =
+            "[{ \"name\": \"여행\", \"isDefault\": true }, { \"name\": \"맛집 탐방하기\", \"isDefault\": false }]"
+    )
     val interest: MutableList<InterestType>?,
 ) {}

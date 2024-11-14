@@ -1,11 +1,11 @@
 package uoslife.servermeeting.global.auth.security
 
 import io.jsonwebtoken.Jwts
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.util.*
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 
 @Component
 class JwtTokenProvider(
@@ -30,7 +30,9 @@ class JwtTokenProvider(
         return Jwts.builder()
             .subject(id.toString())
             .issuer(SecurityConstants.TOKEN_ISSUER)
-            .audience().add(SecurityConstants.TOKEN_AUDIENCE).and()
+            .audience()
+            .add(SecurityConstants.TOKEN_AUDIENCE)
+            .and()
             .issuedAt(now)
             .expiration(validity)
             .signWith(privateKey, Jwts.SIG.ES256)
@@ -47,10 +49,7 @@ class JwtTokenProvider(
 
     private fun validateToken(token: String, publicKey: PublicKey): Boolean {
         try {
-            Jwts.parser()
-                .verifyWith(publicKey)
-                .build()
-                .parseSignedClaims(token)
+            Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(token)
             return true
         } catch (e: Exception) {
             return false
@@ -66,11 +65,7 @@ class JwtTokenProvider(
     }
 
     private fun getUserIdFromToken(token: String, publicKey: PublicKey): Long {
-        val claims = Jwts.parser()
-            .verifyWith(publicKey)
-            .build()
-            .parseSignedClaims(token)
-            .payload
+        val claims = Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(token).payload
         return claims.subject.toLong()
     }
 }

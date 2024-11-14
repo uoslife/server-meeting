@@ -112,13 +112,10 @@ class UserService(
         return userRepository.save(User.create(email = email))
     }
 
-
     @Transactional
     fun createProfile(requestDto: CreateProfileRequest, id: Long) {
         // 사용자 조회
-        val user = userRepository.findById(id).orElseThrow {
-            throw UserNotFoundException()
-        }
+        val user = userRepository.findById(id).orElseThrow { throw UserNotFoundException() }
 
         // 프로필 정보 업데이트
         user.createProfile(requestDto)

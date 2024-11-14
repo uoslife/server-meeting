@@ -23,8 +23,9 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
-        val token = request.getHeader(SecurityConstants.TOKEN_HEADER)
-            ?: return filterChain.doFilter(request, response)
+        val token =
+            request.getHeader(SecurityConstants.TOKEN_HEADER)
+                ?: return filterChain.doFilter(request, response)
 
         try {
             val userId = authService.authenticateToken(token)
