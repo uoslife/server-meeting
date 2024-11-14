@@ -40,5 +40,5 @@ data class UserProfile(
     @Schema(description = "흡연 여부", example = "TRUE") val smoking: SmokingType?,
     @Schema(description = "mbti", example = "ENFP") val mbti: String?,
     @Schema(description = "관심사", example = "[{ \"name\": \"여행\", \"isDefault\": true }, { \"name\": \"맛집 탐방하기\", \"isDefault\": false }]")
-    val interests: MutableList<Interest>?,
+    val interest: MutableList<InterestType>?,
 )
