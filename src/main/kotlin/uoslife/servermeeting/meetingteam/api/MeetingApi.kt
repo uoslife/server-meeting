@@ -571,6 +571,12 @@ class MeetingApi(
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "C01",
+                                            description = "메세지 형식 잘못됨",
+                                            value =
+                                                "{message: Message length must be over 10., status: 400, code: C01}"
+                                        ),
+                                        ExampleObject(
                                             name = "U02",
                                             description = "해당 유저 정보 없음",
                                             value =
