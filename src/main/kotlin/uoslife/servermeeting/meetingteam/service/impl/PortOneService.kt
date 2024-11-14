@@ -39,7 +39,6 @@ class PortOneService(
     private val validator: Validator,
     private val userTeamRepository: UserTeamRepository,
     private val portOneAPIService: PortOneAPIService,
-    @Value("\${portone.api.url}") private val url: String,
     @Value("\${portone.api.price.single}") private val singlePrice: Int,
     @Value("\${portone.api.price.triple}") private val triplePrice: Int,
     @Value("\${portone.api.imp.key}") private val impKey: String,
@@ -49,18 +48,53 @@ class PortOneService(
         private val logger = LoggerFactory.getLogger(PaymentService::class.java)
     }
     @Transactional
-    override fun createPayment(teamType: TeamType): Payment {
+    override fun requestPayment(
+        userId: Long,
+        paymentRequestPaymentRequest: PaymentRequestDto.PaymentRequestRequest,
+        teamType: TeamType
+    ): PaymentResponseDto.PaymentRequestResponse {
+        val userTeam =
+            userDao.findUserWithMeetingTeam(userId, teamType) ?: throw UserNotFoundException()
+        val meetingTeam = userTeam.team ?: throw MeetingTeamNotFoundException()
+        val user = userTeam.user
+        val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
+
+        paymentRepository.findByMeetingTeamAndStatus(meetingTeam, PaymentStatus.PENDING)?.let {
+            if (validator.isAlreadyPaid(it)) throw UserAlreadyHavePaymentException()
+            return PaymentResponseDto.PaymentRequestResponse(
+                it.merchantUid,
+                it.price,
+                phoneNumber,
+                user.name ?: throw PreconditionFailedException(),
+                meetingTeam.type
+            )
+        }
+
         val payment =
             Payment.createPayment(
                 UUID.randomUUID().toString(),
-                when (teamType) {
+                when (meetingTeam.type) {
                     TeamType.SINGLE -> singlePrice
                     TeamType.TRIPLE -> triplePrice
                 },
-                PaymentStatus.NONE,
+                PaymentStatus.PENDING,
+                meetingTeam,
+                meetingTeam.type,
+                user,
             )
 
-        return paymentRepository.save(payment)
+        paymentRepository.save(payment)
+        logger.info(
+            "[결제 정보 생성] merchantId : ${payment.merchantUid}, teamType = ${payment.teamType}"
+        )
+
+        return PaymentResponseDto.PaymentRequestResponse(
+            payment.merchantUid,
+            payment.price,
+            phoneNumber,
+            user.name ?: throw PreconditionFailedException(),
+            meetingTeam.type
+        )
     }
 
     @Transactional
@@ -187,8 +221,8 @@ class PortOneService(
 
         // 결제가 저장되어 있지만 결제 승인 확인 안됐다면, 결제 검증
         return PaymentResponseDto.PaymentRequestResponse(
-            payment.merchantUid!!,
-            payment.price!!,
+            payment.merchantUid,
+            payment.price,
             phoneNumber,
             user.name ?: throw NameNotFoundException(),
             teamType

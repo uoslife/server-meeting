@@ -40,5 +40,6 @@ class MeetingTeam(
         orphanRemoval = true
     )
     var preference: Preference? = null,
-    @OneToOne(fetch = FetchType.LAZY) @JoinColumn(name = "payment_id") var payment: Payment? = null,
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "meetingTeam")
+    var payments: MutableList<Payment>? = null,
 ) : BaseEntity()

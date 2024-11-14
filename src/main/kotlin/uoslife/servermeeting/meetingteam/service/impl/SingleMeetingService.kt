@@ -84,7 +84,8 @@ class SingleMeetingService(
 
         val information =
             meetingTeamInformationUpdateRequest.toInformation(
-                user.gender ?: throw GenderNotUpdatedException()
+                gender = user.gender ?: throw GenderNotUpdatedException(),
+                meetingTeam = meetingTeam,
             )
 
         meetingTeam.information = information
@@ -99,7 +100,8 @@ class SingleMeetingService(
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
         val validMBTI = validator.setValidMBTI(meetingTeamPreferenceUpdateRequest.mbti)
-        val preference = meetingTeamPreferenceUpdateRequest.toSinglePreference(validMBTI)
+        val preference =
+            meetingTeamPreferenceUpdateRequest.toSinglePreference(validMBTI, meetingTeam)
 
         meetingTeam.preference = preference
     }

@@ -111,7 +111,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
         val userId = userDetails.username.toLong()
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.verifyPayment(userId, teamType))
+            .body(paymentService.requestPayment(userId, paymentRequestPaymentRequest, teamType))
     }
 
     @Operation(summary = "결제 검증 API", description = "결제가 되었는지 검증합니다.")
