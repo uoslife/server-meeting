@@ -38,6 +38,10 @@ data class UserProfile(
     @field:NotNull @Schema(description = "카카오톡 ID", example = "kakaoId") val kakaoTalkId: String?,
     @Schema(description = "흡연 여부", example = "TRUE") val smoking: SmokingType?,
     @Schema(description = "mbti", example = "ENFP") val mbti: String?,
-    @Schema(description = "흥미", example = "[\"BOOK\", \"EXERCISE\"]")
-    val interest: List<InterestType>?,
+    @Schema(
+        description = "관심사",
+        example =
+            "[{ \"name\": \"여행\", \"isDefault\": true }, { \"name\": \"맛집 탐방하기\", \"isDefault\": false }]"
+    )
+    val interest: MutableList<InterestType>?,
 )

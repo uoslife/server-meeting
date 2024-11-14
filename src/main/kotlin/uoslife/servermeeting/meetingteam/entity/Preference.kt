@@ -3,7 +3,6 @@ package uoslife.servermeeting.meetingteam.entity
 import jakarta.persistence.*
 import uoslife.servermeeting.meetingteam.entity.enums.TeamMood
 import uoslife.servermeeting.user.entity.enums.SmokingType
-import uoslife.servermeeting.user.entity.enums.SpiritAnimalType
 import uoslife.servermeeting.user.entity.enums.StudentType
 
 @Entity
@@ -15,7 +14,6 @@ class Preference(
     var heightMax: Int? = null,
     @Enumerated(value = EnumType.STRING) var studentType: StudentType? = null,
     var smoking: List<SmokingType>? = null, // todo: List는 엔티티에 어떻게 저장할지
-    var spiritAnimal: List<SpiritAnimalType>? = null,
     var mbti: String? = null,
     var mood: TeamMood? = null,
     var weight: String? = null,

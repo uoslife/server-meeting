@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
@@ -21,14 +20,11 @@ import org.springframework.web.servlet.HandlerExceptionResolver
 import uoslife.servermeeting.global.auth.filter.JwtAccessDeniedHandler
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationEntryPoint
 import uoslife.servermeeting.global.auth.filter.JwtAuthenticationFilter
-import uoslife.servermeeting.global.auth.jwt.JwtAuthenticationProvider
-import uoslife.servermeeting.global.auth.service.UOSLIFEAccountService
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-    private val authProvider: JwtAuthenticationProvider,
-    private val accountService: UOSLIFEAccountService,
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
     @Qualifier("handlerExceptionResolver") private val resolver: HandlerExceptionResolver,
 ) {
     @Bean
@@ -55,7 +51,7 @@ class SecurityConfig(
             } // CORS preflight 요청 허용
 
         http.addFilterBefore(
-            JwtAuthenticationFilter(accountService),
+            jwtAuthenticationFilter,
             UsernamePasswordAuthenticationFilter::class.java
         )
 
@@ -91,10 +87,7 @@ class SecurityConfig(
         authConfig: AuthenticationConfiguration,
         http: HttpSecurity
     ): AuthenticationManager {
-        val authenticationManagerBuilder =
-            http.getSharedObject(AuthenticationManagerBuilder::class.java)
-        authenticationManagerBuilder.authenticationProvider(authProvider)
-        return authenticationManagerBuilder.build()
+        return authConfig.authenticationManager
     }
 
     @Bean
@@ -107,6 +100,8 @@ class SecurityConfig(
                 .requestMatchers("/api/user/isDuplicatedKakaoTalkId") // 카카오톡 중복 확인
                 .requestMatchers("/api/payment/refund/match")
                 .requestMatchers("/api/payment/portone-webhook")
+                .requestMatchers("/api/auth/send-verification-email")
+                .requestMatchers("/api/auth/verify-code")
         }
     }
 }
