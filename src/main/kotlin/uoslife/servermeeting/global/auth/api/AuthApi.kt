@@ -1,16 +1,18 @@
 package uoslife.servermeeting.global.auth.api
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import jakarta.servlet.http.HttpServletResponse
-import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.auth.dto.response.SendVerificationEmailResponse
 import uoslife.servermeeting.global.auth.service.EmailVerificationService
 import uoslife.servermeeting.global.auth.dto.response.JwtResponse
 import uoslife.servermeeting.global.auth.service.AuthService
+import uoslife.servermeeting.global.auth.util.CookieUtils
+import uoslife.servermeeting.global.error.exception.JwtAuthenticationException
 import uoslife.servermeeting.user.service.UserService
 
 @RestController
@@ -19,14 +21,20 @@ class AuthApi(
     private val authService: AuthService,
     private val emailVerificationService: EmailVerificationService,
     private val userService: UserService,
+    private val cookieUtils: CookieUtils,
 ) {
     @PostMapping("/reissue")
     fun reissue(
-        @CookieValue("refresh_token") refreshToken: String,
+        request: HttpServletRequest,
         response: HttpServletResponse
     ): ResponseEntity<JwtResponse> {
-        val accessToken = authService.reissueAccessToken(refreshToken)
-        return ResponseEntity.ok(accessToken)
+        return try {
+            val accessToken = authService.reissueAccessToken(request)
+            ResponseEntity.ok(accessToken)
+        } catch (e: JwtAuthenticationException) {
+            cookieUtils.deleteRefreshTokenCookie(response)
+            throw e
+        }
     }
 
     @PostMapping("/send-verification-email")
