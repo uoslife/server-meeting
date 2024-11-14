@@ -25,6 +25,18 @@ class UserService(
     private val validator: Validator
 ) {
     @Transactional
+    fun createUserByEmail(email: String): Long {
+        // 해당 유저가 처음 이용하는 유저면 유저 생성
+        val user = getOrCreateUserByEmail(email)
+        if (user.userInformation == null) {
+            val newUserInformation = UserInformation(user = user)
+            userInformationRepository.save(newUserInformation)
+            user.userInformation = newUserInformation
+        }
+        return user.id!!
+    }
+
+    @Transactional
     fun createUser(id: Long) {
         // 해당 유저가 처음 이용하는 유저면 유저 생성
         val user = getOrCreateUser(id)
@@ -91,6 +103,15 @@ class UserService(
         }
         return userRepository.save(User.create(userId = userId))
     }
+
+    private fun getOrCreateUserByEmail(email: String): User {
+        val user = userRepository.findByEmailOrNull(email)
+        if (user != null) {
+            return user
+        }
+        return userRepository.save(User.create(email = email))
+    }
+
 
     @Transactional
     fun createProfile(requestDto: CreateProfileRequest, id: Long) {

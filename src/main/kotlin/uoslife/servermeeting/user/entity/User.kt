@@ -12,7 +12,7 @@ import uoslife.servermeeting.user.exception.GenderNotUpdateException
 @Entity
 @Table(name = "meetingUser")
 class User(
-    @Id @Column(nullable = false, unique = true, updatable = false) var id: Long,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long? = null,
     @Column(unique = true) var phoneNumber: String? = null,
     var name: String? = null,
     @Column(unique = true) var kakaoTalkId: String? = null,
@@ -31,6 +31,10 @@ class User(
                     id = userId,
                 )
             return user
+        }
+
+        fun create(email: String): User {
+            return User(email = email)
         }
 
         //        fun toResponse(user: User): UserFindResponse {

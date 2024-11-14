@@ -11,19 +11,22 @@ import uoslife.servermeeting.global.auth.dto.response.SendVerificationEmailRespo
 import uoslife.servermeeting.global.auth.service.EmailVerificationService
 import uoslife.servermeeting.global.auth.dto.response.JwtResponse
 import uoslife.servermeeting.global.auth.service.AuthService
+import uoslife.servermeeting.user.service.UserService
 
 @RestController
 @RequestMapping("/api/auth")
 class AuthApi(
     private val authService: AuthService,
-    private val emailVerificationService: EmailVerificationService
+    private val emailVerificationService: EmailVerificationService,
+    private val userService: UserService,
 ) {
     @PostMapping("/reissue")
     fun reissue(
         @CookieValue("refresh_token") refreshToken: String,
         response: HttpServletResponse
     ): ResponseEntity<JwtResponse> {
-        return ResponseEntity.ok(authService.reissueAccessToken(refreshToken))
+        val accessToken = authService.reissueAccessToken(refreshToken)
+        return ResponseEntity.ok(accessToken)
     }
 
     @PostMapping("/send-verification-email")
@@ -36,9 +39,11 @@ class AuthApi(
     fun verifyCode(
         @RequestParam email: String,
         @RequestParam code: String,
-    ) {
+        response: HttpServletResponse
+    ): ResponseEntity<JwtResponse> {
         emailVerificationService.verifyCode(email, code)
-        // TODO: 유저 생성
-        // TODO: 토큰 반환
+        val userId = userService.createUserByEmail(email)
+        val accessToken = authService.issueTokens(userId, response)
+        return ResponseEntity.ok(accessToken)
     }
 }
