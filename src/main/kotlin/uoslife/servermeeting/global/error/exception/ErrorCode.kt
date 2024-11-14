@@ -18,6 +18,8 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     USER_NOT_FOUND("U02", "User is not Found.", HttpStatus.BAD_REQUEST.value()),
     PHONE_NUMBER_NOT_FOUND("U06", "Phone Number is not found.", HttpStatus.BAD_REQUEST.value()),
     USER_NOT_AUTHORIZED("U08", "User is not authorized.", HttpStatus.UNAUTHORIZED.value()),
+    GENDER_NOT_FOUND("U09", "Gender is not selected.", HttpStatus.BAD_REQUEST.value()),
+    GENDER_NOT_CHANGE("U09", "Gender is not selected.", HttpStatus.BAD_REQUEST.value()),
 
     // User - Token
     INVALID_TOKEN("T01", "Token is not valid.", HttpStatus.UNAUTHORIZED.value()),

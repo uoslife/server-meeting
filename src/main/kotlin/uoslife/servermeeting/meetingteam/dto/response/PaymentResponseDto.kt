@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 
 class PaymentResponseDto {
+    companion object {
+        private const val PAYMENT_SUCCESS = "paid"
+    }
     data class PaymentRequestResponse(
         @Schema(description = "결제 상품 고유 번호") @field:NotBlank var merchantUid: String,
         @Schema(description = "가격", example = "3000") @field:NotNull var price: Int,
@@ -35,6 +38,10 @@ class PaymentResponseDto {
     data class PaymentWebhookResponse(
         var imp_uid: String,
         var merchant_uid: String,
-        var status: String,
-    )
+        @Schema(description = "Portone 결제 여부", example = PAYMENT_SUCCESS) var status: String,
+    ) {
+        fun isSuccess(): Boolean {
+            return status == PAYMENT_SUCCESS
+        }
+    }
 }

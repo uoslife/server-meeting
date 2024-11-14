@@ -1,49 +1,28 @@
 package uoslife.servermeeting.user.entity
 
-import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.*
-import org.hibernate.annotations.Type
 import uoslife.servermeeting.global.common.BaseEntity
-import uoslife.servermeeting.meetingteam.entity.Payment
-import uoslife.servermeeting.meetingteam.entity.SingleMeetingTeam
-import uoslife.servermeeting.meetingteam.entity.TripleMeetingTeam
-import uoslife.servermeeting.user.dto.Interest
+import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.user.dto.request.CreateProfileRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
-import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.entity.enums.StudentType
+import uoslife.servermeeting.user.exception.GenderNotUpdateException
 
 @Entity
 @Table(name = "meetingUser")
 class User(
-    @Id @Column(nullable = false, unique = true) var id: Long? = null,
-    @Column var isProfileCompleted: Boolean = false,
-    @Column(unique = true) var email: String? = null,
+    @Id @Column(nullable = false, unique = true, updatable = false) var id: Long,
     @Column(unique = true) var phoneNumber: String? = null,
-    var name: String = "",
-    @Column(unique = true) var kakaoTalkId: String = "",
-    @Enumerated(EnumType.STRING) var gender: GenderType = GenderType.MALE,
-    @Enumerated(EnumType.STRING) var studentStatus: StudentType = StudentType.UNDERGRADUATE,
-    var department: String = "",
-    var studentNumber: Int? = null,
-    @ElementCollection
-    @CollectionTable(name = "user_interests", joinColumns = [JoinColumn(name = "user_id")])
-    @Column(name = "interest_name")
-    var interests: MutableList<Interest> = mutableListOf(),
-    var height: Int? = null,
-    var age: Int = 0,
-    @Type(JsonType::class)
-    @Column(columnDefinition = "jsonb")
-    var userAdditionInformation: UserAdditionInformation = UserAdditionInformation(),
+    var name: String? = null,
+    @Column(unique = true) var kakaoTalkId: String? = null,
+    @Enumerated(EnumType.STRING) var gender: GenderType? = null,
+    @Column(unique = true) var email: String? = null,
+    @Enumerated(EnumType.STRING) var studentType: StudentType? = null,
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    var payments: MutableList<Payment>? = mutableListOf(),
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "triple_team_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    var tripleTeam: TripleMeetingTeam? = null,
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "single_team_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    var singleTeam: SingleMeetingTeam? = null,
+    var userTeams: MutableList<UserTeam> = mutableListOf(),
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+    var userInformation: UserInformation? = null,
 ) : BaseEntity() {
     companion object {
         fun create(userId: Long): User {
@@ -54,51 +33,43 @@ class User(
             return user
         }
 
-        fun toResponse(user: User): UserFindResponse {
-            val userFindResponse: UserFindResponse =
-                UserFindResponse(
-                    name = user.name,
-                    email = user.email,
-                    genderType = user.gender,
-                    phoneNumber = user.phoneNumber,
-                    age = user.age,
-                    kakaoTalkId = user.kakaoTalkId,
-                    department = user.department,
-                    height = user.height,
-                    smoking = user.userAdditionInformation.smoking,
-                    mbti = user.userAdditionInformation.mbti,
-                    interests = user.interests,
-                    tripleTeam = user.tripleTeam != null,
-                    singleTeam = user.singleTeam != null
-                )
-
-            return userFindResponse
-        }
+        //        fun toResponse(user: User): UserFindResponse {
+        //            val userFindResponse: UserFindResponse =
+        //                UserFindResponse(
+        //                    name = user.name,
+        //                    genderType = user.gender,
+        //                    phoneNumber = user.phoneNumber,
+        //                    age = user.userInformation?.age,
+        //                    kakaoTalkId = user.kakaoTalkId,
+        //                    department = user.userInformation?.department,
+        //                    height = user.userInformation?.height,
+        //                    smoking = user.userInformation?.smoking,
+        //                    mbti = user.userInformation?.mbti,
+        //                    interest = user.userInformation?.interest,
+        //                )
+        //
+        //            return userFindResponse
+        //        }
     }
-    fun update(requestDto: UserUpdateRequest, newUserAdditionInformation: UserAdditionInformation) {
-        name = requestDto.name
-        gender = requestDto.gender
-        studentStatus = requestDto.studentStatus
-        department = requestDto.department
-        studentNumber = requestDto.studentNumber
-        interests = requestDto.interests ?: mutableListOf()
+    fun update(requestDto: UserUpdateRequest) {
+        name = requestDto.name ?: name
         phoneNumber = requestDto.phoneNumber ?: phoneNumber
-        kakaoTalkId = requestDto.kakaoTalkId
-        age = requestDto.age
-        height = requestDto.height
-        userAdditionInformation = newUserAdditionInformation
+        kakaoTalkId = requestDto.kakaoTalkId ?: kakaoTalkId
+        if (requestDto.genderType != null && gender != null) {
+            throw GenderNotUpdateException()
+        }
+        gender = requestDto.genderType
     }
 
     fun createProfile(requestDto: CreateProfileRequest) {
         name = requestDto.name
-        isProfileCompleted = true
         gender = requestDto.gender
-        age = requestDto.age
         phoneNumber = requestDto.phoneNumber ?: phoneNumber
         kakaoTalkId = requestDto.kakaoTalkId
-        studentStatus = requestDto.studentStatus
-        department = requestDto.department
-        studentNumber = requestDto.studentNumber
-        interests = requestDto.interests ?: mutableListOf()
+        studentType = requestDto.studentType
+        userInformation?.department = requestDto.department
+        userInformation?.studentNumber = requestDto.studentNumber
+        userInformation?.age = requestDto.age
+        userInformation?.interest = requestDto.interest
     }
 }

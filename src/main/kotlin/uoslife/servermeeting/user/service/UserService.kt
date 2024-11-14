@@ -3,16 +3,16 @@ package uoslife.servermeeting.user.service
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
-import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
-import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dto.request.CreateProfileRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.UserAdditionInformation
+import uoslife.servermeeting.user.entity.UserInformation
 import uoslife.servermeeting.user.exception.UserNotFoundException
+import uoslife.servermeeting.user.repository.UserInformationRepository
 import uoslife.servermeeting.user.repository.UserRepository
 
 @Service
@@ -20,38 +20,41 @@ import uoslife.servermeeting.user.repository.UserRepository
 class UserService(
     private val userRepository: UserRepository,
     private val paymentService: PaymentService,
-    private val singleMeetingService: SingleMeetingService,
-    private val tripleMeetingService: TripleMeetingService,
+    private val userTeamRepository: UserTeamRepository,
+    private val userInformationRepository: UserInformationRepository,
     private val validator: Validator
 ) {
     @Transactional
-    fun findOrCreateUserByEmail(email: String): User {
-        return userRepository.findByEmail(email).orElseGet {
-            val newUser = User(email = email)
-            userRepository.save(newUser)
+    fun createUser(id: Long) {
+        // 해당 유저가 처음 이용하는 유저면 유저 생성
+        val user = getOrCreateUser(id)
+        if (user.userInformation == null) {
+            val newUserInformation = UserInformation(user = user)
+            userInformationRepository.save(newUserInformation)
+            user.userInformation = newUserInformation
         }
     }
 
     fun findUser(id: Long): UserFindResponse {
         val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
-        return User.toResponse(user)
+        return UserFindResponse.valueOf(user)
     }
 
     @Transactional
     fun updateUser(requestDto: UserUpdateRequest, id: Long) {
         val existingUser = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+        existingUser.update(requestDto)
 
-        val userAdditionInformation: UserAdditionInformation =
-            updateUserPersonalInformationWithDto(existingUser, requestDto)
+        if (existingUser.userInformation == null) throw UserNotFoundException()
 
-        existingUser.update(requestDto, userAdditionInformation)
+        existingUser.userInformation?.updateUserAdditionInfo(requestDto)
     }
 
     private fun updateUserPersonalInformationWithDto(
         existingUser: User,
         requestDto: UserUpdateRequest
-    ): UserAdditionInformation {
+    ): UserInformation {
         val validMBTI = validator.setValidMBTI(requestDto.mbti)
         return requestDto.toUserPersonalInformation(existingUser, validMBTI)
     }
@@ -66,11 +69,8 @@ class UserService(
         // 유저가 존재하는지 확인
         val user: User = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
 
-        if (user.singleTeam != null) {
-            singleMeetingService.deleteMeetingTeam(id)
-        }
-        if (user.tripleTeam != null) {
-            tripleMeetingService.deleteMeetingTeam(id)
+        if (user.userTeams.isNotEmpty()) {
+            user.userTeams.forEach { it -> userTeamRepository.delete(it) }
         }
         // 유저 삭제
         userRepository.delete(user)
@@ -85,8 +85,11 @@ class UserService(
     }
 
     private fun getOrCreateUser(userId: Long): User {
-        return userRepository.findByIdOrNull(userId)
-            ?: userRepository.save(User.create(userId = userId))
+        val user = userRepository.findByIdOrNull(userId)
+        if (user != null) {
+            return user
+        }
+        return userRepository.save(User.create(userId = userId))
     }
 
     @Transactional

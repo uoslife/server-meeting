@@ -1,7 +1,8 @@
 package uoslife.servermeeting.user.entity.enums
 
 enum class SmokingType {
-    TRUE,
+    CIGARETTE,
+    E_CIGARETTE,
     FALSE,
     NOT_MATTER,
 }

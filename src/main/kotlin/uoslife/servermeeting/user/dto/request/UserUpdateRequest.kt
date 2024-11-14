@@ -3,38 +3,38 @@ package uoslife.servermeeting.user.dto.request
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
-import uoslife.servermeeting.user.dto.Interest
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.UserAdditionInformation
+import uoslife.servermeeting.user.entity.UserInformation
 import uoslife.servermeeting.user.entity.enums.*
 
 data class UserUpdateRequest(
-    @Schema(description = "이름", example = "유현승", nullable = false) @field:NotNull val name: String,
-    @Schema(description = "성별", example = "MALE", nullable = false)
-    @field:NotNull
-    val gender: GenderType,
+    @Schema(description = "이름", example = "유현승") val name: String? = null,
     @Schema(description = "전화번호", example = "01047324348")
     @field:Size(max = 11)
-    val phoneNumber: String?,
-    @Schema(description = "나이", example = "26", nullable = false) @field:NotNull val age: Int,
+    val phoneNumber: String? = null,
+    @Schema(description = "성별", example = "MALE") val genderType: GenderType? = null,
+    @Schema(description = "나이", example = "25") val age: Int? = null, // 프론트에서 변환해서 전송
     @Schema(description = "카카오톡 아이디", example = "__uhyun", nullable = false)
     @field:NotNull
-    val kakaoTalkId: String,
-    @Schema(description = "학적 상태", example = "UNDERGRADUATE")
-    val studentStatus: StudentType,
-    @Schema(description = "학과", example = "컴퓨터과학부")
-    val department: String,
-    @Schema(description = "학번", example = "18") val studentNumber: Int?,
+    val kakaoTalkId: String? = null,
+    @Schema(description = "학과", example = "컴퓨터과학부", nullable = false)
+    @field:NotNull
+    val department: String? = null,
+    @Schema(description = "학번", example = "18", nullable = false) val studentNumber: Int?,
     @Schema(description = "키", example = "178") val height: Int?,
     @Schema(description = "흡연 여부", example = "FALSE") val smoking: SmokingType?,
     @Schema(description = "MBTI", example = "INFP") val mbti: String?,
-    @Schema(description = "관심사", example = "[{ \"name\": \"여행\", \"isDefault\": true }, { \"name\": \"맛집 탐방하기\", \"isDefault\": false }]")
-    val interests: MutableList<Interest>?,
+    @Schema(description = "흥미", example = "[\"EXERCISE\", \"MUSIC\"]")
+    val interest: MutableList<InterestType>? = null,
+    @Schema(description = "외모1", example = "ARAB") val appearanceType: AppearanceType? = null,
+    @Schema(description = "외모2", example = "DOUBLE") val eyelidType: EyelidType? = null,
 ) {
-    fun toUserPersonalInformation(existingUser: User, validMBTI: String?): UserAdditionInformation {
-        return UserAdditionInformation(
-            smoking = smoking ?: existingUser.userAdditionInformation.smoking,
-            mbti = validMBTI ?: existingUser.userAdditionInformation.mbti,
+    fun toUserPersonalInformation(existingUser: User, validMBTI: String?): UserInformation {
+        return UserInformation(
+            smoking = smoking ?: existingUser.userInformation?.smoking,
+            mbti = validMBTI ?: existingUser.userInformation?.mbti,
+            interest = interest ?: existingUser.userInformation?.interest,
+            user = existingUser
         )
     }
 }
