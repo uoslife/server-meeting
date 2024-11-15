@@ -16,7 +16,7 @@ class AuthService(
     private val jwtTokenProvider: JwtTokenProvider,
     private val cookieUtils: CookieUtils
 ) {
-    fun authenticateToken(token: String): Long {
+    fun getAuthenticatedUserId(token: String): Long {
         val jwt = extractToken(token)
 
         if (!jwtTokenProvider.validateAccessToken(jwt)) {
