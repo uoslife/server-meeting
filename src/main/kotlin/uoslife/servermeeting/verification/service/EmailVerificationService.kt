@@ -34,20 +34,15 @@ class EmailVerificationService(
     fun sendVerificationEmail(email: String): SendVerificationEmailResponse {
         // 이메일 형식 검증
         validateEmail(email)
-
         // 발송 제한 확인
         validateSendCount(email)
-
         // 인증 코드 생성 및 저장
         val verificationCode = generateVerificationCode()
         saveVerificationCode(email, verificationCode)
-
         // Redis에 발송 횟수 증가
         incrementSendCount(email)
-
         // 이메일 전송
         sendEmail(email, verificationCode)
-
         // 코드 만료 시각 계산
         val expirationTime = calculateExpirationTime()
 
@@ -60,13 +55,10 @@ class EmailVerificationService(
     fun verifyEmail(email: String, code: String) {
         validateVerificationAttempts(email)
         incrementVerificationAttempts(email)
-
         // Redis에서 인증 코드 조회
         val redisCode = getVerificationCode(email)
-
         // 인증 코드 검증
         validateVerificationCode(redisCode, code)
-
         // 검증 성공한 코드 삭제
         clearVerificationData(email)
     }
