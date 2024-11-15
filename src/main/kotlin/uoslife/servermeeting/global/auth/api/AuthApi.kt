@@ -2,6 +2,7 @@ package uoslife.servermeeting.global.auth.api
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -32,7 +33,17 @@ class AuthApi(
                 ApiResponse(
                     responseCode = "200",
                     description = "토큰 재발급 성공",
-                    content = [Content(schema = Schema(implementation = JwtResponse::class))]
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = JwtResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{\"accessToken\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"}"
+                                        )]
+                            )]
                 ),
                 ApiResponse(
                     responseCode = "401",
@@ -41,6 +52,28 @@ class AuthApi(
                         [
                             Content(
                                 schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            name = "Refresh Token Not Found",
+                                            value =
+                                                "{\"message\": \"Refresh token not found\", \"status\": 401, \"code\": \"J005\"}"
+                                        ),
+                                        ExampleObject(
+                                            name = "Refresh Token Expired",
+                                            value =
+                                                "{\"message\": \"Refresh token has expired\", \"status\": 401, \"code\": \"J006\"}"
+                                        ),
+                                        ExampleObject(
+                                            name = "Invalid Token Format",
+                                            value =
+                                                "{\"message\": \"Invalid token format\", \"status\": 401, \"code\": \"J003\"}"
+                                        ),
+                                        ExampleObject(
+                                            name = "Invalid Token Signature",
+                                            value =
+                                                "{\"message\": \"Invalid token signature\", \"status\": 401, \"code\": \"J004\"}"
+                                        )]
                             )]
                 )]
     )
