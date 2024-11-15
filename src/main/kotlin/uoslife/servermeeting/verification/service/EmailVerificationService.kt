@@ -1,4 +1,4 @@
-package uoslife.servermeeting.global.auth.service
+package uoslife.servermeeting.verification.service
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
 import com.amazonaws.services.simpleemail.model.*
@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
-import uoslife.servermeeting.global.auth.dto.response.SendVerificationEmailResponse
-import uoslife.servermeeting.global.auth.exception.*
+import uoslife.servermeeting.verification.dto.response.SendVerificationEmailResponse
+import uoslife.servermeeting.verification.exception.*
 
 @Service
 class EmailVerificationService(

@@ -1,4 +1,7 @@
-package uoslife.servermeeting.global.error.exception
+package uoslife.servermeeting.verification.exception
+
+import uoslife.servermeeting.global.error.exception.BusinessException
+import uoslife.servermeeting.global.error.exception.ErrorCode
 
 open class EmailLimitExceededException : BusinessException {
     constructor(errorCode: ErrorCode) : super(errorCode)

@@ -1,4 +1,4 @@
-package uoslife.servermeeting.global.auth.dto.response
+package uoslife.servermeeting.verification.dto.response
 
 import io.swagger.v3.oas.annotations.media.Schema
 
