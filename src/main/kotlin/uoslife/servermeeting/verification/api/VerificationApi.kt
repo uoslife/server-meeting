@@ -187,6 +187,7 @@ class VerificationApi(
     fun verifyCode(
         @RequestParam email: String,
         @RequestParam code: String,
+        @Valid @RequestBody request: VerifyEmailRequest,
         response: HttpServletResponse
     ): ResponseEntity<JwtResponse> {
         emailVerificationService.verifyCode(email, code)
