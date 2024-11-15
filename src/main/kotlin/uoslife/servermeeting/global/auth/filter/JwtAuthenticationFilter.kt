@@ -28,7 +28,7 @@ class JwtAuthenticationFilter(
                 ?: return filterChain.doFilter(request, response)
 
         try {
-            val userId = authService.authenticateToken(token)
+            val userId = authService.getAuthenticatedUserId(token)
 
             val principal =
                 JwtUserDetails(

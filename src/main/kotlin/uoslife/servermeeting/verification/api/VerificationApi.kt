@@ -8,15 +8,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.auth.dto.response.JwtResponse
 import uoslife.servermeeting.global.auth.service.AuthService
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.user.service.UserService
+import uoslife.servermeeting.verification.dto.request.VerifyEmailRequest
 import uoslife.servermeeting.verification.dto.response.SendVerificationEmailResponse
 import uoslife.servermeeting.verification.service.EmailVerificationService
 
@@ -183,14 +182,13 @@ class VerificationApi(
                             )]
                 )]
     )
-    @PostMapping("/verify-code")
-    fun verifyCode(
-        @RequestParam email: String,
-        @RequestParam code: String,
+    @PostMapping("/verify-email")
+    fun verifyEmail(
+        @Valid @RequestBody request: VerifyEmailRequest,
         response: HttpServletResponse
     ): ResponseEntity<JwtResponse> {
-        emailVerificationService.verifyCode(email, code)
-        val userId = userService.createUserByEmail(email)
+        emailVerificationService.verifyEmail(request.email, request.code)
+        val userId = userService.createUserByEmail(request.email)
         val accessToken = authService.issueTokens(userId, response)
         return ResponseEntity.ok(accessToken)
     }

@@ -57,7 +57,7 @@ class EmailVerificationService(
         )
     }
 
-    fun verifyCode(email: String, code: String) {
+    fun verifyEmail(email: String, code: String) {
         validateVerificationAttempts(email)
         incrementVerificationAttempts(email)
 
