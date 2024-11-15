@@ -11,16 +11,18 @@ import org.springframework.stereotype.Component
 class JwtTokenProvider(
     @Value("\${jwt.access.secret}") private val accessSecret: String,
     @Value("\${jwt.refresh.secret}") private val refreshSecret: String,
+    @Value("\${jwt.access.expiration}") private val accessTokenExpiration: Long,
+    @Value("\${jwt.refresh.expiration}") private val refreshTokenExpiration: Long,
 ) {
     private val accessKey = Keys.hmacShaKeyFor(accessSecret.toByteArray())
     private val refreshKey = Keys.hmacShaKeyFor(refreshSecret.toByteArray())
 
     fun createAccessToken(id: Long): String {
-        return createToken(id, accessKeyPair.private, SecurityConstants.ACCESS_TOKEN_EXPIRATION)
+        return createToken(id, accessKey, accessTokenExpiration)
     }
 
     fun createRefreshToken(id: Long): String {
-        return createToken(id, refreshKeyPair.private, SecurityConstants.REFRESH_TOKEN_EXPIRATION)
+        return createToken(id, refreshKey, refreshTokenExpiration)
     }
 
     private fun createToken(id: Long, key: SecretKey, expiration: Long): String {

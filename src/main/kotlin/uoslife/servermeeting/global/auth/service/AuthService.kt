@@ -14,7 +14,8 @@ import uoslife.servermeeting.global.auth.util.CookieUtils
 @Service
 class AuthService(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val cookieUtils: CookieUtils
+    private val cookieUtils: CookieUtils,
+    @Value("\${jwt.refresh.expiration}") private val refreshTokenExpiration: Long,
 ) {
     fun getAuthenticatedUserId(token: String): Long {
         val jwt = extractToken(token)
