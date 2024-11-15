@@ -1,6 +1,5 @@
-package uoslife.servermeeting.global.auth.exception
+package uoslife.servermeeting.verification.exception
 
-import uoslife.servermeeting.global.error.exception.EmailLimitExceededException
 import uoslife.servermeeting.global.error.exception.ErrorCode
 
 class DailyVerificationAttemptLimitExceededException :

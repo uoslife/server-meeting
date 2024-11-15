@@ -1,4 +1,4 @@
-package uoslife.servermeeting.global.auth.exception
+package uoslife.servermeeting.verification.exception
 
 import uoslife.servermeeting.global.error.exception.BusinessException
 import uoslife.servermeeting.global.error.exception.ErrorCode
