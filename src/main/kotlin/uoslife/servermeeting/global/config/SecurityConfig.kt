@@ -53,7 +53,7 @@ class SecurityConfig(
                         "/api/auth/reissue",
                         "/api/verification/send-email",
                         "/api/verification/verify-email"
-                    )
+                    ) // 토큰 검사 미실시 리스트
                     .permitAll()
                     .requestMatchers("/api/**")
                     .hasRole("USER")
