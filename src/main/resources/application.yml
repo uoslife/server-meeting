@@ -96,8 +96,8 @@ jwt:
         expiration: 604800000 # 7일
 
 aws:
-    access-key-id: ${AWS_ACCESS_KEY_ID}
-    secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+    access-key-id: ${AWS_SES_ACCESS_KEY}
+    secret-access-key: ${AWS_SES_SECRET_KEY}
     region: ap-northeast-2
     ses:
         email:
