@@ -89,5 +89,5 @@ data class UserProfile(
         example =
             "[{ \"name\": \"여행\", \"isDefault\": true }, { \"name\": \"맛집 탐방하기\", \"isDefault\": false }]"
     )
-    val interest: MutableList<InterestType>?,
+    val interest: List<String>?,
 )
