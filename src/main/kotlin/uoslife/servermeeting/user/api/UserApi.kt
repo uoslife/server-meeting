@@ -13,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
-import uoslife.servermeeting.user.dto.request.CreateProfileRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.service.UserService
@@ -81,37 +80,6 @@ class UserApi(
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<Unit> {
         userService.updateUser(requestBody, userDetails.username.toLong())
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-    }
-
-    @Operation(summary = "프로필 생성", description = "사용자의 상세 프로필 정보를 생성합니다.")
-    @ApiResponses(
-        value =
-            [
-                ApiResponse(responseCode = "204", description = "프로필 생성 성공"),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "잘못된 요청 데이터",
-                    content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-                ),
-                ApiResponse(
-                    responseCode = "401",
-                    description = "인증되지 않은 사용자",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                            )]
-                )]
-    )
-    @PostMapping("/create-profile")
-    fun createProfile(
-        @RequestBody() requestBody: CreateProfileRequest,
-        @AuthenticationPrincipal userDetails: UserDetails
-    ): ResponseEntity<Unit> {
-        val id = userDetails.username.toLong()
-        userService.createProfile(requestBody, id)
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
