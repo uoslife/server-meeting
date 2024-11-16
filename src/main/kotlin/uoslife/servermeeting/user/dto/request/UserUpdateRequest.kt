@@ -3,8 +3,8 @@ package uoslife.servermeeting.user.dto.request
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
+import uoslife.servermeeting.meetingteam.exception.PreconditionFailedException
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.UserInformation
 import uoslife.servermeeting.user.entity.enums.*
 
 data class UserUpdateRequest(
@@ -12,7 +12,7 @@ data class UserUpdateRequest(
     @Schema(description = "전화번호", example = "01047324348")
     @field:Size(max = 11)
     val phoneNumber: String? = null,
-    @Schema(description = "성별", example = "MALE") val genderType: GenderType? = null,
+    @Schema(description = "성별(한번만 설정 가능)", example = "MALE") val genderType: GenderType? = null,
     @Schema(description = "나이", example = "25") val age: Int? = null, // 프론트에서 변환해서 전송
     @Schema(description = "카카오톡 아이디", example = "__uhyun", nullable = false)
     @field:NotNull
@@ -25,16 +25,21 @@ data class UserUpdateRequest(
     @Schema(description = "흡연 여부", example = "FALSE") val smoking: SmokingType?,
     @Schema(description = "MBTI", example = "INFP") val mbti: String?,
     @Schema(description = "흥미", example = "[\"EXERCISE\", \"MUSIC\"]")
-    val interest: MutableList<InterestType>? = null,
+    val interest: List<String>? = null,
     @Schema(description = "외모1", example = "ARAB") val appearanceType: AppearanceType? = null,
     @Schema(description = "외모2", example = "DOUBLE") val eyelidType: EyelidType? = null,
+    @Schema(description = "학적", example = "UNDERGRADUATE") val studentType: StudentType? = null,
 ) {
-    fun toUserPersonalInformation(existingUser: User, validMBTI: String?): UserInformation {
-        return UserInformation(
-            smoking = smoking ?: existingUser.userInformation?.smoking,
-            mbti = validMBTI ?: existingUser.userInformation?.mbti,
-            interest = interest ?: existingUser.userInformation?.interest,
-            user = existingUser
-        )
+    fun updateUserInformation(existingUser: User, validMBTI: String?) {
+        val existingUserInfo = existingUser.userInformation ?: throw PreconditionFailedException()
+        existingUserInfo.smoking = smoking ?: existingUserInfo.smoking
+        existingUserInfo.mbti = validMBTI ?: existingUserInfo.mbti
+        existingUserInfo.interest = interest ?: existingUserInfo.interest
+        existingUserInfo.height = height ?: existingUserInfo.height
+        existingUserInfo.age = age ?: existingUserInfo.age
+        existingUserInfo.studentNumber = studentNumber ?: existingUserInfo.studentNumber
+        existingUserInfo.department = department ?: existingUserInfo.department
+        existingUserInfo.eyelidType = eyelidType ?: existingUserInfo.eyelidType
+        existingUserInfo.appearanceType = appearanceType ?: existingUserInfo.appearanceType
     }
 }

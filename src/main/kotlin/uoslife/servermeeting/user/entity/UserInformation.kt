@@ -13,7 +13,7 @@ class UserInformation( // 시즌 정책에 따라 바뀌는 컬럼들
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "interest_type", joinColumns = [JoinColumn(name = "user_info_id")])
     @Enumerated(EnumType.STRING)
-    var interest: MutableList<InterestType>? = null, // 취미
+    var interest: List<String>? = null, // 취미
     @Enumerated(EnumType.STRING) var appearanceType: AppearanceType? = null,
     @Enumerated(EnumType.STRING) var eyelidType: EyelidType? = null,
     var height: Int? = null,

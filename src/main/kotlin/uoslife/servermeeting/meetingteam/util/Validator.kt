@@ -9,7 +9,7 @@ import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.user.entity.User
 
 @Component
-class Validator() {
+class Validator {
     fun isUserAlreadyHaveTeam(user: User) {
         val user = user.userTeams.filter { it.team.type == TeamType.SINGLE }
 

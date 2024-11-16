@@ -231,7 +231,9 @@ class PortOneService(
 
     @Transactional
     override fun deleteUserPayment(user: User) {
-        //        paymentRepository.
+        val userPayments = paymentRepository.findAllByUser(user) ?: return
+
+        userPayments.forEach { it.softDelete() }
     }
 
     @Transactional
