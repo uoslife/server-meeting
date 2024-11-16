@@ -76,7 +76,10 @@ class UserService(
         // 결제 소프트 삭제 우선 진행
         paymentService.deleteUserPayment(user)
         // 유저 삭제
+
+        val deletedId = user.id
         userRepository.delete(user)
+        logger.info("[유저 삭제] UserId : $deletedId")
     }
 
     fun isDuplicatedKakaoTalkId(kakaoTalkId: String): Boolean {
