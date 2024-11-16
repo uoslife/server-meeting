@@ -104,7 +104,6 @@ aws:
             title: UOSLIFE 인증 메일입니다.
             from: 시대생팀 <no-reply@uoslife.team>
             reply-to: 시대생팀 <support@uoslife.team>
-            verify-url: https://api.uoslife.com/v1/verification/email/verify
 
 auth:
     email:
