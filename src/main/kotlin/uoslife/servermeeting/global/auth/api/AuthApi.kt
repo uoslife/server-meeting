@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -89,5 +90,12 @@ class AuthApi(
             cookieUtils.deleteRefreshTokenCookie(response)
             throw e
         }
+    }
+
+
+    @PostMapping("/logout")
+    fun logOut(response: HttpServletResponse): ResponseEntity<Unit> {
+        cookieUtils.deleteRefreshTokenCookie(response)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
