@@ -6,9 +6,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
@@ -45,6 +43,17 @@ class SecurityConfig(
             } // 인증, 인가가 되지 않은 요청 발생시
             .authorizeHttpRequests {
                 it.requestMatchers(CorsUtils::isPreFlightRequest)
+                    .permitAll()
+                    .requestMatchers(
+                        "/swagger-ui/**",
+                        "/meeting/actuator/health/**",
+                        "/api/user/isDuplicatedKakaoTalkId",
+                        "/api/payment/refund/match",
+                        "/api/payment/portone-webhook",
+                        "/api/auth/reissue",
+                        "/api/verification/send-email",
+                        "/api/verification/verify-email"
+                    ) // 토큰 검사 미실시 리스트
                     .permitAll()
                     .requestMatchers("/api/**")
                     .hasRole("USER")
@@ -89,21 +98,5 @@ class SecurityConfig(
         http: HttpSecurity
     ): AuthenticationManager {
         return authConfig.authenticationManager
-    }
-
-    @Bean
-    fun webSecurityCustomizer(): WebSecurityCustomizer {
-        // 토큰 검사 미실시 리스트
-        return WebSecurityCustomizer { web: WebSecurity ->
-            web.ignoring()
-                .requestMatchers("/swagger-ui/**")
-                .requestMatchers("/meeting/actuator/health/**")
-                .requestMatchers("/api/user/isDuplicatedKakaoTalkId") // 카카오톡 중복 확인
-                .requestMatchers("/api/payment/refund/match")
-                .requestMatchers("/api/payment/portone-webhook")
-                .requestMatchers("/api/auth/reissue")
-                .requestMatchers("/api/verification/send-email")
-                .requestMatchers("/api/verification/verify-email")
-        }
     }
 }
