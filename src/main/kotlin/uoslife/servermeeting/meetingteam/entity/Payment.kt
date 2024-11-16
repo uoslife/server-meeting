@@ -23,9 +23,7 @@ class Payment(
     var price: Int,
     var impUid: String? = null,
     @Enumerated(EnumType.STRING) var status: PaymentStatus = PaymentStatus.PENDING,
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    var user: User,
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "user_id") var user: User? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meetingTeam_id", nullable = false)
     var meetingTeam: MeetingTeam,
@@ -53,5 +51,10 @@ class Payment(
     fun updatePayment(impUid: String, status: PaymentStatus) {
         this.impUid = impUid
         this.status = status
+    }
+
+    fun softDelete() {
+        user = null
+        status = PaymentStatus.USER_DELETED
     }
 }

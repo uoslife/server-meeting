@@ -7,4 +7,5 @@ enum class PaymentStatus {
     FAILED,
     REFUND_FAILED,
     REFUND,
+    USER_DELETED,
 }
