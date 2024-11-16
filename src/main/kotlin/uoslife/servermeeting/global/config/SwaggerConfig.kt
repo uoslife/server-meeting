@@ -36,6 +36,7 @@ class SwaggerConfig {
         return OpenAPI()
             .servers(
                 listOf(
+                    Server().url("https://uosmeeting.uoslife.com"),
                     Server().url("https://meeting.alpha.uoslife.com"),
                     Server().url("http://localhost:8081"),
                     Server().url("https://meeting.uoslife.com"),
