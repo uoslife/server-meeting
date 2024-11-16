@@ -92,7 +92,16 @@ class AuthApi(
         }
     }
 
-
+    @Operation(
+        summary = "로그아웃",
+        description = "사용자를 로그아웃 처리합니다. 클라이언트는 응답 수신 후 저장된 Access Token을 삭제해야 합니다."
+    )
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(responseCode = "204", description = "로그아웃 성공"),
+            ]
+    )
     @PostMapping("/logout")
     fun logOut(response: HttpServletResponse): ResponseEntity<Unit> {
         cookieUtils.deleteRefreshTokenCookie(response)
