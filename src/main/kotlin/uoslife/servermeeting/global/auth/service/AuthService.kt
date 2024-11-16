@@ -4,6 +4,7 @@ import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.JwtException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.global.auth.dto.response.JwtResponse
 import uoslife.servermeeting.global.auth.exception.*
@@ -14,15 +15,15 @@ import uoslife.servermeeting.global.auth.util.CookieUtils
 @Service
 class AuthService(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val cookieUtils: CookieUtils
+    private val cookieUtils: CookieUtils,
+    @Value("\${jwt.refresh.expiration}") private val refreshTokenExpiration: Long,
 ) {
-    fun authenticateToken(token: String): Long {
+    fun getAuthenticatedUserId(token: String): Long {
         val jwt = extractToken(token)
 
         if (!jwtTokenProvider.validateAccessToken(jwt)) {
             throw JwtTokenInvalidSignatureException()
         }
-
         return jwtTokenProvider.getUserIdFromAccessToken(jwt)
     }
 
@@ -30,11 +31,7 @@ class AuthService(
         val accessToken = jwtTokenProvider.createAccessToken(userId)
         val refreshToken = jwtTokenProvider.createRefreshToken(userId)
 
-        cookieUtils.addRefreshTokenCookie(
-            response,
-            SecurityConstants.TOKEN_PREFIX + refreshToken,
-            SecurityConstants.REFRESH_TOKEN_EXPIRATION
-        )
+        cookieUtils.addRefreshTokenCookie(response, refreshToken, refreshTokenExpiration)
 
         return JwtResponse(accessToken)
     }
@@ -45,13 +42,11 @@ class AuthService(
                 ?: throw JwtRefreshTokenNotFoundException()
 
         try {
-            val jwt = extractToken(refreshToken)
-
-            if (!jwtTokenProvider.validateRefreshToken(jwt)) {
+            if (!jwtTokenProvider.validateRefreshToken(refreshToken)) {
                 throw JwtTokenInvalidSignatureException()
             }
 
-            val userId = jwtTokenProvider.getUserIdFromRefreshToken(jwt)
+            val userId = jwtTokenProvider.getUserIdFromRefreshToken(refreshToken)
             val accessToken = jwtTokenProvider.createAccessToken(userId)
 
             return JwtResponse(accessToken)

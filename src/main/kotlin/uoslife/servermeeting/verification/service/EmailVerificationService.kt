@@ -1,4 +1,4 @@
-package uoslife.servermeeting.global.auth.service
+package uoslife.servermeeting.verification.service
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
 import com.amazonaws.services.simpleemail.model.*
@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
-import uoslife.servermeeting.global.auth.dto.response.SendVerificationEmailResponse
-import uoslife.servermeeting.global.auth.exception.*
+import uoslife.servermeeting.verification.dto.response.SendVerificationEmailResponse
+import uoslife.servermeeting.verification.exception.*
 
 @Service
 class EmailVerificationService(
@@ -34,20 +34,15 @@ class EmailVerificationService(
     fun sendVerificationEmail(email: String): SendVerificationEmailResponse {
         // 이메일 형식 검증
         validateEmail(email)
-
         // 발송 제한 확인
         validateSendCount(email)
-
         // 인증 코드 생성 및 저장
         val verificationCode = generateVerificationCode()
         saveVerificationCode(email, verificationCode)
-
         // Redis에 발송 횟수 증가
         incrementSendCount(email)
-
         // 이메일 전송
         sendEmail(email, verificationCode)
-
         // 코드 만료 시각 계산
         val expirationTime = calculateExpirationTime()
 
@@ -57,16 +52,13 @@ class EmailVerificationService(
         )
     }
 
-    fun verifyCode(email: String, code: String) {
+    fun verifyEmail(email: String, code: String) {
         validateVerificationAttempts(email)
         incrementVerificationAttempts(email)
-
         // Redis에서 인증 코드 조회
         val redisCode = getVerificationCode(email)
-
         // 인증 코드 검증
         validateVerificationCode(redisCode, code)
-
         // 검증 성공한 코드 삭제
         clearVerificationData(email)
     }
@@ -106,16 +98,17 @@ class EmailVerificationService(
     }
 
     private fun sendEmail(email: String, verificationCode: String) {
+        val codeExpiryMinutes = codeExpiry / 60
+        val emailBody = String.format(emailTemplate, codeExpiryMinutes, verificationCode)
         val request =
             SendEmailRequest()
                 .withDestination(Destination().withToAddresses(email))
                 .withMessage(
                     Message()
                         .withSubject(Content(emailTitle))
-                        .withBody(Body().withText(Content("인증 코드: $verificationCode")))
+                        .withBody(Body().withHtml(Content(emailBody)))
                 )
                 .withSource(emailFrom)
-
         try {
             sesClient.sendEmail(request)
         } catch (e: Exception) {
@@ -165,4 +158,32 @@ class EmailVerificationService(
         }
         return "$prefix:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
     }
+
+    private val emailTemplate =
+        """
+        <html>
+            <body style="font-family: Arial, sans-serif;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+                        <img alt="Logo" src="https://www.uoslife.team/favicon.svg" width="146" height="39" />
+                        <span style="font-size: 19px; font-weight: bold;">시대생</span>
+                    </div>
+
+                    <h1 style="font-size: 34px; margin-bottom: 20px;">인증번호 안내</h1>
+                    <p style="color: #575757;">인증번호의 유효시간은 <strong>%d분</strong>입니다.</p>
+
+                    <div style="border: 2px solid #d1d1d1; padding: 35px; text-align: center; margin: 30px 0;">
+                        <strong style="font-size: 40px; color: #f8605f;">%s</strong>
+                    </div>
+
+                    <footer style="background: #f1f1f1; padding: 25px; margin-top: 30px;">
+                        <a href="https://www.instagram.com/uoslife_official/" style="color: #575757; text-decoration: none; margin-right: 20px; font-size: 12px;">Instagram</a>
+                        <a href="https://www.uoslife.team/" style="color: #575757; text-decoration: none; font-size: 12px;">Blog</a>
+                        <p style="margin-top: 10px; font-size: 12px; color: #575757;">© 2024 시대생팀</p>
+                    </footer>
+                </div>
+            </body>
+        </html>
+    """.trimIndent(
+        )
 }

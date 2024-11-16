@@ -1,6 +1,5 @@
-package uoslife.servermeeting.global.auth.exception
+package uoslife.servermeeting.verification.exception
 
 import uoslife.servermeeting.global.error.exception.ErrorCode
-import uoslife.servermeeting.global.error.exception.InvalidEmailException
 
 class InvalidEmailFormatException : InvalidEmailException(ErrorCode.EMAIL_INVALID_FORMAT)
