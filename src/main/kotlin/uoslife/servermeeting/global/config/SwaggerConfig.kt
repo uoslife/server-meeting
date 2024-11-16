@@ -29,14 +29,14 @@ class SwaggerConfig {
             Info()
                 .title("UOSLIFE Meeting API")
                 .description("UOSLIFE Meeting API Documentation")
-                .version("v4.0.1")
+                .version("v5.0.1")
 
         val securityRequirement = SecurityRequirement().addList(ACCESS_TOKEN)
 
         return OpenAPI()
             .servers(
                 listOf(
-                    Server().url("https://uosmeeting.uoslife.com"),
+                    Server().url("https://uosmeeting.uoslife.net"),
                     Server().url("https://meeting.alpha.uoslife.com"),
                     Server().url("http://localhost:8081"),
                     Server().url("https://meeting.uoslife.com"),
