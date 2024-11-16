@@ -65,6 +65,7 @@ class SecurityConfig(
             listOf(
                 "http://localhost:8081",
                 "http://localhost:3000",
+                "https://uosmeeting.uoslife.net",
                 "https://uoslife.com",
                 "https://meeting.uoslife.com",
                 "https://meeting.alpha.uoslife.com",
