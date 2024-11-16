@@ -96,18 +96,17 @@ jwt:
         expiration: 604800000 # 7일
 
 aws:
+    access-key-id: ${AWS_SES_ACCESS_KEY}
+    secret-access-key: ${AWS_SES_SECRET_KEY}
+    region: ap-northeast-2
     ses:
-        access-key: ${AWS_SES_ACCESS_KEY}
-        secret-key: ${AWS_SES_SECRET_KEY}
-        region: ap-northeast-2
         email:
             title: UOSLIFE 인증 메일입니다.
             from: 시대생팀 <no-reply@uoslife.team>
             reply-to: 시대생팀 <support@uoslife.team>
-            verify-url: https://api.uoslife.com/v1/verification/email/verify
 
 auth:
     email:
-        verification-code-expiry: 180  # 인증코드 유효시간 (3분)
+        verification-code-expiry: 180  # 인증코드 유효시간 (초)
         daily-send-limit: 5  # 하루 최대 발송 횟수
         code-verify-limit: 5 # 일일 최대 인증 횟수
