@@ -11,15 +11,15 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class AwsSesConfig {
 
-    @Value("\${aws.ses.access-key}") private lateinit var accessKey: String
+    @Value("\${aws.access-key-id}") private lateinit var accessKeyId: String
 
-    @Value("\${aws.ses.secret-key}") private lateinit var secretKey: String
+    @Value("\${aws.secret-access-key}") private lateinit var secretAccessKey: String
 
-    @Value("\${aws.ses.region}") private lateinit var region: String
+    @Value("\${aws.region}") private lateinit var region: String
 
     @Bean
     fun amazonSimpleEmailService(): AmazonSimpleEmailService {
-        val credentials = BasicAWSCredentials(accessKey, secretKey)
+        val credentials = BasicAWSCredentials(accessKeyId, secretAccessKey)
         return AmazonSimpleEmailServiceClientBuilder.standard()
             .withCredentials(AWSStaticCredentialsProvider(credentials))
             .withRegion(region)

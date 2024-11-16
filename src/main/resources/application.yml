@@ -96,10 +96,10 @@ jwt:
         expiration: 604800000 # 7일
 
 aws:
+    access-key-id: ${AWS_ACCESS_KEY_ID}
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+    region: ap-northeast-2
     ses:
-        access-key: ${AWS_SES_ACCESS_KEY}
-        secret-key: ${AWS_SES_SECRET_KEY}
-        region: ap-northeast-2
         email:
             title: UOSLIFE 인증 메일입니다.
             from: 시대생팀 <no-reply@uoslife.team>
