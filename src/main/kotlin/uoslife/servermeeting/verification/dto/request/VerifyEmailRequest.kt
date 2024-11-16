@@ -9,8 +9,10 @@ import jakarta.validation.constraints.Size
 data class VerifyEmailRequest(
     @field:Email(message = "올바른 이메일 형식이 아닙니다")
     @field:NotBlank(message = "이메일은 필수입니다")
+    @Schema(description = "이메일", example = "zaza0804@uos.ac.kr")
     val email: String,
     @field:NotBlank(message = "인증 코드는 필수입니다")
     @field:Size(min = 4, max = 4, message = "인증 코드는 4자리여야 합니다")
+    @Schema(description = "코드", example = "0000")
     val code: String
 )

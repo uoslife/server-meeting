@@ -21,8 +21,8 @@ class UserDao(
             .selectFrom(userTeam)
             .join(userTeam.team)
             .join(userTeam.user)
-            .fetchJoin()
             .where(userTeam.user.id.eq(userId).and(userTeam.team.type.eq(teamType)))
+            .fetchJoin()
             .fetchOne()
     }
     fun findNotMatchedPayment(userIdList: List<Long>): List<Payment> {
