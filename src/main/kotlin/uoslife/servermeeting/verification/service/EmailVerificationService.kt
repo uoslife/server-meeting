@@ -165,15 +165,15 @@ class EmailVerificationService(
             <body style="font-family: Arial, sans-serif;">
                 <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
-                        <img alt="Logo" src="https://www.uoslife.team/favicon.svg" width="146" height="39" />
+                        <img alt="Logo" src="https://www.uoslife.team/favicon.svg" width="40" height="40" />
                         <span style="font-size: 19px; font-weight: bold;">시대생</span>
                     </div>
 
                     <h1 style="font-size: 34px; margin-bottom: 20px;">인증번호 안내</h1>
-                    <p style="color: #575757;">인증번호의 유효시간은 <strong>%d분</strong>입니다.</p>
+                    <p style="color: #575757; font-size: 16px;">인증번호의 유효시간은 <strong>%d분</strong>입니다.</p>
 
                     <div style="border: 2px solid #d1d1d1; padding: 35px; text-align: center; margin: 30px 0;">
-                        <strong style="font-size: 40px; color: #f8605f;">%s</strong>
+                        <strong style="font-size: 40px;">%s</strong>
                     </div>
 
                     <footer style="background: #f1f1f1; padding: 25px; margin-top: 30px;">
