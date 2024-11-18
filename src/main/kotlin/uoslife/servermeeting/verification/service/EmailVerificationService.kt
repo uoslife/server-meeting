@@ -1,7 +1,5 @@
 package uoslife.servermeeting.verification.service
 
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
-import com.amazonaws.services.simpleemail.model.*
 import jakarta.mail.internet.AddressException
 import jakarta.mail.internet.InternetAddress
 import java.time.Duration
@@ -17,12 +15,10 @@ import uoslife.servermeeting.verification.exception.*
 @Service
 class EmailVerificationService(
     private val redisTemplate: RedisTemplate<String, Any>,
-    private val sesClient: AmazonSimpleEmailService,
+    private val asyncEmailService: AsyncEmailService,
     @Value("\${auth.email.verification-code-expiry}") private val codeExpiry: Long,
     @Value("\${auth.email.daily-send-limit}") private val dailySendLimit: Int,
     @Value("\${auth.email.code-verify-limit}") private val codeVerifyLimit: Int,
-    @Value("\${aws.ses.email.title}") private val emailTitle: String,
-    @Value("\${aws.ses.email.from}") private val emailFrom: String,
 ) {
     companion object {
         private const val CODE_PREFIX = "email_verification_code:"
@@ -36,13 +32,8 @@ class EmailVerificationService(
         validateEmail(email)
         // 발송 제한 확인
         validateSendCount(email)
-        // 인증 코드 생성 및 저장
-        val verificationCode = generateVerificationCode()
-        saveVerificationCode(email, verificationCode)
-        // Redis에 발송 횟수 증가
-        incrementSendCount(email)
-        // 이메일 전송
-        sendEmail(email, verificationCode)
+        // 비동기 이메일 전송
+        asyncEmailService.sendEmailAsync(email)
         // 코드 만료 시각 계산
         val expirationTime = calculateExpirationTime()
 
