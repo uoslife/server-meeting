@@ -76,12 +76,6 @@ management:
         diskspace:
             enabled: false
 
-account:
-    url: ${ACCOUNT_API_URL}
-    access:
-        id: ${ACCOUNT_API_ACCESS_ID}
-        secret: ${ACCOUNT_API_ACCESS_SECRET}
-
 logging:
     level:
         org:

@@ -1,16 +1,16 @@
 version: '3'
 
 services:
-    postgres:
-        image: postgres
-        restart: always
-        ports:
-            - "5432:5432"
-        container_name: postgres
-        environment:
-            POSTGRES_USER: server-meeting
-            POSTGRES_PASSWORD: server-meeting
-            POSTGRES_DB: server-meeting
+#    postgres:
+#        image: postgres
+#        restart: always
+#        ports:
+#            - "5432:5432"
+#        container_name: postgres
+#        environment:
+#            POSTGRES_USER: server-meeting
+#            POSTGRES_PASSWORD: server-meeting
+#            POSTGRES_DB: server-meeting
 
     redis:
         image: redis
@@ -27,9 +27,25 @@ services:
         ports:
             - "8081:8081"
         environment:
-            SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/server-meeting?stringtype=unspecified
+            SPRING_DATASOURCE_URL:
             SPRING_DATASOURCE_USERNAME: server-meeting
             SPRING_DATASOURCE_PASSWORD: server-meeting
+
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
+
+            # JWT
+            JWT_ACCESS_SECRET:
+            JWT_REFRESH_SECRET:
+
+            AWS_SES_ACCESS_KEY:
+            AWS_SES_SECRET_KEY:
+
+            COOKIE_DOMAIN:
+            COOKIE_SECURE:
+
+            PORTONE_API_IMP_KEY:
+            PORTONE_API_IMP_SECRET:
+
         depends_on:
-            - postgres
             - redis
