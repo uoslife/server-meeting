@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.verification.dto.response.SendVerificationEmailResponse
 import uoslife.servermeeting.verification.exception.*
+import uoslife.servermeeting.verification.util.VerificationUtils
 
 @Service
 class EmailVerificationService(
@@ -35,7 +36,7 @@ class EmailVerificationService(
         // 비동기 이메일 전송
         asyncEmailService.sendEmailAsync(email)
         // 코드 만료 시각 계산
-        val expirationTime = calculateExpirationTime()
+        val expirationTime = VerificationUtils.calculateExpirationTime(codeExpiry)
 
         return SendVerificationEmailResponse(
             expirationTime = expirationTime,
@@ -55,7 +56,8 @@ class EmailVerificationService(
     }
 
     private fun getVerificationCode(email: String): String {
-        val verificationCodeKey = generateRedisKey(CODE_PREFIX, email)
+        val verificationCodeKey =
+            VerificationUtils.generateRedisKey(VerificationConstants.CODE_PREFIX, email)
         return redisTemplate.opsForValue().get(verificationCodeKey).toString()
     }
 
@@ -66,7 +68,8 @@ class EmailVerificationService(
     }
 
     private fun validateSendCount(email: String) {
-        val sendCountKey = generateRedisKey(SEND_COUNT_PREFIX, email, true)
+        val sendCountKey =
+            VerificationUtils.generateRedisKey(VerificationConstants.SEND_COUNT_PREFIX, email, true)
         val currentCount = redisTemplate.opsForValue().get(sendCountKey)?.toString()?.toInt() ?: 0
         if (currentCount >= dailySendLimit) {
             throw DailyEmailSendLimitExceededException()
@@ -123,7 +126,12 @@ class EmailVerificationService(
     }
 
     private fun validateVerificationAttempts(email: String) {
-        val attemptsKey = generateRedisKey(VERIFY_COUNT_PREFIX, email, true)
+        val attemptsKey =
+            VerificationUtils.generateRedisKey(
+                VerificationConstants.VERIFY_COUNT_PREFIX,
+                email,
+                true
+            )
         val attempts = redisTemplate.opsForValue().get(attemptsKey)?.toString()?.toInt() ?: 0
         if (attempts >= codeVerifyLimit) {
             throw DailyVerificationAttemptLimitExceededException()
@@ -131,50 +139,25 @@ class EmailVerificationService(
     }
 
     private fun incrementVerificationAttempts(email: String) {
-        val attemptsKey = generateRedisKey(VERIFY_COUNT_PREFIX, email, true)
+        val attemptsKey =
+            VerificationUtils.generateRedisKey(
+                VerificationConstants.VERIFY_COUNT_PREFIX,
+                email,
+                true
+            )
         redisTemplate.opsForValue().increment(attemptsKey)
         redisTemplate.expire(attemptsKey, Duration.ofDays(1))
     }
 
     private fun clearVerificationData(email: String) {
-        val codeKey = generateRedisKey(CODE_PREFIX, email)
-        val attemptsKey = generateRedisKey(VERIFY_COUNT_PREFIX, email, true)
+        val codeKey = VerificationUtils.generateRedisKey(VerificationConstants.CODE_PREFIX, email)
+        val attemptsKey =
+            VerificationUtils.generateRedisKey(
+                VerificationConstants.VERIFY_COUNT_PREFIX,
+                email,
+                true
+            )
         redisTemplate.delete(codeKey)
         redisTemplate.delete(attemptsKey)
     }
-
-    private fun generateRedisKey(prefix: String, email: String, isDate: Boolean = false): String {
-        if (!isDate) {
-            return "$prefix:$email"
-        }
-        return "$prefix:$email:${LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)}"
-    }
-
-    private val emailTemplate =
-        """
-        <html>
-            <body style="font-family: Arial, sans-serif;">
-                <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
-                        <img alt="Logo" src="https://www.uoslife.team/favicon.svg" width="40" height="40" />
-                        <span style="font-size: 19px; font-weight: bold;">시대생</span>
-                    </div>
-
-                    <h1 style="font-size: 34px; margin-bottom: 20px;">인증번호 안내</h1>
-                    <p style="color: #575757; font-size: 16px;">인증번호의 유효시간은 <strong>%d분</strong>입니다.</p>
-
-                    <div style="border: 2px solid #d1d1d1; padding: 35px; text-align: center; margin: 30px 0;">
-                        <strong style="font-size: 40px;">%s</strong>
-                    </div>
-
-                    <footer style="background: #f1f1f1; padding: 25px; margin-top: 30px;">
-                        <a href="https://www.instagram.com/uoslife_official/" style="color: #575757; text-decoration: none; margin-right: 20px; font-size: 12px;">Instagram</a>
-                        <a href="https://www.uoslife.team/" style="color: #575757; text-decoration: none; font-size: 12px;">Blog</a>
-                        <p style="margin-top: 10px; font-size: 12px; color: #575757;">© 2024 시대생팀</p>
-                    </footer>
-                </div>
-            </body>
-        </html>
-    """.trimIndent(
-        )
 }
