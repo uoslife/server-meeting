@@ -47,11 +47,15 @@ class SecurityConfig(
                 it.requestMatchers(CorsUtils::isPreFlightRequest)
                     .permitAll()
                     .requestMatchers(
-                        "/api/verification/send-email",
-                        "/api/verification/verify-email",
+                        "/swagger-ui/**",
+                        "/meeting/actuator/health/**",
+                        "/api/user/isDuplicatedKakaoTalkId",
+                        "/api/payment/refund/match",
+                        "/api/payment/portone-webhook",
                         "/api/auth/reissue",
-                        "/api/payment/portone-webhook"
-                    )
+                        "/api/verification/send-email",
+                        "/api/verification/verify-email"
+                    ) // 토큰 검사 미실시 리스트
                     .permitAll()
                     .requestMatchers("/api/**")
                     .hasRole("USER")
@@ -96,21 +100,5 @@ class SecurityConfig(
         http: HttpSecurity
     ): AuthenticationManager {
         return authConfig.authenticationManager
-    }
-
-    @Bean
-    fun webSecurityCustomizer(): WebSecurityCustomizer {
-        // 토큰 검사 미실시 리스트
-        return WebSecurityCustomizer { web: WebSecurity ->
-            web.ignoring()
-                .requestMatchers("/swagger-ui/**")
-                .requestMatchers("/meeting/actuator/health/**")
-                .requestMatchers("/api/user/isDuplicatedKakaoTalkId") // 카카오톡 중복 확인
-                .requestMatchers("/api/payment/refund/match")
-                .requestMatchers("/api/payment/portone-webhook")
-                .requestMatchers("/api/auth/reissue")
-                .requestMatchers("/api/verification/send-email")
-                .requestMatchers("/api/verification/verify-email")
-        }
     }
 }
