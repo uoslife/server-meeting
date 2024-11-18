@@ -46,6 +46,13 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it.requestMatchers(CorsUtils::isPreFlightRequest)
                     .permitAll()
+                    .requestMatchers(
+                        "/api/verification/send-email",
+                        "/api/verification/verify-email",
+                        "/api/auth/reissue",
+                        "/api/payment/portone-webhook"
+                    )
+                    .permitAll()
                     .requestMatchers("/api/**")
                     .hasRole("USER")
             } // CORS preflight 요청 허용
