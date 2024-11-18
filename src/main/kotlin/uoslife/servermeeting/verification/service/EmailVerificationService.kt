@@ -3,14 +3,12 @@ package uoslife.servermeeting.verification.service
 import jakarta.mail.internet.AddressException
 import jakarta.mail.internet.InternetAddress
 import java.time.Duration
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.verification.dto.response.SendVerificationEmailResponse
 import uoslife.servermeeting.verification.exception.*
+import uoslife.servermeeting.verification.util.VerificationConstants
 import uoslife.servermeeting.verification.util.VerificationUtils
 
 @Service
@@ -21,12 +19,6 @@ class EmailVerificationService(
     @Value("\${auth.email.daily-send-limit}") private val dailySendLimit: Int,
     @Value("\${auth.email.code-verify-limit}") private val codeVerifyLimit: Int,
 ) {
-    companion object {
-        private const val CODE_PREFIX = "email_verification_code:"
-        private const val SEND_COUNT_PREFIX = "email_send_count"
-        private const val VERIFY_COUNT_PREFIX = "verification_attempts:"
-        private const val UOS_DOMAIN = "@uos.ac.kr"
-    }
 
     fun sendVerificationEmail(email: String): SendVerificationEmailResponse {
         // 이메일 형식 검증
@@ -76,48 +68,10 @@ class EmailVerificationService(
         }
     }
 
-    private fun generateVerificationCode(): String {
-        return String.format("%04d", (0..9999).random())
-    }
-
-    private fun saveVerificationCode(email: String, verificationCode: String) {
-        val codeKey = generateRedisKey(CODE_PREFIX, email)
-        redisTemplate.opsForValue().set(codeKey, verificationCode, codeExpiry, TimeUnit.SECONDS)
-    }
-
-    private fun incrementSendCount(email: String) {
-        val sendCountKey = generateRedisKey(SEND_COUNT_PREFIX, email, true)
-        redisTemplate.opsForValue().increment(sendCountKey)
-        redisTemplate.expire(sendCountKey, Duration.ofDays(1))
-    }
-
-    private fun sendEmail(email: String, verificationCode: String) {
-        val codeExpiryMinutes = codeExpiry / 60
-        val emailBody = String.format(emailTemplate, codeExpiryMinutes, verificationCode)
-        val request =
-            SendEmailRequest()
-                .withDestination(Destination().withToAddresses(email))
-                .withMessage(
-                    Message()
-                        .withSubject(Content(emailTitle))
-                        .withBody(Body().withHtml(Content(emailBody)))
-                )
-                .withSource(emailFrom)
-        try {
-            sesClient.sendEmail(request)
-        } catch (e: Exception) {
-            throw EmailDeliveryFailedException()
-        }
-    }
-
-    private fun calculateExpirationTime(): Long {
-        return System.currentTimeMillis() + codeExpiry * 1000 // 현재 시간 + 유효 시간 (밀리초)
-    }
-
     private fun validateEmail(email: String) {
         try {
             InternetAddress(email).validate()
-            if (!email.endsWith(UOS_DOMAIN)) {
+            if (!email.endsWith(VerificationConstants.UOS_DOMAIN)) {
                 throw InvalidEmailDomainException()
             }
         } catch (e: AddressException) {
