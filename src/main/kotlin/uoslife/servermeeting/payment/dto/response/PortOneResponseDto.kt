@@ -1,4 +1,4 @@
-package uoslife.servermeeting.meetingteam.dto.response
+package uoslife.servermeeting.payment.dto.response
 
 class PortOneResponseDto {
     data class AccessTokenResponse(
@@ -17,7 +17,11 @@ class PortOneResponseDto {
         var code: Int?,
         var message: String?,
         var response: PaymentAnnotation?
-    )
+    ) {
+        fun isPaid(): Boolean {
+            return response?.status == "paid"
+        }
+    }
 
     data class PaymentAnnotation(
         var imp_uid: String,

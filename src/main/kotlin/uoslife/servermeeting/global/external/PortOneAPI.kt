@@ -3,8 +3,8 @@ package uoslife.servermeeting.global.external
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.config.FeginClientConfig
-import uoslife.servermeeting.meetingteam.dto.request.PortOneRequestDto
-import uoslife.servermeeting.meetingteam.dto.response.PortOneResponseDto
+import uoslife.servermeeting.payment.dto.request.PortOneRequestDto
+import uoslife.servermeeting.payment.dto.response.PortOneResponseDto
 
 @FeignClient(
     name = "uoslife-meeting-payment-api",
