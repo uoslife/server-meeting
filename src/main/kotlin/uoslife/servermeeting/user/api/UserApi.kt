@@ -23,7 +23,6 @@ import uoslife.servermeeting.user.service.UserService
 class UserApi(
     private val userService: UserService,
 ) {
-
     @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 정보를 조회합니다.")
     @ApiResponses(
         value =
@@ -49,7 +48,7 @@ class UserApi(
         @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<UserFindResponse> {
         val userFindResponseDto: UserFindResponse =
-            userService.findUser(userDetails.username.toLong())
+            userService.getUser(userDetails.username.toLong())
 
         return ResponseEntity.ok().body(userFindResponseDto)
     }

@@ -31,7 +31,7 @@ class UserService(
         private val logger = LoggerFactory.getLogger(UserService::class.java)
     }
 
-    fun getUserByEmail(email: String): User {
+    fun findUserByEmail(email: String): User {
         return userRepository.findByEmail(email) ?: throw UserNotFoundException()
     }
 
@@ -39,7 +39,7 @@ class UserService(
         return userRepository.save(User.create(email = email))
     }
 
-    fun findUser(id: Long): UserFindResponse {
+    fun getUser(id: Long): UserFindResponse {
         val user = userDao.findUserAllInfo(id) ?: throw UserNotFoundException()
 
         return UserFindResponse.valueOf(user)
