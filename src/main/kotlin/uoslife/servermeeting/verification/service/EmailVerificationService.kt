@@ -3,6 +3,7 @@ package uoslife.servermeeting.verification.service
 import jakarta.mail.internet.AddressException
 import jakarta.mail.internet.InternetAddress
 import java.time.Duration
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
@@ -19,6 +20,9 @@ class EmailVerificationService(
     @Value("\${auth.email.daily-send-limit}") private val dailySendLimit: Int,
     @Value("\${auth.email.code-verify-limit}") private val codeVerifyLimit: Int,
 ) {
+    companion object {
+        private val logger = LoggerFactory.getLogger(EmailVerificationService::class.java)
+    }
 
     fun sendVerificationEmail(email: String): SendVerificationEmailResponse {
         // 이메일 형식 검증
@@ -26,7 +30,14 @@ class EmailVerificationService(
         // 발송 제한 확인
         validateSendCount(email)
         // 비동기 이메일 전송
-        asyncEmailService.sendEmailAsync(email)
+        val asyncResult = asyncEmailService.sendEmailAsync(email)
+        asyncResult.whenComplete { _, exception ->
+            if (exception != null) {
+                logger.error("[이메일 전송 실패] EMAIL : $email")
+            } else {
+                logger.info("[이메일 전송 성공] EMAIL : $email")
+            }
+        }
         // 코드 만료 시각 계산
         val expirationTime = VerificationUtils.calculateExpirationTime(codeExpiry)
 
