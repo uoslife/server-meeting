@@ -3,6 +3,7 @@ package uoslife.servermeeting.verification.service
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
 import com.amazonaws.services.simpleemail.model.*
 import java.time.Duration
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
@@ -24,11 +25,16 @@ class AsyncEmailService(
     @Value("\${aws.ses.email.from}") private val emailFrom: String
 ) {
     @Async
-    fun sendEmailAsync(email: String) {
-        val verificationCode = VerificationUtils.generateVerificationCode()
-        saveVerificationCode(email, verificationCode)
-        sendEmail(email, verificationCode)
-        incrementSendCount(email)
+    fun sendEmailAsync(email: String): CompletableFuture<Unit> {
+        return try {
+            val verificationCode = VerificationUtils.generateVerificationCode()
+            saveVerificationCode(email, verificationCode)
+            sendEmail(email, verificationCode)
+            incrementSendCount(email)
+            CompletableFuture.completedFuture(Unit)
+        } catch (e: Exception) {
+            CompletableFuture.failedFuture(EmailDeliveryFailedException())
+        }
     }
 
     private fun saveVerificationCode(email: String, verificationCode: String) {
@@ -60,10 +66,6 @@ class AsyncEmailService(
                         .withBody(Body().withHtml(Content(emailBody)))
                 )
                 .withSource(emailFrom)
-        try {
-            sesClient.sendEmail(request)
-        } catch (e: Exception) {
-            throw EmailDeliveryFailedException()
-        }
+        sesClient.sendEmail(request)
     }
 }
