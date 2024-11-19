@@ -16,6 +16,16 @@ class UserTeamDao(
     private val queryFactory: JPAQueryFactory,
     private val entityManager: EntityManager,
 ) {
+    fun findUserWithMeetingTeam(userId: Long, teamType: TeamType): UserTeam? {
+        return queryFactory
+            .selectFrom(userTeam)
+            .join(userTeam.team)
+            .join(userTeam.user)
+            .where(userTeam.user.id.eq(userId).and(userTeam.team.type.eq(teamType)))
+            .fetchJoin()
+            .fetchOne()
+    }
+
     fun saveUserTeam(meetingTeam: MeetingTeam, user: User, isLeader: Boolean) {
         entityManager.persist(
             UserTeam(

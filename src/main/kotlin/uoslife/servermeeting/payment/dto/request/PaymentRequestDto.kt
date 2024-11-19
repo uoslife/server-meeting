@@ -1,10 +1,10 @@
-package uoslife.servermeeting.meetingteam.dto.request
+package uoslife.servermeeting.payment.dto.request
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
-import uoslife.servermeeting.meetingteam.entity.enums.PayMethod
-import uoslife.servermeeting.meetingteam.entity.enums.PaymentGateway
+import uoslife.servermeeting.payment.entity.enums.PayMethod
+import uoslife.servermeeting.payment.entity.enums.PaymentGateway
 
 class PaymentRequestDto {
     data class PaymentRequestRequest(

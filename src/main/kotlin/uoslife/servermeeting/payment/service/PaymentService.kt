@@ -1,8 +1,8 @@
-package uoslife.servermeeting.meetingteam.service
+package uoslife.servermeeting.payment.service
 
-import uoslife.servermeeting.meetingteam.dto.request.PaymentRequestDto
-import uoslife.servermeeting.meetingteam.dto.response.PaymentResponseDto
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.payment.dto.request.PaymentRequestDto
+import uoslife.servermeeting.payment.dto.response.PaymentResponseDto
 import uoslife.servermeeting.user.entity.User
 
 interface PaymentService {

@@ -3,7 +3,7 @@ package uoslife.servermeeting.user.dto.request
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
-import uoslife.servermeeting.meetingteam.exception.PreconditionFailedException
+import uoslife.servermeeting.meetingteam.exception.UserInfoNotCompletedException
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.enums.*
 
@@ -31,7 +31,7 @@ data class UserUpdateRequest(
     @Schema(description = "학적", example = "UNDERGRADUATE") val studentType: StudentType? = null,
 ) {
     fun updateUserInformation(existingUser: User, validMBTI: String?) {
-        val existingUserInfo = existingUser.userInformation ?: throw PreconditionFailedException()
+        val existingUserInfo = existingUser.userInformation ?: throw UserInfoNotCompletedException()
         existingUserInfo.smoking = smoking ?: existingUserInfo.smoking
         existingUserInfo.mbti = validMBTI ?: existingUserInfo.mbti
         existingUserInfo.interest = interest ?: existingUserInfo.interest

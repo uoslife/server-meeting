@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uoslife.servermeeting.meetingteam.exception.PreconditionFailedException
+import uoslife.servermeeting.meetingteam.exception.UserInfoNotCompletedException
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
-import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.util.Validator
+import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserFindResponse
@@ -53,7 +53,7 @@ class UserService(
     @Transactional
     fun updateUser(requestDto: UserUpdateRequest, id: Long) {
         val existingUser = userDao.findUserAllInfo(id) ?: throw UserNotFoundException()
-        if (existingUser.userInformation == null) throw PreconditionFailedException()
+        if (existingUser.userInformation == null) throw UserInfoNotCompletedException()
 
         existingUser.update(requestDto)
         val validMBTI = validator.setValidMBTI(requestDto.mbti)

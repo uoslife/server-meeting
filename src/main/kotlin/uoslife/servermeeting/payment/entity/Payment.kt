@@ -1,12 +1,13 @@
-package uoslife.servermeeting.meetingteam.entity
+package uoslife.servermeeting.payment.entity
 
 import jakarta.persistence.*
 import java.util.UUID
 import uoslife.servermeeting.global.common.BaseEntity
-import uoslife.servermeeting.meetingteam.entity.enums.PayMethod
-import uoslife.servermeeting.meetingteam.entity.enums.PaymentGateway
-import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
+import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.payment.entity.enums.PayMethod
+import uoslife.servermeeting.payment.entity.enums.PaymentGateway
+import uoslife.servermeeting.payment.entity.enums.PaymentStatus
 import uoslife.servermeeting.user.entity.User
 
 @Entity
@@ -56,5 +57,12 @@ class Payment(
     fun softDelete() {
         user = null
         status = PaymentStatus.USER_DELETED
+    }
+
+    fun isSuccess(): Boolean {
+        return status == PaymentStatus.SUCCESS
+    }
+    fun checkImpUid(requestImpUid: String): Boolean {
+        return impUid == requestImpUid
     }
 }

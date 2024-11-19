@@ -2,21 +2,14 @@ package uoslife.servermeeting.meetingteam.util
 
 import org.springframework.stereotype.Component
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.meetingteam.entity.Payment
-import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
+import uoslife.servermeeting.payment.entity.Payment
+import uoslife.servermeeting.payment.entity.enums.PaymentStatus
 import uoslife.servermeeting.user.entity.User
 
 @Component
 class Validator {
-    fun isUserAlreadyHaveTeam(user: User) {
-        val user = user.userTeams.filter { it.team.type == TeamType.SINGLE }
-
-        if (user.isNotEmpty()) {
-            throw UserAlreadyHaveTeamException()
-        }
-    }
     fun isUserAlreadyHaveSingleTeam(user: User) {
         val userSingleTeam = user.userTeams.filter { it.team.type == TeamType.SINGLE }
 
@@ -47,12 +40,6 @@ class Validator {
     fun isTeamFull(team: MeetingTeam) {
         if (team.userTeams.size >= 3) {
             throw TeamFullException()
-        }
-    }
-
-    fun isUserSameGenderWithTeamLeader(user: User, teamLeaderUser: User) {
-        if (user.gender != teamLeaderUser.gender) {
-            throw TeamConsistOfSameGenderException()
         }
     }
 
