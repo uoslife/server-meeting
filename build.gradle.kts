@@ -118,6 +118,9 @@ dependencies {
 
     implementation("me.paulschwarz:spring-dotenv:4.0.0")
 
+    // Thymeleaf
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+
 }
 
 tasks.withType<KotlinCompile> {
