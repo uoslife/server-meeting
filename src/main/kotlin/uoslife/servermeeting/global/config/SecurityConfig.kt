@@ -80,7 +80,9 @@ class SecurityConfig(
                 "https://meeting.alpha.uoslife.com",
                 "http://localhost:5173",
                 "https://localhost:5173",
-                "http://uoslife-meeting5-test.s3-website.ap-northeast-2.amazonaws.com", //임시 프론트 배포 TODO: 제거예정
+                "http://uoslife-meeting5-test.s3-website.ap-northeast-2.amazonaws.com", // 임시 프론트 배포
+                // TODO:
+                // 제거예정
                 "https://uoslife-meeting5-test.s3-website.ap-northeast-2.amazonaws.com"
             )
         configuration.allowedMethods =
