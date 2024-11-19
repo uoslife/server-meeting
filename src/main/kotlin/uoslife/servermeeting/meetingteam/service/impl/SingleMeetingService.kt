@@ -46,7 +46,7 @@ class SingleMeetingService(
         name: String?,
     ): MeetingTeamCodeResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        validator.isUserAlreadyHaveTeam(user)
+        validator.isUserAlreadyHaveSingleTeam(user)
 
         val meetingTeam = createDefaultMeetingTeam(leader = user, teamType = TeamType.SINGLE)
 
