@@ -1,4 +1,4 @@
-package uoslife.servermeeting.meetingteam.api
+package uoslife.servermeeting.payment.api
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
-import uoslife.servermeeting.meetingteam.dto.request.PaymentRequestDto
-import uoslife.servermeeting.meetingteam.dto.response.PaymentResponseDto
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
-import uoslife.servermeeting.meetingteam.service.PaymentService
+import uoslife.servermeeting.payment.dto.request.PaymentRequestDto
+import uoslife.servermeeting.payment.dto.response.PaymentResponseDto
+import uoslife.servermeeting.payment.service.PaymentService
 
 @RestController
 @RequestMapping("/api/payment")
@@ -246,14 +246,15 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                 ),
             ]
     )
-    @PostMapping("/refund")
+    @PostMapping("/{teamType}/refund")
     fun refundPaymentByToken(
         @AuthenticationPrincipal userDetails: UserDetails,
+        @PathVariable teamType: TeamType,
     ): ResponseEntity<PaymentResponseDto.PaymentRefundResponse> {
         val userId = userDetails.username.toLong()
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(paymentService.refundPaymentByToken(userId, teamType = TeamType.SINGLE))
+            .body(paymentService.refundPaymentByToken(userId, teamType = teamType))
     }
 
     @Operation(summary = "매칭 안된 유저 결제 취소 API", description = "매칭이 되지않은 모든 유저에 대해 환불합니다")
@@ -299,7 +300,6 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
     )
     @PostMapping("/refund/match")
     fun refundPayment(): ResponseEntity<PaymentResponseDto.NotMatchedPaymentRefundResponse> {
-        paymentService.refundPayment()
         return ResponseEntity.status(HttpStatus.OK).body(paymentService.refundPayment())
     }
 
@@ -309,7 +309,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
             [
                 ApiResponse(
                     responseCode = "200",
-                    description = "결제 요청은 했지만 결제 검증안됨",
+                    description = "미팅팀 결제에 성공한 상태",
                     content =
                         [
                             Content(
@@ -390,7 +390,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
     }
 
     @Operation(summary = "결제 여부 웹훅 API", description = "포트원에서 전달한 결제 정보 웹훅을 처리합니다")
-    @PostMapping("/portone-webhook")
+    @PostMapping("/webhook")
     fun synchronizePayment(
         @RequestBody paymentWebhookResponse: PaymentResponseDto.PaymentWebhookResponse
     ): ResponseEntity<Void> {

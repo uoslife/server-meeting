@@ -1,4 +1,4 @@
-package uoslife.servermeeting.meetingteam.entity.enums
+package uoslife.servermeeting.payment.entity.enums
 
 enum class PaymentStatus {
     PENDING,

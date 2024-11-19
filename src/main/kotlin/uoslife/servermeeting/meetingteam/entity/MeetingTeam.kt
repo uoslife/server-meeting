@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.payment.entity.Payment
 
 @Entity
 @Table(name = "meeting_team")
