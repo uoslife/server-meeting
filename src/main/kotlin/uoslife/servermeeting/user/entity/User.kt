@@ -4,10 +4,8 @@ import jakarta.persistence.*
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.Payment
 import uoslife.servermeeting.meetingteam.entity.UserTeam
-import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.entity.enums.StudentType
-import uoslife.servermeeting.user.exception.GenderNotUpdatableException
 
 @Entity
 @Table(name = "meetingUser")
@@ -30,15 +28,5 @@ class User(
         fun create(email: String): User {
             return User(email = email)
         }
-    }
-    fun update(requestDto: UserUpdateRequest) {
-        name = requestDto.name ?: name
-        phoneNumber = requestDto.phoneNumber ?: phoneNumber
-        kakaoTalkId = requestDto.kakaoTalkId ?: kakaoTalkId
-        if (requestDto.genderType != null && gender != null) {
-            throw GenderNotUpdatableException()
-        }
-        gender = requestDto.genderType
-        studentType = requestDto.studentType
     }
 }
