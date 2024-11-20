@@ -49,7 +49,7 @@ class SecurityConfig(
                         "/meeting/actuator/health/**",
                         "/api/user/isDuplicatedKakaoTalkId",
                         "/api/payment/refund/match",
-                        "/api/payment/portone-webhook",
+                        "/api/payment/webhook",
                         "/api/auth/reissue",
                         "/api/verification/send-email",
                         "/api/verification/verify-email"
