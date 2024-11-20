@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserProfileResponse
+import uoslife.servermeeting.user.dto.response.UserSimpleResponse
 import uoslife.servermeeting.user.service.UserService
 
 @Tag(name = "User", description = "User API")
@@ -47,11 +48,20 @@ class UserApi(
     @GetMapping
     fun getUser(
         @AuthenticationPrincipal userDetails: UserDetails
+    ): ResponseEntity<UserSimpleResponse> {
+        val userSimpleResponse =
+            UserSimpleResponse.valueOf(userService.getUser(userDetails.username.toLong()))
+        return ResponseEntity.ok().body(userSimpleResponse)
+    }
+
+    @GetMapping("/profile")
+    fun getUserProfile(
+        @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<UserProfileResponse> {
-        val userProfileResponseDto: UserProfileResponse =
+        val userProfileResponse: UserProfileResponse =
             UserProfileResponse.valueOf(userService.getUser(userDetails.username.toLong()))
 
-        return ResponseEntity.ok().body(userProfileResponseDto)
+        return ResponseEntity.ok().body(userProfileResponse)
     }
 
     @Operation(summary = "User 정보 업데이트", description = "유저의 정보를 업데이트합니다.")
