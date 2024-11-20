@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
-import uoslife.servermeeting.user.dto.response.UserFindResponse
+import uoslife.servermeeting.user.dto.response.UserProfileResponse
 import uoslife.servermeeting.user.service.UserService
 
 @Tag(name = "User", description = "User API")
@@ -30,7 +30,8 @@ class UserApi(
                 ApiResponse(
                     responseCode = "200",
                     description = "유저 정보 조회 성공",
-                    content = [Content(schema = Schema(implementation = UserFindResponse::class))]
+                    content =
+                        [Content(schema = Schema(implementation = UserProfileResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
@@ -46,11 +47,11 @@ class UserApi(
     @GetMapping
     fun getUser(
         @AuthenticationPrincipal userDetails: UserDetails
-    ): ResponseEntity<UserFindResponse> {
-        val userFindResponseDto: UserFindResponse =
-            userService.getUser(userDetails.username.toLong())
+    ): ResponseEntity<UserProfileResponse> {
+        val userProfileResponseDto: UserProfileResponse =
+            UserProfileResponse.valueOf(userService.getUser(userDetails.username.toLong()))
 
-        return ResponseEntity.ok().body(userFindResponseDto)
+        return ResponseEntity.ok().body(userProfileResponseDto)
     }
 
     @Operation(summary = "User 정보 업데이트", description = "유저의 정보를 업데이트합니다.")

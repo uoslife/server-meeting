@@ -11,7 +11,6 @@ import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
-import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserInformationRepository
@@ -31,7 +30,7 @@ class UserService(
         private val logger = LoggerFactory.getLogger(UserService::class.java)
     }
 
-    fun findUserByEmail(email: String): User {
+    fun getUserByEmail(email: String): User {
         return userRepository.findByEmail(email) ?: throw UserNotFoundException()
     }
 
@@ -39,15 +38,17 @@ class UserService(
         return userRepository.save(User.create(email = email))
     }
 
-    fun getUser(id: Long): UserFindResponse {
-        val user = userDao.findUserAllInfo(id) ?: throw UserNotFoundException()
+    fun getUser(id: Long): User {
+        return userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+    }
 
-        return UserFindResponse.valueOf(user)
+    fun getUserProfile(id: Long): User {
+        return userDao.findUserProfile(id) ?: throw UserNotFoundException()
     }
 
     @Transactional
     fun updateUser(requestDto: UserUpdateRequest, id: Long) {
-        val existingUser = userDao.findUserAllInfo(id) ?: throw UserNotFoundException()
+        val existingUser = userDao.findUserProfile(id) ?: throw UserNotFoundException()
         if (existingUser.userInformation == null) throw PreconditionFailedException()
 
         existingUser.update(requestDto)

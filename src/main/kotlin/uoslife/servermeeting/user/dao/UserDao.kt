@@ -34,7 +34,7 @@ class UserDao(
             .fetch()
     }
 
-    fun findUserAllInfo(userId: Long): User? {
+    fun findUserProfile(userId: Long): User? {
         return queryFactory
             .selectFrom(user)
             .join(userInformation)
