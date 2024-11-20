@@ -15,7 +15,7 @@ data class UserSimpleResponse(
     companion object {
         fun valueOf(user: User): UserSimpleResponse {
             return UserSimpleResponse(
-                email = user.email!!,
+                email = user.email,
                 phoneNumber = user.phoneNumber,
                 name = user.name,
                 kakaoTalkId = user.kakaoTalkId,

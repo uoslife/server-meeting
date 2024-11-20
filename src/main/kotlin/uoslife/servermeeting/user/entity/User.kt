@@ -15,7 +15,7 @@ class User(
     var name: String? = null,
     @Column(unique = true) var kakaoTalkId: String? = null,
     @Enumerated(EnumType.STRING) var gender: GenderType? = null,
-    @Column(unique = true) var email: String? = null,
+    @Column(unique = true) var email: String,
     @Enumerated(EnumType.STRING) var studentType: StudentType? = null,
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     var userTeams: MutableList<UserTeam> = mutableListOf(),
