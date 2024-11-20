@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
+import uoslife.servermeeting.user.dto.request.UserPersonalInformationUpdateRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.dto.response.UserProfileResponse
 import uoslife.servermeeting.user.dto.response.UserSimpleResponse
@@ -88,10 +89,26 @@ class UserApi(
     fun updateUser(
         @RequestBody(required = false) requestBody: UserUpdateRequest,
         @AuthenticationPrincipal userDetails: UserDetails,
-    ): ResponseEntity<Unit> {
-        userService.updateUserInformation(requestBody, userDetails.username.toLong())
+    ): ResponseEntity<UserSimpleResponse> {
+        val user =
+            userService.updateUserInformation(
+                requestBody.toUpdateUserInformationCommand(userDetails.username.toLong())
+            )
+        val userSimpleResponse = UserSimpleResponse.valueOf(user)
+        return ResponseEntity.status(HttpStatus.OK).body(userSimpleResponse)
+    }
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    @PatchMapping("/user-info")
+    fun updateUserPersonalInformation(
+        @RequestBody(required = false) requestBody: UserPersonalInformationUpdateRequest,
+        @AuthenticationPrincipal userDetails: UserDetails,
+    ): ResponseEntity<UserProfileResponse> {
+        val user =
+            userService.updateUserPersonalInformation(
+                requestBody.toUpdateUserPersonalInformationCommand(userDetails.username.toLong())
+            )
+        val userProfileResponse = UserProfileResponse.valueOf(user)
+        return ResponseEntity.status(HttpStatus.OK).body(userProfileResponse)
     }
 
     @Operation(summary = "User 계정 삭제", description = "유저 ID를 이용하여 삭제합니다.")
