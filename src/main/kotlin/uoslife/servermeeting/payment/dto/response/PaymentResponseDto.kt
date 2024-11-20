@@ -45,10 +45,12 @@ class PaymentResponseDto {
         val merchant_uid: String?,
         @Schema(description = "Portone 결제 여부", example = PAYMENT_SUCCESS) var status: String?,
     ) {
+        @Schema(hidden = true)
         fun isCancelled(): Boolean {
             return status == PAYMENT_FAILED
         }
 
+        @Schema(hidden = true)
         fun isSuccess(): Boolean {
             return status == PAYMENT_SUCCESS
         }
