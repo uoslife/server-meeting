@@ -89,7 +89,7 @@ class UserApi(
         @RequestBody(required = false) requestBody: UserUpdateRequest,
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<Unit> {
-        userService.updateUser(requestBody, userDetails.username.toLong())
+        userService.updateUserInformation(requestBody, userDetails.username.toLong())
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }

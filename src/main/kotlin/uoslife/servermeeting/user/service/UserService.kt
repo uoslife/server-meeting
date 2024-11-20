@@ -5,12 +5,11 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uoslife.servermeeting.meetingteam.exception.PreconditionFailedException
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.util.Validator
+import uoslife.servermeeting.user.command.UpdateUserCommand
 import uoslife.servermeeting.user.dao.UserDao
-import uoslife.servermeeting.user.dto.request.UserUpdateRequest
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserInformationRepository
@@ -47,14 +46,13 @@ class UserService(
     }
 
     @Transactional
-    fun updateUser(requestDto: UserUpdateRequest, id: Long) {
-        val existingUser = userDao.findUserProfile(id) ?: throw UserNotFoundException()
-        if (existingUser.userInformation == null) throw PreconditionFailedException()
-
-        existingUser.update(requestDto)
-        val validMBTI = validator.setValidMBTI(requestDto.mbti)
-        requestDto.updateUserInformation(existingUser, validMBTI)
+    fun updateUserInformation(command: UpdateUserCommand.UpdateUserInformation): User {
+        command.mbti = validator.setValidMBTI(command.mbti)
+        val updated: Long = userDao.updateUserInformation(command)
+        return userDao.findUserProfile(command.userId) ?: throw UserNotFoundException()
     }
+
+    @Transactional fun updateUserPersonalInformation() {}
 
     /**
      * id로 유저를 삭제합니다. 유저를 삭제하기 전, 외부키로 연결되어 있는 Payment와 UserTeam을 삭제합니다. UserTeam을 삭제하면 MeetingTeam
