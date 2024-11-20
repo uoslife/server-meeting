@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.PaymentService
 import uoslife.servermeeting.meetingteam.util.Validator
-import uoslife.servermeeting.user.command.UpdateUserCommand
+import uoslife.servermeeting.user.command.UserCommand
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
@@ -46,7 +46,7 @@ class UserService(
     }
 
     @Transactional
-    fun updateUserInformation(command: UpdateUserCommand.UpdateUserInformation): User {
+    fun updateUserInformation(command: UserCommand.UpdateUserInformation): User {
         command.mbti = validator.setValidMBTI(command.mbti)
         val updated: Long = userDao.updateUserInformation(command)
         return userDao.findUserProfile(command.userId) ?: throw UserNotFoundException()

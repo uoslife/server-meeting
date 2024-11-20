@@ -4,7 +4,7 @@ import uoslife.servermeeting.user.entity.enums.AppearanceType
 import uoslife.servermeeting.user.entity.enums.EyelidType
 import uoslife.servermeeting.user.entity.enums.SmokingType
 
-class UpdateUserCommand {
+class UserCommand {
 
     data class UpdateUserInformation(
         val userId: Long,
