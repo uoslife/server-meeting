@@ -45,12 +45,12 @@ class PortOneService(
     private val portOneAPIService: PortOneAPIService,
     @Value("\${portone.api.price.single}") private val singlePrice: Int,
     @Value("\${portone.api.price.triple}") private val triplePrice: Int,
-    @Value("\${portone.api.imp.key}") private val impKey: String,
-    @Value("\${portone.api.imp.secret}") private val impSecret: String,
 ) : PaymentService {
     companion object {
         private val logger = LoggerFactory.getLogger(PaymentService::class.java)
     }
+
+    // 결제 정보를 생성할 수 있는 유일한 로직
     @Transactional
     override fun requestPayment(
         userId: Long,
@@ -65,7 +65,8 @@ class PortOneService(
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
         checkUserIsLeader(userTeam)
-        checkSuccessPayment(user, teamType)
+        checkSuccessPayment(userId, teamType)
+        checkPendingPayment(userId, teamType) // todo : DB 접속 너무 많음
 
         val payment =
             Payment.createPayment(
@@ -95,13 +96,19 @@ class PortOneService(
         )
     }
 
+    private fun checkPendingPayment(userId: Long, teamType: TeamType) {
+        paymentDao.getPendingPaymentFromUserIdAndTeamType(userId, teamType)?.let {
+            throw UserAlreadyHavePaymentException()
+        }
+    }
+
     private fun checkUserIsLeader(userTeam: UserTeam) {
         if (!userTeam.isLeader) throw OnlyTeamLeaderCanCreatePaymentException()
     }
 
-    private fun checkSuccessPayment(user: User, teamType: TeamType) {
-        paymentDao.getPaymentWithUserAndTeamType(user, teamType)?.forEach {
-            if (it.isSuccess()) throw UserAlreadyHavePaymentException()
+    private fun checkSuccessPayment(userId: Long, teamType: TeamType) {
+        paymentDao.getSuccessPaymentFromUserIdAndTeamType(userId, teamType)?.let {
+            throw UserAlreadyHavePaymentException()
         }
     }
 
@@ -121,11 +128,10 @@ class PortOneService(
                 ?: throw PaymentNotFoundException()
 
         try {
-            val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
-            val portOneStatus =
-                portOneAPIService.checkPayment(accessToken, paymentCheckRequest.impUid)
+            val portOneStatus = portOneAPIService.checkPayment(paymentCheckRequest.impUid)
 
             if (portOneStatus.isPaid()) {
+                logger.info("[결제 성공 확인] marchantUid : ${payment.merchantUid}")
                 payment.updatePayment(paymentCheckRequest.impUid, PaymentStatus.SUCCESS)
                 return PaymentResponseDto.PaymentCheckResponse(true, "")
             }
@@ -149,8 +155,7 @@ class PortOneService(
         if (!validator.isAlreadyPaid(payment)) throw PaymentInValidException()
 
         try {
-            val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
-            portOneAPIService.refundPayment(accessToken, payment.impUid, payment.price)
+            portOneAPIService.refundPayment(payment.impUid, payment.price)
 
             payment.status = PaymentStatus.REFUND
             logger.info(
@@ -192,8 +197,7 @@ class PortOneService(
                 "[환불 성공] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.merchantUid}"
             )
             try {
-                val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
-                portOneAPIService.refundPayment(accessToken, payment.impUid, payment.price)
+                portOneAPIService.refundPayment(payment.impUid, payment.price)
                 payment.status = PaymentStatus.REFUND
             } catch (e: ExternalApiFailedException) {
                 logger.info(
@@ -216,7 +220,7 @@ class PortOneService(
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
         val payments =
-            paymentDao.getPaymentWithUserAndTeamType(user, teamType)
+            paymentDao.getAllPaymentWithUserAndTeamType(user, teamType)
                 ?: throw PaymentNotFoundException()
 
         var pendingPayment: Payment? = null
@@ -239,9 +243,7 @@ class PortOneService(
         if (pendingPayment == null) throw PaymentNotFoundException()
 
         try {
-            val accessToken = portOneAPIService.getAccessToken(impKey, impSecret)
-            val portOneStatus =
-                portOneAPIService.findPaymentByMID(accessToken, pendingPayment!!.merchantUid)
+            val portOneStatus = portOneAPIService.findPaymentByMID(pendingPayment!!.merchantUid)
 
             if (portOneStatus.isPaid()) {
                 pendingPayment!!.updatePayment(
@@ -288,6 +290,13 @@ class PortOneService(
 
             payment.updatePayment(paymentWebhookResponse.imp_uid!!, PaymentStatus.SUCCESS)
             logger.info("[웹훅 - 결제 성공] marchantUid : ${payment.merchantUid}")
+        } else if (paymentWebhookResponse.isCancelled()) {
+            val payment =
+                paymentRepository.findByMerchantUid(paymentWebhookResponse.merchant_uid!!)
+                    ?: throw PaymentNotFoundException()
+
+            payment.updatePayment(paymentWebhookResponse.imp_uid!!, PaymentStatus.FAILED)
+            logger.info("[웹훅 - 결제 실패] marchantUid : ${payment.merchantUid}")
         }
         return
     }

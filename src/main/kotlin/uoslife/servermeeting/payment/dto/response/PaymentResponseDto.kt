@@ -9,6 +9,7 @@ import uoslife.servermeeting.payment.entity.enums.PaymentStatus
 class PaymentResponseDto {
     companion object {
         private const val PAYMENT_SUCCESS = "paid"
+        private const val PAYMENT_FAILED = "cancelled"
     }
     data class PaymentRequestResponse(
         @Schema(description = "결제 상품 고유 번호") @field:NotBlank var merchantUid: String,
@@ -44,6 +45,10 @@ class PaymentResponseDto {
         val merchant_uid: String?,
         @Schema(description = "Portone 결제 여부", example = PAYMENT_SUCCESS) var status: String?,
     ) {
+        fun isCancelled(): Boolean {
+            return status == PAYMENT_FAILED
+        }
+
         fun isSuccess(): Boolean {
             return status == PAYMENT_SUCCESS
         }
