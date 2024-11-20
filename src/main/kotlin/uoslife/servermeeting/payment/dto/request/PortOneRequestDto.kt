@@ -1,4 +1,4 @@
-package uoslife.servermeeting.meetingteam.dto.request
+package uoslife.servermeeting.payment.dto.request
 
 class PortOneRequestDto {
     data class AccessTokenRequest(

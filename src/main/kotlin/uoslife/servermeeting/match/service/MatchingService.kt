@@ -7,6 +7,7 @@ import uoslife.servermeeting.match.dto.response.MatchInformationResponse
 import uoslife.servermeeting.match.dto.response.MatchedMeetingTeamInformationGetResponse
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
+import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.SINGLE
@@ -25,6 +26,7 @@ import uoslife.servermeeting.user.exception.UserNotFoundException
 @Transactional(readOnly = true)
 class MatchingService(
     private val matchedDao: MatchedDao,
+    private val userTeamDao: UserTeamDao,
     private val userDao: UserDao,
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
@@ -32,7 +34,7 @@ class MatchingService(
     @Transactional
     fun getMatchedMeetingTeamByType(userId: Long, teamType: TeamType): MatchInformationResponse {
         val userTeam =
-            userDao.findUserWithMeetingTeam(userId, teamType) ?: throw UserNotFoundException()
+            userTeamDao.findUserWithMeetingTeam(userId, teamType) ?: throw UserNotFoundException()
         val meetingTeam = userTeam.team ?: throw MeetingTeamNotFoundException()
 
         if (!userTeam.isLeader) throw OnlyTeamLeaderCanGetMatchException()

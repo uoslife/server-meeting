@@ -1,13 +1,15 @@
-package uoslife.servermeeting.meetingteam.dto.response
+package uoslife.servermeeting.payment.dto.response
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.payment.entity.enums.PaymentStatus
 
 class PaymentResponseDto {
     companion object {
         private const val PAYMENT_SUCCESS = "paid"
+        private const val PAYMENT_FAILED = "cancelled"
     }
     data class PaymentRequestResponse(
         @Schema(description = "결제 상품 고유 번호") @field:NotBlank var merchantUid: String,
@@ -16,7 +18,8 @@ class PaymentResponseDto {
         @field:NotBlank
         var phoneNumber: String,
         @Schema(description = "이름", example = "나인규") @field:NotBlank var name: String,
-        @Schema(description = "주문명", example = "SINGLE") @field:NotNull var productName: TeamType
+        @Schema(description = "주문명", example = "SINGLE") @field:NotNull var productName: TeamType,
+        @Schema(description = "결제 상태", example = "SUCCESS") val paymentStatus: PaymentStatus,
     )
 
     data class PaymentCheckResponse(
@@ -36,10 +39,18 @@ class PaymentResponseDto {
     data class NotMatchedPaymentRefundResponse(val refundFailedList: MutableList<String>?)
 
     data class PaymentWebhookResponse(
-        var imp_uid: String,
-        var merchant_uid: String,
-        @Schema(description = "Portone 결제 여부", example = PAYMENT_SUCCESS) var status: String,
+        @Schema(description = "IMP_UID", example = "c49c5e35-12cd-44e0-b45a-ba930543a13e")
+        val imp_uid: String?,
+        @Schema(description = "Merchant_UID", example = "c49c5e35-12cd-44e0-b45a-ba930543a13e")
+        val merchant_uid: String?,
+        @Schema(description = "Portone 결제 여부", example = PAYMENT_SUCCESS) var status: String?,
     ) {
+        @Schema(hidden = true)
+        fun isCancelled(): Boolean {
+            return status == PAYMENT_FAILED
+        }
+
+        @Schema(hidden = true)
         fun isSuccess(): Boolean {
             return status == PAYMENT_SUCCESS
         }

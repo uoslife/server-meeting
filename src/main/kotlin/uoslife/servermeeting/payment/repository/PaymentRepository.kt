@@ -1,10 +1,10 @@
-package uoslife.servermeeting.meetingteam.repository
+package uoslife.servermeeting.payment.repository
 
 import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.meetingteam.entity.Payment
-import uoslife.servermeeting.meetingteam.entity.enums.PaymentStatus
+import uoslife.servermeeting.payment.entity.Payment
+import uoslife.servermeeting.payment.entity.enums.PaymentStatus
 import uoslife.servermeeting.user.entity.User
 
 interface PaymentRepository : JpaRepository<Payment, UUID> {

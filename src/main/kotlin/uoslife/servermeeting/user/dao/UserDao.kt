@@ -17,15 +17,7 @@ import uoslife.servermeeting.user.entity.User
 class UserDao(
     private val queryFactory: JPAQueryFactory,
 ) {
-    fun findUserWithMeetingTeam(userId: Long, teamType: TeamType): UserTeam? {
-        return queryFactory
-            .selectFrom(userTeam)
-            .join(userTeam.team)
-            .join(userTeam.user)
-            .where(userTeam.user.id.eq(userId).and(userTeam.team.type.eq(teamType)))
-            .fetchJoin()
-            .fetchOne()
-    }
+
     fun findNotMatchedPayment(userIdList: List<Long>): List<Payment> {
         return queryFactory
             .selectFrom(payment)
