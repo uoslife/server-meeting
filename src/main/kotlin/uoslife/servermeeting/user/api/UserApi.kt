@@ -59,7 +59,7 @@ class UserApi(
         @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<UserProfileResponse> {
         val userProfileResponse: UserProfileResponse =
-            UserProfileResponse.valueOf(userService.getUser(userDetails.username.toLong()))
+            UserProfileResponse.valueOf(userService.getUserProfile(userDetails.username.toLong()))
 
         return ResponseEntity.ok().body(userProfileResponse)
     }
