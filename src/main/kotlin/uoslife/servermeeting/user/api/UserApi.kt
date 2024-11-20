@@ -199,7 +199,7 @@ class UserApi(
                             )]
                 )]
     )
-    @GetMapping("/isDuplicatedKakaoTalkId")
+    @GetMapping("/check/kakao-talk-id")
     fun isDuplicatedKakaoTalkId(@RequestParam kakaoTalkId: String): ResponseEntity<Boolean> {
         return ResponseEntity.ok(userService.isDuplicatedKakaoTalkId(kakaoTalkId))
     }
