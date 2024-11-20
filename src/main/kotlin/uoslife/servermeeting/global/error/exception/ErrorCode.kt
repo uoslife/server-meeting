@@ -26,7 +26,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         HttpStatus.PRECONDITION_FAILED.value()
     ),
     KAKAO_TALK_ID_DUPLICATED("U11", "Kakao Talk ID is Duplicated.", HttpStatus.BAD_REQUEST.value()),
-    USER_TEAM_NOT_FOUND("U11", "UserTeam is not Found.", HttpStatus.BAD_REQUEST.value()),
+    USER_TEAM_NOT_FOUND("U12", "UserTeam is not Found.", HttpStatus.BAD_REQUEST.value()),
 
     // User - Token
     INVALID_TOKEN("T01", "Token is not valid.", HttpStatus.UNAUTHORIZED.value()),

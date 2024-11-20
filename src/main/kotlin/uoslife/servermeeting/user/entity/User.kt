@@ -3,6 +3,7 @@ package uoslife.servermeeting.user.entity
 import jakarta.persistence.*
 import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.UserTeam
+import uoslife.servermeeting.payment.entity.Payment
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.entity.enums.StudentType
 
