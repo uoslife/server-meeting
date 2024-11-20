@@ -20,7 +20,7 @@ class UserCommand {
         val appearanceType: AppearanceType?,
     )
 
-    data class UpdateUserProfile(
+    data class UpdateUserPersonalInformation(
         val userId: Long,
         val name: String?,
         val phoneNumber: String?,

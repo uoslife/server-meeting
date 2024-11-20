@@ -11,8 +11,8 @@ import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.user.command.UserCommand
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.exception.KakaoTalkIdDuplicationException
 import uoslife.servermeeting.user.exception.UserNotFoundException
-import uoslife.servermeeting.user.repository.UserInformationRepository
 import uoslife.servermeeting.user.repository.UserRepository
 
 @Service
@@ -21,7 +21,6 @@ class UserService(
     private val userRepository: UserRepository,
     @Qualifier("portOneService") private val paymentService: PaymentService,
     private val userTeamRepository: UserTeamRepository,
-    private val userInformationRepository: UserInformationRepository,
     private val userDao: UserDao,
     private val validator: Validator
 ) {
@@ -52,7 +51,14 @@ class UserService(
         return userDao.findUserProfile(command.userId) ?: throw UserNotFoundException()
     }
 
-    @Transactional fun updateUserPersonalInformation() {}
+    @Transactional
+    fun updateUserPersonalInformation(command: UserCommand.UpdateUserPersonalInformation): User {
+        if (command.kakaoTalkId != null) {
+            isDuplicatedKakaoTalkId(command.kakaoTalkId)
+        }
+        val updateUserPersonalInformation = userDao.updateUserPersonalInformation(command)
+        return userDao.findUserProfile(command.userId) ?: throw UserNotFoundException()
+    }
 
     /**
      * id로 유저를 삭제합니다. 유저를 삭제하기 전, 외부키로 연결되어 있는 Payment와 UserTeam을 삭제합니다. UserTeam을 삭제하면 MeetingTeam
@@ -77,7 +83,7 @@ class UserService(
     }
 
     fun isDuplicatedKakaoTalkId(kakaoTalkId: String): Boolean {
-        if (userRepository.existsByKakaoTalkId(kakaoTalkId)) return true
-        return false
+        if (userRepository.existsByKakaoTalkId(kakaoTalkId)) throw KakaoTalkIdDuplicationException()
+        return true
     }
 }
