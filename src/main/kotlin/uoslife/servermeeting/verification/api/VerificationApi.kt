@@ -182,6 +182,7 @@ class VerificationApi(
                             )]
                 )]
     )
+    // TODO: Service layer로 이동해야함
     @PostMapping("/verify-email")
     fun verifyEmail(
         @Valid @RequestBody request: VerifyEmailRequest,
