@@ -13,8 +13,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
+import uoslife.servermeeting.user.dto.request.UserPersonalInformationUpdateRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
-import uoslife.servermeeting.user.dto.response.UserFindResponse
+import uoslife.servermeeting.user.dto.response.UserProfileResponse
+import uoslife.servermeeting.user.dto.response.UserSimpleResponse
 import uoslife.servermeeting.user.service.UserService
 
 @Tag(name = "User", description = "User API")
@@ -23,7 +25,6 @@ import uoslife.servermeeting.user.service.UserService
 class UserApi(
     private val userService: UserService,
 ) {
-
     @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 정보를 조회합니다.")
     @ApiResponses(
         value =
@@ -31,7 +32,8 @@ class UserApi(
                 ApiResponse(
                     responseCode = "200",
                     description = "유저 정보 조회 성공",
-                    content = [Content(schema = Schema(implementation = UserFindResponse::class))]
+                    content =
+                        [Content(schema = Schema(implementation = UserProfileResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
@@ -47,11 +49,20 @@ class UserApi(
     @GetMapping
     fun getUser(
         @AuthenticationPrincipal userDetails: UserDetails
-    ): ResponseEntity<UserFindResponse> {
-        val userFindResponseDto: UserFindResponse =
-            userService.findUser(userDetails.username.toLong())
+    ): ResponseEntity<UserSimpleResponse> {
+        val userSimpleResponse =
+            UserSimpleResponse.valueOf(userService.getUser(userDetails.username.toLong()))
+        return ResponseEntity.ok().body(userSimpleResponse)
+    }
 
-        return ResponseEntity.ok().body(userFindResponseDto)
+    @GetMapping("/profile")
+    fun getUserProfile(
+        @AuthenticationPrincipal userDetails: UserDetails
+    ): ResponseEntity<UserProfileResponse> {
+        val userProfileResponse: UserProfileResponse =
+            UserProfileResponse.valueOf(userService.getUserProfile(userDetails.username.toLong()))
+
+        return ResponseEntity.ok().body(userProfileResponse)
     }
 
     @Operation(summary = "User 정보 업데이트", description = "유저의 정보를 업데이트합니다.")
@@ -78,10 +89,26 @@ class UserApi(
     fun updateUser(
         @RequestBody(required = false) requestBody: UserUpdateRequest,
         @AuthenticationPrincipal userDetails: UserDetails,
-    ): ResponseEntity<Unit> {
-        userService.updateUser(requestBody, userDetails.username.toLong())
+    ): ResponseEntity<UserSimpleResponse> {
+        val user =
+            userService.updateUserInformation(
+                requestBody.toUpdateUserInformationCommand(userDetails.username.toLong())
+            )
+        val userSimpleResponse = UserSimpleResponse.valueOf(user)
+        return ResponseEntity.status(HttpStatus.OK).body(userSimpleResponse)
+    }
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    @PatchMapping("/user-info")
+    fun updateUserPersonalInformation(
+        @RequestBody(required = false) requestBody: UserPersonalInformationUpdateRequest,
+        @AuthenticationPrincipal userDetails: UserDetails,
+    ): ResponseEntity<UserProfileResponse> {
+        val user =
+            userService.updateUserPersonalInformation(
+                requestBody.toUpdateUserPersonalInformationCommand(userDetails.username.toLong())
+            )
+        val userProfileResponse = UserProfileResponse.valueOf(user)
+        return ResponseEntity.status(HttpStatus.OK).body(userProfileResponse)
     }
 
     @Operation(summary = "User 계정 삭제", description = "유저 ID를 이용하여 삭제합니다.")
@@ -189,7 +216,7 @@ class UserApi(
                             )]
                 )]
     )
-    @GetMapping("/isDuplicatedKakaoTalkId")
+    @GetMapping("/check/kakao-talk-id")
     fun isDuplicatedKakaoTalkId(@RequestParam kakaoTalkId: String): ResponseEntity<Boolean> {
         return ResponseEntity.ok(userService.isDuplicatedKakaoTalkId(kakaoTalkId))
     }
