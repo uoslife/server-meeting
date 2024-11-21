@@ -12,7 +12,6 @@ import uoslife.servermeeting.user.entity.enums.GenderType
 class MeetingTeam(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false, unique = true)
     var id: Long? = null,
     @Column(nullable = false) var season: Int,
     @Column(unique = true) var code: String? = null,
