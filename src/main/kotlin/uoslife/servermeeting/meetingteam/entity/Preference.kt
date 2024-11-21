@@ -39,8 +39,8 @@ class Preference(
     @Enumerated(EnumType.STRING)
     var eyelidType: MutableList<EyelidType>? = null,
     var mbti: String? = null,
-    var mood: TeamMood? = null,
-    var weight: Weight? = null,
+    @Enumerated(EnumType.STRING) var mood: TeamMood? = null,
+    @Enumerated(EnumType.STRING) var weight: Weight? = null,
     var avoidanceNumber: Int? = null,
     var avoidanceDepartment: String? = null,
 )

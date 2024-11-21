@@ -289,14 +289,14 @@ class PortOneService(
                     ?: throw PaymentNotFoundException()
 
             payment.updatePayment(paymentWebhookResponse.imp_uid!!, PaymentStatus.SUCCESS)
-            logger.info("[웹훅 - 결제 성공] marchantUid : ${payment.merchantUid}")
+            logger.info("[웹훅 - 결제 성공] merchantUid : ${payment.merchantUid}")
         } else if (paymentWebhookResponse.isCancelled()) {
             val payment =
                 paymentRepository.findByMerchantUid(paymentWebhookResponse.merchant_uid!!)
                     ?: throw PaymentNotFoundException()
 
             payment.updatePayment(paymentWebhookResponse.imp_uid!!, PaymentStatus.FAILED)
-            logger.info("[웹훅 - 결제 실패] marchantUid : ${payment.merchantUid}")
+            logger.info("[웹훅 - 결제 실패] merchantUid : ${payment.merchantUid}")
         }
         return
     }
