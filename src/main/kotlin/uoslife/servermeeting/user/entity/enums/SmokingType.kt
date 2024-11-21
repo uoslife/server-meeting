@@ -4,5 +4,4 @@ enum class SmokingType {
     CIGARETTE,
     E_CIGARETTE,
     FALSE,
-    NOT_MATTER,
 }
