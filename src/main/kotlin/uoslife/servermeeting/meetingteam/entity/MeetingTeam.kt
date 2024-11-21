@@ -5,26 +5,18 @@ import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.payment.entity.Payment
+import uoslife.servermeeting.user.entity.enums.GenderType
 
 @Entity
 @Table(name = "meeting_team")
 class MeetingTeam(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false, unique = true)
-    var id: Long? = null,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long? = null,
     @Column(nullable = false) var season: Int,
     @Column(unique = true) var code: String? = null,
     var name: String? = null,
     var message: String? = null,
     @Column(nullable = false) @Enumerated(EnumType.STRING) var type: TeamType,
-    @OneToOne(
-        fetch = FetchType.LAZY,
-        mappedBy = "meetingTeam",
-        cascade = [CascadeType.ALL],
-        orphanRemoval = true
-    )
-    var information: Information? = null,
+    @Enumerated(EnumType.STRING) var gender: GenderType,
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "maleTeam") var maleMatch: Match? = null,
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "femaleTeam") var femaleMatch: Match? = null,
     @OneToMany(

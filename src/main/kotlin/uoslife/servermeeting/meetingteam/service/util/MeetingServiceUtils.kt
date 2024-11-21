@@ -2,11 +2,9 @@ package uoslife.servermeeting.meetingteam.service.util
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uoslife.servermeeting.meetingteam.dto.response.InformationDto
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.PreferenceDto
 import uoslife.servermeeting.meetingteam.dto.response.UserProfile
-import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.user.entity.User
@@ -20,7 +18,6 @@ class MeetingServiceUtils {
         gender: GenderType,
         teamType: TeamType,
         user: User,
-        information: Information,
         preference: Preference,
         teamName: String?,
         message: String?
@@ -41,7 +38,6 @@ class MeetingServiceUtils {
                     height = user.userInformation?.height,
                     phoneNumber = user.phoneNumber,
                 ),
-            information = InformationDto.valueOf(information),
             preference = PreferenceDto.valueOf(preference),
             message = message
         )

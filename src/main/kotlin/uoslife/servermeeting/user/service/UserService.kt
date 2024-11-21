@@ -5,59 +5,59 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uoslife.servermeeting.meetingteam.exception.UserInfoNotCompletedException
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.payment.service.PaymentService
+import uoslife.servermeeting.user.command.UserCommand
 import uoslife.servermeeting.user.dao.UserDao
-import uoslife.servermeeting.user.dto.request.UserUpdateRequest
-import uoslife.servermeeting.user.dto.response.UserFindResponse
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.UserInformation
+import uoslife.servermeeting.user.exception.KakaoTalkIdDuplicationException
 import uoslife.servermeeting.user.exception.UserNotFoundException
-import uoslife.servermeeting.user.repository.UserInformationRepository
 import uoslife.servermeeting.user.repository.UserRepository
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 class UserService(
     private val userRepository: UserRepository,
     @Qualifier("portOneService") private val paymentService: PaymentService,
     private val userTeamRepository: UserTeamRepository,
-    private val userInformationRepository: UserInformationRepository,
     private val userDao: UserDao,
     private val validator: Validator
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(UserService::class.java)
     }
+
+    fun getUserByEmail(email: String): User {
+        return userRepository.findByEmail(email) ?: throw UserNotFoundException()
+    }
+
+    fun createUserByEmail(email: String): User {
+        return userRepository.save(User.create(email = email))
+    }
+
+    fun getUser(id: Long): User {
+        return userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+    }
+
+    fun getUserProfile(id: Long): User {
+        return userDao.findUserProfile(id) ?: throw UserNotFoundException()
+    }
+
     @Transactional
-    fun createUserByEmail(email: String): Long {
-        // 해당 유저가 처음 이용하는 유저면 유저 생성
-        val user = getOrCreateUserByEmail(email)
-        if (user.userInformation == null) {
-            val newUserInformation = UserInformation(user = user)
-            userInformationRepository.save(newUserInformation)
-            user.userInformation = newUserInformation
-            logger.info("[유저 생성] UOS EMAIL : ${user.email}")
+    fun updateUserInformation(command: UserCommand.UpdateUserInformation): User {
+        command.mbti = validator.setValidMBTI(command.mbti)
+        val updated: Long = userDao.updateUserInformation(command)
+        return userDao.findUserProfile(command.userId) ?: throw UserNotFoundException()
+    }
+
+    @Transactional
+    fun updateUserPersonalInformation(command: UserCommand.UpdateUserPersonalInformation): User {
+        if (command.kakaoTalkId != null) {
+            isDuplicatedKakaoTalkId(command.kakaoTalkId)
         }
-        return user.id!!
-    }
-
-    fun findUser(id: Long): UserFindResponse {
-        val user = userDao.findUserAllInfo(id) ?: throw UserNotFoundException()
-
-        return UserFindResponse.valueOf(user)
-    }
-
-    @Transactional
-    fun updateUser(requestDto: UserUpdateRequest, id: Long) {
-        val existingUser = userDao.findUserAllInfo(id) ?: throw UserNotFoundException()
-        if (existingUser.userInformation == null) throw UserInfoNotCompletedException()
-
-        existingUser.update(requestDto)
-        val validMBTI = validator.setValidMBTI(requestDto.mbti)
-        requestDto.updateUserInformation(existingUser, validMBTI)
+        val updateUserPersonalInformation = userDao.updateUserPersonalInformation(command)
+        return userDao.findUserProfile(command.userId) ?: throw UserNotFoundException()
     }
 
     /**
@@ -65,6 +65,7 @@ class UserService(
      * 1:1, 3:3 에서 모두 나오며 미팅팀은 고아 객체로 유지됨 (확정 X) Payment는 User를 NULL로 설정하고 STATUS를 변경하여 SOFT_DELETE
      * 진행합니다.
      */
+    // TODO 팀이 있는 상태로 한명이 나가면 팀 전체가 삭제 되기 때문에 팀 삭제 로직을 먼저 실행햐여야 함
     @Transactional
     fun deleteUserById(id: Long) {
         // 유저가 존재하는지 확인
@@ -82,15 +83,7 @@ class UserService(
     }
 
     fun isDuplicatedKakaoTalkId(kakaoTalkId: String): Boolean {
-        if (userRepository.existsByKakaoTalkId(kakaoTalkId)) return true
-        return false
-    }
-
-    fun getOrCreateUserByEmail(email: String): User {
-        val user = userRepository.findByEmail(email)
-        if (user != null) {
-            return user
-        }
-        return userRepository.save(User.create(email = email))
+        if (userRepository.existsByKakaoTalkId(kakaoTalkId)) throw KakaoTalkIdDuplicationException()
+        return true
     }
 }
