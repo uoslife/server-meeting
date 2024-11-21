@@ -2,10 +2,9 @@ package uoslife.servermeeting.meetingteam.service.impl
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
@@ -19,36 +18,32 @@ import uoslife.servermeeting.user.repository.UserRepository
 
 class TripleMeetingServiceTest {
 
-    @MockK
-    lateinit var userRepository: UserRepository
+    @MockK lateinit var userRepository: UserRepository
 
-    @MockK
-    lateinit var validator: Validator
+    @MockK lateinit var validator: Validator
 
-    @MockK
-    lateinit var uniqueCodeGenerator: UniqueCodeGenerator
+    @MockK lateinit var uniqueCodeGenerator: UniqueCodeGenerator
 
-    @MockK
-    lateinit var userTeamDao: UserTeamDao
+    @MockK lateinit var userTeamDao: UserTeamDao
 
-    @MockK
-    lateinit var meetingTeamRepository: MeetingTeamRepository
+    @MockK lateinit var meetingTeamRepository: MeetingTeamRepository
 
     lateinit var tripleMeetingService: TripleMeetingService
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this)
-        tripleMeetingService = TripleMeetingService(
-            userRepository = userRepository,
-            userTeamDao = userTeamDao,
-            uniqueCodeGenerator = uniqueCodeGenerator,
-            meetingTeamRepository = meetingTeamRepository,
-            validator = validator,
-            userTeamRepository = mockk(),
-            meetingServiceUtils = mockk(),
-            season = 2024
-        )
+        tripleMeetingService =
+            TripleMeetingService(
+                userRepository = userRepository,
+                userTeamDao = userTeamDao,
+                uniqueCodeGenerator = uniqueCodeGenerator,
+                meetingTeamRepository = meetingTeamRepository,
+                validator = validator,
+                userTeamRepository = mockk(),
+                meetingServiceUtils = mockk(),
+                season = 2024
+            )
     }
 
     @Test
@@ -85,7 +80,10 @@ class TripleMeetingServiceTest {
         every { userTeamDao.saveUserTeam(any(), user, true) } just Runs
 
         // Act
-        val exception = assertThrows<GenderNotUpdatedException>{ tripleMeetingService.createMeetingTeam(1L,  "TEST") }
+        val exception =
+            assertThrows<GenderNotUpdatedException> {
+                tripleMeetingService.createMeetingTeam(1L, "TEST")
+            }
         // Assert
         assertEquals(exception.message, "Gender is not selected.")
     }
