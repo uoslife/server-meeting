@@ -6,8 +6,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
-import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
-import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
+import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
@@ -16,6 +15,7 @@ import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
+import uoslife.servermeeting.meetingteam.repository.PreferenceRepository
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
@@ -31,6 +31,7 @@ class SingleMeetingService(
     private val userRepository: UserRepository,
     private val meetingTeamRepository: MeetingTeamRepository,
     private val meetingServiceUtils: MeetingServiceUtils,
+    private val preferenceRepository: PreferenceRepository,
     private val validator: Validator,
     private val userTeamRepository: UserTeamRepository,
     private val userTeamDao: UserTeamDao,
@@ -69,42 +70,21 @@ class SingleMeetingService(
     }
 
     @Transactional
-    override fun updateMeetingTeamPreference(
+    override fun updateMeetingTeamInfo(
         userId: Long,
-        meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
+        meetingTeamInfoUpdateRequest: MeetingTeamInfoUpdateRequest
     ) {
-        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
-
-        val validMBTI = validator.setValidMBTI(meetingTeamPreferenceUpdateRequest.mbti)
-
-        if (meetingTeam.preference != null) {
-            meetingTeamPreferenceUpdateRequest.updatePreference(
-                meetingTeam.preference!!,
-                validMBTI,
-                TeamType.SINGLE
-            )
-            return
-        }
-
-        val preference =
-            meetingTeamPreferenceUpdateRequest.toSinglePreference(validMBTI, meetingTeam)
-        meetingTeam.preference = preference
-    }
-
-    @Transactional
-    override fun updateMeetingTeamMessage(
-        userId: Long,
-        meetingTeamMessageUpdateRequest: MeetingTeamMessageUpdateRequest
-    ) {
-        validator.isMessageLengthIsValid(meetingTeamMessageUpdateRequest.message)
+        validator.isMessageLengthIsValid(meetingTeamInfoUpdateRequest.message)
+        val validMBTI = validator.setValidMBTI(meetingTeamInfoUpdateRequest.mbti)
 
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
-        val message = meetingTeamMessageUpdateRequest.message
+        val newPreference = meetingTeamInfoUpdateRequest.toSinglePreference(validMBTI, meetingTeam)
 
-        meetingTeam.message = message
+        meetingTeam.preference?.let { preferenceRepository.delete(it) }
+        meetingTeam.preference = newPreference
+        meetingTeam.message = meetingTeamInfoUpdateRequest.message
     }
 
     override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {

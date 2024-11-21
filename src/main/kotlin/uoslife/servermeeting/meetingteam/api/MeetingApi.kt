@@ -23,17 +23,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
-import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
-import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
+import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamNoJoinTeamException
 import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamOnlyOneUserException
-import uoslife.servermeeting.meetingteam.exception.OnlyTeamLeaderCanCreateTeamException
-import uoslife.servermeeting.meetingteam.exception.OnlyTeamLeaderCanDeleteTeamException
-import uoslife.servermeeting.meetingteam.exception.OnlyTeamLeaderCanUpdateTeamInformationException
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 
 @RestController
@@ -107,18 +103,13 @@ class MeetingApi(
                 ),
             ]
     )
-    @PostMapping("/{teamType}/{isTeamLeader}/create")
+    @PostMapping("/{teamType}/create")
     fun createMeetingTeam(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
-        @PathVariable isTeamLeader: Boolean,
         @RequestParam(required = false) name: String?,
     ): ResponseEntity<MeetingTeamCodeResponse> {
         val userId = userDetails.username.toLong()
-
-        if (!isTeamLeader) {
-            throw OnlyTeamLeaderCanCreateTeamException()
-        }
 
         val meetingTeamCodeResponse =
             when (teamType) {
@@ -312,7 +303,10 @@ class MeetingApi(
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamUserListGetResponse)
     }
 
-    @Operation(summary = "미팅 팀 상대 정보 기입", description = "팀이 원하는 상대 정보를 기입함. 리더만 가능")
+    @Operation(
+        summary = "미팅 팀 정보 기입",
+        description = "팀이 원하는 상대, 팀 메시지 정보를 기입함. 리더만 가능. 모든 정보를 채워서 보냄"
+    )
     @ApiResponses(
         value =
             [
@@ -361,29 +355,24 @@ class MeetingApi(
                 ),
             ]
     )
-    @PutMapping("/{teamType}/{isTeamLeader}/prefer")
-    fun updateMeetingTeamPreference(
+    @PutMapping("/{teamType}/info")
+    fun updateMeetingTeamInfo(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
-        @PathVariable isTeamLeader: Boolean,
-        @RequestBody @Valid meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest,
+        @RequestBody @Valid meetingTeamInfoUpdateRequest: MeetingTeamInfoUpdateRequest,
     ): ResponseEntity<Unit> {
         val userId = userDetails.username.toLong()
-
-        if (!isTeamLeader) {
-            throw OnlyTeamLeaderCanUpdateTeamInformationException()
-        }
 
         when (teamType) {
             TeamType.SINGLE ->
                 singleMeetingService.updateMeetingTeamPreference(
                     userId,
-                    meetingTeamPreferenceUpdateRequest,
+                    meetingTeamInfoUpdateRequest,
                 )
             TeamType.TRIPLE ->
                 tripleMeetingService.updateMeetingTeamPreference(
                     userId,
-                    meetingTeamPreferenceUpdateRequest,
+                    meetingTeamInfoUpdateRequest,
                 )
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
@@ -472,95 +461,6 @@ class MeetingApi(
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamInformationGetResponse)
     }
 
-    @Operation(summary = "상대에게 보내는 메세지 입력(10자 이상 입력)")
-    @ApiResponses(
-        value =
-            [
-                ApiResponse(
-                    responseCode = "204",
-                    description = "반환값 없음",
-                    content = [Content(schema = Schema(implementation = Unit::class))]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "요청 값에 문제가 있음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            name = "C01",
-                                            description = "메세지 형식 잘못됨",
-                                            value =
-                                                "{message: Message length must be over 10., status: 400, code: C01}"
-                                        ),
-                                        ExampleObject(
-                                            name = "U02",
-                                            description = "해당 유저 정보 없음",
-                                            value =
-                                                "{message: User is not Found., status: 400, code: U02}"
-                                        ),
-                                        ExampleObject(
-                                            name = "M06",
-                                            description = "유저가 일치하는 팀 정보 없음",
-                                            value =
-                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
-                                        ),
-                                        ExampleObject(
-                                            name = "M18",
-                                            description = "메세지 길이는 10자 이상이여야 함",
-                                            value =
-                                                "{message: Message length must be over 10., status: 400, code: M18}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "401",
-                    description = "부적절한 토큰 정보",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: Token is not valid., status: 401, code: T01}"
-                                        )]
-                            )]
-                ),
-            ]
-    )
-    @PutMapping("/{teamType}/{isTeamLeader}/message")
-    fun updateMeetingTeamMessage(
-        @AuthenticationPrincipal userDetails: UserDetails,
-        @PathVariable teamType: TeamType,
-        @PathVariable isTeamLeader: Boolean,
-        @RequestBody @Valid meetingTeamMessageUpdateRequest: MeetingTeamMessageUpdateRequest,
-    ): ResponseEntity<Unit> {
-        val userId = userDetails.username.toLong()
-
-        if (!isTeamLeader) {
-            throw OnlyTeamLeaderCanUpdateTeamInformationException()
-        }
-
-        when (teamType) {
-            TeamType.SINGLE ->
-                singleMeetingService.updateMeetingTeamMessage(
-                    userId,
-                    meetingTeamMessageUpdateRequest,
-                )
-            TeamType.TRIPLE ->
-                tripleMeetingService.updateMeetingTeamMessage(
-                    userId,
-                    meetingTeamMessageUpdateRequest,
-                )
-        }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-    }
-
     @Operation(summary = "미팅 팀 삭제", description = "리더만 팀 삭제 가능")
     @ApiResponses(
         value =
@@ -610,17 +510,12 @@ class MeetingApi(
                 ),
             ]
     )
-    @DeleteMapping("/{teamType}/{isTeamLeader}")
+    @DeleteMapping("/{teamType}")
     fun deleteMeetingTeam(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
-        @PathVariable isTeamLeader: Boolean,
     ): ResponseEntity<Unit> {
         val userId = userDetails.username.toLong()
-
-        if (!isTeamLeader) {
-            throw OnlyTeamLeaderCanDeleteTeamException()
-        }
 
         when (teamType) {
             TeamType.SINGLE -> singleMeetingService.deleteMeetingTeam(userId)

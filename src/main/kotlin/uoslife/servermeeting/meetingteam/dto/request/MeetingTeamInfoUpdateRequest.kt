@@ -2,6 +2,7 @@ package uoslife.servermeeting.meetingteam.dto.request
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Size
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamMood
@@ -9,11 +10,14 @@ import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.entity.enums.Weight
 import uoslife.servermeeting.user.entity.enums.*
 
-class MeetingTeamPreferenceUpdateRequest(
+class MeetingTeamInfoUpdateRequest(
+    @Schema(description = "상대에게 보내는 메세지(10자 이상 작성)", example = "안녕하세요 잘부탁드립니다")
+    @field:Size(min = 10)
+    val message: String,
     @Schema(description = "최소 나이", example = "20", nullable = false) @field:NotNull val ageMin: Int,
     @Schema(description = "최대 나이", example = "30", nullable = false) @field:NotNull val ageMax: Int,
-    @Schema(description = "최소 키", example = "130") val heightMin: Int?,
-    @Schema(description = "최대 키", example = "210") val heightMax: Int?,
+    @Schema(description = "최소 키", example = "150") val heightMin: Int?,
+    @Schema(description = "최대 키", example = "190") val heightMax: Int?,
     @Schema(description = "외모1", example = "[\"ARAB\", \"TOFU\"]")
     val appearanceType: MutableList<AppearanceType>?,
     @Schema(description = "외모2", example = "[\"SINGLE\", \"INNER\"]")
