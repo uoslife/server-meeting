@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
-import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
@@ -311,85 +310,6 @@ class MeetingApi(
             tripleMeetingService.getMeetingTeamUserList(userId, code)
 
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamUserListGetResponse)
-    }
-
-    @Operation(summary = "미팅 팀 정보 기입", description = "팀의 정보를 기입함. 리더만 가능")
-    @ApiResponses(
-        value =
-            [
-                ApiResponse(
-                    responseCode = "204",
-                    description = "반환값 없음",
-                    content = [Content(schema = Schema(implementation = Unit::class))]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "요청 값에 문제가 있음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            name = "U02",
-                                            description = "해당 유저 정보 없음",
-                                            value =
-                                                "{message: User is not Found., status: 400, code: U02}"
-                                        ),
-                                        ExampleObject(
-                                            name = "M06",
-                                            description = "유저가 일치하는 팀 정보 없음",
-                                            value =
-                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "401",
-                    description = "부적절한 토큰 정보",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: Token is not valid., status: 401, code: T01}"
-                                        )]
-                            )]
-                ),
-            ]
-    )
-    @PutMapping("/{teamType}/{isTeamLeader}/info")
-    fun updateMeetingTeamInformation(
-        @AuthenticationPrincipal userDetails: UserDetails,
-        @PathVariable teamType: TeamType,
-        @PathVariable isTeamLeader: Boolean,
-        @RequestBody
-        @Valid
-        meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest,
-    ): ResponseEntity<Unit> {
-        val userId = userDetails.username.toLong()
-
-        if (!isTeamLeader) {
-            throw OnlyTeamLeaderCanUpdateTeamInformationException()
-        }
-
-        when (teamType) {
-            TeamType.SINGLE ->
-                singleMeetingService.updateMeetingTeamInformation(
-                    userId,
-                    meetingTeamInformationUpdateRequest,
-                )
-            TeamType.TRIPLE ->
-                tripleMeetingService.updateMeetingTeamInformation(
-                    userId,
-                    meetingTeamInformationUpdateRequest,
-                )
-        }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     @Operation(summary = "미팅 팀 상대 정보 기입", description = "팀이 원하는 상대 정보를 기입함. 리더만 가능")

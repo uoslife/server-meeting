@@ -6,7 +6,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
-import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
@@ -21,7 +20,6 @@ import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
 import uoslife.servermeeting.meetingteam.util.Validator
-import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
@@ -32,7 +30,6 @@ import uoslife.servermeeting.user.repository.UserRepository
 class SingleMeetingService(
     private val userRepository: UserRepository,
     private val meetingTeamRepository: MeetingTeamRepository,
-    private val userDao: UserDao,
     private val meetingServiceUtils: MeetingServiceUtils,
     private val validator: Validator,
     private val userTeamRepository: UserTeamRepository,
@@ -72,26 +69,6 @@ class SingleMeetingService(
     }
 
     @Transactional
-    override fun updateMeetingTeamInformation(
-        userId: Long,
-        meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
-    ) {
-        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val userTeam: UserTeam =
-            userTeamDao.findByUserWithMeetingTeam(user, TeamType.SINGLE)
-                ?: throw MeetingTeamNotFoundException()
-        val meetingTeam = userTeam.team
-
-        val information =
-            meetingTeamInformationUpdateRequest.toInformation(
-                gender = user.gender ?: throw GenderNotUpdatedException(),
-                meetingTeam = meetingTeam,
-            )
-
-        meetingTeam.information = information
-    }
-
-    @Transactional
     override fun updateMeetingTeamPreference(
         userId: Long,
         meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
@@ -100,9 +77,18 @@ class SingleMeetingService(
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
         val validMBTI = validator.setValidMBTI(meetingTeamPreferenceUpdateRequest.mbti)
+
+        if (meetingTeam.preference != null) {
+            meetingTeamPreferenceUpdateRequest.updatePreference(
+                meetingTeam.preference!!,
+                validMBTI,
+                TeamType.SINGLE
+            )
+            return
+        }
+
         val preference =
             meetingTeamPreferenceUpdateRequest.toSinglePreference(validMBTI, meetingTeam)
-
         meetingTeam.preference = preference
     }
 
@@ -125,14 +111,12 @@ class SingleMeetingService(
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
-        val information = meetingTeam.information ?: throw InformationNotFoundException()
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
-            user.gender ?: throw GenderNotUpdatedException(),
+            meetingTeam.gender,
             meetingTeam.type,
             user,
-            information,
             preference,
             null,
             meetingTeam.message
@@ -153,7 +137,8 @@ class SingleMeetingService(
             MeetingTeam(
                 season = season,
                 type = teamType,
-            ),
+                gender = leader.gender ?: throw GenderNotUpdatedException()
+            )
         )
     }
 
