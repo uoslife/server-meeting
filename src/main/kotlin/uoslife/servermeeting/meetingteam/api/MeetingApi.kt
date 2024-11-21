@@ -365,12 +365,12 @@ class MeetingApi(
 
         when (teamType) {
             TeamType.SINGLE ->
-                singleMeetingService.updateMeetingTeamPreference(
+                singleMeetingService.updateMeetingTeamInfo(
                     userId,
                     meetingTeamInfoUpdateRequest,
                 )
             TeamType.TRIPLE ->
-                tripleMeetingService.updateMeetingTeamPreference(
+                tripleMeetingService.updateMeetingTeamInfo(
                     userId,
                     meetingTeamInfoUpdateRequest,
                 )
