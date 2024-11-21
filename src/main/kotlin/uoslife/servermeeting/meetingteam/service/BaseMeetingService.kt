@@ -1,6 +1,5 @@
 package uoslife.servermeeting.meetingteam.service
 
-import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInformationUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamMessageUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamPreferenceUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
@@ -27,10 +26,6 @@ interface BaseMeetingService {
         isJoin: Boolean
     ): MeetingTeamUserListGetResponse?
     fun getMeetingTeamUserList(userId: Long, code: String): MeetingTeamUserListGetResponse
-    fun updateMeetingTeamInformation(
-        userId: Long,
-        meetingTeamInformationUpdateRequest: MeetingTeamInformationUpdateRequest
-    )
     fun updateMeetingTeamPreference(
         userId: Long,
         meetingTeamPreferenceUpdateRequest: MeetingTeamPreferenceUpdateRequest
