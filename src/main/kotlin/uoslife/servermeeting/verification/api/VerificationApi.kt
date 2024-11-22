@@ -182,14 +182,22 @@ class VerificationApi(
                             )]
                 )]
     )
+    // TODO: Service layer로 이동해야함
     @PostMapping("/verify-email")
     fun verifyEmail(
         @Valid @RequestBody request: VerifyEmailRequest,
         response: HttpServletResponse
     ): ResponseEntity<JwtResponse> {
         emailVerificationService.verifyEmail(request.email, request.code)
-        val userId = userService.createUserByEmail(request.email)
-        val accessToken = authService.issueTokens(userId, response)
+
+        val user =
+            try {
+                userService.getUserByEmail(request.email)
+            } catch (e: Exception) {
+                userService.createUserByEmail(request.email)
+            }
+
+        val accessToken = authService.issueTokens(user.id!!, response)
         return ResponseEntity.ok(accessToken)
     }
 }

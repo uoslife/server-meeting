@@ -1,0 +1,57 @@
+
+name: Deployment
+
+run-name: Deploy by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Cache Gradle Dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+          
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+
+    - name: Build with Gradle Wrapper
+      run: ./gradlew build -x test
+
+    - name: Docker build & push to Docker hub
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:0.1 .
+        docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:0.1
+    - name: Docker image pull & Deploy to EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        script: |
+            sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            sudo docker rm -f $(sudo docker ps -qa)
+            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:0.1
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:0.1
+            sudo docker-compose up -d
+            sudo docker image prune -f

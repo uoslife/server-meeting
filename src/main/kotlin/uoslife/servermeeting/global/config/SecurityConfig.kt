@@ -6,9 +6,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
@@ -46,6 +44,17 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it.requestMatchers(CorsUtils::isPreFlightRequest)
                     .permitAll()
+                    .requestMatchers(
+                        "/swagger-ui/**",
+                        "/meeting/actuator/health/**",
+                        "/api/user/isDuplicatedKakaoTalkId",
+                        "/api/payment/refund/match",
+                        "/api/payment/webhook",
+                        "/api/auth/reissue",
+                        "/api/verification/send-email",
+                        "/api/verification/verify-email"
+                    ) // 토큰 검사 미실시 리스트
+                    .permitAll()
                     .requestMatchers("/api/**")
                     .hasRole("USER")
             } // CORS preflight 요청 허용
@@ -65,11 +74,16 @@ class SecurityConfig(
             listOf(
                 "http://localhost:8081",
                 "http://localhost:3000",
+                "https://uosmeeting.uoslife.net",
                 "https://uoslife.com",
                 "https://meeting.uoslife.com",
                 "https://meeting.alpha.uoslife.com",
                 "http://localhost:5173",
                 "https://localhost:5173",
+                "http://uoslife-meeting5-test.s3-website.ap-northeast-2.amazonaws.com", // 임시 프론트 배포
+                // TODO:
+                // 제거예정
+                "https://uoslife-meeting5-test.s3-website.ap-northeast-2.amazonaws.com"
             )
         configuration.allowedMethods =
             mutableListOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
@@ -88,21 +102,5 @@ class SecurityConfig(
         http: HttpSecurity
     ): AuthenticationManager {
         return authConfig.authenticationManager
-    }
-
-    @Bean
-    fun webSecurityCustomizer(): WebSecurityCustomizer {
-        // 토큰 검사 미실시 리스트
-        return WebSecurityCustomizer { web: WebSecurity ->
-            web.ignoring()
-                .requestMatchers("/swagger-ui/**")
-                .requestMatchers("/meeting/actuator/health/**")
-                .requestMatchers("/api/user/isDuplicatedKakaoTalkId") // 카카오톡 중복 확인
-                .requestMatchers("/api/payment/refund/match")
-                .requestMatchers("/api/payment/portone-webhook")
-                .requestMatchers("/api/auth/reissue")
-                .requestMatchers("/api/verification/send-email")
-                .requestMatchers("/api/verification/verify-email")
-        }
     }
 }

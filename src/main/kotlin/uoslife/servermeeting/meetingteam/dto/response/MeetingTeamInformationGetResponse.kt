@@ -1,11 +1,8 @@
 package uoslife.servermeeting.meetingteam.dto.response
 
 import io.swagger.v3.oas.annotations.media.Schema
-import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
-import uoslife.servermeeting.match.dto.response.MatchedInformation
 import uoslife.servermeeting.match.dto.response.MatchedMeetingTeamInformationGetResponse
-import uoslife.servermeeting.meetingteam.entity.Information
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamMood
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
@@ -17,7 +14,6 @@ data class MeetingTeamInformationGetResponse(
     @Schema(description = "팀 이름", example = "팀 이름(1:1인 경우 null)") val teamName: String?,
     @field:NotNull @Schema(description = "성별", example = "MALE") val gender: GenderType,
     @Schema(description = "팀에 속한 유저 정보") val opponentLeaderProfile: UserProfile?,
-    @Schema(description = "질문 응답값") val information: InformationDto? = null,
     @Schema(description = "상대방 선호 응답값") val preference: PreferenceDto?,
     @Schema(description = "상대에게 전하는 메세지") val message: String?
 ) {
@@ -27,7 +23,6 @@ data class MeetingTeamInformationGetResponse(
             teamName = teamName,
             gender = gender,
             leaderProfile = opponentLeaderProfile,
-            information = MatchedInformation(gender = information?.gender),
             message = message
         )
     }
@@ -63,14 +58,6 @@ data class PreferenceDto(
                 avoidanceNumber = preference.avoidanceNumber,
                 avoidanceDepartment = preference.avoidanceDepartment
             )
-        }
-    }
-}
-
-data class InformationDto(val gender: GenderType?) {
-    companion object {
-        fun valueOf(information: Information): InformationDto {
-            return InformationDto(gender = information.gender)
         }
     }
 }

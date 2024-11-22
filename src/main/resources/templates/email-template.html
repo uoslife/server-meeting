@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body style="font-family: Arial, sans-serif;">
+<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+        <img alt="Logo" src="https://www.uoslife.team/favicon.svg" width="40" height="40" />
+        <span style="font-size: 19px; font-weight: bold;">시대생</span>
+    </div>
+
+    <h1 style="font-size: 34px; margin-bottom: 20px;">인증번호 안내</h1>
+    <p style="color: #575757; font-size: 16px;">인증번호의 유효시간은 <strong th:text="${expiryMinutes}">0</strong>분입니다.</p>
+
+    <div style="border: 2px solid #d1d1d1; padding: 35px; text-align: center; margin: 30px 0;">
+        <strong style="font-size: 40px;" th:text="${verificationCode}">0000</strong>
+    </div>
+
+    <footer style="background: #f1f1f1; padding: 25px; margin-top: 30px;">
+        <a href="https://www.instagram.com/uoslife_official/" style="color: #575757; text-decoration: none; margin-right: 20px; font-size: 12px;">Instagram</a>
+        <a href="https://www.uoslife.team/" style="color: #575757; text-decoration: none; font-size: 12px;">Blog</a>
+        <p style="margin-top: 10px; font-size: 12px; color: #575757;">© 2024 시대생팀</p>
+    </footer>
+</div>
+</body>
+</html>

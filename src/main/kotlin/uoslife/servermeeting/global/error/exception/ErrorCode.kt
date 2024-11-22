@@ -25,6 +25,8 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "UserInfo is not completed.",
         HttpStatus.PRECONDITION_FAILED.value()
     ),
+    KAKAO_TALK_ID_DUPLICATED("U11", "Kakao Talk ID is Duplicated.", HttpStatus.BAD_REQUEST.value()),
+    USER_TEAM_NOT_FOUND("U12", "UserTeam is not Found.", HttpStatus.BAD_REQUEST.value()),
 
     // User - Token
     INVALID_TOKEN("T01", "Token is not valid.", HttpStatus.UNAUTHORIZED.value()),
@@ -85,6 +87,11 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "Only Team Leader Can Get Match.",
         HttpStatus.BAD_REQUEST.value()
     ),
+    ONLY_TEAM_LEADER_CAN_CREATE_PAYMENT(
+        "M10",
+        "Only Team Leader can Create Payment.",
+        HttpStatus.BAD_REQUEST.value()
+    ),
 
     // External API
     EXTERNAL_API_FAILED(
@@ -97,6 +104,11 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     PAYMENT_NOT_FOUND("P01", "Payment is not Found.", HttpStatus.BAD_REQUEST.value()),
     PAYMENT_INVALID("P03", "Payment is Invalid.", HttpStatus.BAD_REQUEST.value()),
     USER_ALREADY_HAVE_PAYMENT("P04", "User already have Payment.", HttpStatus.BAD_REQUEST.value()),
+    PAYMENT_NOT_REFUND(
+        "P05",
+        "User Payment refund is not completed.",
+        HttpStatus.PRECONDITION_FAILED.value()
+    ),
 
     // Email Verification
     EMAIL_INVALID_FORMAT("E01", "Invalid email format.", HttpStatus.BAD_REQUEST.value()),
