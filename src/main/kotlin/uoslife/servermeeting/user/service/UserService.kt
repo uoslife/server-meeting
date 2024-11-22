@@ -32,6 +32,7 @@ class UserService(
         return userRepository.findByEmail(email) ?: throw UserNotFoundException()
     }
 
+    @Transactional
     fun createUserByEmail(email: String): User {
         return userRepository.save(User.create(email = email))
     }
