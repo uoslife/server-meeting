@@ -161,19 +161,16 @@ class TripleMeetingService(
         meetingTeamRepository.delete(meetingTeam)
     }
 
-    private fun checkTeamPayment(user: User){
+    private fun checkTeamPayment(user: User) {
         val successPayment =
             paymentDao.getSuccessPaymentFromUserIdAndTeamType(user.id!!, TeamType.SINGLE)
 
-        if(successPayment != null){
+        if (successPayment != null) {
             paymentService.refundPaymentByToken(user.id!!, TeamType.SINGLE)
         }
 
-        user.payments?.forEach { payment ->
-            payment.removeMeetingTeam()
-        }
+        user.payments?.forEach { payment -> payment.removeMeetingTeam() }
     }
-
 
     @Transactional
     fun createDefaultMeetingTeam(

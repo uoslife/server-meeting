@@ -59,7 +59,7 @@ class Payment(
         status = PaymentStatus.USER_DELETED
     }
 
-    fun removeMeetingTeam(){
+    fun removeMeetingTeam() {
         meetingTeam = null
         status = PaymentStatus.TEAM_DELETED
     }
