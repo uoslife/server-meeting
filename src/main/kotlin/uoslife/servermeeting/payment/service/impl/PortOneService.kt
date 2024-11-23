@@ -210,7 +210,7 @@ class PortOneService(
         return PaymentResponseDto.NotMatchedPaymentRefundResponse(refundFailedList)
     }
 
-    @Transactional
+    @Transactional(dontRollbackOn = [PaymentNotFoundException::class])
     override fun verifyPayment(
         userId: Long,
         teamType: TeamType
