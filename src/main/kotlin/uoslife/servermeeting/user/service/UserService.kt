@@ -10,8 +10,6 @@ import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
-import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
-import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.payment.dao.PaymentDao
 import uoslife.servermeeting.payment.service.PaymentService
@@ -86,7 +84,7 @@ class UserService(
         val user: User = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         // 유저 미팅팀 삭제
         if (user.userTeams.isNotEmpty()) {
-            user.userTeams.forEach{ deleteUserMeetingTeam(userId,it) }
+            user.userTeams.forEach { deleteUserMeetingTeam(userId, it) }
         }
         // 결제 소프트 삭제 우선 진행
         paymentService.deleteUserPayment(user)
@@ -96,14 +94,14 @@ class UserService(
         logger.info("[유저 삭제 완료] UserId : $deletedId")
     }
 
-    private fun deleteUserMeetingTeam(userId: Long, userTeam: UserTeam){
-        when(userTeam.team.type){
+    private fun deleteUserMeetingTeam(userId: Long, userTeam: UserTeam) {
+        when (userTeam.team.type) {
             TeamType.SINGLE -> {
                 singleMeetingService.deleteMeetingTeam(userId)
                 userTeamRepository.delete(userTeam)
             }
             TeamType.TRIPLE -> {
-                if(userTeam.isLeader){
+                if (userTeam.isLeader) {
                     tripleMeetingService.deleteMeetingTeam(userId)
                 }
                 userTeamRepository.delete(userTeam)
@@ -116,41 +114,40 @@ class UserService(
         return true
     }
 
-    fun getUserMeetingTeamBranch(userId: Long) : UserBranchResponse {
+    fun getUserMeetingTeamBranch(userId: Long): UserBranchResponse {
         val user: User = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
 
-        val userTeams = userTeamDao.findUserTeamWithMeetingTeam(user) ?: return UserBranchResponse(
-            singleTeamBranch = TeamBranch.NOT_CREATED,
-            tripleTeamBranch = TeamBranch.NOT_CREATED
-        )
+        val userTeams =
+            userTeamDao.findUserTeamWithMeetingTeam(user)
+                ?: return UserBranchResponse(
+                    singleTeamBranch = TeamBranch.NOT_CREATED,
+                    tripleTeamBranch = TeamBranch.NOT_CREATED
+                )
 
         return getMeetingTeamStatus(userId, userTeams)
     }
 
-    private fun getMeetingTeamStatus(userId: Long, userTeams: List<UserTeam>): UserBranchResponse{
+    private fun getMeetingTeamStatus(userId: Long, userTeams: List<UserTeam>): UserBranchResponse {
         var singleTeamBranch = TeamBranch.NOT_CREATED
         var tripleTeamBranch = TeamBranch.NOT_CREATED
 
-        userTeams.forEach{userTeam->
-            when(userTeam.team.type){
+        userTeams.forEach { userTeam ->
+            when (userTeam.team.type) {
                 TeamType.SINGLE -> {
                     singleTeamBranch = TeamBranch.JUST_CREATED
-                    paymentDao.getSuccessPaymentFromUserIdAndTeamType(userId, TeamType.SINGLE)?.let {
-                        singleTeamBranch = TeamBranch.COMPLETED
-                    }
+                    paymentDao
+                        .getSuccessPaymentFromUserIdAndTeamType(userId, TeamType.SINGLE)
+                        ?.let { singleTeamBranch = TeamBranch.COMPLETED }
                 }
                 TeamType.TRIPLE -> {
                     tripleTeamBranch = TeamBranch.JUST_CREATED
-                    paymentDao.getSuccessPaymentFromUserIdAndTeamType(userId, TeamType.TRIPLE)?.let {
-                        tripleTeamBranch = TeamBranch.COMPLETED
-                    }
+                    paymentDao
+                        .getSuccessPaymentFromUserIdAndTeamType(userId, TeamType.TRIPLE)
+                        ?.let { tripleTeamBranch = TeamBranch.COMPLETED }
                 }
             }
         }
 
-        return UserBranchResponse(
-            singleTeamBranch,
-            tripleTeamBranch
-        )
+        return UserBranchResponse(singleTeamBranch, tripleTeamBranch)
     }
 }

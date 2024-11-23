@@ -105,12 +105,10 @@ class UserApi(
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<UserProfileResponse> {
         println(userDetails.username.toLong())
-        val command = requestBody.toUpdateUserPersonalInformationCommand(userDetails.username.toLong())
+        val command =
+            requestBody.toUpdateUserPersonalInformationCommand(userDetails.username.toLong())
         println(command.toString())
-        val user =
-            userService.updateUserPersonalInformation(
-                command
-            )
+        val user = userService.updateUserPersonalInformation(command)
         val userProfileResponse = UserProfileResponse.valueOf(user)
         return ResponseEntity.status(HttpStatus.OK).body(userProfileResponse)
     }
@@ -228,27 +226,27 @@ class UserApi(
     @Operation(summary = "유저 미팅팀 별 기본 정보", description = "유저의 1:1, 3:3팀의 현재 상태를 요약합니다")
     @ApiResponses(
         value =
-        [
-            ApiResponse(
-                responseCode = "200",
-                description = "미팅팀 상태 정보",
-                content = [Content(schema = Schema(implementation = UserBranchResponse::class))]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "해당 유저 정보 없음",
-                content =
-                [
-                    Content(
-                        schema = Schema(implementation = ErrorResponse::class),
-                        examples =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "미팅팀 상태 정보",
+                    content = [Content(schema = Schema(implementation = UserBranchResponse::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
                         [
-                            ExampleObject(
-                                value =
-                                "{message: User is not Found., status:400, code: U02}"
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status:400, code: U02}"
+                                        )]
                             )]
-                    )]
-            )]
+                )]
     )
     @GetMapping("/status")
     fun getUserMeetingTeamStatus(
