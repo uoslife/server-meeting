@@ -5,9 +5,11 @@ import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Repository
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
+import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.user.entity.QUser.user
 import uoslife.servermeeting.user.entity.User
 
 @Repository
@@ -19,11 +21,20 @@ class UserTeamDao(
     fun findUserWithMeetingTeam(userId: Long, teamType: TeamType): UserTeam? {
         return queryFactory
             .selectFrom(userTeam)
-            .join(userTeam.team)
-            .join(userTeam.user)
+            .join(meetingTeam)
+            .join(user)
             .where(userTeam.user.id.eq(userId).and(userTeam.team.type.eq(teamType)))
             .fetchJoin()
             .fetchOne()
+    }
+
+    fun findUserTeamWithMeetingTeam(user: User): List<UserTeam>? {
+        return queryFactory
+            .selectFrom(userTeam)
+            .join(meetingTeam)
+            .where(userTeam.user.eq(user))
+            .fetchJoin()
+            .fetch()
     }
 
     fun saveUserTeam(meetingTeam: MeetingTeam, user: User, isLeader: Boolean) {

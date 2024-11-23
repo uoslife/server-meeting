@@ -5,11 +5,20 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uoslife.servermeeting.meetingteam.dao.UserTeamDao
+import uoslife.servermeeting.meetingteam.entity.UserTeam
+import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
+import uoslife.servermeeting.meetingteam.service.BaseMeetingService
+import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
+import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
 import uoslife.servermeeting.meetingteam.util.Validator
+import uoslife.servermeeting.payment.dao.PaymentDao
 import uoslife.servermeeting.payment.service.PaymentService
+import uoslife.servermeeting.user.command.TeamBranch
 import uoslife.servermeeting.user.command.UserCommand
 import uoslife.servermeeting.user.dao.UserDao
+import uoslife.servermeeting.user.dto.response.UserBranchResponse
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.KakaoTalkIdDuplicationException
 import uoslife.servermeeting.user.exception.UserNotFoundException
@@ -22,7 +31,11 @@ class UserService(
     @Qualifier("portOneService") private val paymentService: PaymentService,
     private val userTeamRepository: UserTeamRepository,
     private val userDao: UserDao,
-    private val validator: Validator
+    private val userTeamDao: UserTeamDao,
+    private val paymentDao: PaymentDao,
+    private val validator: Validator,
+    @Qualifier("singleMeetingService") private val singleMeetingService: BaseMeetingService,
+    @Qualifier("tripleMeetingService") private val tripleMeetingService: BaseMeetingService
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(UserService::class.java)
@@ -37,12 +50,12 @@ class UserService(
         return userRepository.save(User.create(email = email))
     }
 
-    fun getUser(id: Long): User {
-        return userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+    fun getUser(userId: Long): User {
+        return userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
     }
 
-    fun getUserProfile(id: Long): User {
-        return userDao.findUserProfile(id) ?: throw UserNotFoundException()
+    fun getUserProfile(userId: Long): User {
+        return userDao.findUserProfile(userId) ?: throw UserNotFoundException()
     }
 
     @Transactional
@@ -58,7 +71,7 @@ class UserService(
             isDuplicatedKakaoTalkId(command.kakaoTalkId)
         }
         val updateUserPersonalInformation = userDao.updateUserPersonalInformation(command)
-        return userDao.findUserProfile(command.userId) ?: throw UserNotFoundException()
+        return userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
     }
 
     /**
@@ -68,23 +81,76 @@ class UserService(
      */
     // TODO 팀이 있는 상태로 한명이 나가면 팀 전체가 삭제 되기 때문에 팀 삭제 로직을 먼저 실행햐여야 함
     @Transactional
-    fun deleteUserById(id: Long) {
+    fun deleteUserById(userId: Long) {
         // 유저가 존재하는지 확인
-        val user: User = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+        val user: User = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        // 유저 미팅팀 삭제
         if (user.userTeams.isNotEmpty()) {
-            user.userTeams.forEach { userTeamRepository.delete(it) }
+            user.userTeams.forEach{ deleteUserMeetingTeam(userId,it) }
         }
         // 결제 소프트 삭제 우선 진행
         paymentService.deleteUserPayment(user)
-        // 유저 삭제
-
+        // 유저 삭제 진행
         val deletedId = user.id
         userRepository.delete(user)
-        logger.info("[유저 삭제] UserId : $deletedId")
+        logger.info("[유저 삭제 완료] UserId : $deletedId")
+    }
+
+    private fun deleteUserMeetingTeam(userId: Long, userTeam: UserTeam){
+        when(userTeam.team.type){
+            TeamType.SINGLE -> {
+                singleMeetingService.deleteMeetingTeam(userId)
+                userTeamRepository.delete(userTeam)
+            }
+            TeamType.TRIPLE -> {
+                if(userTeam.isLeader){
+                    tripleMeetingService.deleteMeetingTeam(userId)
+                }
+                userTeamRepository.delete(userTeam)
+            }
+        }
     }
 
     fun isDuplicatedKakaoTalkId(kakaoTalkId: String): Boolean {
         if (userRepository.existsByKakaoTalkId(kakaoTalkId)) throw KakaoTalkIdDuplicationException()
         return true
+    }
+
+    fun getUserMeetingTeamBranch(userId: Long) : UserBranchResponse {
+        val user: User = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+
+        val userTeams = userTeamDao.findUserTeamWithMeetingTeam(user) ?: return UserBranchResponse(
+            singleTeamBranch = TeamBranch.NOT_CREATED,
+            tripleTeamBranch = TeamBranch.NOT_CREATED
+        )
+
+        return getMeetingTeamStatus(userId, userTeams)
+    }
+
+    private fun getMeetingTeamStatus(userId: Long, userTeams: List<UserTeam>): UserBranchResponse{
+        var singleTeamBranch = TeamBranch.NOT_CREATED
+        var tripleTeamBranch = TeamBranch.NOT_CREATED
+
+        userTeams.forEach{userTeam->
+            when(userTeam.team.type){
+                TeamType.SINGLE -> {
+                    singleTeamBranch = TeamBranch.JUST_CREATED
+                    paymentDao.getSuccessPaymentFromUserIdAndTeamType(userId, TeamType.SINGLE)?.let {
+                        singleTeamBranch = TeamBranch.COMPLETED
+                    }
+                }
+                TeamType.TRIPLE -> {
+                    tripleTeamBranch = TeamBranch.JUST_CREATED
+                    paymentDao.getSuccessPaymentFromUserIdAndTeamType(userId, TeamType.TRIPLE)?.let {
+                        tripleTeamBranch = TeamBranch.COMPLETED
+                    }
+                }
+            }
+        }
+
+        return UserBranchResponse(
+            singleTeamBranch,
+            tripleTeamBranch
+        )
     }
 }
