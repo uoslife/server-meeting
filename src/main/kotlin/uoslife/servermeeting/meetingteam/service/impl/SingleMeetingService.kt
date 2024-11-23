@@ -20,6 +20,8 @@ import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
 import uoslife.servermeeting.meetingteam.util.Validator
+import uoslife.servermeeting.payment.dao.PaymentDao
+import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
@@ -35,6 +37,8 @@ class SingleMeetingService(
     private val validator: Validator,
     private val userTeamRepository: UserTeamRepository,
     private val userTeamDao: UserTeamDao,
+    private val paymentDao: PaymentDao,
+    @Qualifier("PortOneService") private val paymentService: PaymentService,
     @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
 
@@ -108,7 +112,19 @@ class SingleMeetingService(
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
+        checkTeamPayment(user)
         meetingTeamRepository.delete(meetingTeam)
+    }
+
+    private fun checkTeamPayment(user: User) {
+        val successPayment =
+            paymentDao.getSuccessPaymentFromUserIdAndTeamType(user.id!!, TeamType.SINGLE)
+
+        if (successPayment != null) {
+            paymentService.refundPaymentByToken(user.id!!, TeamType.SINGLE)
+        }
+
+        user.payments?.forEach { payment -> payment.removeMeetingTeam() }
     }
 
     @Transactional

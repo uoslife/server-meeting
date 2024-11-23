@@ -26,8 +26,8 @@ class Payment(
     @Enumerated(EnumType.STRING) var status: PaymentStatus = PaymentStatus.PENDING,
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "user_id") var user: User? = null,
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meetingTeam_id", nullable = false)
-    var meetingTeam: MeetingTeam,
+    @JoinColumn(name = "meetingTeam_id")
+    var meetingTeam: MeetingTeam? = null,
 ) : BaseEntity() {
     companion object {
         fun createPayment(
@@ -57,6 +57,11 @@ class Payment(
     fun softDelete() {
         user = null
         status = PaymentStatus.USER_DELETED
+    }
+
+    fun removeMeetingTeam() {
+        meetingTeam = null
+        status = PaymentStatus.TEAM_DELETED
     }
 
     fun isSuccess(): Boolean {

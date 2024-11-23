@@ -104,7 +104,6 @@ class UserApi(
         @RequestBody(required = false) requestBody: UserPersonalInformationUpdateRequest,
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<UserProfileResponse> {
-        println(userDetails.username.toLong())
         val command =
             requestBody.toUpdateUserPersonalInformationCommand(userDetails.username.toLong())
         println(command.toString())

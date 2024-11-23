@@ -23,6 +23,8 @@ import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.meetingteam.util.Validator
+import uoslife.servermeeting.payment.dao.PaymentDao
+import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
@@ -39,6 +41,8 @@ class TripleMeetingService(
     private val validator: Validator,
     private val userTeamRepository: UserTeamRepository,
     private val meetingServiceUtils: MeetingServiceUtils,
+    private val paymentDao: PaymentDao,
+    @Qualifier("PortOneService") private val paymentService: PaymentService,
     @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
 
@@ -151,9 +155,21 @@ class TripleMeetingService(
         if (!meetingUserTeam.isLeader) throw OnlyTeamLeaderCanDeleteTeamException()
 
         val meetingTeam = meetingUserTeam.team
+        checkTeamPayment(user)
 
         meetingTeam.userTeams.forEach { userTeamRepository.delete(it) }
         meetingTeamRepository.delete(meetingTeam)
+    }
+
+    private fun checkTeamPayment(user: User) {
+        val successPayment =
+            paymentDao.getSuccessPaymentFromUserIdAndTeamType(user.id!!, TeamType.SINGLE)
+
+        if (successPayment != null) {
+            paymentService.refundPaymentByToken(user.id!!, TeamType.SINGLE)
+        }
+
+        user.payments?.forEach { payment -> payment.removeMeetingTeam() }
     }
 
     @Transactional

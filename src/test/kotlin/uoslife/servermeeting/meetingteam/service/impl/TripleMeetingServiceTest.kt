@@ -42,14 +42,18 @@ class TripleMeetingServiceTest {
                 validator = validator,
                 userTeamRepository = mockk(),
                 meetingServiceUtils = mockk(),
-                season = 2024
+                season = 5,
+                paymentService = mockk(),
+                paymentDao = mockk(),
+                preferenceRepository = mockk()
             )
     }
 
     @Test
     fun `createMeetingTeam should create a team and return code`() {
         // Arrange
-        val user = User(id = 1L, name = "Test User", gender = GenderType.MALE)
+        val user =
+            User(id = 1L, name = "Test User", gender = GenderType.MALE, email = "test@uos.ac.kr")
         val generatedCode = "A123"
 
         every { userRepository.findByIdOrNull(1L) } returns user
@@ -69,7 +73,7 @@ class TripleMeetingServiceTest {
     @Test
     fun `리더 유저의 성별 안정해진 경우 예외를 발생한다`() {
         // Arrange
-        val user = User(id = 1L, name = "Test User", gender = null)
+        val user = User(id = 1L, name = "Test User", gender = null, email = "test@uos.ac.kr")
         val generatedCode = "A123"
 
         every { userRepository.findByIdOrNull(1L) } returns user
