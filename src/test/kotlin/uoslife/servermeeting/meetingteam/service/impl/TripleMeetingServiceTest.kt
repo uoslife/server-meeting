@@ -12,8 +12,6 @@ import uoslife.servermeeting.meetingteam.exception.GenderNotUpdatedException
 import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.meetingteam.util.Validator
-import uoslife.servermeeting.payment.dao.PaymentDao
-import uoslife.servermeeting.payment.service.impl.PortOneService
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.repository.UserRepository
@@ -29,7 +27,6 @@ class TripleMeetingServiceTest {
     @MockK lateinit var userTeamDao: UserTeamDao
 
     @MockK lateinit var meetingTeamRepository: MeetingTeamRepository
-
 
     lateinit var tripleMeetingService: TripleMeetingService
 
@@ -55,7 +52,8 @@ class TripleMeetingServiceTest {
     @Test
     fun `createMeetingTeam should create a team and return code`() {
         // Arrange
-        val user = User(id = 1L, name = "Test User", gender = GenderType.MALE, email = "test@uos.ac.kr")
+        val user =
+            User(id = 1L, name = "Test User", gender = GenderType.MALE, email = "test@uos.ac.kr")
         val generatedCode = "A123"
 
         every { userRepository.findByIdOrNull(1L) } returns user
