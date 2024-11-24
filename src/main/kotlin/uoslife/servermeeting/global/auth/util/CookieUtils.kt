@@ -44,7 +44,7 @@ class CookieUtils(
         val encodedRefreshToken = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8)
         response.addHeader(
             "Set-Cookie",
-            "refresh_token=${encodedRefreshToken}; Domain=${this.domain}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=None"
+            "refresh_token=${encodedRefreshToken}; Domain=${this.domain}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=None"
         )
     }
 
