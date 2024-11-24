@@ -6,7 +6,7 @@ import uoslife.servermeeting.user.entity.enums.*
 
 @Entity
 class UserInformation( // 시즌 정책에 따라 바뀌는 컬럼들
-    @Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long? = null,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long? = null,
     @OneToOne @JoinColumn(nullable = false, name = "user_id") var user: User,
     @Enumerated(EnumType.STRING) var smoking: SmokingType? = null,
     var mbti: String? = null,
