@@ -32,10 +32,8 @@ spring:
 app:
     season: 5
     cookie:
-        domain: localhost
-        secure: true
-#        domain: ${COOKIE_DOMAIN:} # TODO: 추후 서비스시 주석 해제
-#        secure: ${COOKIE_SECURE:false}
+        domain: ${COOKIE_DOMAIN:}
+        secure: ${COOKIE_SECURE:false}
 
 portone:
     api:

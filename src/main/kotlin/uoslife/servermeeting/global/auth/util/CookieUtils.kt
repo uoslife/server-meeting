@@ -24,22 +24,19 @@ class CookieUtils(
                 .secure(secure)
                 .path("/")
                 .maxAge(maxAge)
-                .sameSite("None")
                 .build()
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
     }
 
     fun deleteRefreshTokenCookie(response: HttpServletResponse) {
         val cookie =
-            ResponseCookie.from("refresh_token", "") // 빈 문자열 사용
+            ResponseCookie.from("refresh_token", "")
                 .domain(domain)
                 .httpOnly(true)
                 .secure(secure)
                 .path("/")
                 .maxAge(0)
-                .sameSite("None")
                 .build()
-
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
     }
 
