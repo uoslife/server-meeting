@@ -55,7 +55,7 @@ class TripleMeetingService(
         val user = userService.getUser(userId)
 
         validator.isUserAlreadyHaveTripleTeam(user)
-        //        validator.isTeamNameInvalid(name)
+//        validator.isTeamNameInvalid(name)
 
         val code = uniqueCodeGenerator.getUniqueTeamCode()
         val meetingTeam = createDefaultMeetingTeam(user, name, code, TeamType.TRIPLE)
@@ -83,14 +83,10 @@ class TripleMeetingService(
 
         val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, false)
         userTeamRepository.save(newUserTeam)
-
-        return if (isJoin) {
-            null
-        } else {
-            val meetingTeamUsers =
-                MeetingTeamUsers(meetingTeam.userTeams.stream().map { it.user }.toList())
-            meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
-        }
+        logger.info("[3:3팀 입장] User ID : $userId Triple Team ID : ${meetingTeam.id}")
+        val meetingTeamUsers =
+            MeetingTeamUsers(meetingTeam.userTeams.stream().map { it.user }.toList())
+        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
     }
 
     override fun getMeetingTeamUserList(
@@ -119,7 +115,7 @@ class TripleMeetingService(
         userId: Long,
         meetingTeamInfoUpdateRequest: MeetingTeamInfoUpdateRequest
     ) {
-        validator.isMessageLengthIsValid(meetingTeamInfoUpdateRequest.message)
+        validator.isTeamNameInvalid(meetingTeamInfoUpdateRequest.name)
 
         val user = userService.getUser(userId)
         val meetingUserTeam = getUserTripleMeetingUserTeam(user)
@@ -130,7 +126,7 @@ class TripleMeetingService(
         val newPreference = meetingTeamInfoUpdateRequest.toTriplePreference(meetingTeam)
         meetingTeam.preference?.let { preferenceRepository.delete(it) }
         meetingTeam.preference = newPreference
-        meetingTeam.message = meetingTeamInfoUpdateRequest.message
+        meetingTeam.name = meetingTeamInfoUpdateRequest.name
     }
 
     override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {
