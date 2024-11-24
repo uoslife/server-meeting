@@ -65,9 +65,9 @@ class PortOneService(
         val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
         checkUserIsLeader(userTeam)
-        checkSuccessPayment(userId, teamType)
-        checkPendingPayment(userId, teamType) // todo : DB 접속 너무 많음
-
+        getSuccessPayment(userId, teamType)?.let { throw UserAlreadyHavePaymentException() }
+        getPendingPayment(userId, teamType)?.let { throw UserAlreadyHavePaymentException() }
+        // todo : DB 접속 너무 많음
         val payment =
             Payment.createPayment(
                 UUID.randomUUID().toString(),
@@ -96,20 +96,16 @@ class PortOneService(
         )
     }
 
-    private fun checkPendingPayment(userId: Long, teamType: TeamType) {
-        paymentDao.getPendingPaymentFromUserIdAndTeamType(userId, teamType)?.let {
-            throw UserAlreadyHavePaymentException()
-        }
+    fun getPendingPayment(userId: Long, teamType: TeamType): Payment? {
+        return paymentDao.getPendingPaymentFromUserIdAndTeamType(userId, teamType)
     }
 
     private fun checkUserIsLeader(userTeam: UserTeam) {
         if (!userTeam.isLeader) throw OnlyTeamLeaderCanCreatePaymentException()
     }
 
-    private fun checkSuccessPayment(userId: Long, teamType: TeamType) {
-        paymentDao.getSuccessPaymentFromUserIdAndTeamType(userId, teamType)?.let {
-            throw UserAlreadyHavePaymentException()
-        }
+    override fun getSuccessPayment(userId: Long, teamType: TeamType): Payment? {
+        return paymentDao.getSuccessPaymentFromUserIdAndTeamType(userId, teamType)
     }
 
     @Transactional
