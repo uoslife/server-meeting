@@ -2,6 +2,7 @@ package uoslife.servermeeting.user.service
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -11,7 +12,6 @@ import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 import uoslife.servermeeting.meetingteam.util.Validator
-import uoslife.servermeeting.payment.dao.PaymentDao
 import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.command.TeamBranch
 import uoslife.servermeeting.user.command.UserCommand
@@ -30,10 +30,9 @@ class UserService(
     private val userTeamRepository: UserTeamRepository,
     private val userDao: UserDao,
     private val userTeamDao: UserTeamDao,
-    private val paymentDao: PaymentDao,
     private val validator: Validator,
-    @Qualifier("singleMeetingService") private val singleMeetingService: BaseMeetingService,
-    @Qualifier("tripleMeetingService") private val tripleMeetingService: BaseMeetingService
+    @Lazy @Qualifier("singleMeetingService") private val singleMeetingService: BaseMeetingService,
+    @Lazy @Qualifier("tripleMeetingService") private val tripleMeetingService: BaseMeetingService
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(UserService::class.java)
@@ -115,7 +114,7 @@ class UserService(
     }
 
     fun getUserMeetingTeamBranch(userId: Long): UserBranchResponse {
-        val user: User = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
 
         val userTeams =
             userTeamDao.findUserTeamWithMeetingTeam(user)
@@ -124,30 +123,30 @@ class UserService(
                     tripleTeamBranch = TeamBranch.NOT_CREATED
                 )
 
-        return getMeetingTeamStatus(userId, userTeams)
+        return determineMeetingTeamStatus(userId, userTeams)
     }
 
-    private fun getMeetingTeamStatus(userId: Long, userTeams: List<UserTeam>): UserBranchResponse {
+    private fun determineMeetingTeamStatus(
+        userId: Long,
+        userTeams: List<UserTeam>
+    ): UserBranchResponse {
         var singleTeamBranch = TeamBranch.NOT_CREATED
         var tripleTeamBranch = TeamBranch.NOT_CREATED
 
         userTeams.forEach { userTeam ->
             when (userTeam.team.type) {
-                TeamType.SINGLE -> {
-                    singleTeamBranch = TeamBranch.JUST_CREATED
-                    paymentDao
-                        .getSuccessPaymentFromUserIdAndTeamType(userId, TeamType.SINGLE)
-                        ?.let { singleTeamBranch = TeamBranch.COMPLETED }
-                }
-                TeamType.TRIPLE -> {
-                    tripleTeamBranch = TeamBranch.JUST_CREATED
-                    paymentDao
-                        .getSuccessPaymentFromUserIdAndTeamType(userId, TeamType.TRIPLE)
-                        ?.let { tripleTeamBranch = TeamBranch.COMPLETED }
-                }
+                TeamType.SINGLE -> singleTeamBranch = determineTeamBranch(userId, TeamType.SINGLE)
+                TeamType.TRIPLE -> tripleTeamBranch = determineTeamBranch(userId, TeamType.TRIPLE)
             }
         }
 
         return UserBranchResponse(singleTeamBranch, tripleTeamBranch)
+    }
+
+    private fun determineTeamBranch(userId: Long, teamType: TeamType): TeamBranch {
+        paymentService.getSuccessPayment(userId, teamType)?.let {
+            return TeamBranch.COMPLETED
+        }
+        return TeamBranch.JUST_CREATED
     }
 }

@@ -3,6 +3,7 @@ package uoslife.servermeeting.payment.service
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.payment.dto.request.PaymentRequestDto
 import uoslife.servermeeting.payment.dto.response.PaymentResponseDto
+import uoslife.servermeeting.payment.entity.Payment
 import uoslife.servermeeting.user.entity.User
 
 interface PaymentService {
@@ -24,4 +25,5 @@ interface PaymentService {
     fun verifyPayment(userId: Long, teamType: TeamType): PaymentResponseDto.PaymentRequestResponse
     fun deleteUserPayment(user: User)
     fun synchronizePayment(paymentWebhookResponse: PaymentResponseDto.PaymentWebhookResponse)
+    fun getSuccessPayment(userId: Long, teamType: TeamType): Payment?
 }
