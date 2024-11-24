@@ -32,7 +32,8 @@ spring:
 app:
     season: 5
     cookie:
-        domain: ${COOKIE_DOMAIN:}
+        domain: localhost
+#        domain: ${COOKIE_DOMAIN:} # TODO: 추후 서비스시 주석 해제
         secure: ${COOKIE_SECURE:false}
 
 portone:
@@ -104,5 +105,5 @@ aws:
 auth:
     email:
         verification-code-expiry: 180  # 인증코드 유효시간 (초)
-        daily-send-limit: 5  # 하루 최대 발송 횟수
-        code-verify-limit: 5 # 일일 최대 인증 횟수
+        daily-send-limit: 50  # 하루 최대 발송 횟수
+        code-verify-limit: 50 # 일일 최대 인증 횟수
