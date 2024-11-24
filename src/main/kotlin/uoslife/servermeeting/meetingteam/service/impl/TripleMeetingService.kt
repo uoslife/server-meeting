@@ -55,7 +55,7 @@ class TripleMeetingService(
         val user = userService.getUser(userId)
 
         validator.isUserAlreadyHaveTripleTeam(user)
-//        validator.isTeamNameInvalid(name)
+        //        validator.isTeamNameInvalid(name)
 
         val code = uniqueCodeGenerator.getUniqueTeamCode()
         val meetingTeam = createDefaultMeetingTeam(user, name, code, TeamType.TRIPLE)

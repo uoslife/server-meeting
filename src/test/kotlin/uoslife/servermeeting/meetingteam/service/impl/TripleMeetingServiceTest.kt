@@ -35,7 +35,6 @@ class TripleMeetingServiceTest {
         MockKAnnotations.init(this)
         tripleMeetingService =
             TripleMeetingService(
-                userRepository = userRepository,
                 userTeamDao = userTeamDao,
                 uniqueCodeGenerator = uniqueCodeGenerator,
                 meetingTeamRepository = meetingTeamRepository,
@@ -44,8 +43,8 @@ class TripleMeetingServiceTest {
                 meetingServiceUtils = mockk(),
                 season = 5,
                 paymentService = mockk(),
-                paymentDao = mockk(),
-                preferenceRepository = mockk()
+                preferenceRepository = mockk(),
+                userService = mockk()
             )
     }
 
