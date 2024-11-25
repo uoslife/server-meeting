@@ -34,7 +34,8 @@ app:
     cookie:
 #        domain: ${COOKIE_DOMAIN:} # 환경변수 업데이트 후 주석 제거
         domain: .uoslife.net
-        secure: ${COOKIE_SECURE:false}
+#        secure: ${COOKIE_SECURE:false} # 환경변수 업데이트 후 주석 제거
+        secure: true
 
 portone:
     api:
