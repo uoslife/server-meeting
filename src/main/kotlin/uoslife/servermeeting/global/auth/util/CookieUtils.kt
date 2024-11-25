@@ -24,6 +24,7 @@ class CookieUtils(
                 .secure(secure)
                 .path("/")
                 .maxAge(maxAge)
+                .sameSite("None")
                 .build()
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
     }
