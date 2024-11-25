@@ -18,6 +18,7 @@ class PaymentRequestDto {
 
     data class PaymentCheckRequest(
         @Schema(description = "결제 고유 번호", nullable = false) @field:NotBlank val impUid: String,
+        @Schema(description = "주문번호", nullable = false) @field:NotBlank val merchantUid: String,
     )
 
     data class PaymentRefundRequest(

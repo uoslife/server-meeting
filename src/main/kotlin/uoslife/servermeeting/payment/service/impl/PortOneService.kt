@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
 import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
+import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.*
@@ -62,12 +63,28 @@ class PortOneService(
                 ?: throw UserTeamNotFoundException()
         val meetingTeam = userTeam.team
         val user = userTeam.user
-        val phoneNumber = user.phoneNumber ?: throw PhoneNumberNotFoundException()
 
+        checkUserCanMakePayment(userTeam, userId, teamType)
+
+        val payment = createNewPayment(user, meetingTeam)
+
+        return PaymentResponseDto.PaymentRequestResponse(
+            payment.merchantUid,
+            payment.price,
+            user.phoneNumber ?: throw PhoneNumberNotFoundException(),
+            user.name ?: throw UserInfoNotCompletedException(),
+            meetingTeam.type,
+            payment.status
+        )
+    }
+
+    private fun checkUserCanMakePayment(userTeam: UserTeam, userId: Long, teamType: TeamType) {
         checkUserIsLeader(userTeam)
         getSuccessPayment(userId, teamType)?.let { throw UserAlreadyHavePaymentException() }
         getPendingPayment(userId, teamType)?.let { throw UserAlreadyHavePaymentException() }
-        // todo : DB 접속 너무 많음
+    }
+
+    private fun createNewPayment(user: User, meetingTeam: MeetingTeam): Payment {
         val payment =
             Payment.createPayment(
                 UUID.randomUUID().toString(),
@@ -80,20 +97,10 @@ class PortOneService(
                 meetingTeam.type,
                 user,
             )
-
-        paymentRepository.save(payment)
         logger.info(
             "[결제 정보 생성] merchantId : ${payment.merchantUid}, teamType = ${payment.teamType}"
         )
-
-        return PaymentResponseDto.PaymentRequestResponse(
-            payment.merchantUid,
-            payment.price,
-            phoneNumber,
-            user.name ?: throw UserInfoNotCompletedException(),
-            meetingTeam.type,
-            payment.status
-        )
+        return paymentRepository.save(payment)
     }
 
     fun getPendingPayment(userId: Long, teamType: TeamType): Payment? {
@@ -114,26 +121,25 @@ class PortOneService(
         teamType: TeamType,
         paymentCheckRequest: PaymentRequestDto.PaymentCheckRequest
     ): PaymentResponseDto.PaymentCheckResponse {
-        val successPayment = paymentDao.getSuccessPaymentFromUserIdAndTeamType(userId, teamType)
-        if (successPayment != null) {
+        logger.info("[결제 검증 요청] UserId : $userId")
+        paymentDao.getSuccessPaymentFromUserIdAndTeamType(userId, teamType)?.let {
             return PaymentResponseDto.PaymentCheckResponse(true, "")
         }
 
         val payment =
-            paymentDao.getPendingPaymentFromUserIdAndTeamType(userId, teamType)
+            paymentRepository.findByMerchantUid(paymentCheckRequest.merchantUid)
                 ?: throw PaymentNotFoundException()
 
         try {
             val portOneStatus = portOneAPIService.checkPayment(paymentCheckRequest.impUid)
 
             if (portOneStatus.isPaid()) {
-                logger.info("[결제 성공 확인] marchantUid : ${payment.merchantUid}")
-                payment.updatePayment(paymentCheckRequest.impUid, PaymentStatus.SUCCESS)
+                updatePaymentStatus(payment, PaymentStatus.SUCCESS, paymentCheckRequest.impUid)
                 return PaymentResponseDto.PaymentCheckResponse(true, "")
             }
         } catch (_: ExternalApiFailedException) {}
 
-        payment.updatePayment(paymentCheckRequest.impUid, PaymentStatus.FAILED)
+        updatePaymentStatus(payment, PaymentStatus.FAILED, paymentCheckRequest.impUid)
         return PaymentResponseDto.PaymentCheckResponse(false, "")
     }
 
@@ -153,12 +159,8 @@ class PortOneService(
         try {
             portOneAPIService.refundPayment(payment.impUid, payment.price)
 
-            payment.status = PaymentStatus.REFUND
-            logger.info(
-                "[환불 성공] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.merchantUid}"
-            )
+            updatePaymentStatus(payment, PaymentStatus.REFUND, payment.impUid!!)
         } catch (e: ExternalApiFailedException) {
-            payment.status = PaymentStatus.REFUND_FAILED // 이게 필요한가?
             return PaymentResponseDto.PaymentRefundResponse(false, "")
         }
 
@@ -189,12 +191,9 @@ class PortOneService(
 
         val refundFailedList: MutableList<String> = mutableListOf()
         paymentList.forEach { payment ->
-            logger.info(
-                "[환불 성공] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.merchantUid}"
-            )
             try {
                 portOneAPIService.refundPayment(payment.impUid, payment.price)
-                payment.status = PaymentStatus.REFUND
+                updatePaymentStatus(payment, PaymentStatus.REFUND, payment.impUid!!)
             } catch (e: ExternalApiFailedException) {
                 logger.info(
                     "[환불 실패] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.merchantUid}"
@@ -242,9 +241,10 @@ class PortOneService(
             val portOneStatus = portOneAPIService.findPaymentByMID(pendingPayment!!.merchantUid)
 
             if (portOneStatus.isPaid()) {
-                pendingPayment!!.updatePayment(
-                    portOneStatus.response?.imp_uid!!,
-                    PaymentStatus.SUCCESS
+                updatePaymentStatus(
+                    pendingPayment!!,
+                    PaymentStatus.SUCCESS,
+                    portOneStatus.response?.imp_uid!!
                 )
                 return PaymentResponseDto.PaymentRequestResponse(
                     pendingPayment!!.merchantUid,
@@ -256,6 +256,7 @@ class PortOneService(
                 )
             }
         } catch (_: ExternalApiFailedException) {}
+        logger.info("[결제 검증 실패] merchantUid : ${pendingPayment!!.merchantUid}")
         pendingPayment!!.status = PaymentStatus.FAILED
         throw PaymentNotFoundException()
     }
@@ -279,21 +280,25 @@ class PortOneService(
     override fun synchronizePayment(
         paymentWebhookResponse: PaymentResponseDto.PaymentWebhookResponse
     ) {
+        logger.info("[웹훅 수신] status : ${paymentWebhookResponse.status}")
         if (paymentWebhookResponse.isSuccess()) {
             val payment =
                 paymentRepository.findByMerchantUid(paymentWebhookResponse.merchant_uid!!)
                     ?: throw PaymentNotFoundException()
 
-            payment.updatePayment(paymentWebhookResponse.imp_uid!!, PaymentStatus.SUCCESS)
-            logger.info("[웹훅 - 결제 성공] merchantUid : ${payment.merchantUid}")
+            updatePaymentStatus(payment, PaymentStatus.SUCCESS, paymentWebhookResponse.imp_uid!!)
         } else if (paymentWebhookResponse.isCancelled()) {
             val payment =
                 paymentRepository.findByMerchantUid(paymentWebhookResponse.merchant_uid!!)
                     ?: throw PaymentNotFoundException()
 
-            payment.updatePayment(paymentWebhookResponse.imp_uid!!, PaymentStatus.FAILED)
-            logger.info("[웹훅 - 결제 실패] merchantUid : ${payment.merchantUid}")
+            updatePaymentStatus(payment, PaymentStatus.FAILED, paymentWebhookResponse.imp_uid!!)
         }
         return
+    }
+
+    private fun updatePaymentStatus(payment: Payment, status: PaymentStatus, impUid: String) {
+        payment.updatePayment(impUid, status)
+        logger.info("[결제 상태 변경] paymentId: ${payment.id}, status: $status, impUid: $impUid")
     }
 }

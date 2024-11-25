@@ -10,4 +10,8 @@ data class MeetingTeamUserListGetResponse(
 
 data class MeetingTeamUser(
     val name: String? = null,
+    val department: String?,
+    val studentNumber: Int?,
+    val interest: List<String>?,
+    val kakaoTalkId: String?
 )

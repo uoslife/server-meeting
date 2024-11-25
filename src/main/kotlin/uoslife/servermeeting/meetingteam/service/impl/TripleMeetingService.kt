@@ -9,7 +9,6 @@ import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUser
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.meetingteam.dto.vo.MeetingTeamUsers
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
@@ -69,7 +68,6 @@ class TripleMeetingService(
     override fun joinMeetingTeam(
         userId: Long,
         code: String,
-        isJoin: Boolean
     ): MeetingTeamUserListGetResponse? {
         val user = userService.getUser(userId)
 
@@ -98,16 +96,9 @@ class TripleMeetingService(
         val meetingTeam =
             meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
 
-        val meetingTeamUsers = meetingTeam.userTeams.stream().map { it.user }.toList()
-        return MeetingTeamUserListGetResponse(
-            teamName = meetingTeam.name!!,
-            userList =
-                meetingTeamUsers.map {
-                    MeetingTeamUser(
-                        name = it.name,
-                    )
-                }
-        )
+        val meetingTeamUsers =
+            MeetingTeamUsers(meetingTeam.userTeams.stream().map { it.user }.toList())
+        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
     }
 
     @Transactional
