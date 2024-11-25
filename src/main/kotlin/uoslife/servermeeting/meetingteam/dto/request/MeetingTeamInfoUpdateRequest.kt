@@ -11,9 +11,12 @@ import uoslife.servermeeting.meetingteam.entity.enums.Weight
 import uoslife.servermeeting.user.entity.enums.*
 
 class MeetingTeamInfoUpdateRequest(
-    @Schema(description = "상대에게 보내는 메세지(10자 이상 작성)", example = "안녕하세요 잘부탁드립니다")
+    @Schema(description = "1:1 상대에게 보내는 메세지(10자 이상 작성)", example = "안녕하세요 잘부탁드립니다")
     @field:Size(min = 10)
-    val message: String,
+    val message: String?,
+    @Schema(description = "3:3 팀 이름 (2~8자)", example = "우당탕탕 시립대")
+    @field:Size(min = 2, max = 8)
+    val name: String?,
     @Schema(description = "최소 나이", example = "20", nullable = false) @field:NotNull val ageMin: Int,
     @Schema(description = "최대 나이", example = "30", nullable = false) @field:NotNull val ageMax: Int,
     @Schema(description = "최소 키", example = "150") val heightMin: Int?,

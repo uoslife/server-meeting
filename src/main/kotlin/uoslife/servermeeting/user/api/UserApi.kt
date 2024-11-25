@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.user.dto.request.UserPersonalInformationUpdateRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
+import uoslife.servermeeting.user.dto.response.UserBranchResponse
 import uoslife.servermeeting.user.dto.response.UserProfileResponse
 import uoslife.servermeeting.user.dto.response.UserSimpleResponse
 import uoslife.servermeeting.user.service.UserService
@@ -103,10 +104,10 @@ class UserApi(
         @RequestBody(required = false) requestBody: UserPersonalInformationUpdateRequest,
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<UserProfileResponse> {
-        val user =
-            userService.updateUserPersonalInformation(
-                requestBody.toUpdateUserPersonalInformationCommand(userDetails.username.toLong())
-            )
+        val command =
+            requestBody.toUpdateUserPersonalInformationCommand(userDetails.username.toLong())
+        println(command.toString())
+        val user = userService.updateUserPersonalInformation(command)
         val userProfileResponse = UserProfileResponse.valueOf(user)
         return ResponseEntity.status(HttpStatus.OK).body(userProfileResponse)
     }
@@ -219,5 +220,38 @@ class UserApi(
     @GetMapping("/check/kakao-talk-id")
     fun isDuplicatedKakaoTalkId(@RequestParam kakaoTalkId: String): ResponseEntity<Boolean> {
         return ResponseEntity.ok(userService.isDuplicatedKakaoTalkId(kakaoTalkId))
+    }
+
+    @Operation(summary = "유저 미팅팀 별 기본 정보", description = "유저의 1:1, 3:3팀의 현재 상태를 요약합니다")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "미팅팀 상태 정보",
+                    content = [Content(schema = Schema(implementation = UserBranchResponse::class))]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{message: User is not Found., status:400, code: U02}"
+                                        )]
+                            )]
+                )]
+    )
+    @GetMapping("/status")
+    fun getUserMeetingTeamStatus(
+        @AuthenticationPrincipal userDetails: UserDetails
+    ): ResponseEntity<UserBranchResponse> {
+        val userId = userDetails.username.toLong()
+        return ResponseEntity.ok(userService.getUserMeetingTeamBranch(userId))
     }
 }

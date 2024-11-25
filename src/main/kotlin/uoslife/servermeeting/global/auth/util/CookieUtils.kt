@@ -1,12 +1,13 @@
 package uoslife.servermeeting.global.auth.util
 
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders
+import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Component
 
 @Component
@@ -16,28 +17,28 @@ class CookieUtils(
 ) {
     fun addRefreshTokenCookie(response: HttpServletResponse, refreshToken: String, maxAge: Long) {
         val encodedRefreshToken = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8)
-
         val cookie =
-            Cookie("refresh_token", encodedRefreshToken).apply {
-                this.domain = this@CookieUtils.domain
-                this.isHttpOnly = true
-                this.secure = this@CookieUtils.secure
-                this.path = "/"
-                this.maxAge = maxAge.toInt()
-            }
-        response.addCookie(cookie)
+            ResponseCookie.from("refresh_token", encodedRefreshToken)
+                .domain(domain)
+                .httpOnly(true)
+                .secure(secure)
+                .path("/")
+                .maxAge(maxAge)
+                .sameSite("None")
+                .build()
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
     }
 
     fun deleteRefreshTokenCookie(response: HttpServletResponse) {
         val cookie =
-            Cookie("refresh_token", null).apply {
-                this.domain = this@CookieUtils.domain
-                this.isHttpOnly = true
-                this.secure = this@CookieUtils.secure
-                this.path = "/"
-                this.maxAge = 0
-            }
-        response.addCookie(cookie)
+            ResponseCookie.from("refresh_token", "")
+                .domain(domain)
+                .httpOnly(true)
+                .secure(secure)
+                .path("/")
+                .maxAge(0)
+                .build()
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
     }
 
     fun getRefreshTokenFromCookie(request: HttpServletRequest): String? {

@@ -8,4 +8,5 @@ enum class PaymentStatus {
     REFUND_FAILED,
     REFUND,
     USER_DELETED,
+    TEAM_DELETED,
 }

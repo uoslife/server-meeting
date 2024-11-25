@@ -9,7 +9,7 @@ import uoslife.servermeeting.user.entity.enums.SmokingType
 
 @Entity
 class Preference(
-    @Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long? = null,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long? = null,
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_team_id")
     var meetingTeam: MeetingTeam? = null,

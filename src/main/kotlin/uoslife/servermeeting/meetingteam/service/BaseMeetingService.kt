@@ -22,7 +22,6 @@ interface BaseMeetingService {
     fun joinMeetingTeam(
         userId: Long,
         code: String,
-        isJoin: Boolean
     ): MeetingTeamUserListGetResponse?
     fun getMeetingTeamUserList(userId: Long, code: String): MeetingTeamUserListGetResponse
     fun updateMeetingTeamInfo(

@@ -1,15 +1,14 @@
 package uoslife.servermeeting.meetingteam.service.impl
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUser
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
 import uoslife.servermeeting.meetingteam.dto.vo.MeetingTeamUsers
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
@@ -23,15 +22,15 @@ import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.meetingteam.util.Validator
+import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.exception.UserNotFoundException
-import uoslife.servermeeting.user.repository.UserRepository
+import uoslife.servermeeting.user.service.UserService
 
 @Service
 @Transactional(readOnly = true)
 @Qualifier("tripleMeetingService")
 class TripleMeetingService(
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val userTeamDao: UserTeamDao,
     private val preferenceRepository: PreferenceRepository,
     private val uniqueCodeGenerator: UniqueCodeGenerator,
@@ -39,24 +38,29 @@ class TripleMeetingService(
     private val validator: Validator,
     private val userTeamRepository: UserTeamRepository,
     private val meetingServiceUtils: MeetingServiceUtils,
+    @Qualifier("PortOneService") private val paymentService: PaymentService,
     @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(TripleMeetingService::class.java)
+    }
 
     @Transactional
     override fun createMeetingTeam(
         userId: Long,
         name: String?,
     ): MeetingTeamCodeResponse {
-        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val user = userService.getUser(userId)
 
         validator.isUserAlreadyHaveTripleTeam(user)
-        validator.isTeamNameInvalid(name)
+        //        validator.isTeamNameInvalid(name)
 
         val code = uniqueCodeGenerator.getUniqueTeamCode()
         val meetingTeam = createDefaultMeetingTeam(user, name, code, TeamType.TRIPLE)
 
         userTeamDao.saveUserTeam(meetingTeam, user, true)
-
+        logger.info("[유저 팀 생성] User ID : $userId Triple Team ID : ${meetingTeam.id}")
         return MeetingTeamCodeResponse(code)
     }
 
@@ -64,9 +68,8 @@ class TripleMeetingService(
     override fun joinMeetingTeam(
         userId: Long,
         code: String,
-        isJoin: Boolean
     ): MeetingTeamUserListGetResponse? {
-        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val user = userService.getUser(userId)
 
         validator.isTeamCodeValid(code)
         validator.isUserAlreadyHaveTripleTeam(user)
@@ -78,36 +81,24 @@ class TripleMeetingService(
 
         val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, false)
         userTeamRepository.save(newUserTeam)
-
-        return if (isJoin) {
-            null
-        } else {
-            val meetingTeamUsers =
-                MeetingTeamUsers(meetingTeam.userTeams.stream().map { it.user }.toList())
-            meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
-        }
+        logger.info("[3:3팀 입장] User ID : $userId Triple Team ID : ${meetingTeam.id}")
+        val meetingTeamUsers =
+            MeetingTeamUsers(meetingTeam.userTeams.stream().map { it.user }.toList())
+        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
     }
 
     override fun getMeetingTeamUserList(
         userId: Long,
         code: String
     ): MeetingTeamUserListGetResponse {
-        userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         validator.isTeamCodeValid(code)
 
         val meetingTeam =
             meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
 
-        val meetingTeamUsers = meetingTeam.userTeams.stream().map { it.user }.toList()
-        return MeetingTeamUserListGetResponse(
-            teamName = meetingTeam.name!!,
-            userList =
-                meetingTeamUsers.map {
-                    MeetingTeamUser(
-                        name = it.name,
-                    )
-                }
-        )
+        val meetingTeamUsers =
+            MeetingTeamUsers(meetingTeam.userTeams.stream().map { it.user }.toList())
+        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
     }
 
     @Transactional
@@ -115,20 +106,22 @@ class TripleMeetingService(
         userId: Long,
         meetingTeamInfoUpdateRequest: MeetingTeamInfoUpdateRequest
     ) {
-        validator.isMessageLengthIsValid(meetingTeamInfoUpdateRequest.message)
+        validator.isTeamNameInvalid(meetingTeamInfoUpdateRequest.name)
 
-        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-        val meetingTeam: MeetingTeam = getUserTripleMeetingUserTeam(user).team
+        val user = userService.getUser(userId)
+        val meetingUserTeam = getUserTripleMeetingUserTeam(user)
+        if (!meetingUserTeam.isLeader) throw OnlyTeamLeaderCanUpdateTeamInformationException()
+
+        val meetingTeam = meetingUserTeam.team
 
         val newPreference = meetingTeamInfoUpdateRequest.toTriplePreference(meetingTeam)
-
         meetingTeam.preference?.let { preferenceRepository.delete(it) }
         meetingTeam.preference = newPreference
-        meetingTeam.message = meetingTeamInfoUpdateRequest.message
+        meetingTeam.name = meetingTeamInfoUpdateRequest.name
     }
 
     override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {
-        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val user = userService.getUser(userId)
         val meetingTeam = getUserTripleMeetingUserTeam(user).team
 
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
@@ -145,15 +138,27 @@ class TripleMeetingService(
 
     @Transactional
     override fun deleteMeetingTeam(userId: Long) {
-        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val user = userService.getUser(userId)
         val meetingUserTeam = getUserTripleMeetingUserTeam(user)
 
         if (!meetingUserTeam.isLeader) throw OnlyTeamLeaderCanDeleteTeamException()
 
         val meetingTeam = meetingUserTeam.team
+        checkTeamPayment(user)
 
         meetingTeam.userTeams.forEach { userTeamRepository.delete(it) }
         meetingTeamRepository.delete(meetingTeam)
+        logger.info("[3:3 미팅 팀 삭제] User ID : $userId")
+    }
+
+    private fun checkTeamPayment(user: User) {
+        val successPayment = paymentService.getSuccessPayment(user.id!!, teamType = TeamType.TRIPLE)
+
+        if (successPayment != null) {
+            paymentService.refundPaymentByToken(user.id!!, TeamType.SINGLE)
+        }
+
+        user.payments?.forEach { payment -> payment.removeMeetingTeam() }
     }
 
     @Transactional
