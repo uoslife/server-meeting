@@ -116,6 +116,20 @@ class UserService(
         return true
     }
 
+
+    fun getUserMeetingTeamBranch(userId: Long): UserBranchResponse {
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+
+        val userTeams =
+            userTeamDao.findUserTeamWithMeetingTeam(user)
+                ?: return UserBranchResponse(
+                    singleTeamBranch = TeamBranch.NOT_CREATED,
+                    tripleTeamBranch = TeamBranch.NOT_CREATED
+                )
+
+        return determineMeetingTeamStatus(userId, userTeams)
+    }
+
     private fun upsertUserInformation(
         user: User,
         command: UserCommand.UpdateUserInformation
@@ -150,20 +164,6 @@ class UserService(
         user.kakaoTalkId = command.kakaoTalkId ?: user.kakaoTalkId
         return user
     }
-
-    fun getUserMeetingTeamBranch(userId: Long): UserBranchResponse {
-        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-
-        val userTeams =
-            userTeamDao.findUserTeamWithMeetingTeam(user)
-                ?: return UserBranchResponse(
-                    singleTeamBranch = TeamBranch.NOT_CREATED,
-                    tripleTeamBranch = TeamBranch.NOT_CREATED
-                )
-
-        return determineMeetingTeamStatus(userId, userTeams)
-    }
-
     private fun determineMeetingTeamStatus(
         userId: Long,
         userTeams: List<UserTeam>
