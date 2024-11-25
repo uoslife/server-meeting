@@ -34,23 +34,6 @@ class UserDao(
             .fetchOne()
     }
 
-    fun updateUserInformation(command: UserCommand.UpdateUserInformation): Long {
-
-        val jpaClause =
-            queryFactory.update(userInformation).where(userInformation.user.id.eq(command.userId))
-
-        command.smoking?.let { jpaClause.set(userInformation.smoking, it) }
-        command.mbti?.let { jpaClause.set(userInformation.mbti, it) }
-        command.interest?.let { jpaClause.set(userInformation.interest, it) }
-        command.height?.let { jpaClause.set(userInformation.height, it) }
-        command.age?.let { jpaClause.set(userInformation.age, it) }
-        command.studentNumber?.let { jpaClause.set(userInformation.studentNumber, it) }
-        command.department?.let { jpaClause.set(userInformation.department, it) }
-        command.eyelidType?.let { jpaClause.set(userInformation.eyelidType, it) }
-        command.appearanceType?.let { jpaClause.set(userInformation.appearanceType, it) }
-        return jpaClause.execute()
-    }
-
     fun updateUserPersonalInformation(command: UserCommand.UpdateUserPersonalInformation): Long {
         val jpaClause = queryFactory.update(user).where(user.id.eq(command.userId))
         command.name?.let { jpaClause.set(user.name, it) }

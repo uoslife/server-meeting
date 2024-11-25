@@ -11,6 +11,7 @@ import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.command.UserCommand
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.entity.UserInformation
 import uoslife.servermeeting.user.exception.KakaoTalkIdDuplicationException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
@@ -48,7 +49,8 @@ class UserService(
     @Transactional
     fun updateUserInformation(command: UserCommand.UpdateUserInformation): User {
         command.mbti = validator.setValidMBTI(command.mbti)
-        val updated: Long = userDao.updateUserInformation(command)
+        val user = userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
+        upsertUserInformation(user, command)
         return userDao.findUserProfile(command.userId) ?: throw UserNotFoundException()
     }
 
@@ -86,5 +88,18 @@ class UserService(
     fun isDuplicatedKakaoTalkId(kakaoTalkId: String): Boolean {
         if (userRepository.existsByKakaoTalkId(kakaoTalkId)) throw KakaoTalkIdDuplicationException()
         return true
+    }
+
+    private fun upsertUserInformation(user: User, command: UserCommand.UpdateUserInformation) {
+        val existingUserInfo = user.userInformation ?: UserInformation(user = user)
+        existingUserInfo.smoking = command.smoking ?: existingUserInfo.smoking
+        existingUserInfo.mbti = command.mbti ?: existingUserInfo.mbti
+        existingUserInfo.interest = command.interest ?: existingUserInfo.interest
+        existingUserInfo.height = command.height ?: existingUserInfo.height
+        existingUserInfo.age = command.age ?: existingUserInfo.age
+        existingUserInfo.studentNumber = command.studentNumber ?: existingUserInfo.studentNumber
+        existingUserInfo.department = command.department ?: existingUserInfo.department
+        existingUserInfo.eyelidType = command.eyelidType ?: existingUserInfo.eyelidType
+        existingUserInfo.appearanceType = command.appearanceType ?: existingUserInfo.appearanceType
     }
 }
