@@ -27,10 +27,9 @@ class UserDao(
     fun findUserProfile(userId: Long): User? {
         return queryFactory
             .selectFrom(user)
-            .join(userInformation)
-            .on(userInformation.user.eq(user))
-            .where(user.id.eq(userId))
+            .leftJoin(user.userInformation, userInformation)
             .fetchJoin()
+            .where(user.id.eq(userId))
             .fetchOne()
     }
 
