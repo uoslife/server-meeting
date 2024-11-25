@@ -42,7 +42,7 @@ class AuthApi(
                                     [
                                         ExampleObject(
                                             value =
-                                                "{\"accessToken\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"}"
+                                                "{\"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"}"
                                         )]
                             )]
                 ),
