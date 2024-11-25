@@ -126,7 +126,7 @@ class MeetingApi(
             [
                 ApiResponse(
                     responseCode = "204",
-                    description = "isJoin true일 경우, 팀 참가 및 null 반환, false일 경우, 팀 참가하지 않고 팀 정보 반환",
+                    description = "팀에 참가하고 참가한 팀 정보 반환",
                     content =
                         [
                             Content(
@@ -209,7 +209,6 @@ class MeetingApi(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
         @PathVariable code: String,
-        @RequestParam isJoin: Boolean,
     ): ResponseEntity<MeetingTeamUserListGetResponse?> {
         val userId = userDetails.username.toLong()
 
@@ -217,8 +216,7 @@ class MeetingApi(
             throw InSingleMeetingTeamNoJoinTeamException()
         }
 
-        val meetingTeamUserListGetResponse =
-            tripleMeetingService.joinMeetingTeam(userId, code, isJoin)
+        val meetingTeamUserListGetResponse = tripleMeetingService.joinMeetingTeam(userId, code)
         return ResponseEntity.ok(meetingTeamUserListGetResponse)
     }
 

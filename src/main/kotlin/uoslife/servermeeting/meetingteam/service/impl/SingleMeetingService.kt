@@ -62,7 +62,6 @@ class SingleMeetingService(
     override fun joinMeetingTeam(
         userId: Long,
         code: String,
-        isJoin: Boolean
     ): MeetingTeamUserListGetResponse? {
         throw InSingleMeetingTeamNoJoinTeamException()
     }
