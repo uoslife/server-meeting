@@ -55,7 +55,7 @@ constructor(
 
             `when`("유저 info 업데이트 정보 요청이 들어오면") {
                 then("업데이트를 한다") {
-                    val firstUser = userService.updateUserInformation(userUpdateCommand)
+                    val firstUser = userService.updateUserInformation(initUserInformationCommand)
                     entityManager.flush()
 
                     firstUser.userInformation?.mbti shouldBe "INTJ"
@@ -71,7 +71,36 @@ constructor(
             `when`("유저 프로파일 업데이트 요청이 들어오면") {
                 then("업데이트를 한다") {
                     val firstUser =
-                        userService.updateUserPersonalInformation(userPersonalUpdateCommand)
+                        userService.updateUserPersonalInformation(initUserProfileCommand)
+                    entityManager.flush()
+
+                    firstUser.name shouldBe "석우진"
+                    firstUser.phoneNumber shouldBe "010-1234-5678"
+                    firstUser.kakaoTalkId shouldBe "seok"
+                }
+            }
+            `when`("유저 정보가 이미 있을때") {
+                userService.updateUserPersonalInformation(initUserProfileCommand)
+                userService.updateUserInformation(initUserInformationCommand)
+
+                then("userInformation을 업데이트한다") {
+                    val firstUser =
+                        userService.updateUserInformation(updateUserPersonalInformationCommand)
+                    entityManager.flush()
+
+                    firstUser.userInformation?.smoking shouldBe SmokingType.E_CIGARETTE
+                    firstUser.userInformation?.mbti shouldBe "ENTP"
+                    firstUser.userInformation?.interest shouldBe listOf("수영", "코딩")
+                    firstUser.userInformation?.height shouldBe 185
+                    firstUser.userInformation?.age shouldBe 23
+                    firstUser.userInformation?.studentNumber shouldBe 2023830018
+                    firstUser.userInformation?.department shouldBe "전자전기컴퓨터공학부"
+                    firstUser.userInformation?.eyelidType shouldBe EyelidType.SINGLE
+                    firstUser.userInformation?.appearanceType shouldBe AppearanceType.TOFU
+                }
+                then("userProfile을 업데이트한다") {
+                    val firstUser =
+                        userService.updateUserPersonalInformation(initUserProfileCommand)
                     entityManager.flush()
 
                     firstUser.name shouldBe "석우진"
@@ -88,7 +117,7 @@ constructor(
                 User(name = "석우진", email = "seok@gmail.com"),
                 User(name = "최동준", email = "dong@gmail.com"),
             )
-        private val userUpdateCommand =
+        private val initUserInformationCommand =
             UserCommand.UpdateUserInformation(
                 userId = 1L,
                 smoking = SmokingType.FALSE,
@@ -101,11 +130,31 @@ constructor(
                 eyelidType = EyelidType.DOUBLE,
                 appearanceType = AppearanceType.ARAB,
             )
-        private val userPersonalUpdateCommand =
+        private val initUserProfileCommand =
             UserCommand.UpdateUserPersonalInformation(
                 userId = 1L,
                 name = "석우진",
                 phoneNumber = "010-1234-5678",
+                kakaoTalkId = "seok"
+            )
+        private val updateUserPersonalInformationCommand =
+            UserCommand.UpdateUserInformation(
+                userId = 1L,
+                smoking = SmokingType.E_CIGARETTE,
+                mbti = "ENTP",
+                interest = listOf("수영", "코딩"),
+                height = 185,
+                age = 23,
+                studentNumber = 2023830018,
+                department = "전자전기컴퓨터공학부",
+                eyelidType = EyelidType.SINGLE,
+                appearanceType = AppearanceType.TOFU,
+            )
+        private val updateUserProfileCommand =
+            UserCommand.UpdateUserPersonalInformation(
+                userId = 1L,
+                name = "석우진",
+                phoneNumber = "010-9006-8420",
                 kakaoTalkId = "seok"
             )
     }
