@@ -20,6 +20,7 @@ import uoslife.servermeeting.user.dto.response.UserBranchResponse
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserInformation
 import uoslife.servermeeting.user.exception.KakaoTalkIdDuplicationException
+import uoslife.servermeeting.user.exception.UserInformationNotFoundException
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserInformationRepository
 import uoslife.servermeeting.user.repository.UserRepository
@@ -136,24 +137,18 @@ class UserService(
         user: User,
         command: UserCommand.UpdateUserInformation
     ): User {
-        val existingUserInfo =
-            if (user.userInformation == null) {
-                user.userInformation = userInformationRepository.save(UserInformation(user = user))
-                user.userInformation
-            } else {
-                user.userInformation
-            }
+        val information: UserInformation =
+            user.userInformation ?: throw UserInformationNotFoundException()
 
-        existingUserInfo?.smoking = command.smoking ?: existingUserInfo?.smoking
-        existingUserInfo?.mbti = command.mbti ?: existingUserInfo?.mbti
-        existingUserInfo?.interest = command.interest ?: existingUserInfo?.interest
-        existingUserInfo?.height = command.height ?: existingUserInfo?.height
-        existingUserInfo?.age = command.age ?: existingUserInfo?.age
-        existingUserInfo?.studentNumber = command.studentNumber ?: existingUserInfo?.studentNumber
-        existingUserInfo?.department = command.department ?: existingUserInfo?.department
-        existingUserInfo?.eyelidType = command.eyelidType ?: existingUserInfo?.eyelidType
-        existingUserInfo?.appearanceType =
-            command.appearanceType ?: existingUserInfo?.appearanceType
+        information.smoking = command.smoking ?: information.smoking
+        information.mbti = command.mbti ?: information.mbti
+        information.interest = command.interest ?: information.interest
+        information.height = command.height ?: information.height
+        information.age = command.age ?: information.age
+        information.studentNumber = command.studentNumber ?: information.studentNumber
+        information.department = command.department ?: information.department
+        information.eyelidType = command.eyelidType ?: information.eyelidType
+        information.appearanceType = command.appearanceType ?: information.appearanceType
         return user
     }
 

@@ -58,7 +58,8 @@ constructor(
             )
 
         given("유저가 생성되었을때") {
-            val savedUser = userRepository.saveAllAndFlush(users)
+            val savedUser = userService.createUserByEmail("seok@gmail.com")
+            userRepository.flush()
 
             `when`("유저 info 업데이트 정보 요청이 들어오면") {
                 then("업데이트를 한다") {
