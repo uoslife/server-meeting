@@ -19,6 +19,7 @@ import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.dto.response.UserBranchResponse
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserInformation
+import uoslife.servermeeting.user.exception.GenderNotUpdatableException
 import uoslife.servermeeting.user.exception.KakaoTalkIdDuplicationException
 import uoslife.servermeeting.user.exception.UserInformationNotFoundException
 import uoslife.servermeeting.user.exception.UserNotFoundException
@@ -71,10 +72,10 @@ class UserService(
 
     @Transactional
     fun updateUserPersonalInformation(command: UserCommand.UpdateUserPersonalInformation): User {
-        if (command.kakaoTalkId != null) {
+        val user = userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
+        if (command.kakaoTalkId != null && command.kakaoTalkId != user.kakaoTalkId) {
             isDuplicatedKakaoTalkId(command.kakaoTalkId)
         }
-        val user = userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
         return updateUserProfile(user, command)
     }
 
@@ -83,7 +84,6 @@ class UserService(
      * 1:1, 3:3 에서 모두 나오며 미팅팀은 고아 객체로 유지됨 (확정 X) Payment는 User를 NULL로 설정하고 STATUS를 변경하여 SOFT_DELETE
      * 진행합니다.
      */
-    // TODO 팀이 있는 상태로 한명이 나가면 팀 전체가 삭제 되기 때문에 팀 삭제 로직을 먼저 실행햐여야 함
     @Transactional
     fun deleteUserById(userId: Long) {
         // 유저가 존재하는지 확인
@@ -159,6 +159,10 @@ class UserService(
         user.name = command.name ?: user.name
         user.phoneNumber = command.phoneNumber ?: user.phoneNumber
         user.kakaoTalkId = command.kakaoTalkId ?: user.kakaoTalkId
+        if(command.gender != null && user.gender != null){
+            throw GenderNotUpdatableException()
+        }
+        user.gender = command.gender ?: user.gender
         return user
     }
     private fun determineMeetingTeamStatus(
