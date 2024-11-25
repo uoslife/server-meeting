@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository
 import uoslife.servermeeting.payment.entity.Payment
 import uoslife.servermeeting.payment.entity.QPayment.payment
 import uoslife.servermeeting.payment.entity.enums.PaymentStatus
-import uoslife.servermeeting.user.command.UserCommand
 import uoslife.servermeeting.user.entity.QUser.user
 import uoslife.servermeeting.user.entity.QUserInformation.userInformation
 import uoslife.servermeeting.user.entity.User
@@ -31,13 +30,5 @@ class UserDao(
             .fetchJoin()
             .where(user.id.eq(userId))
             .fetchOne()
-    }
-
-    fun updateUserPersonalInformation(command: UserCommand.UpdateUserPersonalInformation): Long {
-        val jpaClause = queryFactory.update(user).where(user.id.eq(command.userId))
-        command.name?.let { jpaClause.set(user.name, it) }
-        command.phoneNumber?.let { jpaClause.set(user.phoneNumber, it) }
-        command.kakaoTalkId?.let { jpaClause.set(user.kakaoTalkId, it) }
-        return jpaClause.execute()
     }
 }

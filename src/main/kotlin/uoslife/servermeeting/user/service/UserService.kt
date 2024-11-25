@@ -52,8 +52,7 @@ class UserService(
     fun updateUserInformation(command: UserCommand.UpdateUserInformation): User {
         command.mbti = validator.setValidMBTI(command.mbti)
         val user = userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
-        upsertUserInformation(user, command)
-        return user
+        return upsertUserInformation(user, command)
     }
 
     @Transactional
@@ -61,8 +60,8 @@ class UserService(
         if (command.kakaoTalkId != null) {
             isDuplicatedKakaoTalkId(command.kakaoTalkId)
         }
-        val updateUserPersonalInformation = userDao.updateUserPersonalInformation(command)
-        return userDao.findUserProfile(command.userId) ?: throw UserNotFoundException()
+        val user = userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
+        return updateUserProfile(user, command)
     }
 
     /**
@@ -92,7 +91,10 @@ class UserService(
         return true
     }
 
-    private fun upsertUserInformation(user: User, command: UserCommand.UpdateUserInformation) {
+    private fun upsertUserInformation(
+        user: User,
+        command: UserCommand.UpdateUserInformation
+    ): User {
         val existingUserInfo =
             if (user.userInformation == null) {
                 user.userInformation = userInformationRepository.save(UserInformation(user = user))
@@ -111,5 +113,16 @@ class UserService(
         existingUserInfo?.eyelidType = command.eyelidType ?: existingUserInfo?.eyelidType
         existingUserInfo?.appearanceType =
             command.appearanceType ?: existingUserInfo?.appearanceType
+        return user
+    }
+
+    private fun updateUserProfile(
+        user: User,
+        command: UserCommand.UpdateUserPersonalInformation
+    ): User {
+        user.name = command.name ?: user.name
+        user.phoneNumber = command.phoneNumber ?: user.phoneNumber
+        user.kakaoTalkId = command.kakaoTalkId ?: user.kakaoTalkId
+        return user
     }
 }
