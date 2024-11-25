@@ -149,6 +149,8 @@ class UserService(
         user.phoneNumber = command.phoneNumber ?: user.phoneNumber
         user.kakaoTalkId = command.kakaoTalkId ?: user.kakaoTalkId
         return user
+    }
+
     fun getUserMeetingTeamBranch(userId: Long): UserBranchResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
 
