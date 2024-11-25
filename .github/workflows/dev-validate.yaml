@@ -40,9 +40,9 @@ jobs:
                 run: |
                     mkdir -p ./src/main/resources
                     echo "${{ env.PROD_PROPERTIES }}" > ./src/main/resources/application.yml
-            -   name: Create test-application.yml
-                run: |
-                    mkdir -p ./src/test/resources
-                    echo "${{ env.TEST_PROPERTIES }}" > ./src/test/resources/application.yml
+#            -   name: Create test-application.yml
+#                run: |
+#                    mkdir -p ./src/test/resources
+#                    echo "${{ env.TEST_PROPERTIES }}" > ./src/test/resources/application.yml
             -   name: Build with Gradle
                 run: ./gradlew clean build

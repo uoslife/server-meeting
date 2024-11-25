@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.user.dto.request.UserPersonalInformationUpdateRequest
 import uoslife.servermeeting.user.dto.request.UserUpdateRequest
+import uoslife.servermeeting.user.dto.response.UserAllInformationResponse
 import uoslife.servermeeting.user.dto.response.UserBranchResponse
-import uoslife.servermeeting.user.dto.response.UserProfileResponse
 import uoslife.servermeeting.user.dto.response.UserSimpleResponse
 import uoslife.servermeeting.user.service.UserService
 
@@ -26,15 +26,14 @@ import uoslife.servermeeting.user.service.UserService
 class UserApi(
     private val userService: UserService,
 ) {
-    @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 정보를 조회합니다.")
+    @Operation(summary = "User 정보 조회", description = "토큰을 통해서 User의 간단 정보를 조회합니다.")
     @ApiResponses(
         value =
             [
                 ApiResponse(
                     responseCode = "200",
                     description = "유저 정보 조회 성공",
-                    content =
-                        [Content(schema = Schema(implementation = UserProfileResponse::class))]
+                    content = [Content(schema = Schema(implementation = UserSimpleResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
@@ -56,24 +55,86 @@ class UserApi(
         return ResponseEntity.ok().body(userSimpleResponse)
     }
 
-    @GetMapping("/profile")
-    fun getUserProfile(
-        @AuthenticationPrincipal userDetails: UserDetails
-    ): ResponseEntity<UserProfileResponse> {
-        val userProfileResponse: UserProfileResponse =
-            UserProfileResponse.valueOf(userService.getUserProfile(userDetails.username.toLong()))
-
-        return ResponseEntity.ok().body(userProfileResponse)
-    }
-
-    @Operation(summary = "User 정보 업데이트", description = "유저의 정보를 업데이트합니다.")
+    @Operation(summary = "User 상세 조회", description = "토큰을 통해서 유저의 모든 정보를 조회합니다.")
     @ApiResponses(
         value =
             [
                 ApiResponse(
-                    responseCode = "204",
+                    responseCode = "200",
+                    description = "유저 정보 조회 성공",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = UserAllInformationResponse::class)
+                            )]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                            )]
+                ),
+            ]
+    )
+    @GetMapping("/all-info")
+    fun getUserProfile(
+        @AuthenticationPrincipal userDetails: UserDetails
+    ): ResponseEntity<UserAllInformationResponse> {
+        val userAllInformationResponse: UserAllInformationResponse =
+            UserAllInformationResponse.valueOf(
+                userService.getUserDetailedInformation(userDetails.username.toLong())
+            )
+
+        return ResponseEntity.ok().body(userAllInformationResponse)
+    }
+
+    @Operation(summary = "User 정보 업데이트", description = "유저의 상세 정보를 업데이트합니다.")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
                     description = "유저 정보 업데이트 성공",
-                    content = [Content(schema = Schema(implementation = Unit::class))]
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = UserAllInformationResponse::class)
+                            )]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "해당 유저 정보 없음",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                            )]
+                ),
+            ]
+    )
+    @PatchMapping("/user-info")
+    fun updateUser(
+        @RequestBody(required = false) requestBody: UserUpdateRequest,
+        @AuthenticationPrincipal userDetails: UserDetails,
+    ): ResponseEntity<UserAllInformationResponse> {
+        val user =
+            userService.updateUserInformation(
+                requestBody.toUpdateUserInformationCommand(userDetails.username.toLong())
+            )
+        val userAllInformationResponse = UserAllInformationResponse.valueOf(user)
+        return ResponseEntity.status(HttpStatus.OK).body(userAllInformationResponse)
+    }
+    @Operation(summary = "User 기본 정보 업데이트", description = "유저의 기본 정보를 업데이트합니다.")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "유저 정보 업데이트 성공",
+                    content = [Content(schema = Schema(implementation = UserSimpleResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
@@ -87,29 +148,16 @@ class UserApi(
             ]
     )
     @PatchMapping
-    fun updateUser(
-        @RequestBody(required = false) requestBody: UserUpdateRequest,
-        @AuthenticationPrincipal userDetails: UserDetails,
-    ): ResponseEntity<UserSimpleResponse> {
-        val user =
-            userService.updateUserInformation(
-                requestBody.toUpdateUserInformationCommand(userDetails.username.toLong())
-            )
-        val userSimpleResponse = UserSimpleResponse.valueOf(user)
-        return ResponseEntity.status(HttpStatus.OK).body(userSimpleResponse)
-    }
-
-    @PatchMapping("/user-info")
     fun updateUserPersonalInformation(
         @RequestBody(required = false) requestBody: UserPersonalInformationUpdateRequest,
         @AuthenticationPrincipal userDetails: UserDetails,
-    ): ResponseEntity<UserProfileResponse> {
+    ): ResponseEntity<UserSimpleResponse> {
         val command =
             requestBody.toUpdateUserPersonalInformationCommand(userDetails.username.toLong())
         println(command.toString())
         val user = userService.updateUserPersonalInformation(command)
-        val userProfileResponse = UserProfileResponse.valueOf(user)
-        return ResponseEntity.status(HttpStatus.OK).body(userProfileResponse)
+        val userSimpleResponse = UserSimpleResponse.valueOf(user)
+        return ResponseEntity.status(HttpStatus.OK).body(userSimpleResponse)
     }
 
     @Operation(summary = "User 계정 삭제", description = "유저 ID를 이용하여 삭제합니다.")

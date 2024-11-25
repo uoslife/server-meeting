@@ -18,8 +18,11 @@ import uoslife.servermeeting.user.command.UserCommand
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.dto.response.UserBranchResponse
 import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.entity.UserInformation
 import uoslife.servermeeting.user.exception.KakaoTalkIdDuplicationException
+import uoslife.servermeeting.user.exception.UserInformationNotFoundException
 import uoslife.servermeeting.user.exception.UserNotFoundException
+import uoslife.servermeeting.user.repository.UserInformationRepository
 import uoslife.servermeeting.user.repository.UserRepository
 
 @Service
@@ -28,6 +31,7 @@ class UserService(
     private val userRepository: UserRepository,
     @Qualifier("portOneService") private val paymentService: PaymentService,
     private val userTeamRepository: UserTeamRepository,
+    private val userInformationRepository: UserInformationRepository,
     private val userDao: UserDao,
     private val userTeamDao: UserTeamDao,
     private val validator: Validator,
@@ -44,22 +48,25 @@ class UserService(
 
     @Transactional
     fun createUserByEmail(email: String): User {
-        return userRepository.save(User.create(email = email))
+        val user = userRepository.save(User.create(email = email))
+        val userInformation = userInformationRepository.save(UserInformation(user = user))
+        user.userInformation = userInformation
+        return user
     }
 
     fun getUser(userId: Long): User {
         return userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
     }
 
-    fun getUserProfile(userId: Long): User {
+    fun getUserDetailedInformation(userId: Long): User {
         return userDao.findUserProfile(userId) ?: throw UserNotFoundException()
     }
 
     @Transactional
     fun updateUserInformation(command: UserCommand.UpdateUserInformation): User {
         command.mbti = validator.setValidMBTI(command.mbti)
-        val updated: Long = userDao.updateUserInformation(command)
-        return userDao.findUserProfile(command.userId) ?: throw UserNotFoundException()
+        val user = userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
+        return upsertUserInformation(user, command)
     }
 
     @Transactional
@@ -67,8 +74,8 @@ class UserService(
         if (command.kakaoTalkId != null) {
             isDuplicatedKakaoTalkId(command.kakaoTalkId)
         }
-        val updateUserPersonalInformation = userDao.updateUserPersonalInformation(command)
-        return userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
+        val user = userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
+        return updateUserProfile(user, command)
     }
 
     /**
@@ -126,6 +133,34 @@ class UserService(
         return determineMeetingTeamStatus(userId, userTeams)
     }
 
+    private fun upsertUserInformation(
+        user: User,
+        command: UserCommand.UpdateUserInformation
+    ): User {
+        val information: UserInformation =
+            user.userInformation ?: throw UserInformationNotFoundException()
+
+        information.smoking = command.smoking ?: information.smoking
+        information.mbti = command.mbti ?: information.mbti
+        information.interest = command.interest ?: information.interest
+        information.height = command.height ?: information.height
+        information.age = command.age ?: information.age
+        information.studentNumber = command.studentNumber ?: information.studentNumber
+        information.department = command.department ?: information.department
+        information.eyelidType = command.eyelidType ?: information.eyelidType
+        information.appearanceType = command.appearanceType ?: information.appearanceType
+        return user
+    }
+
+    private fun updateUserProfile(
+        user: User,
+        command: UserCommand.UpdateUserPersonalInformation
+    ): User {
+        user.name = command.name ?: user.name
+        user.phoneNumber = command.phoneNumber ?: user.phoneNumber
+        user.kakaoTalkId = command.kakaoTalkId ?: user.kakaoTalkId
+        return user
+    }
     private fun determineMeetingTeamStatus(
         userId: Long,
         userTeams: List<UserTeam>

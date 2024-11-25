@@ -2,7 +2,6 @@ package uoslife.servermeeting.user.command
 
 import uoslife.servermeeting.user.entity.enums.AppearanceType
 import uoslife.servermeeting.user.entity.enums.EyelidType
-import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.entity.enums.SmokingType
 
 class UserCommand {
@@ -24,7 +23,6 @@ class UserCommand {
         val userId: Long,
         val name: String?,
         val phoneNumber: String?,
-        val gender: GenderType?,
         val kakaoTalkId: String?,
     )
 }
