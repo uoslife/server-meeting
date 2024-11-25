@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.enums.*
 
-data class UserProfileResponse(
+data class UserAllInformationResponse(
     @Schema(description = "이름", example = "유현승") val name: String?,
     @Schema(description = "성별", example = "MALE") val genderType: GenderType?,
     @Schema(description = "나이", example = "26") val age: Int?,
@@ -22,8 +22,8 @@ data class UserProfileResponse(
     @Schema(description = "학적", example = "UNDERGRADUATE") val studentType: StudentType?,
 ) {
     companion object {
-        fun valueOf(user: User): UserProfileResponse {
-            return UserProfileResponse(
+        fun valueOf(user: User): UserAllInformationResponse {
+            return UserAllInformationResponse(
                 name = user.name,
                 genderType = user.gender,
                 phoneNumber = user.phoneNumber,

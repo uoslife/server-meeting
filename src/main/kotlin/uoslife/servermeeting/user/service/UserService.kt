@@ -47,14 +47,17 @@ class UserService(
 
     @Transactional
     fun createUserByEmail(email: String): User {
-        return userRepository.save(User.create(email = email))
+        val user = userRepository.save(User.create(email = email))
+        val userInformation = userInformationRepository.save(UserInformation(user = user))
+        user.userInformation = userInformation
+        return user
     }
 
     fun getUser(userId: Long): User {
         return userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
     }
 
-    fun getUserProfile(userId: Long): User {
+    fun getUserDetailedInformation(userId: Long): User {
         return userDao.findUserProfile(userId) ?: throw UserNotFoundException()
     }
 
@@ -115,7 +118,6 @@ class UserService(
         if (userRepository.existsByKakaoTalkId(kakaoTalkId)) throw KakaoTalkIdDuplicationException()
         return true
     }
-
 
     fun getUserMeetingTeamBranch(userId: Long): UserBranchResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
