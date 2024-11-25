@@ -1,0 +1,20 @@
+spring:
+    h2:
+        console:
+            enabled: true  # H2 Console을 사용할지 여부 (H2 Console은 H2 Database를 UI로 제공해주는 기능)
+            path: /h2-console  # H2 Console의 Path
+    datasource:
+        driver-class-name: org.h2.Driver
+        url: jdbc:h2:mem:db;MODE=POSTGRESQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+        username: sa
+        password:
+    jpa:
+        generate-ddl: 'true'
+        hibernate:
+            ddl-auto: create
+        properties:
+            hibernate:
+                #  show_sql: true
+                format_sql: true
+                use_sql_comments: true # sql 과 함께 jpql 주석처리되어  콘솔창에 출력
+
