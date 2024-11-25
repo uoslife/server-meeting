@@ -22,7 +22,6 @@ data class UserPersonalInformationUpdateRequest(
             name = this.name,
             phoneNumber = this.phoneNumber,
             kakaoTalkId = this.kakaoTalkId,
-            gender = this.genderType,
         )
     }
 }

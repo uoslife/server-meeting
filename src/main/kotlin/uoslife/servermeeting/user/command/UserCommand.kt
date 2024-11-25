@@ -24,7 +24,6 @@ class UserCommand {
         val userId: Long,
         val name: String?,
         val phoneNumber: String?,
-        val gender: GenderType?,
         val kakaoTalkId: String?,
     )
 }

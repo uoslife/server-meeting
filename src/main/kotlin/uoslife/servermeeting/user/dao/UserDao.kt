@@ -38,7 +38,6 @@ class UserDao(
         val jpaClause = queryFactory.update(user).where(user.id.eq(command.userId))
         command.name?.let { jpaClause.set(user.name, it) }
         command.phoneNumber?.let { jpaClause.set(user.phoneNumber, it) }
-        command.gender?.let { jpaClause.set(user.gender, it) }
         command.kakaoTalkId?.let { jpaClause.set(user.kakaoTalkId, it) }
         return jpaClause.execute()
     }
