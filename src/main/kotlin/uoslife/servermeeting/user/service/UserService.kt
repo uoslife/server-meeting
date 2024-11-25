@@ -14,6 +14,7 @@ import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserInformation
 import uoslife.servermeeting.user.exception.KakaoTalkIdDuplicationException
 import uoslife.servermeeting.user.exception.UserNotFoundException
+import uoslife.servermeeting.user.repository.UserInformationRepository
 import uoslife.servermeeting.user.repository.UserRepository
 
 @Service
@@ -22,6 +23,7 @@ class UserService(
     private val userRepository: UserRepository,
     @Qualifier("portOneService") private val paymentService: PaymentService,
     private val userTeamRepository: UserTeamRepository,
+    private val userInformationRepository: UserInformationRepository,
     private val userDao: UserDao,
     private val validator: Validator
 ) {
@@ -51,7 +53,7 @@ class UserService(
         command.mbti = validator.setValidMBTI(command.mbti)
         val user = userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
         upsertUserInformation(user, command)
-        return userDao.findUserProfile(command.userId) ?: throw UserNotFoundException()
+        return user
     }
 
     @Transactional
@@ -91,15 +93,23 @@ class UserService(
     }
 
     private fun upsertUserInformation(user: User, command: UserCommand.UpdateUserInformation) {
-        val existingUserInfo = user.userInformation ?: UserInformation(user = user)
-        existingUserInfo.smoking = command.smoking ?: existingUserInfo.smoking
-        existingUserInfo.mbti = command.mbti ?: existingUserInfo.mbti
-        existingUserInfo.interest = command.interest ?: existingUserInfo.interest
-        existingUserInfo.height = command.height ?: existingUserInfo.height
-        existingUserInfo.age = command.age ?: existingUserInfo.age
-        existingUserInfo.studentNumber = command.studentNumber ?: existingUserInfo.studentNumber
-        existingUserInfo.department = command.department ?: existingUserInfo.department
-        existingUserInfo.eyelidType = command.eyelidType ?: existingUserInfo.eyelidType
-        existingUserInfo.appearanceType = command.appearanceType ?: existingUserInfo.appearanceType
+        val existingUserInfo =
+            if (user.userInformation == null) {
+                user.userInformation = userInformationRepository.save(UserInformation(user = user))
+                user.userInformation
+            } else {
+                user.userInformation
+            }
+
+        existingUserInfo?.smoking = command.smoking ?: existingUserInfo?.smoking
+        existingUserInfo?.mbti = command.mbti ?: existingUserInfo?.mbti
+        existingUserInfo?.interest = command.interest ?: existingUserInfo?.interest
+        existingUserInfo?.height = command.height ?: existingUserInfo?.height
+        existingUserInfo?.age = command.age ?: existingUserInfo?.age
+        existingUserInfo?.studentNumber = command.studentNumber ?: existingUserInfo?.studentNumber
+        existingUserInfo?.department = command.department ?: existingUserInfo?.department
+        existingUserInfo?.eyelidType = command.eyelidType ?: existingUserInfo?.eyelidType
+        existingUserInfo?.appearanceType =
+            command.appearanceType ?: existingUserInfo?.appearanceType
     }
 }
