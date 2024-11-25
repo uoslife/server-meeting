@@ -76,21 +76,6 @@ class VerificationApi(
                                                 "{\"message\": \"Daily email send limit exceeded.\", \"status\": 429, \"code\": \"E04\"}"
                                         )]
                             )]
-                ),
-                ApiResponse(
-                    responseCode = "500",
-                    description = "서버 오류",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{\"message\": \"Failed to send email.\", \"status\": 500, \"code\": \"E06\"}"
-                                        )]
-                            )]
                 )]
     )
     @PostMapping("/send-email")
@@ -108,7 +93,17 @@ class VerificationApi(
                 ApiResponse(
                     responseCode = "200",
                     description = "인증 성공 및 토큰 발급",
-                    content = [Content(schema = Schema(implementation = JwtResponse::class))]
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = JwtResponse::class),
+                                examples =
+                                    [
+                                        ExampleObject(
+                                            value =
+                                                "{\"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"}"
+                                        )]
+                            )]
                 ),
                 ApiResponse(
                     responseCode = "400",
