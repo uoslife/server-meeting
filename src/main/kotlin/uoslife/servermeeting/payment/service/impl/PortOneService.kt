@@ -78,13 +78,13 @@ class PortOneService(
         )
     }
 
-    private fun checkUserCanMakePayment(userTeam:UserTeam, userId:Long, teamType: TeamType){
+    private fun checkUserCanMakePayment(userTeam: UserTeam, userId: Long, teamType: TeamType) {
         checkUserIsLeader(userTeam)
         getSuccessPayment(userId, teamType)?.let { throw UserAlreadyHavePaymentException() }
         getPendingPayment(userId, teamType)?.let { throw UserAlreadyHavePaymentException() }
     }
 
-    private fun createNewPayment(user:User, meetingTeam: MeetingTeam): Payment {
+    private fun createNewPayment(user: User, meetingTeam: MeetingTeam): Payment {
         val payment =
             Payment.createPayment(
                 UUID.randomUUID().toString(),
@@ -241,7 +241,11 @@ class PortOneService(
             val portOneStatus = portOneAPIService.findPaymentByMID(pendingPayment!!.merchantUid)
 
             if (portOneStatus.isPaid()) {
-                updatePaymentStatus(pendingPayment!!, PaymentStatus.SUCCESS, portOneStatus.response?.imp_uid!!)
+                updatePaymentStatus(
+                    pendingPayment!!,
+                    PaymentStatus.SUCCESS,
+                    portOneStatus.response?.imp_uid!!
+                )
                 return PaymentResponseDto.PaymentRequestResponse(
                     pendingPayment!!.merchantUid,
                     pendingPayment!!.price,

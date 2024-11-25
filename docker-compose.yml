@@ -1,25 +1,6 @@
 version: '3'
 
 services:
-#    postgres:
-#        image: postgres
-#        restart: always
-#        ports:
-#            - "5432:5432"
-#        container_name: postgres
-#        environment:
-#            POSTGRES_USER: server-meeting
-#            POSTGRES_PASSWORD: server-meeting
-#            POSTGRES_DB: server-meeting
-
-    redis:
-        image: redis
-        restart: always
-        command: redis-server --port 6379
-        hostname: redis
-        ports:
-            - "6379:6379"
-
     application:
         image: ${DOCKER_ID}/${DOCKER_IMAGE}:0.1
         ports:
@@ -29,8 +10,8 @@ services:
             SPRING_DATASOURCE_USERNAME: ${DATABASE_USERNAME}
             SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
 
-            REDIS_HOST: redis
-            REDIS_PORT: 6379
+            REDIS_HOST: ${REDIS_HOST}
+            REDIS_PORT: ${REDIS_PORT}
 
             JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
             JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
@@ -44,5 +25,21 @@ services:
             PORTONE_API_IMP_KEY: ${PORTONE_API_IMP_KEY}
             PORTONE_API_IMP_SECRET: ${PORTONE_API_IMP_SECRET}
 
-        depends_on:
-            - redis
+#    postgres:
+#        image: postgres
+#        restart: always
+#        ports:
+#            - "5432:5432"
+#        container_name: postgres
+#        environment:
+#            POSTGRES_USER: server-meeting
+#            POSTGRES_PASSWORD: server-meeting
+#            POSTGRES_DB: server-meeting
+
+#    redis:
+#        image: redis
+#        restart: always
+#        command: redis-server --port 6379
+#        hostname: redis
+#        ports:
+#            - "6379:6379"
