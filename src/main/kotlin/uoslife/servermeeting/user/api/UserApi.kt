@@ -86,7 +86,7 @@ class UserApi(
                 ),
             ]
     )
-    @PatchMapping
+    @PatchMapping("/user-info")
     fun updateUser(
         @RequestBody(required = false) requestBody: UserUpdateRequest,
         @AuthenticationPrincipal userDetails: UserDetails,
@@ -99,7 +99,7 @@ class UserApi(
         return ResponseEntity.status(HttpStatus.OK).body(userSimpleResponse)
     }
 
-    @PatchMapping("/user-info")
+    @PatchMapping
     fun updateUserPersonalInformation(
         @RequestBody(required = false) requestBody: UserPersonalInformationUpdateRequest,
         @AuthenticationPrincipal userDetails: UserDetails,
