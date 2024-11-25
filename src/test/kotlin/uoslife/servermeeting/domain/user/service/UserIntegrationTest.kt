@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.annotation.Rollback
+import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
+import uoslife.servermeeting.meetingteam.service.BaseMeetingService
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.command.UserCommand
@@ -40,6 +42,8 @@ constructor(
         val jpaQueryFactory = JPAQueryFactory(entityManager)
         val userDao = UserDao(jpaQueryFactory)
         val paymentService = mockk<PaymentService>()
+        val userTeamDao = mockk<UserTeamDao>()
+        val meetingService = mockk<BaseMeetingService>()
         val userService =
             UserService(
                 userRepository = userRepository,
@@ -47,7 +51,10 @@ constructor(
                 paymentService = paymentService,
                 userTeamRepository = userTeamRepository,
                 userDao = userDao,
-                validator = Validator()
+                validator = Validator(),
+                userTeamDao = userTeamDao,
+                singleMeetingService = meetingService,
+                tripleMeetingService = meetingService
             )
 
         given("유저가 생성되었을때") {
