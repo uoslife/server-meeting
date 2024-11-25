@@ -159,7 +159,7 @@ class UserService(
         user.name = command.name ?: user.name
         user.phoneNumber = command.phoneNumber ?: user.phoneNumber
         user.kakaoTalkId = command.kakaoTalkId ?: user.kakaoTalkId
-        if(command.gender != null && user.gender != null){
+        if (command.gender != null && user.gender != null) {
             throw GenderNotUpdatableException()
         }
         user.gender = command.gender ?: user.gender
