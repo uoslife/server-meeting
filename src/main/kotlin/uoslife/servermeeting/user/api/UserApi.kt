@@ -154,7 +154,6 @@ class UserApi(
     ): ResponseEntity<UserSimpleResponse> {
         val command =
             requestBody.toUpdateUserPersonalInformationCommand(userDetails.username.toLong())
-        println(command.toString())
         val user = userService.updateUserPersonalInformation(command)
         val userSimpleResponse = UserSimpleResponse.valueOf(user)
         return ResponseEntity.status(HttpStatus.OK).body(userSimpleResponse)
