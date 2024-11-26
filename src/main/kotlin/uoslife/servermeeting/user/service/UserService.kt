@@ -80,8 +80,9 @@ class UserService(
     }
 
     /**
-     * id로 유저를 삭제합니다. 유저를 삭제하기 전, 외부키로 연결되어 있는 Payment와 UserTeam을 삭제합니다. UserTeam을 삭제하면 MeetingTeam
-     * 1:1, 3:3 에서 모두 나오며 미팅팀은 고아 객체로 유지됨 (확정 X) Payment는 User를 NULL로 설정하고 STATUS를 변경하여 SOFT_DELETE
+     * id로 유저를 삭제합니다. 유저를 삭제하기 전 진행사항
+     * 유저의 1:1 미팅팀 삭제, 유저 3:3 미팅팀 삭제 (팅장일 경우), 유저 3:3 미팅팀 탈퇴 (팅원일 경우)
+     * 외부키로 연결되어 있는 Payment를 삭제합니다. 결제가 이뤄진 경우
      * 진행합니다.
      */
     @Transactional
@@ -159,10 +160,13 @@ class UserService(
         user.name = command.name ?: user.name
         user.phoneNumber = command.phoneNumber ?: user.phoneNumber
         user.kakaoTalkId = command.kakaoTalkId ?: user.kakaoTalkId
-        if (command.gender != null && user.gender != null) {
-            throw GenderNotUpdatableException()
+        command.gender?.let {
+            if(user.gender == null){
+                user.gender = command.gender
+            } else if (command.gender != user.gender){
+                throw GenderNotUpdatableException()
+            }
         }
-        user.gender = command.gender ?: user.gender
         return user
     }
     private fun determineMeetingTeamStatus(
