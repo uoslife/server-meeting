@@ -38,7 +38,7 @@ data class UserAllInformationResponse(
                 studentNumber = user.userInformation?.studentNumber,
                 appearanceType = user.userInformation?.appearanceType,
                 eyelidType = user.userInformation?.eyelidType,
-                studentType = user.studentType,
+                studentType = user.userInformation?.studentType
             )
         }
     }

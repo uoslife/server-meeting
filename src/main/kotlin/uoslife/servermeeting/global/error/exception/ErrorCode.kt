@@ -113,19 +113,15 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     // Email Verification
     EMAIL_INVALID_FORMAT("E01", "Invalid email format.", HttpStatus.BAD_REQUEST.value()),
     EMAIL_INVALID_DOMAIN("E02", "Email domain is not allowed.", HttpStatus.BAD_REQUEST.value()),
-    EMAIL_VERIFICATION_CODE_MISMATCH(
-        "E03",
-        "Verification code does not match.",
-        HttpStatus.BAD_REQUEST.value()
-    ),
+    EMAIL_VERIFICATION_CODE_MISMATCH("E03", "인증 코드가 일치하지 않습니다.", HttpStatus.BAD_REQUEST.value()),
     EMAIL_DAILY_SEND_LIMIT_EXCEEDED(
         "E04",
-        "Daily email send limit exceeded.",
+        "일일 전송 횟수를 초과했습니다.(5/5)",
         HttpStatus.TOO_MANY_REQUESTS.value()
     ),
     EMAIL_DAILY_VERIFY_LIMIT_EXCEEDED(
         "E05",
-        "Daily verification attempt limit exceeded.",
+        "일일 인증 횟수를 초과했습니다.(5/5)",
         HttpStatus.TOO_MANY_REQUESTS.value()
     ),
     EMAIL_SEND_FAILED("E06", "Failed to send email.", HttpStatus.INTERNAL_SERVER_ERROR.value()),

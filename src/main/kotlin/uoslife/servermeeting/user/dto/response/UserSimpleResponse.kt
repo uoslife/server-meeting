@@ -2,7 +2,6 @@ package uoslife.servermeeting.user.dto.response
 
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.enums.GenderType
-import uoslife.servermeeting.user.entity.enums.StudentType
 
 data class UserSimpleResponse(
     val email: String,
@@ -10,7 +9,6 @@ data class UserSimpleResponse(
     val name: String?,
     val kakaoTalkId: String?,
     val gender: GenderType?,
-    val studentType: StudentType?,
 ) {
     companion object {
         fun valueOf(user: User): UserSimpleResponse {
@@ -20,7 +18,6 @@ data class UserSimpleResponse(
                 name = user.name,
                 kakaoTalkId = user.kakaoTalkId,
                 gender = user.gender,
-                studentType = user.studentType
             )
         }
     }
