@@ -5,7 +5,6 @@ import uoslife.servermeeting.global.common.BaseEntity
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.payment.entity.Payment
 import uoslife.servermeeting.user.entity.enums.GenderType
-import uoslife.servermeeting.user.entity.enums.StudentType
 
 @Entity
 @Table(name = "meetingUser")
@@ -16,7 +15,6 @@ class User(
     @Column(unique = true) var kakaoTalkId: String? = null,
     @Enumerated(EnumType.STRING) var gender: GenderType? = null,
     @Column(unique = true) var email: String,
-    @Enumerated(EnumType.STRING) var studentType: StudentType? = null,
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     var userTeams: MutableList<UserTeam> = mutableListOf(),
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = [CascadeType.REMOVE])

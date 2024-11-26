@@ -32,6 +32,7 @@ data class UserUpdateRequest(
             department = this.department,
             eyelidType = this.eyelidType,
             appearanceType = this.appearanceType,
+            studentType = this.studentType
         )
     }
 }

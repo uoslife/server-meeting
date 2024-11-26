@@ -148,6 +148,7 @@ class UserService(
         information.department = command.department ?: information.department
         information.eyelidType = command.eyelidType ?: information.eyelidType
         information.appearanceType = command.appearanceType ?: information.appearanceType
+        information.studentType = command.studentType ?: information.studentType
         return user
     }
 

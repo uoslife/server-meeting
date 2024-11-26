@@ -1,9 +1,6 @@
 package uoslife.servermeeting.user.command
 
-import uoslife.servermeeting.user.entity.enums.AppearanceType
-import uoslife.servermeeting.user.entity.enums.EyelidType
-import uoslife.servermeeting.user.entity.enums.GenderType
-import uoslife.servermeeting.user.entity.enums.SmokingType
+import uoslife.servermeeting.user.entity.enums.*
 
 class UserCommand {
 
@@ -18,6 +15,7 @@ class UserCommand {
         val department: String?,
         val eyelidType: EyelidType?,
         val appearanceType: AppearanceType?,
+        val studentType: StudentType?
     )
 
     data class UpdateUserPersonalInformation(
