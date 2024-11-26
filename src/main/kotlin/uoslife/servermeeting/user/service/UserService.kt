@@ -80,10 +80,8 @@ class UserService(
     }
 
     /**
-     * id로 유저를 삭제합니다. 유저를 삭제하기 전 진행사항
-     * 유저의 1:1 미팅팀 삭제, 유저 3:3 미팅팀 삭제 (팅장일 경우), 유저 3:3 미팅팀 탈퇴 (팅원일 경우)
-     * 외부키로 연결되어 있는 Payment를 삭제합니다. 결제가 이뤄진 경우
-     * 진행합니다.
+     * id로 유저를 삭제합니다. 유저를 삭제하기 전 진행사항 유저의 1:1 미팅팀 삭제, 유저 3:3 미팅팀 삭제 (팅장일 경우), 유저 3:3 미팅팀 탈퇴 (팅원일 경우)
+     * 외부키로 연결되어 있는 Payment를 삭제합니다. 결제가 이뤄진 경우 진행합니다.
      */
     @Transactional
     fun deleteUserById(userId: Long) {
@@ -161,9 +159,9 @@ class UserService(
         user.phoneNumber = command.phoneNumber ?: user.phoneNumber
         user.kakaoTalkId = command.kakaoTalkId ?: user.kakaoTalkId
         command.gender?.let {
-            if(user.gender == null){
+            if (user.gender == null) {
                 user.gender = command.gender
-            } else if (command.gender != user.gender){
+            } else if (command.gender != user.gender) {
                 throw GenderNotUpdatableException()
             }
         }
