@@ -77,7 +77,7 @@ class SingleMeetingService(
         userId: Long,
         meetingTeamInfoUpdateRequest: MeetingTeamInfoUpdateRequest
     ) {
-        validator.isMessageLengthIsValid(meetingTeamInfoUpdateRequest.course)
+        //        validator.isMessageLengthIsValid(meetingTeamInfoUpdateRequest.course)
         val validMBTI = validator.setValidMBTI(meetingTeamInfoUpdateRequest.mbti)
 
         val user = userService.getUser(userId)
