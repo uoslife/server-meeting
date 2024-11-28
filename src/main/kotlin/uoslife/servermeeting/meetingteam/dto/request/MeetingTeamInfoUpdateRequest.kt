@@ -11,8 +11,8 @@ import uoslife.servermeeting.meetingteam.entity.enums.Weight
 import uoslife.servermeeting.user.entity.enums.*
 
 class MeetingTeamInfoUpdateRequest(
-    @Schema(description = "1:1 상대에게 보내는 데이트 코스(10자 이상 작성)", example = "같이 밥먹고 눈사람 만들기")
-    @field:Size(min = 10)
+    @Schema(description = "1:1 상대에게 보내는 데이트 코스", example = "같이 밥먹고 눈사람 만들기")
+    @field:Size(min = 1)
     val course: String?,
     @Schema(description = "3:3 팀 이름 (2~8자)", example = "우당탕탕 시립대")
     @field:Size(min = 2, max = 8)

@@ -1,11 +1,13 @@
 package uoslife.servermeeting.user.service
 
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uoslife.servermeeting.global.auth.util.CookieUtils
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
@@ -36,6 +38,7 @@ class UserService(
     private val userDao: UserDao,
     private val userTeamDao: UserTeamDao,
     private val validator: Validator,
+    private val cookieUtils: CookieUtils,
     @Lazy @Qualifier("singleMeetingService") private val singleMeetingService: BaseMeetingService,
     @Lazy @Qualifier("tripleMeetingService") private val tripleMeetingService: BaseMeetingService
 ) {
@@ -84,7 +87,7 @@ class UserService(
      * 외부키로 연결되어 있는 Payment를 삭제합니다. 결제가 이뤄진 경우 진행합니다.
      */
     @Transactional
-    fun deleteUserById(userId: Long) {
+    fun deleteUserById(userId: Long, response: HttpServletResponse) {
         // 유저가 존재하는지 확인
         val user: User = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
         // 유저 미팅팀 삭제
@@ -96,6 +99,7 @@ class UserService(
         // 유저 삭제 진행
         val deletedId = user.id
         userRepository.delete(user)
+        cookieUtils.deleteRefreshTokenCookie(response)
         logger.info("[유저 삭제 완료] UserId : $deletedId")
     }
 
