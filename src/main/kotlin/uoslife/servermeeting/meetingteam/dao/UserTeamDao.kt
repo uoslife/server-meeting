@@ -31,9 +31,9 @@ class UserTeamDao(
     fun findUserTeamWithMeetingTeam(user: User): List<UserTeam>? {
         return queryFactory
             .selectFrom(userTeam)
-            .join(meetingTeam)
+            .join(userTeam.team, meetingTeam)
+            .fetchJoin() // 관계 명시 및 fetchJoin 적용
             .where(userTeam.user.eq(user))
-            .fetchJoin()
             .fetch()
     }
 
