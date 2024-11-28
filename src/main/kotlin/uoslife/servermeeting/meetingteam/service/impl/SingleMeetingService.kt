@@ -82,13 +82,13 @@ class SingleMeetingService(
 
         val user = userService.getUser(userId)
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
+        val newPreference = meetingTeamInfoUpdateRequest.toSinglePreference(validMBTI, meetingTeam)
 
         meetingTeam.preference?.let {
             meetingTeam.preference = null
             preferenceRepository.delete(it)
             preferenceRepository.flush()
         } // 분리된 트랜잭션 호출
-        val newPreference = meetingTeamInfoUpdateRequest.toSinglePreference(validMBTI, meetingTeam)
 
         meetingTeam.preference = newPreference
         meetingTeam.course = meetingTeamInfoUpdateRequest.course

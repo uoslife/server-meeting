@@ -113,7 +113,11 @@ class TripleMeetingService(
         val meetingTeam = meetingUserTeam.team
 
         val newPreference = meetingTeamInfoUpdateRequest.toTriplePreference(meetingTeam)
-        meetingTeam.preference?.let { preferenceRepository.delete(it) }
+        meetingTeam.preference?.let {
+            meetingTeam.preference = null
+            preferenceRepository.delete(it)
+            preferenceRepository.flush()
+        } // 분리된 트랜잭션 호출
         meetingTeam.preference = newPreference
         meetingTeam.name = meetingTeamInfoUpdateRequest.name
     }
