@@ -36,10 +36,14 @@ class MeetingTeamInfoUpdateRequest(
     @Schema(description = "피하고 싶은 학번", example = "19") val avoidanceNumber: Int?,
     @Schema(description = "피하고 싶은 학과", example = "통계학과") val avoidanceDepartment: String?,
 ) {
+    companion object {
+        const val MINIMUM_AGE = 20
+        const val MAXIMAL_AGE = 30
+    }
     fun toSinglePreference(validMBTI: String?, meetingTeam: MeetingTeam): Preference {
         return Preference(
-            ageMin = ageMin,
-            ageMax = ageMax,
+            ageMin = if (ageMin < MINIMUM_AGE) MINIMUM_AGE else ageMin,
+            ageMax = if (ageMax > MAXIMAL_AGE) MAXIMAL_AGE else ageMax,
             heightMin = heightMin,
             heightMax = heightMax,
             appearanceType = appearanceType,
@@ -54,7 +58,12 @@ class MeetingTeamInfoUpdateRequest(
     }
 
     fun toTriplePreference(meetingTeam: MeetingTeam): Preference {
-        return Preference(ageMin = ageMin, ageMax = ageMax, mood = mood, meetingTeam = meetingTeam)
+        return Preference(
+            ageMin = if (ageMin < MINIMUM_AGE) MINIMUM_AGE else ageMin,
+            ageMax = if (ageMax > MAXIMAL_AGE) MAXIMAL_AGE else ageMax,
+            mood = mood,
+            meetingTeam = meetingTeam
+        )
     }
 
     fun updatePreference(preference: Preference, validMBTI: String?, teamType: TeamType) {
