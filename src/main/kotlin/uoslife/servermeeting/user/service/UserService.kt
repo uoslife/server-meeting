@@ -123,7 +123,7 @@ class UserService(
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
 
         val userTeams =
-            userTeamDao.findUserTeamWithMeetingTeam(user)
+            userTeamDao.findAllUserTeamWithMeetingTeam(user)
                 ?: return UserBranchResponse(
                     singleTeamBranch = TeamBranch.NOT_CREATED,
                     tripleTeamBranch = TeamBranch.NOT_CREATED

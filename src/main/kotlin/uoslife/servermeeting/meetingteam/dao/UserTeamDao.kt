@@ -21,14 +21,14 @@ class UserTeamDao(
     fun findUserWithMeetingTeam(userId: Long, teamType: TeamType): UserTeam? {
         return queryFactory
             .selectFrom(userTeam)
-            .join(meetingTeam)
-            .join(user)
-            .where(userTeam.user.id.eq(userId).and(userTeam.team.type.eq(teamType)))
+            .join(userTeam.team, meetingTeam)
+            .join(userTeam.user, user)
+            .where(user.id.eq(userId).and(meetingTeam.type.eq(teamType)))
             .fetchJoin()
             .fetchOne()
     }
 
-    fun findUserTeamWithMeetingTeam(user: User): List<UserTeam>? {
+    fun findAllUserTeamWithMeetingTeam(user: User): List<UserTeam>? {
         return queryFactory
             .selectFrom(userTeam)
             .join(userTeam.team, meetingTeam)
@@ -54,17 +54,9 @@ class UserTeamDao(
     fun findByUserWithMeetingTeam(user: User, teamType: TeamType): UserTeam? {
         return queryFactory
             .selectFrom(userTeam)
-            .join(userTeam.team)
+            .join(userTeam.team, meetingTeam)
             .fetchJoin()
-            .where(userTeam.user.eq(user))
-            .where(userTeam.team.type.eq(teamType))
-            .fetchOne()
-    }
-
-    fun findByUserAndTeam(user: User, meetingTeam: MeetingTeam): UserTeam? {
-        return queryFactory
-            .selectFrom(userTeam)
-            .where(userTeam.user.eq(user), userTeam.team.eq(meetingTeam))
+            .where(userTeam.user.eq(user).and(meetingTeam.type.eq(teamType)))
             .fetchOne()
     }
 
