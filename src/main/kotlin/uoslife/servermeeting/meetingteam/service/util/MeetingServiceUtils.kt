@@ -20,7 +20,7 @@ class MeetingServiceUtils {
         user: User,
         preference: Preference,
         teamName: String?,
-        message: String?
+        course: String?
     ): MeetingTeamInformationGetResponse {
         return MeetingTeamInformationGetResponse(
             teamType = teamType,
@@ -39,7 +39,7 @@ class MeetingServiceUtils {
                     phoneNumber = user.phoneNumber,
                 ),
             preference = PreferenceDto.valueOf(preference),
-            message = message
+            course = course
         )
     }
 }

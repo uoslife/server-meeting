@@ -132,7 +132,7 @@ class TripleMeetingService(
             user,
             preference,
             meetingTeam.name,
-            meetingTeam.message
+            meetingTeam.course
         )
     }
 
