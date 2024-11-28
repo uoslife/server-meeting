@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -185,8 +186,11 @@ class UserApi(
                 )]
     )
     @DeleteMapping("/{userId}")
-    fun deleteUserById(@PathVariable("userId") userId: Long): ResponseEntity<Unit> {
-        userService.deleteUserById(userId)
+    fun deleteUserById(
+        @PathVariable("userId") userId: Long,
+        response: HttpServletResponse
+    ): ResponseEntity<Unit> {
+        userService.deleteUserById(userId, response)
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
@@ -232,10 +236,13 @@ class UserApi(
                 ),
             ]
     )
-    @DeleteMapping()
-    fun deleteUserByToken(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<Unit> {
+    @DeleteMapping
+    fun deleteUserByToken(
+        @AuthenticationPrincipal userDetails: UserDetails,
+        response: HttpServletResponse
+    ): ResponseEntity<Unit> {
         val userId: Long = userDetails.username.toLong()
-        userService.deleteUserById(userId)
+        userService.deleteUserById(userId, response)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
