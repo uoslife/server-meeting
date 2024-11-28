@@ -178,10 +178,15 @@ class UserService(
         userTeams.forEach { userTeam ->
             when (userTeam.team.type) {
                 TeamType.SINGLE -> singleTeamBranch = determineTeamBranch(userId, TeamType.SINGLE)
-                TeamType.TRIPLE -> tripleTeamBranch = determineTeamBranch(userId, TeamType.TRIPLE)
+                TeamType.TRIPLE ->
+                    tripleTeamBranch =
+                        if (!userTeam.isLeader) {
+                            TeamBranch.JOINED
+                        } else {
+                            determineTeamBranch(userId, TeamType.TRIPLE)
+                        }
             }
         }
-
         return UserBranchResponse(singleTeamBranch, tripleTeamBranch)
     }
 
