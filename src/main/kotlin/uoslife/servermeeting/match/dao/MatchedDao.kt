@@ -29,4 +29,13 @@ class MatchedDao(private val queryFactory: JPAQueryFactory) {
             .where(match.femaleTeam.eq(femaleTeam).and(userTeam.isLeader.eq(true)))
             .fetchOne()
     }
+
+    fun findByTeam(team: MeetingTeam): Match? {
+        return queryFactory
+            .selectFrom(match)
+            .leftJoin(match.maleTeam, meetingTeam)
+            .leftJoin(match.femaleTeam, meetingTeam)
+            .where(match.maleTeam.eq(team).or(match.femaleTeam.eq(team)))
+            .fetchOne()
+    }
 }

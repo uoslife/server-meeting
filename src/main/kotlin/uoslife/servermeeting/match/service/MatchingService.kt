@@ -4,11 +4,14 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.match.dao.MatchedDao
 import uoslife.servermeeting.match.dto.response.MatchInformationResponse
+import uoslife.servermeeting.match.dto.response.MatchParticipationResponse
 import uoslife.servermeeting.match.dto.response.MatchedMeetingTeamInformationGetResponse
+import uoslife.servermeeting.match.dto.response.ParticipationStatus
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
+import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.SINGLE
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.TRIPLE
@@ -17,7 +20,6 @@ import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
 import uoslife.servermeeting.meetingteam.exception.OnlyTeamLeaderCanGetMatchException
 import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
 import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
-import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.exception.UserNotFoundException
@@ -27,10 +29,18 @@ import uoslife.servermeeting.user.exception.UserNotFoundException
 class MatchingService(
     private val matchedDao: MatchedDao,
     private val userTeamDao: UserTeamDao,
-    private val userDao: UserDao,
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
 ) {
+    fun getMatchParticipation(userId: Long): MatchParticipationResponse {
+        val userTeams = userTeamDao.findAllByUserId(userId)
+
+        return MatchParticipationResponse(
+            single = getParticipationStatus(userTeams.find { it.team.type == SINGLE }),
+            triple = getParticipationStatus(userTeams.find { it.team.type == TRIPLE })
+        )
+    }
+
     @Transactional
     fun getMatchedMeetingTeamByType(userId: Long, teamType: TeamType): MatchInformationResponse {
         val userTeam =
@@ -90,5 +100,15 @@ class MatchingService(
                 }
             }
         return meetingTeamInformationGetResponse.toMatchedMeetingTeamInformationGetResponse()
+    }
+
+    private fun getParticipationStatus(userTeam: UserTeam?): ParticipationStatus {
+        if (userTeam == null) {
+            return ParticipationStatus(false, null)
+        }
+
+        val matchId = matchedDao.findByTeam(userTeam.team)?.id
+
+        return ParticipationStatus(isParticipated = true, matchId = matchId)
     }
 }

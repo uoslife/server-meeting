@@ -93,4 +93,13 @@ class UserTeamDao(
     fun deleteAll() {
         queryFactory.delete(userTeam).execute()
     }
+
+    fun findAllByUserId(userId: Long): List<UserTeam> {
+        return queryFactory
+            .selectFrom(userTeam)
+            .join(userTeam.team, meetingTeam)
+            .fetchJoin()
+            .where(userTeam.user.id.eq(userId))
+            .fetch()
+    }
 }
