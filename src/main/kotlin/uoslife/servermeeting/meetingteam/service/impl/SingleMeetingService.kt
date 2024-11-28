@@ -45,7 +45,6 @@ class SingleMeetingService(
     @Transactional
     override fun createMeetingTeam(
         userId: Long,
-        name: String?,
     ): MeetingTeamCodeResponse {
         val user = userService.getUser(userId)
         validator.isUserAlreadyHaveSingleTeam(user)
