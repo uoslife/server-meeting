@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.match.dto.response.MatchInformationResponse
+import uoslife.servermeeting.match.dto.response.MatchResultResponse
 import uoslife.servermeeting.match.dto.response.MeetingParticipationResponse
 import uoslife.servermeeting.match.service.MatchingService
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
@@ -34,6 +35,17 @@ class MatchApi(
     ): ResponseEntity<MeetingParticipationResponse> {
         val result = matchingService.getMeetingParticipation(userDetails.username.toLong())
         return ResponseEntity.ok(result)
+    }
+
+    @Operation(summary = "매칭 결과 조회", description = "특정 매칭의 성공 여부를 조회합니다.")
+    @GetMapping("/{meetingTeamId}/result")
+    fun getMatchResult(
+        @PathVariable meetingTeamId: Long,
+        @AuthenticationPrincipal userDetails: UserDetails
+    ): ResponseEntity<MatchResultResponse> {
+        return ResponseEntity.ok(
+            matchingService.getMatchResult(userDetails.username.toLong(), meetingTeamId)
+        )
     }
 
     @Operation(summary = "매칭된 미팅 팀 전체 정보 조회")

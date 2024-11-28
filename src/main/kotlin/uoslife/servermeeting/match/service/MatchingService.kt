@@ -6,6 +6,7 @@ import uoslife.servermeeting.match.dao.MatchedDao
 import uoslife.servermeeting.match.dto.response.*
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
+import uoslife.servermeeting.match.exception.UnauthorizedTeamAccessException
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
@@ -35,6 +36,18 @@ class MatchingService(
         return MeetingParticipationResponse(
             single = getParticipationStatus(userTeams.find { it.team.type == SINGLE }),
             triple = getParticipationStatus(userTeams.find { it.team.type == TRIPLE })
+        )
+    }
+
+    fun getMatchResult(userId: Long, meetingTeamId: Long): MatchResultResponse {
+        val result =
+            matchedDao.findMatchResultByUserIdAndTeamId(userId, meetingTeamId)
+                ?: throw UnauthorizedTeamAccessException()
+
+        return MatchResultResponse(
+            matchType = result.teamType,
+            isMatched = result.matchId != null,
+            matchId = result.matchId ?: 0L
         )
     }
 
