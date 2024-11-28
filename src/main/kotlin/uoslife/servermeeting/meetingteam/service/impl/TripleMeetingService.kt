@@ -49,15 +49,13 @@ class TripleMeetingService(
     @Transactional
     override fun createMeetingTeam(
         userId: Long,
-        name: String?,
     ): MeetingTeamCodeResponse {
         val user = userService.getUser(userId)
 
         validator.isUserAlreadyHaveTripleTeam(user)
-        //        validator.isTeamNameInvalid(name)
 
         val code = uniqueCodeGenerator.getUniqueTeamCode()
-        val meetingTeam = createDefaultMeetingTeam(user, name, code, TeamType.TRIPLE)
+        val meetingTeam = createDefaultMeetingTeam(user, code, TeamType.TRIPLE)
 
         userTeamDao.saveUserTeam(meetingTeam, user, true)
         logger.info("[유저 팀 생성] User ID : $userId Triple Team ID : ${meetingTeam.id}")
@@ -132,7 +130,7 @@ class TripleMeetingService(
             user,
             preference,
             meetingTeam.name,
-            meetingTeam.message
+            meetingTeam.course
         )
     }
 
@@ -162,16 +160,10 @@ class TripleMeetingService(
     }
 
     @Transactional
-    fun createDefaultMeetingTeam(
-        leader: User,
-        name: String?,
-        code: String,
-        teamType: TeamType
-    ): MeetingTeam {
+    fun createDefaultMeetingTeam(leader: User, code: String, teamType: TeamType): MeetingTeam {
         return meetingTeamRepository.save(
             MeetingTeam(
                 season = season,
-                name = name,
                 code = code,
                 type = teamType,
                 gender = leader.gender ?: throw GenderNotUpdatedException()

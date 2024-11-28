@@ -45,7 +45,6 @@ class SingleMeetingService(
     @Transactional
     override fun createMeetingTeam(
         userId: Long,
-        name: String?,
     ): MeetingTeamCodeResponse {
         val user = userService.getUser(userId)
         validator.isUserAlreadyHaveSingleTeam(user)
@@ -78,7 +77,7 @@ class SingleMeetingService(
         userId: Long,
         meetingTeamInfoUpdateRequest: MeetingTeamInfoUpdateRequest
     ) {
-        validator.isMessageLengthIsValid(meetingTeamInfoUpdateRequest.message)
+        validator.isMessageLengthIsValid(meetingTeamInfoUpdateRequest.course)
         val validMBTI = validator.setValidMBTI(meetingTeamInfoUpdateRequest.mbti)
 
         val user = userService.getUser(userId)
@@ -88,7 +87,7 @@ class SingleMeetingService(
 
         meetingTeam.preference?.let { preferenceRepository.delete(it) }
         meetingTeam.preference = newPreference
-        meetingTeam.message = meetingTeamInfoUpdateRequest.message
+        meetingTeam.course = meetingTeamInfoUpdateRequest.course
     }
 
     override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {
@@ -103,7 +102,7 @@ class SingleMeetingService(
             user,
             preference,
             null,
-            meetingTeam.message
+            meetingTeam.course
         )
     }
 

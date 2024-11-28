@@ -14,7 +14,7 @@ class MeetingTeam(
     @Column(nullable = false) var season: Int,
     @Column(unique = true) var code: String? = null,
     var name: String? = null,
-    var message: String? = null,
+    var course: String? = null,
     @Column(nullable = false) @Enumerated(EnumType.STRING) var type: TeamType,
     @Enumerated(EnumType.STRING) var gender: GenderType,
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "maleTeam") var maleMatch: Match? = null,

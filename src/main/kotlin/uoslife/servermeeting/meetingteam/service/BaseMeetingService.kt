@@ -17,7 +17,6 @@ interface BaseMeetingService {
      */
     fun createMeetingTeam(
         userId: Long,
-        name: String? = null,
     ): MeetingTeamCodeResponse
     fun joinMeetingTeam(
         userId: Long,

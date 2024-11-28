@@ -15,7 +15,7 @@ data class MeetingTeamInformationGetResponse(
     @field:NotNull @Schema(description = "성별", example = "MALE") val gender: GenderType,
     @Schema(description = "팀에 속한 유저 정보") val opponentLeaderProfile: UserProfile?,
     @Schema(description = "상대방 선호 응답값") val preference: PreferenceDto?,
-    @Schema(description = "상대에게 전하는 메세지") val message: String?
+    @Schema(description = "상대에게 전하는 데이트 코스") val course: String?
 ) {
     fun toMatchedMeetingTeamInformationGetResponse(): MatchedMeetingTeamInformationGetResponse {
         return MatchedMeetingTeamInformationGetResponse(
@@ -23,7 +23,7 @@ data class MeetingTeamInformationGetResponse(
             teamName = teamName,
             gender = gender,
             leaderProfile = opponentLeaderProfile,
-            message = message
+            course = course
         )
     }
 }
