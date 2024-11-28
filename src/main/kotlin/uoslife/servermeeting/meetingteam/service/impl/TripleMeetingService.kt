@@ -58,7 +58,7 @@ class TripleMeetingService(
         val meetingTeam = createDefaultMeetingTeam(user, code, TeamType.TRIPLE)
 
         userTeamDao.saveUserTeam(meetingTeam, user, true)
-        logger.info("[유저 팀 생성] User ID : $userId Triple Team ID : ${meetingTeam.id}")
+        logger.info("[유저 3:3 팀 생성] User ID : $userId Triple Team ID : ${meetingTeam.id}")
         return MeetingTeamCodeResponse(code)
     }
 
@@ -80,9 +80,8 @@ class TripleMeetingService(
         val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, false)
         userTeamRepository.save(newUserTeam)
         logger.info("[3:3팀 입장] User ID : $userId Triple Team ID : ${meetingTeam.id}")
-        val meetingTeamUsers =
-            MeetingTeamUsers(meetingTeam.userTeams.stream().map { it.user }.toList())
-        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
+        val meetingTeamUsers = MeetingTeamUsers(meetingTeam.userTeams)
+        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name)
     }
 
     override fun getMeetingTeamUserList(
@@ -94,9 +93,8 @@ class TripleMeetingService(
         val meetingTeam =
             meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
 
-        val meetingTeamUsers =
-            MeetingTeamUsers(meetingTeam.userTeams.stream().map { it.user }.toList())
-        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name!!)
+        val meetingTeamUsers = MeetingTeamUsers(meetingTeam.userTeams)
+        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name)
     }
 
     @Transactional

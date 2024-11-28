@@ -2,22 +2,23 @@ package uoslife.servermeeting.meetingteam.dto.vo
 
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUser
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
+import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.exception.UserInfoNotCompletedException
-import uoslife.servermeeting.user.entity.User
 
-class MeetingTeamUsers(private val users: List<User>) {
+class MeetingTeamUsers(private val userTeams: List<UserTeam>) {
 
-    fun toMeetingTeamUserListGetResponse(teamName: String): MeetingTeamUserListGetResponse {
+    fun toMeetingTeamUserListGetResponse(teamName: String?): MeetingTeamUserListGetResponse {
         return MeetingTeamUserListGetResponse(
             teamName = teamName,
-            users.map {
-                it.userInformation ?: throw UserInfoNotCompletedException()
+            userTeams.map {
+                it.user.userInformation ?: throw UserInfoNotCompletedException()
                 MeetingTeamUser(
-                    name = it.name,
-                    department = it.userInformation!!.department,
-                    interest = it.userInformation!!.interest,
-                    kakaoTalkId = it.kakaoTalkId,
-                    studentNumber = it.userInformation!!.studentNumber
+                    isLeader = it.isLeader,
+                    name = it.user.name,
+                    department = it.user.userInformation!!.department,
+                    interest = it.user.userInformation!!.interest,
+                    kakaoTalkId = it.user.kakaoTalkId,
+                    studentNumber = it.user.userInformation!!.studentNumber
                 )
             },
         )
