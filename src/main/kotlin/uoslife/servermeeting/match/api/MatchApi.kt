@@ -43,7 +43,7 @@ class MatchApi(
                 ),
             ]
     )
-    @GetMapping("/participation")
+    @GetMapping("/teams/participation")
     fun getMeetingParticipation(
         @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<MeetingParticipationResponse> {
@@ -78,7 +78,7 @@ class MatchApi(
                             )]
                 )]
     )
-    @GetMapping("/{meetingTeamId}/result")
+    @GetMapping("/teams/{meetingTeamId}/result")
     fun getMatchResult(
         @PathVariable meetingTeamId: Long,
         @AuthenticationPrincipal userDetails: UserDetails
@@ -138,7 +138,7 @@ class MatchApi(
                 ),
             ]
     )
-    @GetMapping("/{matchId}/partner")
+    @GetMapping("/matches/{matchId}/partner")
     fun getMatchedMeetingTeamInformation(
         @PathVariable matchId: Long,
         @AuthenticationPrincipal userDetails: UserDetails,
