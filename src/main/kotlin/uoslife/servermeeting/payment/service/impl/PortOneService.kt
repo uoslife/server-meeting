@@ -115,6 +115,10 @@ class PortOneService(
         return paymentDao.getSuccessPaymentFromUserIdAndTeamType(userId, teamType)
     }
 
+    override fun getSuccessPaymentFromMeetingTeam(meetingTeam: MeetingTeam): Payment? {
+        return paymentDao.getSuccessPaymentFromMeetingTeam(meetingTeam)
+    }
+
     @Transactional
     override fun checkPayment(
         userId: Long,

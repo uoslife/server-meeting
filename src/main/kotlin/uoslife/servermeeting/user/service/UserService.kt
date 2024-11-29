@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.global.auth.util.CookieUtils
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
+import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
@@ -32,13 +33,13 @@ import uoslife.servermeeting.user.repository.UserRepository
 @Transactional(readOnly = true)
 class UserService(
     private val userRepository: UserRepository,
-    @Qualifier("portOneService") private val paymentService: PaymentService,
     private val userTeamRepository: UserTeamRepository,
     private val userInformationRepository: UserInformationRepository,
     private val userDao: UserDao,
     private val userTeamDao: UserTeamDao,
     private val validator: Validator,
     private val cookieUtils: CookieUtils,
+    @Qualifier("portOneService") private val paymentService: PaymentService,
     @Lazy @Qualifier("singleMeetingService") private val singleMeetingService: BaseMeetingService,
     @Lazy @Qualifier("tripleMeetingService") private val tripleMeetingService: BaseMeetingService
 ) {
@@ -128,18 +129,6 @@ class UserService(
         return true
     }
 
-    fun getUserMeetingTeamBranch(userId: Long): UserBranchResponse {
-        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
-
-        val userTeams =
-            userTeamDao.findAllUserTeamWithMeetingTeam(user)
-                ?: return UserBranchResponse(
-                    singleTeamBranch = TeamBranch.NOT_CREATED,
-                    tripleTeamBranch = TeamBranch.NOT_CREATED
-                )
-
-        return determineMeetingTeamStatus(userId, userTeams)
-    }
 
     private fun upsertUserInformation(
         user: User,
@@ -177,6 +166,21 @@ class UserService(
         }
         return user
     }
+
+    fun getUserMeetingTeamBranch(userId: Long): UserBranchResponse {
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+
+        val userTeams =
+            userTeamDao.findAllUserTeamWithMeetingTeam(user)
+                ?: return UserBranchResponse(
+                    singleTeamBranch = TeamBranch.NOT_CREATED,
+                    tripleTeamBranch = TeamBranch.NOT_CREATED
+                )
+
+        return determineMeetingTeamStatus(userId, userTeams)
+    }
+
+
     private fun determineMeetingTeamStatus(
         userId: Long,
         userTeams: List<UserTeam>
@@ -187,13 +191,12 @@ class UserService(
         userTeams.forEach { userTeam ->
             when (userTeam.team.type) {
                 TeamType.SINGLE -> singleTeamBranch = determineTeamBranch(userId, TeamType.SINGLE)
-                TeamType.TRIPLE ->
-                    tripleTeamBranch =
-                        if (!userTeam.isLeader) {
-                            TeamBranch.JOINED
-                        } else {
-                            determineTeamBranch(userId, TeamType.TRIPLE)
-                        }
+                TeamType.TRIPLE -> tripleTeamBranch =
+                    if(!userTeam.isLeader){
+                        determineTeamBranch(userTeam.team)
+                    } else {
+                        determineTeamBranch(userId, TeamType.TRIPLE)
+                    }
             }
         }
         return UserBranchResponse(singleTeamBranch, tripleTeamBranch)
@@ -205,4 +208,12 @@ class UserService(
         }
         return TeamBranch.JUST_CREATED
     }
+
+    private fun determineTeamBranch(meetingTeam: MeetingTeam): TeamBranch {
+        paymentService.getSuccessPaymentFromMeetingTeam(meetingTeam)?.let {
+            return TeamBranch.COMPLETED
+        }
+        return TeamBranch.JOINED
+    }
+
 }
