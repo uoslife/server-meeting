@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
+import uoslife.servermeeting.meetingteam.dto.request.CompletionStatus
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
@@ -116,18 +117,32 @@ class TripleMeetingService(
         meetingTeam.name = meetingTeamInfoUpdateRequest.name
     }
 
-    override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {
+    override fun getMeetingTeamInformation(
+        userId: Long,
+        status: CompletionStatus
+    ): MeetingTeamInformationGetResponse {
         val user = userService.getUser(userId)
         val meetingTeam = getUserTripleMeetingUserTeam(user).team
 
         val userTeamsWithInfo = userTeamDao.findAllUserTeamWithUserInfoFromMeetingTeam(meetingTeam)
-        val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
+        meetingTeam.preference?.let {
+            return MeetingDtoConverter.toMeetingTeamInformationGetResponse(
+                meetingTeam.gender,
+                TeamType.TRIPLE,
+                userTeamsWithInfo,
+                it,
+                meetingTeam.name,
+                null,
+                meetingTeam.code
+            )
+        }
 
+        if (status == CompletionStatus.COMPLETED) throw PreferenceNotFoundException()
         return MeetingDtoConverter.toMeetingTeamInformationGetResponse(
             meetingTeam.gender,
             TeamType.TRIPLE,
             userTeamsWithInfo,
-            preference,
+            null,
             meetingTeam.name,
             null,
             meetingTeam.code

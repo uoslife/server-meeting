@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
+import uoslife.servermeeting.meetingteam.dto.request.CompletionStatus
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
@@ -371,7 +373,7 @@ class MeetingApi(
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @Operation(summary = "미팅 팀 전체 정보 조회")
+    @Operation(summary = "미팅 팀 최종 전체 정보 조회")
     @ApiResponses(
         value =
             [
@@ -439,17 +441,18 @@ class MeetingApi(
                 ),
             ]
     )
-    @GetMapping("/{teamType}/application/info")
+    @GetMapping("/{teamType}/info")
     fun getMeetingTeamApplicationInformation(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
+        @RequestParam status: CompletionStatus
     ): ResponseEntity<MeetingTeamInformationGetResponse> {
         val userId = userDetails.username.toLong()
 
         val meetingTeamInformationGetResponse =
             when (teamType) {
-                TeamType.SINGLE -> singleMeetingService.getMeetingTeamInformation(userId)
-                TeamType.TRIPLE -> tripleMeetingService.getMeetingTeamInformation(userId)
+                TeamType.SINGLE -> singleMeetingService.getMeetingTeamInformation(userId, status)
+                TeamType.TRIPLE -> tripleMeetingService.getMeetingTeamInformation(userId, status)
             }
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamInformationGetResponse)
     }
