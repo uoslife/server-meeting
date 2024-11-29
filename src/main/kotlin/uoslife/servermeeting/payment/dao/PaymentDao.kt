@@ -49,8 +49,7 @@ class PaymentDao(private val queryFactory: JPAQueryFactory) {
         return queryFactory
             .selectFrom(payment)
             .where(
-                payment.meetingTeam.eq(meetingTeam)
-                    .and(payment.status.eq(PaymentStatus.SUCCESS))
+                payment.meetingTeam.eq(meetingTeam).and(payment.status.eq(PaymentStatus.SUCCESS))
             )
             .fetchOne()
     }

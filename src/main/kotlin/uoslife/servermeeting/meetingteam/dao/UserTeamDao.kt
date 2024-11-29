@@ -86,8 +86,10 @@ class UserTeamDao(
         return queryFactory
             .select(userTeam) // fetch join 주체인 userTeam 명시
             .from(userTeam)
-            .join(userTeam.user, user).fetchJoin() // user 엔티티 fetch join
-            .join(user.userInformation, userInformation).fetchJoin() // userInformation fetch join
+            .join(userTeam.user, user)
+            .fetchJoin() // user 엔티티 fetch join
+            .join(user.userInformation, userInformation)
+            .fetchJoin() // userInformation fetch join
             .where(userTeam.team.eq(meetingTeam))
             .fetch()
     }

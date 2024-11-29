@@ -129,7 +129,6 @@ class UserService(
         return true
     }
 
-
     private fun upsertUserInformation(
         user: User,
         command: UserCommand.UpdateUserInformation
@@ -180,7 +179,6 @@ class UserService(
         return determineMeetingTeamStatus(userId, userTeams)
     }
 
-
     private fun determineMeetingTeamStatus(
         userId: Long,
         userTeams: List<UserTeam>
@@ -191,12 +189,13 @@ class UserService(
         userTeams.forEach { userTeam ->
             when (userTeam.team.type) {
                 TeamType.SINGLE -> singleTeamBranch = determineTeamBranch(userId, TeamType.SINGLE)
-                TeamType.TRIPLE -> tripleTeamBranch =
-                    if(!userTeam.isLeader){
-                        determineTeamBranch(userTeam.team)
-                    } else {
-                        determineTeamBranch(userId, TeamType.TRIPLE)
-                    }
+                TeamType.TRIPLE ->
+                    tripleTeamBranch =
+                        if (!userTeam.isLeader) {
+                            determineTeamBranch(userTeam.team)
+                        } else {
+                            determineTeamBranch(userId, TeamType.TRIPLE)
+                        }
             }
         }
         return UserBranchResponse(singleTeamBranch, tripleTeamBranch)
@@ -215,5 +214,4 @@ class UserService(
         }
         return TeamBranch.JOINED
     }
-
 }

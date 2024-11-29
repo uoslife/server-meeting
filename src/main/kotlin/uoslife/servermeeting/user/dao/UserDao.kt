@@ -1,10 +1,7 @@
 package uoslife.servermeeting.user.dao
 
-import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
-import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
 import uoslife.servermeeting.payment.entity.Payment
 import uoslife.servermeeting.payment.entity.QPayment.payment
 import uoslife.servermeeting.payment.entity.enums.PaymentStatus
