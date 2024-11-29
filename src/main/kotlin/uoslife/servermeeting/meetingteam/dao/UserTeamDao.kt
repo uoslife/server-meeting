@@ -10,6 +10,7 @@ import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.user.entity.QUser.user
+import uoslife.servermeeting.user.entity.QUserInformation.userInformation
 import uoslife.servermeeting.user.entity.User
 
 @Repository
@@ -27,7 +28,6 @@ class UserTeamDao(
             .fetchJoin()
             .fetchOne()
     }
-
     fun findAllUserTeamWithMeetingTeam(user: User): List<UserTeam>? {
         return queryFactory
             .selectFrom(userTeam)
@@ -45,10 +45,6 @@ class UserTeamDao(
                 isLeader = isLeader,
             ),
         )
-    }
-
-    fun findByUser(user: User): UserTeam? {
-        return queryFactory.selectFrom(userTeam).where(userTeam.user.eq(user)).fetchOne()
     }
 
     fun findByUserWithMeetingTeam(user: User, teamType: TeamType): UserTeam? {
@@ -84,5 +80,15 @@ class UserTeamDao(
 
     fun deleteAll() {
         queryFactory.delete(userTeam).execute()
+    }
+
+    fun findAllUserTeamWithUserInfoFromMeetingTeam(meetingTeam: MeetingTeam): List<UserTeam> {
+        return queryFactory
+            .select(userTeam) // fetch join 주체인 userTeam 명시
+            .from(userTeam)
+            .join(userTeam.user, user).fetchJoin() // user 엔티티 fetch join
+            .join(user.userInformation, userInformation).fetchJoin() // userInformation fetch join
+            .where(userTeam.team.eq(meetingTeam))
+            .fetch()
     }
 }

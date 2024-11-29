@@ -124,15 +124,16 @@ class TripleMeetingService(
         val user = userService.getUser(userId)
         val meetingTeam = getUserTripleMeetingUserTeam(user).team
 
+        val userTeamsWithInfo = userTeamDao.findAllUserTeamWithUserInfoFromMeetingTeam(meetingTeam)
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
             meetingTeam.gender,
             TeamType.TRIPLE,
-            user,
+            userTeamsWithInfo,
             preference,
             meetingTeam.name,
-            meetingTeam.course
+            null
         )
     }
 

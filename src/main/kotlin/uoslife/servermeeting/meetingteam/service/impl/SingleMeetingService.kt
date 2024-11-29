@@ -97,13 +97,15 @@ class SingleMeetingService(
     override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {
         val user = userService.getUser(userId)
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
+        println("meetingteam get")
 
+        val userTeamsWithInfo = userTeamDao.findAllUserTeamWithUserInfoFromMeetingTeam(meetingTeam)
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
             meetingTeam.gender,
             meetingTeam.type,
-            user,
+            userTeamsWithInfo,
             preference,
             null,
             meetingTeam.course

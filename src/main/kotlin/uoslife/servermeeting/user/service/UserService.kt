@@ -59,7 +59,12 @@ class UserService(
     }
 
     fun getUser(userId: Long): User {
-        return userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val user = userRepository.findByIdOrNull(userId)
+        if (user == null) {
+            logger.info("[유저 없음]: UserID : $userId")
+            throw UserNotFoundException()
+        }
+        return user
     }
 
     fun getUserDetailedInformation(userId: Long): User {
