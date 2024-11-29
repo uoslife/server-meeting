@@ -9,7 +9,7 @@ import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
+import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamLeaderNameResponse
 import uoslife.servermeeting.meetingteam.dto.vo.MeetingTeamUsers
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
@@ -19,7 +19,7 @@ import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PreferenceRepository
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
-import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
+import uoslife.servermeeting.meetingteam.service.util.MeetingDtoConverter
 import uoslife.servermeeting.meetingteam.util.UniqueCodeGenerator
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.payment.service.PaymentService
@@ -37,7 +37,6 @@ class TripleMeetingService(
     private val meetingTeamRepository: MeetingTeamRepository,
     private val validator: Validator,
     private val userTeamRepository: UserTeamRepository,
-    private val meetingServiceUtils: MeetingServiceUtils,
     @Qualifier("PortOneService") private val paymentService: PaymentService,
     @Value("\${app.season}") private val season: Int,
 ) : BaseMeetingService {
@@ -66,7 +65,7 @@ class TripleMeetingService(
     override fun joinMeetingTeam(
         userId: Long,
         code: String,
-    ): MeetingTeamUserListGetResponse? {
+    ): MeetingTeamLeaderNameResponse {
         val user = userService.getUser(userId)
 
         validator.isTeamCodeValid(code)
@@ -79,22 +78,19 @@ class TripleMeetingService(
 
         val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, false)
         userTeamRepository.save(newUserTeam)
+
         logger.info("[3:3팀 입장] User ID : $userId Triple Team ID : ${meetingTeam.id}")
-        val meetingTeamUsers = MeetingTeamUsers(meetingTeam.userTeams)
-        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name)
+        return MeetingTeamLeaderNameResponse(meetingTeam.name)
     }
 
-    override fun getMeetingTeamUserList(
-        userId: Long,
-        code: String
-    ): MeetingTeamUserListGetResponse {
+    override fun getMeetingTeamUserList(code: String): MeetingTeamLeaderNameResponse {
         validator.isTeamCodeValid(code)
 
         val meetingTeam =
             meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
 
         val meetingTeamUsers = MeetingTeamUsers(meetingTeam.userTeams)
-        return meetingTeamUsers.toMeetingTeamUserListGetResponse(meetingTeam.name)
+        return MeetingTeamLeaderNameResponse(meetingTeamUsers.getLeaderName())
     }
 
     @Transactional
@@ -127,7 +123,7 @@ class TripleMeetingService(
         val userTeamsWithInfo = userTeamDao.findAllUserTeamWithUserInfoFromMeetingTeam(meetingTeam)
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
-        return meetingServiceUtils.toMeetingTeamInformationGetResponse(
+        return MeetingDtoConverter.toMeetingTeamInformationGetResponse(
             meetingTeam.gender,
             TeamType.TRIPLE,
             userTeamsWithInfo,

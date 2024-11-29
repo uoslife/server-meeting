@@ -1,7 +1,5 @@
 package uoslife.servermeeting.meetingteam.service.util
 
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.dto.response.PreferenceDto
 import uoslife.servermeeting.meetingteam.dto.response.UserCardProfile
@@ -11,31 +9,28 @@ import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.UserInfoNotCompletedException
 import uoslife.servermeeting.user.entity.enums.GenderType
 
-@Service
-@Transactional(readOnly = true)
-class MeetingServiceUtils {
+class MeetingDtoConverter {
+    companion object {
+        fun toMeetingTeamInformationGetResponse(
+            gender: GenderType,
+            teamType: TeamType,
+            userTeams: List<UserTeam>,
+            preference: Preference,
+            teamName: String?,
+            course: String?
+        ): MeetingTeamInformationGetResponse {
+            return MeetingTeamInformationGetResponse(
+                teamType = teamType,
+                teamName = teamName,
+                gender = gender,
+                meetingTeamUserProfiles = userTeams.map { toUserCardProfile(it) },
+                preference = PreferenceDto.valueOf(preference),
+                course = course
+            )
+        }
 
-    fun toMeetingTeamInformationGetResponse(
-        gender: GenderType,
-        teamType: TeamType,
-        userTeams: List<UserTeam>,
-        preference: Preference,
-        teamName: String?,
-        course: String?
-    ): MeetingTeamInformationGetResponse {
-        return MeetingTeamInformationGetResponse(
-            teamType = teamType,
-            teamName = teamName,
-            gender = gender,
-            meetingTeamUserProfiles = userTeams.map(this::toUserCardProfile),
-            preference = PreferenceDto.valueOf(preference),
-            course = course
-        )
-    }
-
-    private fun toUserCardProfile(userTeam: UserTeam): UserCardProfile {
-        val userInfo = userTeam.user.userInformation ?: throw UserInfoNotCompletedException()
-        try {
+        private fun toUserCardProfile(userTeam: UserTeam): UserCardProfile {
+            val userInfo = userTeam.user.userInformation ?: throw UserInfoNotCompletedException()
             return UserCardProfile(
                 isLeader = userTeam.isLeader,
                 name = userTeam.user.name!!,
@@ -51,8 +46,6 @@ class MeetingServiceUtils {
                 interest = userInfo.interest,
                 kakaoTalkId = userTeam.user.kakaoTalkId!!
             )
-        } catch (e: NullPointerException) {
-            throw UserInfoNotCompletedException()
         }
     }
 }
