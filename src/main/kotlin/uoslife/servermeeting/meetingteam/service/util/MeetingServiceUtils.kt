@@ -17,7 +17,8 @@ class MeetingDtoConverter {
             userTeams: List<UserTeam>,
             preference: Preference,
             teamName: String?,
-            course: String?
+            course: String?,
+            code: String?
         ): MeetingTeamInformationGetResponse {
             return MeetingTeamInformationGetResponse(
                 teamType = teamType,
@@ -25,7 +26,8 @@ class MeetingDtoConverter {
                 gender = gender,
                 meetingTeamUserProfiles = userTeams.map { toUserCardProfile(it) },
                 preference = PreferenceDto.valueOf(preference),
-                course = course
+                course = course,
+                code = code
             )
         }
 

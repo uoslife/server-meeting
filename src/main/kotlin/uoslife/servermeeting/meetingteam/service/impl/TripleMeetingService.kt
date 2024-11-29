@@ -129,7 +129,8 @@ class TripleMeetingService(
             userTeamsWithInfo,
             preference,
             meetingTeam.name,
-            null
+            null,
+            meetingTeam.code
         )
     }
 
