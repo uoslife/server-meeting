@@ -104,6 +104,6 @@ aws:
 
 auth:
     email:
-        verification-code-expiry: 180  # 인증코드 유효시간 (초)
+        verification-code-expiry: 600  # 인증코드 유효시간 (초)
         daily-send-limit: 50  # 하루 최대 발송 횟수
         code-verify-limit: 50 # 일일 최대 인증 횟수

@@ -2,6 +2,7 @@ package uoslife.servermeeting.payment.dao
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
+import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.payment.entity.Payment
 import uoslife.servermeeting.payment.entity.QPayment.payment
@@ -40,6 +41,16 @@ class PaymentDao(private val queryFactory: JPAQueryFactory) {
                     .eq(userId)
                     .and(payment.teamType.eq(teamType))
                     .and(payment.status.eq(PaymentStatus.PENDING))
+            )
+            .fetchOne()
+    }
+
+    fun getSuccessPaymentFromMeetingTeam(meetingTeam: MeetingTeam): Payment? {
+        return queryFactory
+            .selectFrom(payment)
+            .where(
+                payment.meetingTeam.eq(meetingTeam)
+                    .and(payment.status.eq(PaymentStatus.SUCCESS))
             )
             .fetchOne()
     }

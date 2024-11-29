@@ -1,5 +1,6 @@
 package uoslife.servermeeting.payment.service
 
+import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.payment.dto.request.PaymentRequestDto
 import uoslife.servermeeting.payment.dto.response.PaymentResponseDto
@@ -26,4 +27,5 @@ interface PaymentService {
     fun deleteUserPayment(user: User)
     fun synchronizePayment(paymentWebhookResponse: PaymentResponseDto.PaymentWebhookResponse)
     fun getSuccessPayment(userId: Long, teamType: TeamType): Payment?
+    fun getSuccessPaymentFromMeetingTeam(meetingTeam: MeetingTeam): Payment?
 }
