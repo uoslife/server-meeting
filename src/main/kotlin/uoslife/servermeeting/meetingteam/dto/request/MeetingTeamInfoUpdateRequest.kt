@@ -11,9 +11,9 @@ import uoslife.servermeeting.meetingteam.entity.enums.Weight
 import uoslife.servermeeting.user.entity.enums.*
 
 class MeetingTeamInfoUpdateRequest(
-    @Schema(description = "1:1 상대에게 보내는 메세지(10자 이상 작성)", example = "안녕하세요 잘부탁드립니다")
-    @field:Size(min = 10)
-    val message: String?,
+    @Schema(description = "1:1 상대에게 보내는 데이트 코스", example = "같이 밥먹고 눈사람 만들기")
+    @field:Size(min = 1)
+    val course: String?,
     @Schema(description = "3:3 팀 이름 (2~8자)", example = "우당탕탕 시립대")
     @field:Size(min = 2, max = 8)
     val name: String?,
@@ -21,11 +21,14 @@ class MeetingTeamInfoUpdateRequest(
     @Schema(description = "최대 나이", example = "30", nullable = false) @field:NotNull val ageMax: Int,
     @Schema(description = "최소 키", example = "150") val heightMin: Int?,
     @Schema(description = "최대 키", example = "190") val heightMax: Int?,
-    @Schema(description = "외모1", example = "[\"ARAB\", \"TOFU\"]")
+    @Schema(description = "외모1 (상관없음 시, 모두)", example = "[\"ARAB\",\"NORMAL\",\"TOFU\"]")
     val appearanceType: MutableList<AppearanceType>?,
-    @Schema(description = "외모2", example = "[\"SINGLE\", \"INNER\"]")
+    @Schema(description = "외모2 (상관없음 시, 모두)", example = "[\"SINGLE\", \"INNER\",\"DOUBLE\"]")
     val eyelidType: MutableList<EyelidType>?,
-    @Schema(description = "흡연 여부", example = "[\"FALSE\", \"E_CIGARETTE\"]")
+    @Schema(
+        description = "흡연 여부 (상관없음 시, 모두)",
+        example = "[\"FALSE\", \"E_CIGARETTE\", \"CIGARETTE\"]"
+    )
     val smoking: MutableList<SmokingType>?,
     @Schema(description = "MBTI", example = "EINTFJP") val mbti: String?,
     @Schema(description = "미팅 분위기", example = "ACTIVE") val mood: TeamMood?,
@@ -33,10 +36,14 @@ class MeetingTeamInfoUpdateRequest(
     @Schema(description = "피하고 싶은 학번", example = "19") val avoidanceNumber: Int?,
     @Schema(description = "피하고 싶은 학과", example = "통계학과") val avoidanceDepartment: String?,
 ) {
+    companion object {
+        const val MINIMUM_AGE = 20
+        const val MAXIMAL_AGE = 30
+    }
     fun toSinglePreference(validMBTI: String?, meetingTeam: MeetingTeam): Preference {
         return Preference(
-            ageMin = ageMin,
-            ageMax = ageMax,
+            ageMin = if (ageMin < MINIMUM_AGE) MINIMUM_AGE else ageMin,
+            ageMax = if (ageMax > MAXIMAL_AGE) MAXIMAL_AGE else ageMax,
             heightMin = heightMin,
             heightMax = heightMax,
             appearanceType = appearanceType,
@@ -51,7 +58,12 @@ class MeetingTeamInfoUpdateRequest(
     }
 
     fun toTriplePreference(meetingTeam: MeetingTeam): Preference {
-        return Preference(ageMin = ageMin, ageMax = ageMax, mood = mood, meetingTeam = meetingTeam)
+        return Preference(
+            ageMin = if (ageMin < MINIMUM_AGE) MINIMUM_AGE else ageMin,
+            ageMax = if (ageMax > MAXIMAL_AGE) MAXIMAL_AGE else ageMax,
+            mood = mood,
+            meetingTeam = meetingTeam
+        )
     }
 
     fun updatePreference(preference: Preference, validMBTI: String?, teamType: TeamType) {

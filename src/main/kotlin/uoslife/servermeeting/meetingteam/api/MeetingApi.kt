@@ -17,10 +17,8 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
@@ -106,15 +104,14 @@ class MeetingApi(
     @PostMapping("/{teamType}/create")
     fun createMeetingTeam(
         @AuthenticationPrincipal userDetails: UserDetails,
-        @PathVariable teamType: TeamType,
-        @RequestParam(required = false) name: String?,
+        @PathVariable teamType: TeamType
     ): ResponseEntity<MeetingTeamCodeResponse> {
         val userId = userDetails.username.toLong()
 
         val meetingTeamCodeResponse =
             when (teamType) {
-                TeamType.SINGLE -> singleMeetingService.createMeetingTeam(userId, name)
-                TeamType.TRIPLE -> tripleMeetingService.createMeetingTeam(userId, name)
+                TeamType.SINGLE -> singleMeetingService.createMeetingTeam(userId)
+                TeamType.TRIPLE -> tripleMeetingService.createMeetingTeam(userId)
             }
 
         return ResponseEntity.ok(meetingTeamCodeResponse)
@@ -353,7 +350,7 @@ class MeetingApi(
                 ),
             ]
     )
-    @PutMapping("/{teamType}/info")
+    @PostMapping("/{teamType}/info")
     fun updateMeetingTeamInfo(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,

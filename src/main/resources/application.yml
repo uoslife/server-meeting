@@ -11,7 +11,7 @@ spring:
             initialization-fail-timeout: 3600
     jpa:
         hibernate:
-            ddl-auto: create
+            ddl-auto: validate
         database-platform: org.hibernate.dialect.PostgreSQLDialect
         generate-ddl: false
         open-in-view: false
@@ -26,15 +26,15 @@ spring:
         redis:
             host: ${REDIS_HOST}
             port: ${REDIS_PORT}
-            password: ${REDIS_PASSWORD}
+            password: ${REDIS_PASSWORD:}
             repositories:
                 enabled: false
 
 app:
     season: 5
     cookie:
-        domain: ${COOKIE_DOMAIN:}
-        secure: ${COOKIE_SECURE:false}
+        domain: .uoslife.net
+        secure: true
 
 portone:
     api:
@@ -104,6 +104,6 @@ aws:
 
 auth:
     email:
-        verification-code-expiry: 180  # 인증코드 유효시간 (초)
+        verification-code-expiry: 600  # 인증코드 유효시간 (초)
         daily-send-limit: 50  # 하루 최대 발송 횟수
         code-verify-limit: 50 # 일일 최대 인증 횟수

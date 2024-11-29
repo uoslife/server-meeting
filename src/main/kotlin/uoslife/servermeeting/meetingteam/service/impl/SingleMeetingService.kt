@@ -45,7 +45,6 @@ class SingleMeetingService(
     @Transactional
     override fun createMeetingTeam(
         userId: Long,
-        name: String?,
     ): MeetingTeamCodeResponse {
         val user = userService.getUser(userId)
         validator.isUserAlreadyHaveSingleTeam(user)
@@ -78,32 +77,37 @@ class SingleMeetingService(
         userId: Long,
         meetingTeamInfoUpdateRequest: MeetingTeamInfoUpdateRequest
     ) {
-        validator.isMessageLengthIsValid(meetingTeamInfoUpdateRequest.message)
+        //        validator.isMessageLengthIsValid(meetingTeamInfoUpdateRequest.course)
         val validMBTI = validator.setValidMBTI(meetingTeamInfoUpdateRequest.mbti)
 
         val user = userService.getUser(userId)
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
-
         val newPreference = meetingTeamInfoUpdateRequest.toSinglePreference(validMBTI, meetingTeam)
 
-        meetingTeam.preference?.let { preferenceRepository.delete(it) }
+        meetingTeam.preference?.let {
+            meetingTeam.preference = null
+            preferenceRepository.delete(it)
+            preferenceRepository.flush()
+        } // 분리된 트랜잭션 호출
+
         meetingTeam.preference = newPreference
-        meetingTeam.message = meetingTeamInfoUpdateRequest.message
+        meetingTeam.course = meetingTeamInfoUpdateRequest.course
     }
 
     override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {
         val user = userService.getUser(userId)
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
+        val userTeamsWithInfo = userTeamDao.findAllUserTeamWithUserInfoFromMeetingTeam(meetingTeam)
         val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
 
         return meetingServiceUtils.toMeetingTeamInformationGetResponse(
             meetingTeam.gender,
             meetingTeam.type,
-            user,
+            userTeamsWithInfo,
             preference,
             null,
-            meetingTeam.message
+            meetingTeam.course
         )
     }
 

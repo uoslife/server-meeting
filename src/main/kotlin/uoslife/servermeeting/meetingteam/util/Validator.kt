@@ -44,8 +44,7 @@ class Validator {
     }
 
     fun isMessageLengthIsValid(message: String?) {
-        message ?: throw InvalidMessageLengthException()
-        if (message == null && message.length < 10) {
+        if (message == null || message.length < 10) {
             throw InvalidMessageLengthException()
         }
     }

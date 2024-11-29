@@ -11,6 +11,7 @@ import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.user.entity.QUser.user
+import uoslife.servermeeting.user.entity.QUserInformation.userInformation
 import uoslife.servermeeting.user.entity.User
 
 @Repository
@@ -22,19 +23,18 @@ class UserTeamDao(
     fun findUserWithMeetingTeam(userId: Long, teamType: TeamType): UserTeam? {
         return queryFactory
             .selectFrom(userTeam)
-            .join(meetingTeam)
-            .join(user)
-            .where(userTeam.user.id.eq(userId).and(userTeam.team.type.eq(teamType)))
+            .join(userTeam.team, meetingTeam)
+            .join(userTeam.user, user)
+            .where(user.id.eq(userId).and(meetingTeam.type.eq(teamType)))
             .fetchJoin()
             .fetchOne()
     }
-
-    fun findUserTeamWithMeetingTeam(user: User): List<UserTeam>? {
+    fun findAllUserTeamWithMeetingTeam(user: User): List<UserTeam>? {
         return queryFactory
             .selectFrom(userTeam)
-            .join(meetingTeam)
+            .join(userTeam.team, meetingTeam)
+            .fetchJoin() // 관계 명시 및 fetchJoin 적용
             .where(userTeam.user.eq(user))
-            .fetchJoin()
             .fetch()
     }
 
@@ -48,24 +48,12 @@ class UserTeamDao(
         )
     }
 
-    fun findByUser(user: User): UserTeam? {
-        return queryFactory.selectFrom(userTeam).where(userTeam.user.eq(user)).fetchOne()
-    }
-
     fun findByUserWithMeetingTeam(user: User, teamType: TeamType): UserTeam? {
         return queryFactory
             .selectFrom(userTeam)
-            .join(userTeam.team)
+            .join(userTeam.team, meetingTeam)
             .fetchJoin()
-            .where(userTeam.user.eq(user))
-            .where(userTeam.team.type.eq(teamType))
-            .fetchOne()
-    }
-
-    fun findByUserAndTeam(user: User, meetingTeam: MeetingTeam): UserTeam? {
-        return queryFactory
-            .selectFrom(userTeam)
-            .where(userTeam.user.eq(user), userTeam.team.eq(meetingTeam))
+            .where(userTeam.user.eq(user).and(meetingTeam.type.eq(teamType)))
             .fetchOne()
     }
 
@@ -93,6 +81,18 @@ class UserTeamDao(
 
     fun deleteAll() {
         queryFactory.delete(userTeam).execute()
+    }
+
+    fun findAllUserTeamWithUserInfoFromMeetingTeam(meetingTeam: MeetingTeam): List<UserTeam> {
+        return queryFactory
+            .select(userTeam) // fetch join 주체인 userTeam 명시
+            .from(userTeam)
+            .join(userTeam.user, user)
+            .fetchJoin() // user 엔티티 fetch join
+            .join(user.userInformation, userInformation)
+            .fetchJoin() // userInformation fetch join
+            .where(userTeam.team.eq(meetingTeam))
+            .fetch()
     }
 
     fun findAllByUserId(userId: Long): List<UserTeam> {
