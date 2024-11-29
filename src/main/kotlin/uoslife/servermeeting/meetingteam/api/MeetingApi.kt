@@ -24,7 +24,7 @@ import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
+import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamLeaderNameResponse
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamNoJoinTeamException
 import uoslife.servermeeting.meetingteam.exception.InSingleMeetingTeamOnlyOneUserException
@@ -128,7 +128,7 @@ class MeetingApi(
                         [
                             Content(
                                 schema =
-                                    Schema(implementation = MeetingTeamUserListGetResponse::class)
+                                    Schema(implementation = MeetingTeamLeaderNameResponse::class)
                             )]
                 ),
                 ApiResponse(
@@ -206,7 +206,7 @@ class MeetingApi(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
         @PathVariable code: String,
-    ): ResponseEntity<MeetingTeamUserListGetResponse?> {
+    ): ResponseEntity<MeetingTeamLeaderNameResponse> {
         val userId = userDetails.username.toLong()
 
         if (teamType == TeamType.SINGLE) {
@@ -231,7 +231,7 @@ class MeetingApi(
                         [
                             Content(
                                 schema =
-                                    Schema(implementation = MeetingTeamUserListGetResponse::class)
+                                    Schema(implementation = MeetingTeamLeaderNameResponse::class)
                             )]
                 ),
                 ApiResponse(
@@ -280,20 +280,18 @@ class MeetingApi(
                 ),
             ]
     )
-    @GetMapping("/{teamType}/{code}/user/list")
+    @GetMapping("/{teamType}/{code}")
     fun getMeetingTeamUserList(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable code: String,
         @PathVariable teamType: TeamType,
-    ): ResponseEntity<MeetingTeamUserListGetResponse> {
-        val userId = userDetails.username.toLong()
+    ): ResponseEntity<MeetingTeamLeaderNameResponse> {
 
         if (teamType == TeamType.SINGLE) {
             throw InSingleMeetingTeamOnlyOneUserException()
         }
 
-        val meetingTeamUserListGetResponse =
-            tripleMeetingService.getMeetingTeamUserList(userId, code)
+        val meetingTeamUserListGetResponse = tripleMeetingService.getMeetingTeamUserList(code)
 
         return ResponseEntity.status(HttpStatus.OK).body(meetingTeamUserListGetResponse)
     }

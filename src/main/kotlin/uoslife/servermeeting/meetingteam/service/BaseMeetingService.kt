@@ -3,7 +3,7 @@ package uoslife.servermeeting.meetingteam.service
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
+import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamLeaderNameResponse
 
 interface BaseMeetingService {
     /**
@@ -21,8 +21,8 @@ interface BaseMeetingService {
     fun joinMeetingTeam(
         userId: Long,
         code: String,
-    ): MeetingTeamUserListGetResponse?
-    fun getMeetingTeamUserList(userId: Long, code: String): MeetingTeamUserListGetResponse
+    ): MeetingTeamLeaderNameResponse
+    fun getMeetingTeamUserList(code: String): MeetingTeamLeaderNameResponse
     fun updateMeetingTeamInfo(
         userId: Long,
         meetingTeamInfoUpdateRequest: MeetingTeamInfoUpdateRequest
