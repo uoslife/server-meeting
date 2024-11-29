@@ -59,7 +59,7 @@ class MatchingService(
                 ?: throw UnauthorizedMatchAccessException()
 
         val match = matchedDao.findById(matchId) ?: throw MatchNotFoundException()
-        val partnerTeam = getPartnerTeam(userTeam.team.gender!!, match)
+        val partnerTeam = getPartnerTeam(userTeam.team.gender, match)
 
         // 매칭된 상대의 정보를 조회
         return when (partnerTeam.type) {
