@@ -15,7 +15,7 @@ class MeetingDtoConverter {
             gender: GenderType,
             teamType: TeamType,
             userTeams: List<UserTeam>,
-            preference: Preference,
+            preference: Preference?,
             teamName: String?,
             course: String?,
             code: String?
@@ -25,7 +25,10 @@ class MeetingDtoConverter {
                 teamName = teamName,
                 gender = gender,
                 meetingTeamUserProfiles = userTeams.map { toUserCardProfile(it) },
-                preference = PreferenceDto.valueOf(preference),
+                preference =
+                    if (preference != null) {
+                        PreferenceDto.valueOf(preference)
+                    } else null,
                 course = course,
                 code = code
             )

@@ -8,6 +8,7 @@ import uoslife.servermeeting.match.dto.response.MatchedMeetingTeamInformationGet
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
+import uoslife.servermeeting.meetingteam.dto.request.CompletionStatus
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.SINGLE
@@ -83,10 +84,16 @@ class MatchingService(
         val meetingTeamInformationGetResponse =
             when (meetingTeam.type) {
                 SINGLE -> {
-                    singleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
+                    singleMeetingService.getMeetingTeamInformation(
+                        opponentUser.id!!,
+                        CompletionStatus.COMPLETED
+                    )
                 }
                 TRIPLE -> {
-                    tripleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
+                    tripleMeetingService.getMeetingTeamInformation(
+                        opponentUser.id!!,
+                        CompletionStatus.COMPLETED
+                    )
                 }
             }
         return meetingTeamInformationGetResponse.toMatchedMeetingTeamInformationGetResponse()
