@@ -33,21 +33,25 @@ class MeetingDtoConverter {
 
         private fun toUserCardProfile(userTeam: UserTeam): UserCardProfile {
             val userInfo = userTeam.user.userInformation ?: throw UserInfoNotCompletedException()
-            return UserCardProfile(
-                isLeader = userTeam.isLeader,
-                name = userTeam.user.name!!,
-                studentType = userInfo.studentType!!,
-                department = userInfo.department!!,
-                studentNumber = userInfo.studentNumber,
-                age = userInfo.age!!,
-                height = userInfo.height,
-                mbti = userInfo.mbti,
-                appearanceType = userInfo.appearanceType,
-                eyelidType = userInfo.eyelidType,
-                smoking = userInfo.smoking,
-                interest = userInfo.interest,
-                kakaoTalkId = userTeam.user.kakaoTalkId!!
-            )
+            try {
+                return UserCardProfile(
+                    isLeader = userTeam.isLeader,
+                    name = userTeam.user.name!!,
+                    studentType = userInfo.studentType!!,
+                    department = userInfo.department!!,
+                    studentNumber = userInfo.studentNumber,
+                    age = userInfo.age!!,
+                    height = userInfo.height,
+                    mbti = userInfo.mbti,
+                    appearanceType = userInfo.appearanceType,
+                    eyelidType = userInfo.eyelidType,
+                    smoking = userInfo.smoking,
+                    interest = userInfo.interest,
+                    kakaoTalkId = userTeam.user.kakaoTalkId!!
+                )
+            } catch (e: NullPointerException) {
+                throw UserInfoNotCompletedException()
+            }
         }
     }
 }
