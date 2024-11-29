@@ -97,6 +97,11 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "User does not have access to this team.",
         HttpStatus.FORBIDDEN.value()
     ),
+    UNAUTHORIZED_MATCH_ACCESS(
+        "MT04",
+        "User does not have access to this match.",
+        HttpStatus.FORBIDDEN.value()
+    ),
 
     // External API
     EXTERNAL_API_FAILED(

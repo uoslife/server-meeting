@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Repository
+import uoslife.servermeeting.match.entity.QMatch.match
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
@@ -101,5 +102,16 @@ class UserTeamDao(
             .fetchJoin()
             .where(userTeam.user.id.eq(userId))
             .fetch()
+    }
+
+    fun findUserWithMeetingTeamByMatchId(userId: Long, matchId: Long): UserTeam? {
+        return queryFactory
+            .selectFrom(userTeam)
+            .join(userTeam.team, meetingTeam)
+            .fetchJoin()
+            .leftJoin(match)
+            .on(meetingTeam.eq(match.maleTeam).or(meetingTeam.eq(match.femaleTeam)))
+            .where(userTeam.user.id.eq(userId), match.id.eq(matchId))
+            .fetchOne()
     }
 }

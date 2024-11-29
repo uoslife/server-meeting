@@ -6,8 +6,10 @@ import uoslife.servermeeting.match.dao.MatchedDao
 import uoslife.servermeeting.match.dto.response.*
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
+import uoslife.servermeeting.match.exception.UnauthorizedMatchAccessException
 import uoslife.servermeeting.match.exception.UnauthorizedTeamAccessException
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
+import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
@@ -49,6 +51,27 @@ class MatchingService(
             isMatched = result.matchId != null,
             matchId = result.matchId ?: 0L
         )
+    }
+
+    fun getMatchPartnerInformation(userId: Long, matchId: Long): MeetingTeamInformationGetResponse {
+        val userTeam =
+            userTeamDao.findUserWithMeetingTeamByMatchId(userId, matchId)
+                ?: throw UnauthorizedMatchAccessException()
+
+        val match = matchedDao.findById(matchId) ?: throw MatchNotFoundException()
+        val partnerTeam = getPartnerTeam(userTeam.user.gender!!, match)
+
+        // 매칭된 상대의 정보를 조회
+        return when (partnerTeam.type) {
+            SINGLE ->
+                singleMeetingService.getMeetingTeamInformation(
+                    partnerTeam.userTeams.first().user.id!!
+                )
+            TRIPLE ->
+                tripleMeetingService.getMeetingTeamInformation(
+                    partnerTeam.userTeams.first { it.isLeader }.user.id!!
+                )
+        }
     }
 
     @Transactional
@@ -118,5 +141,12 @@ class MatchingService(
         }
 
         return ParticipationStatus(isParticipated = true, meetingTeamId = userTeam.team.id)
+    }
+
+    private fun getPartnerTeam(userGender: GenderType, match: Match): MeetingTeam {
+        return when (userGender) {
+            GenderType.MALE -> match.femaleTeam
+            GenderType.FEMALE -> match.maleTeam
+        }
     }
 }

@@ -20,7 +20,7 @@ import uoslife.servermeeting.match.dto.response.MatchInformationResponse
 import uoslife.servermeeting.match.dto.response.MatchResultResponse
 import uoslife.servermeeting.match.dto.response.MeetingParticipationResponse
 import uoslife.servermeeting.match.service.MatchingService
-import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 
 @RestController
 @RequestMapping("/api/match")
@@ -116,14 +116,14 @@ class MatchApi(
                 ),
             ]
     )
-    @GetMapping("/{teamType}")
+    @GetMapping("/{matchId}/partner")
     fun getMatchedMeetingTeamInformation(
-        @PathVariable teamType: TeamType,
+        @PathVariable matchId: Long,
         @AuthenticationPrincipal userDetails: UserDetails,
-    ): ResponseEntity<MatchInformationResponse> {
+    ): ResponseEntity<MeetingTeamInformationGetResponse> {
         return ResponseEntity.status(HttpStatus.OK)
             .body(
-                matchingService.getMatchedMeetingTeamByType(userDetails.username.toLong(), teamType)
+                matchingService.getMatchPartnerInformation(userDetails.username.toLong(), matchId)
             )
     }
 }
