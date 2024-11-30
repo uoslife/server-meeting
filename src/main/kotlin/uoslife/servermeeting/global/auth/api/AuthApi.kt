@@ -87,7 +87,7 @@ class AuthApi(
         response: HttpServletResponse
     ): ResponseEntity<JwtResponse> {
         return try {
-            val accessToken = authService.reissueAccessToken(request, response)
+            val accessToken = authService.reissueTokens(request, response)
             ResponseEntity.ok(accessToken)
         } catch (e: JwtAuthenticationException) {
             cookieUtils.deleteRefreshTokenCookie(response)

@@ -37,7 +37,7 @@ class AuthService(
         return JwtResponse(accessToken)
     }
 
-    fun reissueAccessToken(
+    fun reissueTokens(
         request: HttpServletRequest,
         response: HttpServletResponse
     ): JwtResponse {
