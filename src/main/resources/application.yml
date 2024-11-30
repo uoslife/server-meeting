@@ -91,6 +91,8 @@ jwt:
     refresh:
         secret: ${JWT_REFRESH_SECRET}
         expiration: 604800000 # 유효시간(ms): 7일
+    encryption:
+        aes-secret-key: ${JWT_ENCRYPTION_AES_SECRET}
 
 aws:
     access-key-id: ${AWS_SES_ACCESS_KEY}
