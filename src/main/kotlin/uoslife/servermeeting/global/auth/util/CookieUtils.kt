@@ -15,7 +15,11 @@ class CookieUtils(
     @Value("\${app.cookie.domain}") private val domain: String,
     @Value("\${app.cookie.secure}") private val secure: Boolean
 ) {
-    fun addRefreshTokenCookie(response: HttpServletResponse, refreshToken: String, maxAge: Long) {
+    fun addRefreshTokenCookie(
+        response: HttpServletResponse,
+        refreshToken: String,
+        maxAgeMillisecond: Long
+    ) {
         val encodedRefreshToken = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8)
         val cookie =
             ResponseCookie.from("refresh_token", encodedRefreshToken)
@@ -23,7 +27,7 @@ class CookieUtils(
                 .httpOnly(true)
                 .secure(secure)
                 .path("/")
-                .maxAge(maxAge)
+                .maxAge(maxAgeMillisecond / 1000)
                 .sameSite("None")
                 .build()
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
