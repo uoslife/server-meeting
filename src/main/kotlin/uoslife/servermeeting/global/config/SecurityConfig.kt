@@ -55,6 +55,8 @@ class SecurityConfig(
                         "/api/verification/verify-email"
                     ) // 토큰 검사 미실시 리스트
                     .permitAll()
+                    .requestMatchers("/api/admin/**")
+                    .permitAll()
                     .requestMatchers("/api/**")
                     .hasRole("USER")
             } // CORS preflight 요청 허용
