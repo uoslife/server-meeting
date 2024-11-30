@@ -92,6 +92,16 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "Only Team Leader can Create Payment.",
         HttpStatus.BAD_REQUEST.value()
     ),
+    UNAUTHORIZED_TEAM_ACCESS(
+        "MT03",
+        "User does not have access to this team.",
+        HttpStatus.FORBIDDEN.value()
+    ),
+    UNAUTHORIZED_MATCH_ACCESS(
+        "MT04",
+        "User does not have access to this match.",
+        HttpStatus.FORBIDDEN.value()
+    ),
 
     // External API
     EXTERNAL_API_FAILED(
