@@ -85,4 +85,9 @@ class JwtTokenProvider(
         val key = "${SecurityConstants.REFRESH_TOKEN_PREFIX}:$userId"
         return redisTemplate.opsForValue().get(key)?.toString()
     }
+
+    fun deleteRefreshToken(userId: Long) {
+        val key = "${SecurityConstants.REFRESH_TOKEN_PREFIX}:$userId"
+        redisTemplate.delete(key)
+    }
 }

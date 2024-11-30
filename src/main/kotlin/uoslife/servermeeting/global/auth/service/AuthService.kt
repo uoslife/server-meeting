@@ -37,10 +37,7 @@ class AuthService(
         return JwtResponse(accessToken)
     }
 
-    fun reissueTokens(
-        request: HttpServletRequest,
-        response: HttpServletResponse
-    ): JwtResponse {
+    fun reissueTokens(request: HttpServletRequest, response: HttpServletResponse): JwtResponse {
         val refreshToken =
             cookieUtils.getRefreshTokenFromCookie(request)
                 ?: throw JwtRefreshTokenNotFoundException()
@@ -66,6 +63,15 @@ class AuthService(
         } catch (e: JwtException) {
             throw JwtTokenInvalidSignatureException()
         }
+    }
+
+    fun logout(request: HttpServletRequest, response: HttpServletResponse) {
+        val refreshToken = cookieUtils.getRefreshTokenFromCookie(request)
+        if (refreshToken != null) {
+            val userId = jwtTokenProvider.getUserIdFromRefreshToken(refreshToken)
+            jwtTokenProvider.deleteRefreshToken(userId)
+        }
+        cookieUtils.deleteRefreshTokenCookie(response)
     }
 
     private fun extractToken(token: String): String {

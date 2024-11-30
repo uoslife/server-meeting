@@ -106,8 +106,8 @@ class AuthApi(
             ]
     )
     @PostMapping("/logout")
-    fun logOut(response: HttpServletResponse): ResponseEntity<Unit> {
-        cookieUtils.deleteRefreshTokenCookie(response)
+    fun logout(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<Unit> {
+        authService.logout(request, response)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
