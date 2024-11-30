@@ -133,4 +133,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     JWT_TOKEN_INVALID_SIGNATURE("J004", "Invalid token signature", HttpStatus.UNAUTHORIZED.value()),
     JWT_REFRESH_TOKEN_NOT_FOUND("J005", "Refresh token not found", HttpStatus.UNAUTHORIZED.value()),
     JWT_REFRESH_TOKEN_EXPIRED("J006", "Refresh token has expired", HttpStatus.UNAUTHORIZED.value()),
+
+    // AOP
+    DUPLICATE_REQUEST("A01", "Duplicate Request found", HttpStatus.TOO_MANY_REQUESTS.value())
 }
