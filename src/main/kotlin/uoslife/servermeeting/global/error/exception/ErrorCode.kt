@@ -148,4 +148,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "Refresh token has been reused",
         HttpStatus.UNAUTHORIZED.value()
     ),
+
+    // AOP
+    DUPLICATE_REQUEST("A01", "Duplicate Request found", HttpStatus.TOO_MANY_REQUESTS.value())
 }

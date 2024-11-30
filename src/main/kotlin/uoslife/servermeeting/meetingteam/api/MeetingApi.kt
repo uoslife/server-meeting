@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import uoslife.servermeeting.global.aop.PreventDuplicateRequest
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.meetingteam.dto.request.CompletionStatus
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
@@ -103,6 +104,7 @@ class MeetingApi(
                 ),
             ]
     )
+    @PreventDuplicateRequest
     @PostMapping("/{teamType}/create")
     fun createMeetingTeam(
         @AuthenticationPrincipal userDetails: UserDetails,
