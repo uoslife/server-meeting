@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.annotation.Rollback
+import uoslife.servermeeting.global.auth.util.CookieUtils
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
@@ -18,9 +19,7 @@ import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.command.UserCommand
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.enums.AppearanceType
-import uoslife.servermeeting.user.entity.enums.EyelidType
-import uoslife.servermeeting.user.entity.enums.SmokingType
+import uoslife.servermeeting.user.entity.enums.*
 import uoslife.servermeeting.user.repository.UserInformationRepository
 import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.user.service.UserService
@@ -34,7 +33,7 @@ constructor(
     private val userRepository: UserRepository,
     private val userTeamRepository: UserTeamRepository,
     private val userInformationRepository: UserInformationRepository,
-    private val entityManager: EntityManager
+    private val entityManager: EntityManager,
 ) : BehaviorSpec() {
 
     override fun extensions() = listOf(SpringExtension)
@@ -44,6 +43,7 @@ constructor(
         val paymentService = mockk<PaymentService>()
         val userTeamDao = mockk<UserTeamDao>()
         val meetingService = mockk<BaseMeetingService>()
+        val cookieUtils = mockk<CookieUtils>()
         val userService =
             UserService(
                 userRepository = userRepository,
@@ -54,7 +54,8 @@ constructor(
                 validator = Validator(),
                 userTeamDao = userTeamDao,
                 singleMeetingService = meetingService,
-                tripleMeetingService = meetingService
+                tripleMeetingService = meetingService,
+                cookieUtils = cookieUtils,
             )
 
         given("유저가 생성되었을때") {
@@ -137,13 +138,15 @@ constructor(
                 department = "컴퓨터공학과",
                 eyelidType = EyelidType.DOUBLE,
                 appearanceType = AppearanceType.ARAB,
+                studentType = StudentType.UNDERGRADUATE,
             )
         private val initUserProfileCommand =
             UserCommand.UpdateUserPersonalInformation(
                 userId = 1L,
                 name = "석우진",
                 phoneNumber = "010-1234-5678",
-                kakaoTalkId = "seok"
+                kakaoTalkId = "seok",
+                gender = GenderType.MALE,
             )
         private val updateUserPersonalInformationCommand =
             UserCommand.UpdateUserInformation(
@@ -157,13 +160,15 @@ constructor(
                 department = "전자전기컴퓨터공학부",
                 eyelidType = EyelidType.SINGLE,
                 appearanceType = AppearanceType.TOFU,
+                studentType = StudentType.GRADUATE,
             )
         private val updateUserProfileCommand =
             UserCommand.UpdateUserPersonalInformation(
                 userId = 1L,
                 name = "석우진",
                 phoneNumber = "010-9006-8420",
-                kakaoTalkId = "seok"
+                kakaoTalkId = "seok",
+                gender = GenderType.FEMALE,
             )
     }
 }
