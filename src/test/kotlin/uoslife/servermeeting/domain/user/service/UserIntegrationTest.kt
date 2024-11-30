@@ -18,9 +18,7 @@ import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.command.UserCommand
 import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
-import uoslife.servermeeting.user.entity.enums.AppearanceType
-import uoslife.servermeeting.user.entity.enums.EyelidType
-import uoslife.servermeeting.user.entity.enums.SmokingType
+import uoslife.servermeeting.user.entity.enums.*
 import uoslife.servermeeting.user.repository.UserInformationRepository
 import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.user.service.UserService
@@ -54,7 +52,8 @@ constructor(
                 validator = Validator(),
                 userTeamDao = userTeamDao,
                 singleMeetingService = meetingService,
-                tripleMeetingService = meetingService
+                tripleMeetingService = meetingService,
+                cookieUtils = mockk()
             )
 
         given("유저가 생성되었을때") {
@@ -137,13 +136,15 @@ constructor(
                 department = "컴퓨터공학과",
                 eyelidType = EyelidType.DOUBLE,
                 appearanceType = AppearanceType.ARAB,
+                studentType = StudentType.GRADUATE
             )
         private val initUserProfileCommand =
             UserCommand.UpdateUserPersonalInformation(
                 userId = 1L,
                 name = "석우진",
                 phoneNumber = "010-1234-5678",
-                kakaoTalkId = "seok"
+                kakaoTalkId = "seok",
+                gender = GenderType.MALE
             )
         private val updateUserPersonalInformationCommand =
             UserCommand.UpdateUserInformation(
@@ -157,13 +158,15 @@ constructor(
                 department = "전자전기컴퓨터공학부",
                 eyelidType = EyelidType.SINGLE,
                 appearanceType = AppearanceType.TOFU,
+                studentType = null
             )
         private val updateUserProfileCommand =
             UserCommand.UpdateUserPersonalInformation(
                 userId = 1L,
                 name = "석우진",
                 phoneNumber = "010-9006-8420",
-                kakaoTalkId = "seok"
+                kakaoTalkId = "seok",
+                gender = null
             )
     }
 }
