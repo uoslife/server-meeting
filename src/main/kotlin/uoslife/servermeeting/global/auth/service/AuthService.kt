@@ -4,6 +4,7 @@ import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.JwtException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.global.auth.dto.response.JwtResponse
@@ -18,6 +19,10 @@ class AuthService(
     private val cookieUtils: CookieUtils,
     @Value("\${jwt.refresh.expiration}") private val refreshTokenExpiration: Long,
 ) {
+    companion object {
+        private val logger = LoggerFactory.getLogger(AuthService::class.java)
+    }
+
     fun getAuthenticatedUserId(token: String): Long {
         val jwt = extractToken(token)
 
@@ -56,7 +61,7 @@ class AuthService(
             jwtTokenProvider.saveRefreshToken(userId, newRefreshToken)
 
             cookieUtils.addRefreshTokenCookie(response, newRefreshToken, refreshTokenExpiration)
-
+            logger.info("[토큰 재발급 성공] USER ID: $userId")
             return JwtResponse(newAccessToken)
         } catch (e: ExpiredJwtException) {
             throw JwtRefreshTokenExpiredException()
@@ -68,8 +73,14 @@ class AuthService(
     fun logout(request: HttpServletRequest, response: HttpServletResponse) {
         val refreshToken = cookieUtils.getRefreshTokenFromCookie(request)
         if (refreshToken != null) {
-            val userId = jwtTokenProvider.getUserIdFromRefreshToken(refreshToken)
-            jwtTokenProvider.deleteRefreshToken(userId)
+            try {
+                val userId = jwtTokenProvider.getUserIdFromRefreshToken(refreshToken)
+                jwtTokenProvider.deleteRefreshToken(userId)
+            } catch (e: JwtException) {
+                logger.warn("[로그아웃 요청] 유효하지 않은 리프레시 토큰으로 로그아웃 시도")
+            }
+        } else {
+            logger.warn("[로그아웃 요청] 리프레시 토큰 없이 로그아웃 시도")
         }
         cookieUtils.deleteRefreshTokenCookie(response)
     }
