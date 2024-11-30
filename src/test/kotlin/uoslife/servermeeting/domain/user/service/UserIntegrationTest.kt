@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.annotation.Rollback
+import uoslife.servermeeting.global.auth.util.CookieUtils
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
@@ -42,6 +43,7 @@ constructor(
         val paymentService = mockk<PaymentService>()
         val userTeamDao = mockk<UserTeamDao>()
         val meetingService = mockk<BaseMeetingService>()
+        val cookieUtils = mockk<CookieUtils>()
         val userService =
             UserService(
                 userRepository = userRepository,
@@ -53,7 +55,7 @@ constructor(
                 userTeamDao = userTeamDao,
                 singleMeetingService = meetingService,
                 tripleMeetingService = meetingService,
-                cookieUtils = mockk()
+                cookieUtils = cookieUtils,
             )
 
         given("유저가 생성되었을때") {
@@ -136,7 +138,7 @@ constructor(
                 department = "컴퓨터공학과",
                 eyelidType = EyelidType.DOUBLE,
                 appearanceType = AppearanceType.ARAB,
-                studentType = StudentType.GRADUATE
+                studentType = StudentType.UNDERGRADUATE,
             )
         private val initUserProfileCommand =
             UserCommand.UpdateUserPersonalInformation(
@@ -144,7 +146,7 @@ constructor(
                 name = "석우진",
                 phoneNumber = "010-1234-5678",
                 kakaoTalkId = "seok",
-                gender = GenderType.MALE
+                gender = GenderType.MALE,
             )
         private val updateUserPersonalInformationCommand =
             UserCommand.UpdateUserInformation(
@@ -158,7 +160,7 @@ constructor(
                 department = "전자전기컴퓨터공학부",
                 eyelidType = EyelidType.SINGLE,
                 appearanceType = AppearanceType.TOFU,
-                studentType = null
+                studentType = StudentType.GRADUATE,
             )
         private val updateUserProfileCommand =
             UserCommand.UpdateUserPersonalInformation(
@@ -166,7 +168,7 @@ constructor(
                 name = "석우진",
                 phoneNumber = "010-9006-8420",
                 kakaoTalkId = "seok",
-                gender = null
+                gender = GenderType.FEMALE,
             )
     }
 }
