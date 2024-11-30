@@ -15,6 +15,7 @@ services:
 
             JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
             JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+            JWT_ENCRYPTION_AES_SECRET: ${JWT_ENCRYPTION_AES_SECRET}
 
             AWS_SES_ACCESS_KEY: ${AWS_SES_ACCESS_KEY}
             AWS_SES_SECRET_KEY: ${AWS_SES_SECRET_KEY}
@@ -24,6 +25,8 @@ services:
 
             PORTONE_API_IMP_KEY: ${PORTONE_API_IMP_KEY}
             PORTONE_API_IMP_SECRET: ${PORTONE_API_IMP_SECRET}
+
+            ADMIN_API_KEY: ${ADMIN_API_KEY}
 
 #    postgres:
 #        image: postgres

@@ -8,4 +8,5 @@ object SecurityConstants {
     const val TOKEN_PREFIX = "Bearer "
     const val TOKEN_ISSUER = "UOSLIFE"
     const val TOKEN_AUDIENCE = "UOSLIFE USER"
+    const val REFRESH_TOKEN_PREFIX = "refresh_token"
 }

@@ -27,7 +27,10 @@ class AuthApi(
     private val authService: AuthService,
     private val cookieUtils: CookieUtils,
 ) {
-    @Operation(summary = "토큰 재발급", description = "Refresh Token으로 새로운 Access Token을 발급합니다.")
+    @Operation(
+        summary = "토큰 재발급",
+        description = "Refresh Token으로 새로운 Access Token과 Refresh Token을 발급합니다."
+    )
     @ApiResponses(
         value =
             [
@@ -84,7 +87,7 @@ class AuthApi(
         response: HttpServletResponse
     ): ResponseEntity<JwtResponse> {
         return try {
-            val accessToken = authService.reissueAccessToken(request)
+            val accessToken = authService.reissueTokens(request, response)
             ResponseEntity.ok(accessToken)
         } catch (e: JwtAuthenticationException) {
             cookieUtils.deleteRefreshTokenCookie(response)
@@ -103,8 +106,8 @@ class AuthApi(
             ]
     )
     @PostMapping("/logout")
-    fun logOut(response: HttpServletResponse): ResponseEntity<Unit> {
-        cookieUtils.deleteRefreshTokenCookie(response)
+    fun logout(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<Unit> {
+        authService.logout(request, response)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }

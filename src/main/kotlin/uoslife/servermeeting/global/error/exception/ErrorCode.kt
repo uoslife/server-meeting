@@ -92,6 +92,16 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "Only Team Leader can Create Payment.",
         HttpStatus.BAD_REQUEST.value()
     ),
+    UNAUTHORIZED_TEAM_ACCESS(
+        "MT03",
+        "User does not have access to this team.",
+        HttpStatus.FORBIDDEN.value()
+    ),
+    UNAUTHORIZED_MATCH_ACCESS(
+        "MT04",
+        "User does not have access to this match.",
+        HttpStatus.FORBIDDEN.value()
+    ),
 
     // External API
     EXTERNAL_API_FAILED(
@@ -133,4 +143,16 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
     JWT_TOKEN_INVALID_SIGNATURE("J004", "Invalid token signature", HttpStatus.UNAUTHORIZED.value()),
     JWT_REFRESH_TOKEN_NOT_FOUND("J005", "Refresh token not found", HttpStatus.UNAUTHORIZED.value()),
     JWT_REFRESH_TOKEN_EXPIRED("J006", "Refresh token has expired", HttpStatus.UNAUTHORIZED.value()),
+    JWT_REFRESH_TOKEN_REUSED(
+        "J008",
+        "Refresh token has been reused",
+        HttpStatus.UNAUTHORIZED.value()
+    ),
+
+    // AOP
+    DUPLICATE_REQUEST("A01", "Duplicate Request found", HttpStatus.TOO_MANY_REQUESTS.value()),
+
+    // Admin
+    API_KEY_NOT_FOUND("AD01", "API key not found", HttpStatus.UNAUTHORIZED.value()),
+    API_KEY_INVALID("AD02", "Invalid API key", HttpStatus.UNAUTHORIZED.value()),
 }

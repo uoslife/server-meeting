@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uoslife.servermeeting.global.aop.PreventDuplicateRequest
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.payment.dto.request.PaymentRequestDto
@@ -102,6 +103,7 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
                 ),
             ]
     )
+    @PreventDuplicateRequest
     @PostMapping("/{teamType}/request")
     fun requestPayment(
         @AuthenticationPrincipal userDetails: UserDetails,

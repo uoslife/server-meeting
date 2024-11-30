@@ -75,13 +75,13 @@ class UserService(
     @Transactional
     fun updateUserInformation(command: UserCommand.UpdateUserInformation): User {
         command.mbti = validator.setValidMBTI(command.mbti)
-        val user = userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
+        val user = getUser(command.userId)
         return upsertUserInformation(user, command)
     }
 
     @Transactional
     fun updateUserPersonalInformation(command: UserCommand.UpdateUserPersonalInformation): User {
-        val user = userRepository.findByIdOrNull(command.userId) ?: throw UserNotFoundException()
+        val user = getUser(command.userId)
         if (command.kakaoTalkId != null && command.kakaoTalkId != user.kakaoTalkId) {
             isDuplicatedKakaoTalkId(command.kakaoTalkId)
         }
@@ -95,7 +95,7 @@ class UserService(
     @Transactional
     fun deleteUserById(userId: Long, response: HttpServletResponse) {
         // 유저가 존재하는지 확인
-        val user: User = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val user: User = getUser(userId)
         // 유저 미팅팀 삭제
         if (user.userTeams.isNotEmpty()) {
             user.userTeams.forEach { deleteUserMeetingTeam(userId, it) }
@@ -167,7 +167,7 @@ class UserService(
     }
 
     fun getUserMeetingTeamBranch(userId: Long): UserBranchResponse {
-        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+        val user = getUser(userId)
 
         val userTeams =
             userTeamDao.findAllUserTeamWithMeetingTeam(user)

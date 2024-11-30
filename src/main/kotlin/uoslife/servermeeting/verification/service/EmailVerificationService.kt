@@ -33,7 +33,7 @@ class EmailVerificationService(
         val asyncResult = asyncEmailService.sendEmailAsync(email)
         asyncResult.whenComplete { _, exception ->
             if (exception != null) {
-                logger.error("[이메일 전송 실패] EMAIL : $email")
+                logger.warn("[이메일 전송 실패] EMAIL : $email")
             } else {
                 logger.info("[이메일 전송 성공] EMAIL : $email")
             }

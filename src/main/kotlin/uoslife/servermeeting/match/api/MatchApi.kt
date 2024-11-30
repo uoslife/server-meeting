@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
-import uoslife.servermeeting.match.dto.response.MatchInformationResponse
+import uoslife.servermeeting.match.dto.response.MatchResultResponse
+import uoslife.servermeeting.match.dto.response.MeetingParticipationResponse
 import uoslife.servermeeting.match.service.MatchingService
-import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 
 @RestController
 @RequestMapping("/api/match")
@@ -26,19 +27,43 @@ import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 class MatchApi(
     private val matchingService: MatchingService,
 ) {
-    @Operation(summary = "매칭된 미팅 팀 전체 정보 조회")
+    @Operation(summary = "시대팅 신청 내역 조회", description = "유저의 시대팅 신청 내역을 조회합니다.")
     @ApiResponses(
         value =
             [
                 ApiResponse(
                     responseCode = "200",
-                    description = "매칭된 미팅 팀 전체 정보(MatchInformationResponse) 반환",
+                    description = "시대팅 신청 내역 반환",
                     content =
-                        [Content(schema = Schema(implementation = MatchInformationResponse::class))]
+                        [
+                            Content(
+                                schema =
+                                    Schema(implementation = MeetingParticipationResponse::class)
+                            )]
+                ),
+            ]
+    )
+    @GetMapping("/teams/participation")
+    fun getMeetingParticipation(
+        @AuthenticationPrincipal userDetails: UserDetails
+    ): ResponseEntity<MeetingParticipationResponse> {
+        val result = matchingService.getMeetingParticipation(userDetails.username.toLong())
+        return ResponseEntity.ok(result)
+    }
+
+    @Operation(summary = "매칭 결과 조회", description = "특정 매칭의 성공 여부를 조회합니다.")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "매칭 결과 정보 반환",
+                    content =
+                        [Content(schema = Schema(implementation = MatchResultResponse::class))]
                 ),
                 ApiResponse(
-                    responseCode = "400",
-                    description = "요청 값에 문제가 있음.",
+                    responseCode = "403",
+                    description = "해당 팀에 대한 접근 권한 없음",
                     content =
                         [
                             Content(
@@ -46,40 +71,58 @@ class MatchApi(
                                 examples =
                                     [
                                         ExampleObject(
-                                            name = "U02",
-                                            description = "해당 유저 정보 없음",
+                                            name = "MT03",
                                             value =
-                                                "{message: User is not Found., status: 400, code: U02}"
-                                        ),
+                                                "{\"message\": \"Unauthorized team access.\", \"status\": 403, \"code\": \"MT03\"}"
+                                        )]
+                            )]
+                )]
+    )
+    @GetMapping("/teams/{meetingTeamId}/result")
+    fun getMatchResult(
+        @PathVariable meetingTeamId: Long,
+        @AuthenticationPrincipal userDetails: UserDetails
+    ): ResponseEntity<MatchResultResponse> {
+        return ResponseEntity.ok(
+            matchingService.getMatchResult(userDetails.username.toLong(), meetingTeamId)
+        )
+    }
+
+    @Operation(summary = "매칭된 상대방 정보 조회", description = "매칭된 상대 팀의 상세 정보를 조회합니다.")
+    @ApiResponses(
+        value =
+            [
+                ApiResponse(
+                    responseCode = "200",
+                    description = "매칭된 상대방 정보 반환",
+                    content =
+                        [
+                            Content(
+                                schema =
+                                    Schema(
+                                        implementation = MeetingTeamInformationGetResponse::class
+                                    )
+                            )]
+                ),
+                ApiResponse(
+                    responseCode = "400",
+                    description = "매치를 찾을 수 없음",
+                    content =
+                        [
+                            Content(
+                                schema = Schema(implementation = ErrorResponse::class),
+                                examples =
+                                    [
                                         ExampleObject(
                                             name = "MT01",
-                                            description = "유저가 속한 팀이 매칭되어있지않음",
                                             value =
-                                                "{message: Match is not Found., status: 400, code: MT01}"
-                                        ),
-                                        ExampleObject(
-                                            name = "M06",
-                                            description = "유저가 일치하는 팀 정보 없음",
-                                            value =
-                                                "{message: Meeting Team is not Found., status: 400, code: M06}"
-                                        ),
-                                        ExampleObject(
-                                            name = "M08",
-                                            description = "매칭된 상대의 선호 상대방에 대한 응답값이 없음",
-                                            value =
-                                                "{message: Preference is not Found., status: 400, code: M08}"
-                                        ),
-                                        ExampleObject(
-                                            name = "M07",
-                                            description = "매칭된 상대의 질문 리스트 응답값이 없음",
-                                            value =
-                                                "{message: Information is not Found., status: 400, code: M07}"
+                                                "{\"message\": \"Match is not Found.\", \"status\": 400, \"code\": \"MT01\"}"
                                         )]
                             )]
                 ),
                 ApiResponse(
-                    responseCode = "401",
-                    description = "부적절한 토큰 정보",
+                    responseCode = "403",
+                    description = "해당 매치에 대한 접근 권한 없음",
                     content =
                         [
                             Content(
@@ -87,21 +130,22 @@ class MatchApi(
                                 examples =
                                     [
                                         ExampleObject(
+                                            name = "MT04",
                                             value =
-                                                "{message: Token is not valid., status: 401, code: T01}"
+                                                "{\"message\": \"Unauthorized match access.\", \"status\": 403, \"code\": \"MT04\"}"
                                         )]
                             )]
                 ),
             ]
     )
-    @GetMapping("/{teamType}")
+    @GetMapping("/matches/{matchId}/partner")
     fun getMatchedMeetingTeamInformation(
-        @PathVariable teamType: TeamType,
+        @PathVariable matchId: Long,
         @AuthenticationPrincipal userDetails: UserDetails,
-    ): ResponseEntity<MatchInformationResponse> {
+    ): ResponseEntity<MeetingTeamInformationGetResponse> {
         return ResponseEntity.status(HttpStatus.OK)
             .body(
-                matchingService.getMatchedMeetingTeamByType(userDetails.username.toLong(), teamType)
+                matchingService.getMatchPartnerInformation(userDetails.username.toLong(), matchId)
             )
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
+import uoslife.servermeeting.meetingteam.dto.request.CompletionStatus
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
@@ -90,20 +91,35 @@ class SingleMeetingService(
         meetingTeam.course = meetingTeamInfoUpdateRequest.course
     }
 
-    override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {
+    override fun getMeetingTeamInformation(
+        userId: Long,
+        status: CompletionStatus
+    ): MeetingTeamInformationGetResponse {
         val user = userService.getUser(userId)
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
         val userTeamsWithInfo = userTeamDao.findAllUserTeamWithUserInfoFromMeetingTeam(meetingTeam)
-        val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
+        meetingTeam.preference?.let {
+            return MeetingDtoConverter.toMeetingTeamInformationGetResponse(
+                meetingTeam.gender,
+                meetingTeam.type,
+                userTeamsWithInfo,
+                it,
+                null,
+                meetingTeam.course,
+                null
+            )
+        }
 
+        if (status == CompletionStatus.COMPLETED) throw PreferenceNotFoundException()
         return MeetingDtoConverter.toMeetingTeamInformationGetResponse(
             meetingTeam.gender,
             meetingTeam.type,
             userTeamsWithInfo,
-            preference,
             null,
-            meetingTeam.course
+            null,
+            meetingTeam.course,
+            null
         )
     }
 

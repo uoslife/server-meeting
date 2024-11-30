@@ -160,41 +160,6 @@ class UserApi(
         return ResponseEntity.status(HttpStatus.OK).body(userSimpleResponse)
     }
 
-    @Operation(summary = "User 계정 삭제", description = "유저 ID를 이용하여 삭제합니다.")
-    @ApiResponses(
-        value =
-            [
-                ApiResponse(
-                    responseCode = "204",
-                    description = "유저 삭제 성공",
-                    content = [Content(schema = Schema(implementation = Unit::class))]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "해당 유저 정보 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: User is not Found., status:400, code: U02}"
-                                        )]
-                            )]
-                )]
-    )
-    @DeleteMapping("/{userId}")
-    fun deleteUserById(
-        @PathVariable("userId") userId: Long,
-        response: HttpServletResponse
-    ): ResponseEntity<Unit> {
-        userService.deleteUserById(userId, response)
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-    }
-
     @Operation(summary = "User 계정 삭제", description = "토큰을 이용하여 삭제합니다.")
     @ApiResponses(
         value =

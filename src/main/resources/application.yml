@@ -87,10 +87,12 @@ logging:
 jwt:
     access:
         secret: ${JWT_ACCESS_SECRET}
-        expiration: 3600000 # 1시간
+        expiration: 3600000 # 유효시간(ms): 1시간
     refresh:
         secret: ${JWT_REFRESH_SECRET}
-        expiration: 604800000 # 7일
+        expiration: 604800000 # 유효시간(ms): 7일
+    encryption:
+        aes-secret-key: ${JWT_ENCRYPTION_AES_SECRET}
 
 aws:
     access-key-id: ${AWS_SES_ACCESS_KEY}
@@ -107,3 +109,7 @@ auth:
         verification-code-expiry: 600  # 인증코드 유효시간 (초)
         daily-send-limit: 50  # 하루 최대 발송 횟수
         code-verify-limit: 50 # 일일 최대 인증 횟수
+
+api:
+    admin:
+        key: ${ADMIN_API_KEY}
