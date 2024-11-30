@@ -14,6 +14,7 @@ data class MeetingTeamInformationGetResponse(
     @Schema(description = "팀 이름", example = "팀 이름(1:1인 경우 null)") val teamName: String?,
     @Schema(description = "상대에게 전하는 데이트 코스", example = "밥먹기 (3:3인 경우 null)") val course: String?,
     @field:NotNull @Schema(description = "성별", example = "MALE") val gender: GenderType,
+    @Schema(description = "미팅팀 코드", example = "1K1L") val code: String?,
     @Schema(description = "팀에 속한 유저 정보") val meetingTeamUserProfiles: List<UserCardProfile>?,
     @Schema(description = "상대방 선호 응답값") val preference: PreferenceDto?,
 ) {

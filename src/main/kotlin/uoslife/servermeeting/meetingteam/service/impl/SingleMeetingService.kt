@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
+import uoslife.servermeeting.meetingteam.dto.request.CompletionStatus
 import uoslife.servermeeting.meetingteam.dto.request.MeetingTeamInfoUpdateRequest
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamCodeResponse
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamUserListGetResponse
+import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamLeaderNameResponse
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
@@ -18,7 +19,7 @@ import uoslife.servermeeting.meetingteam.repository.MeetingTeamRepository
 import uoslife.servermeeting.meetingteam.repository.PreferenceRepository
 import uoslife.servermeeting.meetingteam.repository.UserTeamRepository
 import uoslife.servermeeting.meetingteam.service.BaseMeetingService
-import uoslife.servermeeting.meetingteam.service.util.MeetingServiceUtils
+import uoslife.servermeeting.meetingteam.service.util.MeetingDtoConverter
 import uoslife.servermeeting.meetingteam.util.Validator
 import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.entity.User
@@ -30,7 +31,6 @@ import uoslife.servermeeting.user.service.UserService
 class SingleMeetingService(
     private val userService: UserService,
     private val meetingTeamRepository: MeetingTeamRepository,
-    private val meetingServiceUtils: MeetingServiceUtils,
     private val preferenceRepository: PreferenceRepository,
     private val validator: Validator,
     private val userTeamRepository: UserTeamRepository,
@@ -61,14 +61,11 @@ class SingleMeetingService(
     override fun joinMeetingTeam(
         userId: Long,
         code: String,
-    ): MeetingTeamUserListGetResponse? {
+    ): MeetingTeamLeaderNameResponse {
         throw InSingleMeetingTeamNoJoinTeamException()
     }
 
-    override fun getMeetingTeamUserList(
-        userId: Long,
-        code: String
-    ): MeetingTeamUserListGetResponse {
+    override fun getMeetingTeamUserList(code: String): MeetingTeamLeaderNameResponse {
         throw InSingleMeetingTeamOnlyOneUserException()
     }
 
@@ -94,20 +91,35 @@ class SingleMeetingService(
         meetingTeam.course = meetingTeamInfoUpdateRequest.course
     }
 
-    override fun getMeetingTeamInformation(userId: Long): MeetingTeamInformationGetResponse {
+    override fun getMeetingTeamInformation(
+        userId: Long,
+        status: CompletionStatus
+    ): MeetingTeamInformationGetResponse {
         val user = userService.getUser(userId)
         val meetingTeam: MeetingTeam = getUserSingleMeetingTeam(user)
 
         val userTeamsWithInfo = userTeamDao.findAllUserTeamWithUserInfoFromMeetingTeam(meetingTeam)
-        val preference = meetingTeam.preference ?: throw PreferenceNotFoundException()
+        meetingTeam.preference?.let {
+            return MeetingDtoConverter.toMeetingTeamInformationGetResponse(
+                meetingTeam.gender,
+                meetingTeam.type,
+                userTeamsWithInfo,
+                it,
+                null,
+                meetingTeam.course,
+                null
+            )
+        }
 
-        return meetingServiceUtils.toMeetingTeamInformationGetResponse(
+        if (status == CompletionStatus.COMPLETED) throw PreferenceNotFoundException()
+        return MeetingDtoConverter.toMeetingTeamInformationGetResponse(
             meetingTeam.gender,
             meetingTeam.type,
             userTeamsWithInfo,
-            preference,
             null,
-            meetingTeam.course
+            null,
+            meetingTeam.course,
+            null
         )
     }
 

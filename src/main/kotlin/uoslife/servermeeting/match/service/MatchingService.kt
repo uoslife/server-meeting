@@ -9,6 +9,7 @@ import uoslife.servermeeting.match.exception.MatchNotFoundException
 import uoslife.servermeeting.match.exception.UnauthorizedMatchAccessException
 import uoslife.servermeeting.match.exception.UnauthorizedTeamAccessException
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
+import uoslife.servermeeting.meetingteam.dto.request.CompletionStatus
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
@@ -65,11 +66,13 @@ class MatchingService(
         return when (partnerTeam.type) {
             SINGLE ->
                 singleMeetingService.getMeetingTeamInformation(
-                    partnerTeam.userTeams.first().user.id!!
+                    partnerTeam.userTeams.first().user.id!!,
+                    CompletionStatus.COMPLETED
                 )
             TRIPLE ->
                 tripleMeetingService.getMeetingTeamInformation(
-                    partnerTeam.userTeams.first { it.isLeader }.user.id!!
+                    partnerTeam.userTeams.first { it.isLeader }.user.id!!,
+                    CompletionStatus.COMPLETED
                 )
         }
     }
@@ -126,10 +129,16 @@ class MatchingService(
         val meetingTeamInformationGetResponse =
             when (meetingTeam.type) {
                 SINGLE -> {
-                    singleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
+                    singleMeetingService.getMeetingTeamInformation(
+                        opponentUser.id!!,
+                        CompletionStatus.COMPLETED
+                    )
                 }
                 TRIPLE -> {
-                    tripleMeetingService.getMeetingTeamInformation(opponentUser.id!!)
+                    tripleMeetingService.getMeetingTeamInformation(
+                        opponentUser.id!!,
+                        CompletionStatus.COMPLETED
+                    )
                 }
             }
         return meetingTeamInformationGetResponse.toMatchedMeetingTeamInformationGetResponse()
