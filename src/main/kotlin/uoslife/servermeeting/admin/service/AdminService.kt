@@ -1,18 +1,21 @@
 package uoslife.servermeeting.admin.service
 
+import jakarta.servlet.http.HttpServletResponse
 import java.time.Duration
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
+import uoslife.servermeeting.user.service.UserService
 import uoslife.servermeeting.verification.util.VerificationConstants
 import uoslife.servermeeting.verification.util.VerificationUtils
 
 @Service
-class AdminEmailVerificationService(
+class AdminService(
     private val redisTemplate: RedisTemplate<String, Any>,
+    private val userService: UserService,
 ) {
     companion object {
-        private val logger = LoggerFactory.getLogger(AdminEmailVerificationService::class.java)
+        private val logger = LoggerFactory.getLogger(AdminService::class.java)
     }
 
     fun resetEmailSendCount(email: String) {
@@ -23,5 +26,9 @@ class AdminEmailVerificationService(
         redisTemplate.expire(sendCountKey, Duration.ofDays(1))
 
         logger.info("[이메일 발송 횟수 초기화] email: $email")
+    }
+
+    fun deleteUserById(userId: Long, response: HttpServletResponse) {
+        userService.deleteUserById(userId, response)
     }
 }
