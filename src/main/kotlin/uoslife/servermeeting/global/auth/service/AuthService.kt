@@ -46,10 +46,6 @@ class AuthService(
                 ?: throw JwtRefreshTokenNotFoundException()
 
         try {
-            if (!jwtTokenProvider.validateRefreshToken(refreshToken)) {
-                throw JwtTokenInvalidSignatureException()
-            }
-
             val userId = jwtTokenProvider.getUserIdFromRefreshToken(refreshToken)
 
             val storedToken = jwtTokenProvider.getStoredRefreshToken(userId)
