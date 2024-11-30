@@ -31,12 +31,16 @@ class AuthService(
         val accessToken = jwtTokenProvider.createAccessToken(userId)
         val refreshToken = jwtTokenProvider.createRefreshToken(userId)
 
+        jwtTokenProvider.saveRefreshToken(userId, refreshToken)
         cookieUtils.addRefreshTokenCookie(response, refreshToken, refreshTokenExpiration)
 
         return JwtResponse(accessToken)
     }
 
-    fun reissueAccessToken(request: HttpServletRequest): JwtResponse {
+    fun reissueAccessToken(
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ): JwtResponse {
         val refreshToken =
             cookieUtils.getRefreshTokenFromCookie(request)
                 ?: throw JwtRefreshTokenNotFoundException()
@@ -47,9 +51,20 @@ class AuthService(
             }
 
             val userId = jwtTokenProvider.getUserIdFromRefreshToken(refreshToken)
-            val accessToken = jwtTokenProvider.createAccessToken(userId)
 
-            return JwtResponse(accessToken)
+            val storedToken = jwtTokenProvider.getStoredRefreshToken(userId)
+            if (storedToken != refreshToken) {
+                throw JwtRefreshTokenReusedException()
+            }
+
+            val newAccessToken = jwtTokenProvider.createAccessToken(userId)
+            val newRefreshToken = jwtTokenProvider.createRefreshToken(userId)
+
+            jwtTokenProvider.saveRefreshToken(userId, newRefreshToken)
+
+            cookieUtils.addRefreshTokenCookie(response, newRefreshToken, refreshTokenExpiration)
+
+            return JwtResponse(newAccessToken)
         } catch (e: ExpiredJwtException) {
             throw JwtRefreshTokenExpiredException()
         } catch (e: JwtException) {
