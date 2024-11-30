@@ -3,12 +3,15 @@ package uoslife.servermeeting.global.auth.security
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.crypto.SecretKey
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
 
 @Component
 class JwtTokenProvider(
+    private val redisTemplate: RedisTemplate<String, Any>,
     @Value("\${jwt.access.secret}") private val accessSecret: String,
     @Value("\${jwt.refresh.secret}") private val refreshSecret: String,
     @Value("\${jwt.access.expiration}") private val accessTokenExpiration: Long,
@@ -69,5 +72,17 @@ class JwtTokenProvider(
     private fun getUserIdFromToken(token: String, key: SecretKey): Long {
         val claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).payload
         return claims.subject.toLong()
+    }
+
+    fun saveRefreshToken(userId: Long, refreshToken: String) {
+        val key = "${SecurityConstants.REFRESH_TOKEN_PREFIX}:$userId"
+        redisTemplate
+            .opsForValue()
+            .set(key, refreshToken, refreshTokenExpiration, TimeUnit.MILLISECONDS)
+    }
+
+    fun getStoredRefreshToken(userId: Long): String? {
+        val key = "${SecurityConstants.REFRESH_TOKEN_PREFIX}:$userId"
+        return redisTemplate.opsForValue().get(key)?.toString()
     }
 }
