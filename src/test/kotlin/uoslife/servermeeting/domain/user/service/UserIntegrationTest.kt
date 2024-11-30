@@ -33,7 +33,7 @@ constructor(
     private val userRepository: UserRepository,
     private val userTeamRepository: UserTeamRepository,
     private val userInformationRepository: UserInformationRepository,
-    private val entityManager: EntityManager,
+    private val entityManager: EntityManager
 ) : BehaviorSpec() {
 
     override fun extensions() = listOf(SpringExtension)

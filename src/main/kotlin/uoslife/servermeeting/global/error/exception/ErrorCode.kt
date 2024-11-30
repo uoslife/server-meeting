@@ -149,7 +149,10 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         HttpStatus.UNAUTHORIZED.value()
     ),
 
+    // AOP
+    DUPLICATE_REQUEST("A01", "Duplicate Request found", HttpStatus.TOO_MANY_REQUESTS.value()),
+
     // Admin
-    API_KEY_NOT_FOUND("A001", "API key not found", HttpStatus.UNAUTHORIZED.value()),
-    API_KEY_INVALID("A002", "Invalid API key", HttpStatus.UNAUTHORIZED.value()),
+    API_KEY_NOT_FOUND("AD01", "API key not found", HttpStatus.UNAUTHORIZED.value()),
+    API_KEY_INVALID("AD02", "Invalid API key", HttpStatus.UNAUTHORIZED.value()),
 }
