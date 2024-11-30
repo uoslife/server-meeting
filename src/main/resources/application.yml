@@ -87,10 +87,10 @@ logging:
 jwt:
     access:
         secret: ${JWT_ACCESS_SECRET}
-        expiration: 3600000 # 1시간
+        expiration: 3600000 # 유효시간(ms): 1시간
     refresh:
         secret: ${JWT_REFRESH_SECRET}
-        expiration: 604800000 # 7일
+        expiration: 604800000 # 유효시간(ms): 7일
 
 aws:
     access-key-id: ${AWS_SES_ACCESS_KEY}
