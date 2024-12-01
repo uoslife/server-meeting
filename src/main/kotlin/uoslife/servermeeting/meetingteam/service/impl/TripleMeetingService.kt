@@ -76,6 +76,7 @@ class TripleMeetingService(
             meetingTeamRepository.findByCode(code) ?: throw MeetingTeamNotFoundException()
 
         validator.isTeamFull(meetingTeam)
+        validator.isGenderSame(meetingTeam, user)
 
         val newUserTeam = UserTeam.createUserTeam(meetingTeam, user, false)
         userTeamRepository.save(newUserTeam)
