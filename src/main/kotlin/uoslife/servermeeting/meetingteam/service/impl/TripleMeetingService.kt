@@ -168,7 +168,7 @@ class TripleMeetingService(
         val successPayment = paymentService.getSuccessPayment(user.id!!, teamType = TeamType.TRIPLE)
 
         if (successPayment != null) {
-            paymentService.refundPaymentByToken(user.id!!, TeamType.SINGLE)
+            paymentService.refundPaymentByToken(user.id!!, TeamType.TRIPLE)
         }
 
         user.payments?.forEach { payment -> payment.removeMeetingTeam() }
