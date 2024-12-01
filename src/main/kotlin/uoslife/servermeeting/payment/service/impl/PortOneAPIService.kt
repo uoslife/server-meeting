@@ -19,7 +19,7 @@ class PortOneAPIService(
     companion object {
         const val ACCESS_TOKEN_KEY = "PORTONE_ACCESS_KEY"
         const val SUCCESS_CODE = 0
-        const val TOKEN_VALID_TIME = 1700L // 포트원 1800초 보다 축소
+        const val TOKEN_VALID_TIME = 60L // 포트원 1800초 보다 축소
     }
     private fun getAccessToken(): String {
         val accessKey = redisTemplate.opsForValue().get(ACCESS_TOKEN_KEY)
@@ -34,6 +34,15 @@ class PortOneAPIService(
             .opsForValue()
             .set(ACCESS_TOKEN_KEY, newAccessToken, Duration.ofSeconds(TOKEN_VALID_TIME))
         return newAccessToken
+    }
+
+    fun refreshAccessToken() {
+        val accessTokenResponse = requestAccessToken()
+        checkResponseCode(accessTokenResponse)
+        val newAccessToken = accessTokenResponse.response!!.access_token
+        redisTemplate
+            .opsForValue()
+            .set(ACCESS_TOKEN_KEY, newAccessToken, Duration.ofSeconds(TOKEN_VALID_TIME))
     }
 
     private fun requestAccessToken(): PortOneResponseDto.AccessTokenResponse {

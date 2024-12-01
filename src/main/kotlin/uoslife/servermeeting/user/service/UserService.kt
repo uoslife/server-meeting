@@ -81,7 +81,7 @@ class UserService(
 
     @Transactional
     fun updateUserPersonalInformation(command: UserCommand.UpdateUserPersonalInformation): User {
-        if(command.kakaoTalkId != null){
+        if (command.kakaoTalkId != null) {
             isDuplicatedKakaoTalkId(command.userId, command.kakaoTalkId)
         }
 
@@ -128,7 +128,8 @@ class UserService(
     fun isDuplicatedKakaoTalkId(userId: Long, kakaoTalkId: String): Boolean {
         val user = getUser(userId)
         if (kakaoTalkId != user.kakaoTalkId) {
-            if (userRepository.existsByKakaoTalkId(kakaoTalkId)) throw KakaoTalkIdDuplicationException()
+            if (userRepository.existsByKakaoTalkId(kakaoTalkId))
+                throw KakaoTalkIdDuplicationException()
         }
         return true
     }

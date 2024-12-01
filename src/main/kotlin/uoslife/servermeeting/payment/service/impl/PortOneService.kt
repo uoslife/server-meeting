@@ -21,10 +21,7 @@ import uoslife.servermeeting.payment.dto.request.PaymentRequestDto
 import uoslife.servermeeting.payment.dto.response.PaymentResponseDto
 import uoslife.servermeeting.payment.entity.Payment
 import uoslife.servermeeting.payment.entity.enums.PaymentStatus
-import uoslife.servermeeting.payment.exception.PaymentInValidException
-import uoslife.servermeeting.payment.exception.PaymentNotFoundException
-import uoslife.servermeeting.payment.exception.RefundPrecedeException
-import uoslife.servermeeting.payment.exception.UserAlreadyHavePaymentException
+import uoslife.servermeeting.payment.exception.*
 import uoslife.servermeeting.payment.repository.PaymentRepository
 import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.dao.UserDao
@@ -141,7 +138,9 @@ class PortOneService(
                 updatePaymentStatus(payment, PaymentStatus.SUCCESS, paymentCheckRequest.impUid)
                 return PaymentResponseDto.PaymentCheckResponse(true, "")
             }
-        } catch (_: ExternalApiFailedException) {}
+        } catch (_: ExternalApiFailedException) {
+            portOneAPIService.refreshAccessToken()
+        }
 
         updatePaymentStatus(payment, PaymentStatus.FAILED, paymentCheckRequest.impUid)
         return PaymentResponseDto.PaymentCheckResponse(false, "")
@@ -165,7 +164,8 @@ class PortOneService(
 
             updatePaymentStatus(payment, PaymentStatus.REFUND, payment.impUid!!)
         } catch (e: ExternalApiFailedException) {
-            return PaymentResponseDto.PaymentRefundResponse(false, "")
+            portOneAPIService.refreshAccessToken()
+            throw RefundFailedException()
         }
 
         when (teamType) {
@@ -234,7 +234,9 @@ class PortOneService(
                     pendingPayment!!.status
                 )
             }
-        } catch (_: ExternalApiFailedException) {}
+        } catch (_: ExternalApiFailedException) {
+            portOneAPIService.refreshAccessToken()
+        }
         logger.info("[결제 검증 실패] merchantUid : ${pendingPayment!!.merchantUid}")
         pendingPayment!!.status = PaymentStatus.FAILED
         throw PaymentNotFoundException()

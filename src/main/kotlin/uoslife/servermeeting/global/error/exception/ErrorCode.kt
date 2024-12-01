@@ -119,6 +119,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         "User Payment refund is not completed.",
         HttpStatus.PRECONDITION_FAILED.value()
     ),
+    PAYMENT_REFUND_FAILED("P06", "User Refund Failed", HttpStatus.INTERNAL_SERVER_ERROR.value()),
 
     // Email Verification
     EMAIL_INVALID_FORMAT("E01", "Invalid email format.", HttpStatus.BAD_REQUEST.value()),
