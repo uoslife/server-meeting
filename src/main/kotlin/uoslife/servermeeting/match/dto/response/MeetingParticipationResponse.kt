@@ -1,8 +1,18 @@
 package uoslife.servermeeting.match.dto.response
 
-data class MeetingParticipationResponse(
-    val single: ParticipationStatus,
-    val triple: ParticipationStatus
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class MeetingParticipationResponse
+@JsonCreator
+constructor(
+    @JsonProperty("single") val single: ParticipationStatus,
+    @JsonProperty("triple") val triple: ParticipationStatus
 )
 
-data class ParticipationStatus(val isParticipated: Boolean, val meetingTeamId: Long?)
+data class ParticipationStatus
+@JsonCreator
+constructor(
+    @JsonProperty("participated") val isParticipated: Boolean,
+    @JsonProperty("meetingTeamId") val meetingTeamId: Long?
+)
