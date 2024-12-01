@@ -59,10 +59,6 @@ class MatchedDao(private val queryFactory: JPAQueryFactory) {
             .fetchJoin()
             .join(match.femaleTeam)
             .fetchJoin()
-            .leftJoin(match.maleTeam.userTeams)
-            .fetchJoin()
-            .leftJoin(match.femaleTeam.userTeams)
-            .fetchJoin()
             .where(match.id.eq(matchId))
             .fetchOne()
     }
