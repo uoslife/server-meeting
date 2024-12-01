@@ -34,7 +34,7 @@ class MatchingService(
     private val tripleMeetingService: TripleMeetingService,
 ) {
     fun getMeetingParticipation(userId: Long): MeetingParticipationResponse {
-        val userTeams = userTeamDao.findAllByUserId(userId)
+        val userTeams = userTeamDao.findAllByUserIdWithPaymentStatus(userId)
 
         return MeetingParticipationResponse(
             single = getParticipationStatus(userTeams.find { it.team.type == SINGLE }),
