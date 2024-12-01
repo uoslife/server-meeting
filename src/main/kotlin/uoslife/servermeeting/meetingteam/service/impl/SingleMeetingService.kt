@@ -88,7 +88,7 @@ class SingleMeetingService(
         } // 분리된 트랜잭션 호출
 
         meetingTeam.preference = newPreference
-        meetingTeam.course = meetingTeamInfoUpdateRequest.course
+        meetingTeam.course = meetingTeamInfoUpdateRequest.course ?: meetingTeam.course
     }
 
     override fun getMeetingTeamInformation(

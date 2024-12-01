@@ -184,31 +184,6 @@ class PortOneService(
         return PaymentResponseDto.PaymentRefundResponse(true, "")
     }
 
-    @Transactional
-    override fun refundPayment(): PaymentResponseDto.NotMatchedPaymentRefundResponse {
-        val userList =
-            meetingTeamDao
-                .findUserIdWithMaleMeetingTeam()
-                .plus(meetingTeamDao.findUserIdWithFeMaleMeetingTeam())
-        val paymentList = userDao.findNotMatchedPayment(userList)
-        logger.info("Total payment count: " + paymentList.size)
-
-        val refundFailedList: MutableList<String> = mutableListOf()
-        paymentList.forEach { payment ->
-            try {
-                portOneAPIService.refundPayment(payment.impUid, payment.price)
-                updatePaymentStatus(payment, PaymentStatus.REFUND, payment.impUid!!)
-            } catch (e: ExternalApiFailedException) {
-                logger.info(
-                    "[환불 실패] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.merchantUid}"
-                )
-                refundFailedList.add(payment.id.toString())
-                payment.status = PaymentStatus.REFUND_FAILED
-            }
-        }
-        return PaymentResponseDto.NotMatchedPaymentRefundResponse(refundFailedList)
-    }
-
     @Transactional(dontRollbackOn = [PaymentNotFoundException::class])
     override fun verifyPayment(
         userId: Long,
@@ -304,5 +279,30 @@ class PortOneService(
     private fun updatePaymentStatus(payment: Payment, status: PaymentStatus, impUid: String) {
         payment.updatePayment(impUid, status)
         logger.info("[결제 상태 변경] paymentId: ${payment.id}, status: $status, impUid: $impUid")
+    }
+
+    @Transactional
+    override fun refundPayment(): PaymentResponseDto.NotMatchedPaymentRefundResponse {
+        val userList =
+            meetingTeamDao
+                .findUserIdWithMaleMeetingTeam()
+                .plus(meetingTeamDao.findUserIdWithFeMaleMeetingTeam())
+        val paymentList = userDao.findNotMatchedPayment(userList)
+        logger.info("Total payment count: " + paymentList.size)
+
+        val refundFailedList: MutableList<String> = mutableListOf()
+        paymentList.forEach { payment ->
+            try {
+                portOneAPIService.refundPayment(payment.impUid, payment.price)
+                updatePaymentStatus(payment, PaymentStatus.REFUND, payment.impUid!!)
+            } catch (e: ExternalApiFailedException) {
+                logger.info(
+                    "[환불 실패] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.merchantUid}"
+                )
+                refundFailedList.add(payment.id.toString())
+                payment.status = PaymentStatus.REFUND_FAILED
+            }
+        }
+        return PaymentResponseDto.NotMatchedPaymentRefundResponse(refundFailedList)
     }
 }

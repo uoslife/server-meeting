@@ -43,12 +43,6 @@ class Validator {
         }
     }
 
-    fun isMessageLengthIsValid(message: String?) {
-        if (message == null || message.length < 10) {
-            throw InvalidMessageLengthException()
-        }
-    }
-
     fun isAlreadyPaid(payment: Payment): Boolean {
         if (payment.status.equals(PaymentStatus.SUCCESS)) return true
         return false

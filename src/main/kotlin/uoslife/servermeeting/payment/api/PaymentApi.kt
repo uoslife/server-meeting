@@ -259,52 +259,6 @@ class PaymentApi(@Qualifier("PortOneService") private val paymentService: Paymen
             .body(paymentService.refundPaymentByToken(userId, teamType = teamType))
     }
 
-    @Operation(summary = "매칭 안된 유저 결제 취소 API", description = "매칭이 되지않은 모든 유저에 대해 환불합니다")
-    @ApiResponses(
-        value =
-            [
-                ApiResponse(
-                    responseCode = "204",
-                    description = "반환값 없음",
-                    content = [Content(schema = Schema(implementation = Unit::class))]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "결제 정보 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: Payment is not Found., status: 400, code: P01}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "401",
-                    description = "부적절한 토큰 정보",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            value =
-                                                "{message: Token is not valid., status: 401, code: T01}"
-                                        )]
-                            )]
-                ),
-            ]
-    )
-    @PostMapping("/refund/match")
-    fun refundPayment(): ResponseEntity<PaymentResponseDto.NotMatchedPaymentRefundResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(paymentService.refundPayment())
-    }
-
     @Operation(summary = "결제 여부 확인 API", description = "결제 여부를 확인할 수 있습니다")
     @ApiResponses(
         value =
