@@ -50,7 +50,7 @@ class MatchingService(
         return MatchResultResponse(
             matchType = result.teamType,
             isMatched = result.matchId != null,
-            matchId = result.matchId ?: 0L
+            matchId = result.matchId
         )
     }
 
