@@ -42,8 +42,18 @@ class MeetingTeamInfoUpdateRequest(
     }
     fun toSinglePreference(validMBTI: String?, meetingTeam: MeetingTeam): Preference {
         return Preference(
-            ageMin = if (ageMin < MINIMUM_AGE) MINIMUM_AGE else ageMin,
-            ageMax = if (ageMax > MAXIMAL_AGE) MAXIMAL_AGE else ageMax,
+            ageMin =
+                if (ageMin < MINIMUM_AGE) { //20살 미만
+                    MINIMUM_AGE
+                } else if (ageMin > MAXIMAL_AGE) { //30살 초과
+                    MAXIMAL_AGE
+                } else ageMin,
+            ageMax =
+                if (ageMax > MAXIMAL_AGE) {
+                    MAXIMAL_AGE
+                } else if (ageMax < MINIMUM_AGE) {
+                    MINIMUM_AGE
+                } else ageMax,
             heightMin = heightMin,
             heightMax = heightMax,
             appearanceType = appearanceType,
@@ -59,34 +69,10 @@ class MeetingTeamInfoUpdateRequest(
 
     fun toTriplePreference(meetingTeam: MeetingTeam): Preference {
         return Preference(
-            ageMin = if (ageMin < MINIMUM_AGE) MINIMUM_AGE else ageMin,
-            ageMax = if (ageMax > MAXIMAL_AGE) MAXIMAL_AGE else ageMax,
+            ageMin = ageMin,
+            ageMax = ageMax,
             mood = mood,
             meetingTeam = meetingTeam
         )
-    }
-
-    fun updatePreference(preference: Preference, validMBTI: String?, teamType: TeamType) {
-        when (teamType) {
-            TeamType.SINGLE -> {
-                preference.ageMin = ageMin ?: preference.ageMin
-                preference.ageMax = ageMax ?: preference.ageMax
-                preference.heightMin = heightMin ?: preference.heightMin
-                preference.heightMax = heightMax ?: preference.heightMax
-                preference.appearanceType = appearanceType ?: preference.appearanceType
-                preference.eyelidType = eyelidType ?: preference.eyelidType
-                preference.smoking = smoking ?: preference.smoking
-                preference.mbti = validMBTI ?: preference.mbti
-                preference.weight = weight ?: preference.weight
-                preference.avoidanceDepartment =
-                    avoidanceDepartment ?: preference.avoidanceDepartment
-                preference.avoidanceNumber = avoidanceNumber ?: preference.avoidanceNumber
-            }
-            TeamType.TRIPLE -> {
-                preference.ageMin = ageMin ?: preference.ageMin
-                preference.ageMax = ageMax ?: preference.ageMax
-                preference.mood = mood ?: preference.mood
-            }
-        }
     }
 }
