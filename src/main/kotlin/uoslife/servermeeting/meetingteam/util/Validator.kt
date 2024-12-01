@@ -61,4 +61,10 @@ class Validator {
         }
         return validMBTI
     }
+
+    fun isGenderSame(meetingTeam: MeetingTeam, user: User) {
+        if(meetingTeam.gender != user.gender){
+            throw TeamConsistOfSameGenderException()
+        }
+    }
 }
