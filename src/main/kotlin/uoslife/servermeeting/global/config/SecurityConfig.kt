@@ -47,7 +47,6 @@ class SecurityConfig(
                     .requestMatchers(
                         "/swagger-ui/**",
                         "/meeting/actuator/health/**",
-                        "/api/user/isDuplicatedKakaoTalkId",
                         "/api/payment/refund/match",
                         "/api/payment/webhook",
                         "/api/auth/reissue",
