@@ -81,7 +81,7 @@ class AuthApi(
                                         ExampleObject(
                                             name = "Refresh Token Reused",
                                             value =
-                                                "{\"message\": \"\"Refresh token has been reused\", \"status\":401, \"code\": \"J008\"}"
+                                                "{\"message\": \"Refresh token has been reused\", \"status\":401, \"code\": \"J008\"}"
                                         )]
                             )]
                 )]

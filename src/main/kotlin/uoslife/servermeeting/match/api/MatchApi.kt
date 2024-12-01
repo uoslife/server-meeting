@@ -43,11 +43,11 @@ class MatchApi(
                 ),
             ]
     )
-    @GetMapping("/teams/participation")
-    fun getMeetingParticipation(
+    @GetMapping("/me/participations")
+    fun getUserMeetingParticipation(
         @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<MeetingParticipationResponse> {
-        val result = matchingService.getMeetingParticipation(userDetails.username.toLong())
+        val result = matchingService.getUserMeetingParticipation(userDetails.username.toLong())
         return ResponseEntity.ok(result)
     }
 
@@ -78,13 +78,13 @@ class MatchApi(
                             )]
                 )]
     )
-    @GetMapping("/teams/{meetingTeamId}/result")
+    @GetMapping("/teams/{teamId}/result")
     fun getMatchResult(
-        @PathVariable meetingTeamId: Long,
+        @PathVariable teamId: Long,
         @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<MatchResultResponse> {
         return ResponseEntity.ok(
-            matchingService.getMatchResult(userDetails.username.toLong(), meetingTeamId)
+            matchingService.getMatchResult(userDetails.username.toLong(), teamId)
         )
     }
 
@@ -138,14 +138,14 @@ class MatchApi(
                 ),
             ]
     )
-    @GetMapping("/matches/{matchId}/partner")
-    fun getMatchedMeetingTeamInformation(
+    @GetMapping("/{matchId}/partner")
+    fun getMatchedPartnerInformation(
         @PathVariable matchId: Long,
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<MeetingTeamInformationGetResponse> {
         return ResponseEntity.status(HttpStatus.OK)
             .body(
-                matchingService.getMatchPartnerInformation(userDetails.username.toLong(), matchId)
+                matchingService.getMatchedPartnerInformation(userDetails.username.toLong(), matchId)
             )
     }
 }

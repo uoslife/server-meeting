@@ -1,5 +1,6 @@
 package uoslife.servermeeting.meetingteam.dao
 
+import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
@@ -10,6 +11,8 @@ import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.payment.entity.QPayment.payment
+import uoslife.servermeeting.payment.entity.enums.PaymentStatus
 import uoslife.servermeeting.user.entity.QUser.user
 import uoslife.servermeeting.user.entity.QUserInformation.userInformation
 import uoslife.servermeeting.user.entity.User
@@ -95,12 +98,21 @@ class UserTeamDao(
             .fetch()
     }
 
-    fun findAllByUserId(userId: Long): List<UserTeam> {
+    fun findAllByUserIdWithPaymentStatus(userId: Long): List<UserTeam> {
+        val hasNonSuccessPayment =
+            JPAExpressions.selectOne()
+                .from(payment)
+                .where(
+                    payment.meetingTeam.eq(meetingTeam),
+                    payment.status.ne(PaymentStatus.SUCCESS)
+                )
+                .exists()
+
         return queryFactory
             .selectFrom(userTeam)
             .join(userTeam.team, meetingTeam)
             .fetchJoin()
-            .where(userTeam.user.id.eq(userId))
+            .where(userTeam.user.id.eq(userId), hasNonSuccessPayment.not())
             .fetch()
     }
 
