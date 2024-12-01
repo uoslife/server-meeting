@@ -1,5 +1,6 @@
 package uoslife.servermeeting.match.service
 
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uoslife.servermeeting.match.dao.MatchedDao
@@ -33,6 +34,7 @@ class MatchingService(
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
 ) {
+    @Cacheable(value = ["user-participation"], key = "#userId", unless = "#result == null")
     fun getUserMeetingParticipation(userId: Long): MeetingParticipationResponse {
         val userTeams = userTeamDao.findAllByUserIdWithPaymentStatus(userId)
 
@@ -42,6 +44,7 @@ class MatchingService(
         )
     }
 
+    @Cacheable(value = ["match-result"], key = "#meetingTeamId", unless = "#result == null")
     fun getMatchResult(userId: Long, meetingTeamId: Long): MatchResultResponse {
         val result =
             matchedDao.findMatchResultByUserIdAndTeamId(userId, meetingTeamId)
@@ -54,6 +57,11 @@ class MatchingService(
         )
     }
 
+    @Cacheable(
+        value = ["partner-info"],
+        key = "#matchId + ':' + #userId",
+        unless = "#result == null"
+    )
     fun getMatchedPartnerInformation(
         userId: Long,
         matchId: Long
