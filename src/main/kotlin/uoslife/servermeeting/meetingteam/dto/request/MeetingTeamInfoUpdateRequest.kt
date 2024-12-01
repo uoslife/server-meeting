@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Preference
 import uoslife.servermeeting.meetingteam.entity.enums.TeamMood
-import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.entity.enums.Weight
 import uoslife.servermeeting.user.entity.enums.*
 
@@ -43,9 +42,9 @@ class MeetingTeamInfoUpdateRequest(
     fun toSinglePreference(validMBTI: String?, meetingTeam: MeetingTeam): Preference {
         return Preference(
             ageMin =
-                if (ageMin < MINIMUM_AGE) { //20살 미만
+                if (ageMin < MINIMUM_AGE) { // 20살 미만
                     MINIMUM_AGE
-                } else if (ageMin > MAXIMAL_AGE) { //30살 초과
+                } else if (ageMin > MAXIMAL_AGE) { // 30살 초과
                     MAXIMAL_AGE
                 } else ageMin,
             ageMax =
@@ -68,11 +67,6 @@ class MeetingTeamInfoUpdateRequest(
     }
 
     fun toTriplePreference(meetingTeam: MeetingTeam): Preference {
-        return Preference(
-            ageMin = ageMin,
-            ageMax = ageMax,
-            mood = mood,
-            meetingTeam = meetingTeam
-        )
+        return Preference(ageMin = ageMin, ageMax = ageMax, mood = mood, meetingTeam = meetingTeam)
     }
 }
