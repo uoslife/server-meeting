@@ -63,7 +63,7 @@ class Validator {
     }
 
     fun isGenderSame(meetingTeam: MeetingTeam, user: User) {
-        if(meetingTeam.gender != user.gender){
+        if (meetingTeam.gender != user.gender) {
             throw TeamConsistOfSameGenderException()
         }
     }
