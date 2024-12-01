@@ -49,6 +49,7 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         script: |
+            scp -i ${{ secrets.EC2_PRIVATE_KEY }} ./docker-compose.yml ubuntu@${{ secrets.EC2_HOST }}:
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             sudo docker rm -f $(sudo docker ps -qa)
             sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:0.1
