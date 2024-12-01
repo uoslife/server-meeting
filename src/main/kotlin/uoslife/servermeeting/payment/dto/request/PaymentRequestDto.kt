@@ -20,10 +20,4 @@ class PaymentRequestDto {
         @Schema(description = "결제 고유 번호", nullable = false) @field:NotBlank val impUid: String,
         @Schema(description = "주문번호", nullable = false) @field:NotBlank val merchantUid: String,
     )
-
-    data class PaymentRefundRequest(
-        @field:NotBlank
-        @Schema(description = "전화번호", example = "01012341234", nullable = false)
-        val phoneNumber: String,
-    )
 }
