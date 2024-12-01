@@ -52,10 +52,9 @@ class SecurityConfig(
                         "/api/payment/webhook",
                         "/api/auth/reissue",
                         "/api/verification/send-email",
-                        "/api/verification/verify-email"
+                        "/api/verification/verify-email",
+                        "/api/admin/**"
                     ) // 토큰 검사 미실시 리스트
-                    .permitAll()
-                    .requestMatchers("/api/admin/**")
                     .permitAll()
                     .requestMatchers("/api/**")
                     .hasRole("USER")
@@ -82,10 +81,6 @@ class SecurityConfig(
                 "https://meeting.alpha.uoslife.com",
                 "http://localhost:5173",
                 "https://localhost:5173",
-                "http://uoslife-meeting5-test.s3-website.ap-northeast-2.amazonaws.com", // 임시 프론트 배포
-                // TODO:
-                // 제거예정
-                "https://uoslife-meeting5-test.s3-website.ap-northeast-2.amazonaws.com",
                 "https://meeting5.uoslife.net"
             )
         configuration.allowedMethods =
