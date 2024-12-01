@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration
 class SwaggerConfig {
     companion object {
         const val ACCESS_TOKEN = "Access Token"
+        const val API_KEY = "API Key"
     }
 
     private val accessToken: SecurityScheme =
@@ -22,6 +23,13 @@ class SwaggerConfig {
             .bearerFormat("JWT")
             .name(ACCESS_TOKEN)
             .description("시대팅 서비스 인증을 위한 토큰")
+
+    private val apiKey: SecurityScheme =
+        SecurityScheme()
+            .type(SecurityScheme.Type.APIKEY)
+            .`in`(SecurityScheme.In.HEADER)
+            .name("X-Api-Key")
+            .description("Admin API 인증을 위한 API Key")
 
     @Bean
     fun openAPI(): OpenAPI {
@@ -42,7 +50,11 @@ class SwaggerConfig {
                     Server().url("https://meeting.uoslife.com"),
                 )
             )
-            .components(Components().addSecuritySchemes(ACCESS_TOKEN, accessToken))
+            .components(
+                Components()
+                    .addSecuritySchemes(ACCESS_TOKEN, accessToken)
+                    .addSecuritySchemes(API_KEY, apiKey)
+            )
             .addSecurityItem(securityRequirement)
             .info(info)
     }

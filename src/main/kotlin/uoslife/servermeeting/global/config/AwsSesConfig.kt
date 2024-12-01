@@ -9,20 +9,22 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class AwsSesConfig {
-
-    @Value("\${aws.access-key-id}") private lateinit var accessKeyId: String
-
-    @Value("\${aws.secret-access-key}") private lateinit var secretAccessKey: String
-
-    @Value("\${aws.region}") private lateinit var region: String
+class AwsSesConfig(
+    @Value("\${aws.access-key-id}") private val accessKeyId: String,
+    @Value("\${aws.secret-access-key}") private val secretAccessKey: String,
+    @Value("\${aws.region}") private val region: String
+) {
 
     @Bean
     fun amazonSimpleEmailService(): AmazonSimpleEmailService {
-        val credentials = BasicAWSCredentials(accessKeyId, secretAccessKey)
+        val awsCredentials = createAwsCredentials()
         return AmazonSimpleEmailServiceClientBuilder.standard()
-            .withCredentials(AWSStaticCredentialsProvider(credentials))
+            .withCredentials(AWSStaticCredentialsProvider(awsCredentials))
             .withRegion(region)
             .build()
+    }
+
+    private fun createAwsCredentials(): BasicAWSCredentials {
+        return BasicAWSCredentials(accessKeyId, secretAccessKey)
     }
 }

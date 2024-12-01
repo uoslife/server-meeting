@@ -67,7 +67,4 @@ class Payment(
     fun isSuccess(): Boolean {
         return status == PaymentStatus.SUCCESS
     }
-    fun checkImpUid(requestImpUid: String): Boolean {
-        return impUid == requestImpUid
-    }
 }

@@ -88,7 +88,7 @@ class SingleMeetingService(
         } // 분리된 트랜잭션 호출
 
         meetingTeam.preference = newPreference
-        meetingTeam.course = meetingTeamInfoUpdateRequest.course
+        meetingTeam.course = meetingTeamInfoUpdateRequest.course ?: meetingTeam.course
     }
 
     override fun getMeetingTeamInformation(
@@ -141,7 +141,9 @@ class SingleMeetingService(
             paymentService.refundPaymentByToken(user.id!!, TeamType.SINGLE)
         }
 
-        user.payments?.forEach { payment -> payment.removeMeetingTeam() }
+        user.payments
+            ?.filter { it.teamType == TeamType.SINGLE }
+            ?.forEach { payment -> payment.removeMeetingTeam() }
     }
 
     @Transactional

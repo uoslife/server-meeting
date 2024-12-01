@@ -221,16 +221,13 @@ class MeetingApi(
         return ResponseEntity.ok(meetingTeamUserListGetResponse)
     }
 
-    @Operation(
-        summary = "팅 결성 대기 중 간에 미팅 팀 유저 리스트 조회",
-        description = "1대1의 경우 지원되지 않음. 1대1은 팀 유저가 본인 단독"
-    )
+    @Operation(summary = "코드 입력 시, 리더 이름 출력", description = "1대1의 경우 지원되지 않음")
     @ApiResponses(
         value =
             [
                 ApiResponse(
                     responseCode = "200",
-                    description = "미팅 팀 유저 리스트 및 팀 이름(MeetingTeamUserListGetResponse) 반환",
+                    description = "미팅 팀 리더 이름 반환",
                     content =
                         [
                             Content(
@@ -261,7 +258,7 @@ class MeetingApi(
                                         ),
                                         ExampleObject(
                                             name = "M05",
-                                            description = "1대1 팀의 경우는 팀에 속한 유저 리스트 조회 불가",
+                                            description = "1대1 팀의 경우는 코드 조회 불가",
                                             value =
                                                 "{message: In Single Meeting Team, only One User Exist., status: 400, code: M05}"
                                         )]

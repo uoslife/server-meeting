@@ -77,6 +77,11 @@ class AuthApi(
                                             name = "Invalid Token Signature",
                                             value =
                                                 "{\"message\": \"Invalid token signature\", \"status\": 401, \"code\": \"J004\"}"
+                                        ),
+                                        ExampleObject(
+                                            name = "Refresh Token Reused",
+                                            value =
+                                                "{\"message\": \"\"Refresh token has been reused\", \"status\":401, \"code\": \"J008\"}"
                                         )]
                             )]
                 )]

@@ -41,7 +41,7 @@ class MeetingDtoConverter {
                     isLeader = userTeam.isLeader,
                     name = userTeam.user.name!!,
                     studentType = userInfo.studentType!!,
-                    department = userInfo.department!!,
+                    department = userInfo.department,
                     studentNumber = userInfo.studentNumber,
                     age = userInfo.age!!,
                     height = userInfo.height,

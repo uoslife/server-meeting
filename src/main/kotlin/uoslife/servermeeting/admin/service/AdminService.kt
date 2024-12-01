@@ -3,8 +3,11 @@ package uoslife.servermeeting.admin.service
 import jakarta.servlet.http.HttpServletResponse
 import java.time.Duration
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
+import uoslife.servermeeting.payment.dto.response.PaymentResponseDto
+import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.service.UserService
 import uoslife.servermeeting.verification.util.VerificationConstants
 import uoslife.servermeeting.verification.util.VerificationUtils
@@ -13,6 +16,7 @@ import uoslife.servermeeting.verification.util.VerificationUtils
 class AdminService(
     private val redisTemplate: RedisTemplate<String, Any>,
     private val userService: UserService,
+    @Qualifier("PortOneService") private val paymentService: PaymentService
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(AdminService::class.java)
@@ -30,5 +34,9 @@ class AdminService(
 
     fun deleteUserById(userId: Long, response: HttpServletResponse) {
         userService.deleteUserById(userId, response)
+    }
+
+    fun refundPayment(): PaymentResponseDto.NotMatchedPaymentRefundResponse {
+        return paymentService.refundPayment()
     }
 }
