@@ -33,7 +33,7 @@ class MatchingService(
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
 ) {
-    fun getMeetingParticipation(userId: Long): MeetingParticipationResponse {
+    fun getUserMeetingParticipation(userId: Long): MeetingParticipationResponse {
         val userTeams = userTeamDao.findAllByUserIdWithPaymentStatus(userId)
 
         return MeetingParticipationResponse(
@@ -54,12 +54,16 @@ class MatchingService(
         )
     }
 
-    fun getMatchPartnerInformation(userId: Long, matchId: Long): MeetingTeamInformationGetResponse {
+    fun getMatchedPartnerInformation(
+        userId: Long,
+        matchId: Long
+    ): MeetingTeamInformationGetResponse {
+        val match = matchedDao.findById(matchId) ?: throw MatchNotFoundException()
+
         val userTeam =
             userTeamDao.findUserWithMeetingTeamByMatchId(userId, matchId)
                 ?: throw UnauthorizedMatchAccessException()
 
-        val match = matchedDao.findById(matchId) ?: throw MatchNotFoundException()
         val partnerTeam = getPartnerTeam(userTeam.team.gender, match)
 
         // 매칭된 상대의 정보를 조회
