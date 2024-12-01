@@ -237,8 +237,8 @@ class UserApi(
                 )]
     )
     @GetMapping("/check/kakao-talk-id")
-    fun isDuplicatedKakaoTalkId(@RequestParam kakaoTalkId: String): ResponseEntity<Boolean> {
-        return ResponseEntity.ok(userService.isDuplicatedKakaoTalkId(kakaoTalkId))
+    fun isDuplicatedKakaoTalkId(@RequestParam kakaoTalkId: String,@AuthenticationPrincipal userDetails: UserDetails,): ResponseEntity<Boolean> {
+        return ResponseEntity.ok(userService.isDuplicatedKakaoTalkId(userDetails.username.toLong(), kakaoTalkId))
     }
 
     @Operation(summary = "유저 미팅팀 별 기본 정보", description = "유저의 1:1, 3:3팀의 현재 상태를 요약합니다")
