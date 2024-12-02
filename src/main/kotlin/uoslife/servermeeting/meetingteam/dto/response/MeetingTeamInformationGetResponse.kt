@@ -1,7 +1,5 @@
 package uoslife.servermeeting.meetingteam.dto.response
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
 import uoslife.servermeeting.match.dto.response.MatchedMeetingTeamInformationGetResponse
@@ -11,28 +9,14 @@ import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.entity.enums.Weight
 import uoslife.servermeeting.user.entity.enums.*
 
-data class MeetingTeamInformationGetResponse
-@JsonCreator
-constructor(
-    @field:NotNull
-    @Schema(description = "팀 타입", example = "SINGLE")
-    @JsonProperty("teamType")
-    val teamType: TeamType,
-    @Schema(description = "팀 이름", example = "팀 이름(1:1인 경우 null)")
-    @JsonProperty("teamName")
-    val teamName: String?,
-    @Schema(description = "상대에게 전하는 데이트 코스", example = "밥먹기 (3:3인 경우 null)")
-    @JsonProperty("course")
-    val course: String?,
-    @field:NotNull
-    @Schema(description = "성별", example = "MALE")
-    @JsonProperty("gender")
-    val gender: GenderType,
-    @JsonProperty("code") @Schema(description = "미팅팀 코드", example = "1K1L") val code: String?,
-    @Schema(description = "팀에 속한 유저 정보")
-    @JsonProperty("meetingTeamUserProfiles")
-    val meetingTeamUserProfiles: List<UserCardProfile>?,
-    @Schema(description = "상대방 선호 응답값") @JsonProperty("preference") val preference: PreferenceDto?,
+data class MeetingTeamInformationGetResponse(
+    @field:NotNull @Schema(description = "팀 타입", example = "SINGLE") val teamType: TeamType,
+    @Schema(description = "팀 이름", example = "팀 이름(1:1인 경우 null)") val teamName: String?,
+    @Schema(description = "상대에게 전하는 데이트 코스", example = "밥먹기 (3:3인 경우 null)") val course: String?,
+    @field:NotNull @Schema(description = "성별", example = "MALE") val gender: GenderType,
+    @Schema(description = "미팅팀 코드", example = "1K1L") val code: String?,
+    @Schema(description = "팀에 속한 유저 정보") val meetingTeamUserProfiles: List<UserCardProfile>?,
+    @Schema(description = "상대방 선호 응답값") val preference: PreferenceDto?,
 ) {
     fun toMatchedMeetingTeamInformationGetResponse(): MatchedMeetingTeamInformationGetResponse {
         return MatchedMeetingTeamInformationGetResponse(
