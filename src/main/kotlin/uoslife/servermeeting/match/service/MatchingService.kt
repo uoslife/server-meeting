@@ -34,7 +34,7 @@ class MatchingService(
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
 ) {
-    @Cacheable(value = ["user-participation"], key = "#userId", unless = "#result == null")
+    @Cacheable(value = ["meeting-participation"], key = "#userId", unless = "#result == null")
     fun getUserMeetingParticipation(userId: Long): MeetingParticipationResponse {
         val userTeams = userTeamDao.findAllByUserIdWithPaymentStatus(userId)
 
