@@ -66,27 +66,8 @@ class MatchingService(
         userId: Long,
         matchId: Long
     ): MeetingTeamInformationGetResponse {
-        val match = matchedDao.findById(matchId) ?: throw MatchNotFoundException()
-
-        val userTeam =
-            userTeamDao.findUserWithMeetingTeamByMatchId(userId, matchId)
-                ?: throw UnauthorizedMatchAccessException()
-
-        val partnerTeam = getPartnerTeam(userTeam.team.gender, match)
-
-        // 매칭된 상대의 정보를 조회
-        return when (partnerTeam.type) {
-            SINGLE ->
-                singleMeetingService.getMeetingTeamInformation(
-                    partnerTeam.userTeams.first().user.id!!,
-                    CompletionStatus.COMPLETED
-                )
-            TRIPLE ->
-                tripleMeetingService.getMeetingTeamInformation(
-                    partnerTeam.userTeams.first { it.isLeader }.user.id!!,
-                    CompletionStatus.COMPLETED
-                )
-        }
+        val response = getPartnerInformation(userId, matchId)
+        return convertPersistentBagToArrayList(response)
     }
 
     @Transactional
@@ -170,4 +151,48 @@ class MatchingService(
             GenderType.FEMALE -> match.maleTeam
         }
     }
+
+    private fun getPartnerInformation(
+        userId: Long,
+        matchId: Long
+    ): MeetingTeamInformationGetResponse {
+        val match = matchedDao.findById(matchId) ?: throw MatchNotFoundException()
+        val userTeam =
+            userTeamDao.findUserWithMeetingTeamByMatchId(userId, matchId)
+                ?: throw UnauthorizedMatchAccessException()
+        val partnerTeam = getPartnerTeam(userTeam.team.gender, match)
+
+        return when (partnerTeam.type) {
+            SINGLE -> getPartnerSingleTeamInfo(partnerTeam)
+            TRIPLE -> getPartnerTripleTeamInfo(partnerTeam)
+        }
+    }
+
+    private fun getPartnerSingleTeamInfo(partnerTeam: MeetingTeam) =
+        singleMeetingService.getMeetingTeamInformation(
+            partnerTeam.userTeams.first().user.id!!,
+            CompletionStatus.COMPLETED
+        )
+
+    private fun getPartnerTripleTeamInfo(partnerTeam: MeetingTeam) =
+        tripleMeetingService.getMeetingTeamInformation(
+            partnerTeam.userTeams.first { it.isLeader }.user.id!!,
+            CompletionStatus.COMPLETED
+        )
+
+    private fun convertPersistentBagToArrayList(response: MeetingTeamInformationGetResponse) =
+        response.copy(
+            meetingTeamUserProfiles =
+                response.meetingTeamUserProfiles?.map { profile ->
+                    profile.copy(interest = profile.interest?.let { ArrayList(it) })
+                },
+            preference =
+                response.preference?.let { pref ->
+                    pref.copy(
+                        smoking = pref.smoking?.let { ArrayList(it) },
+                        appearanceType = pref.appearanceType?.let { ArrayList(it) },
+                        eyelidType = pref.eyelidType?.let { ArrayList(it) }
+                    )
+                }
+        )
 }
