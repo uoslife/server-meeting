@@ -1,7 +1,7 @@
 package uoslife.servermeeting.meetingteam.dto.request
 
 import io.swagger.v3.oas.annotations.media.Schema
-import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.Size
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.Preference
@@ -16,8 +16,8 @@ class MeetingTeamInfoUpdateRequest(
     @Schema(description = "3:3 팀 이름 (2~8자)", example = "우당탕탕 시립대")
     @field:Size(min = 2, max = 8)
     val name: String?,
-    @Schema(description = "최소 나이", example = "20", nullable = false) @field:NotNull val ageMin: Int,
-    @Schema(description = "최대 나이", example = "30", nullable = false) @field:NotNull val ageMax: Int,
+    @Schema(description = "최소 나이", example = "20", nullable = false) @field:Min(1) val ageMin: Int,
+    @Schema(description = "최대 나이", example = "30", nullable = false) @field:Min(1) val ageMax: Int,
     @Schema(description = "최소 키", example = "150") val heightMin: Int?,
     @Schema(description = "최대 키", example = "190") val heightMax: Int?,
     @Schema(description = "외모1 (상관없음 시, 모두)", example = "[\"ARAB\",\"NORMAL\",\"TOFU\"]")
