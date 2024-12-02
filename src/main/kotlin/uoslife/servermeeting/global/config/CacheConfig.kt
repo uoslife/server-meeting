@@ -27,7 +27,6 @@ class CacheConfig(private val redisConnectionFactory: RedisConnectionFactory) {
                 .registerModule(KotlinModule.Builder().build()) // Kotlin 지원 모듈 추가
                 .apply {
                     configure(MapperFeature.USE_STD_BEAN_NAMING, true)
-                    configure(MapperFeature.USE_STD_BEAN_NAMING, true)
                     configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                     activateDefaultTyping(
                         BasicPolymorphicTypeValidator.builder()
