@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uoslife.servermeeting.global.auth.security.JwtTokenProvider
 import uoslife.servermeeting.global.auth.util.CookieUtils
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
@@ -37,6 +38,7 @@ class UserService(
     private val userTeamDao: UserTeamDao,
     private val validator: Validator,
     private val cookieUtils: CookieUtils,
+    private val jwtTokenProvider: JwtTokenProvider,
     @Qualifier("portOneService") private val paymentService: PaymentService,
     @Lazy @Qualifier("singleMeetingService") private val singleMeetingService: BaseMeetingService,
     @Lazy @Qualifier("tripleMeetingService") private val tripleMeetingService: BaseMeetingService
@@ -115,9 +117,15 @@ class UserService(
         paymentService.deleteUserPayment(user)
         // 유저 삭제 진행
         val deletedEmail = user.email
+
+        deleteRefreshInfo(user, response)
         userRepository.delete(user)
-        cookieUtils.deleteRefreshTokenCookie(response)
         logger.info("[유저 삭제 완료] User Email : $deletedEmail")
+    }
+
+    private fun deleteRefreshInfo(user: User, response: HttpServletResponse) {
+        cookieUtils.deleteRefreshTokenCookie(response)
+        jwtTokenProvider.deleteRefreshToken(user.id!!)
     }
 
     private fun deleteUserMeetingTeam(userId: Long, userTeam: UserTeam) {
