@@ -22,10 +22,8 @@ import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.dto.response.UserBranchResponse
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.UserInformation
-import uoslife.servermeeting.user.exception.GenderNotUpdatableException
-import uoslife.servermeeting.user.exception.KakaoTalkIdDuplicationException
-import uoslife.servermeeting.user.exception.UserInformationNotFoundException
-import uoslife.servermeeting.user.exception.UserNotFoundException
+import uoslife.servermeeting.user.entity.enums.StudentType
+import uoslife.servermeeting.user.exception.*
 import uoslife.servermeeting.user.repository.UserInformationRepository
 import uoslife.servermeeting.user.repository.UserRepository
 
@@ -84,9 +82,21 @@ class UserService(
         if (command.kakaoTalkId != null) {
             isDuplicatedKakaoTalkId(command.userId, command.kakaoTalkId)
         }
+        if (command.phoneNumber != null) {
+            isDuplicatedPhoneNumber(command.userId, command.phoneNumber)
+        }
 
         val user = getUser(command.userId)
         return updateUserProfile(user, command)
+    }
+
+    private fun isDuplicatedPhoneNumber(userId: Long, phoneNumber: String): Boolean {
+        val user = getUser(userId)
+        if (phoneNumber != user.phoneNumber) {
+            if (userRepository.existsByPhoneNumber(phoneNumber))
+                throw PhoneNumberDuplicationException()
+        }
+        return true
     }
 
     /**
@@ -104,10 +114,10 @@ class UserService(
         // 결제 소프트 삭제 우선 진행
         paymentService.deleteUserPayment(user)
         // 유저 삭제 진행
-        val deletedId = user.id
+        val deletedEmail = user.email
         userRepository.delete(user)
         cookieUtils.deleteRefreshTokenCookie(response)
-        logger.info("[유저 삭제 완료] UserId : $deletedId")
+        logger.info("[유저 삭제 완료] User Email : $deletedEmail")
     }
 
     private fun deleteUserMeetingTeam(userId: Long, userTeam: UserTeam) {
@@ -151,6 +161,14 @@ class UserService(
         information.eyelidType = command.eyelidType ?: information.eyelidType
         information.appearanceType = command.appearanceType ?: information.appearanceType
         information.studentType = command.studentType ?: information.studentType
+
+        if (
+            information.studentType == StudentType.GRADUATE ||
+                information.studentType == StudentType.POSTGRADUATE
+        ) {
+            information.department = null
+            information.studentNumber = null
+        }
         return user
     }
 
