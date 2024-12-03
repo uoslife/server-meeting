@@ -24,7 +24,7 @@ import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 
 @RestController
 @RequestMapping("/api/match")
-@Tag(name = "Match", description = "매칭 API")
+@Tag(name = "Match", description = "매칭 내역 조회 API")
 class MatchApi(
     private val matchingService: MatchingService,
 ) {
@@ -63,8 +63,8 @@ class MatchApi(
                         [Content(schema = Schema(implementation = MatchResultResponse::class))]
                 ),
                 ApiResponse(
-                    responseCode = "403",
-                    description = "해당 팀에 대한 접근 권한 없음",
+                    responseCode = "400",
+                    description = "해당 타입의 미팅 신청 내역 없음",
                     content =
                         [
                             Content(
@@ -72,9 +72,9 @@ class MatchApi(
                                 examples =
                                     [
                                         ExampleObject(
-                                            name = "MT03",
+                                            name = "Meeting Team Not Found",
                                             value =
-                                                "{\"message\": \"Unauthorized team access.\", \"status\": 403, \"code\": \"MT03\"}"
+                                                "{\"message\": \"Meeting Team is not Found.\", \"status\": 400, \"code\": \"M06\"}"
                                         )]
                             )]
                 )]
@@ -107,7 +107,7 @@ class MatchApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "매치를 찾을 수 없음",
+                    description = "신청 내역 또는 성공 내역 없음",
                     content =
                         [
                             Content(
@@ -115,25 +115,14 @@ class MatchApi(
                                 examples =
                                     [
                                         ExampleObject(
-                                            name = "MT01",
+                                            name = "Meeting Team Not Found",
+                                            value =
+                                                "{\"message\": \"Meeting Team is not Found.\", \"status\": 400, \"code\": \"M06\"}"
+                                        ),
+                                        ExampleObject(
+                                            name = "Match Not Found",
                                             value =
                                                 "{\"message\": \"Match is not Found.\", \"status\": 400, \"code\": \"MT01\"}"
-                                        )]
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "403",
-                    description = "해당 매치에 대한 접근 권한 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            name = "MT04",
-                                            value =
-                                                "{\"message\": \"Unauthorized match access.\", \"status\": 403, \"code\": \"MT04\"}"
                                         )]
                             )]
                 ),
