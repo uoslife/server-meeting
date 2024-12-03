@@ -60,9 +60,7 @@ class MatchingService(
             throw MeetingTeamNotFoundException()
         }
         // 매칭 결과 조회
-        val result =
-            matchedDao.findMatchResultByUserIdAndTeamType(userId, teamType)
-                ?: throw MeetingTeamNotFoundException()
+        val result = matchedDao.findMatchResultByUserIdAndTeamType(userId, teamType)!!
 
         return MatchResultResponse(
             matchType = result.teamType,
