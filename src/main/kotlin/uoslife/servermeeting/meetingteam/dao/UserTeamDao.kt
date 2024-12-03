@@ -98,7 +98,7 @@ class UserTeamDao(
             .fetch()
     }
 
-    fun findAllByUserIdWithPaymentStatus(userId: Long): List<UserTeam> {
+    fun findAllByUserIdAndSeasonWithPaymentStatus(userId: Long, season: Int): List<UserTeam> {
         val hasNonSuccessPayment =
             JPAExpressions.selectOne()
                 .from(payment)
@@ -112,7 +112,11 @@ class UserTeamDao(
             .selectFrom(userTeam)
             .join(userTeam.team, meetingTeam)
             .fetchJoin()
-            .where(userTeam.user.id.eq(userId), hasNonSuccessPayment.not())
+            .where(
+                userTeam.user.id.eq(userId),
+                meetingTeam.season.eq(season),
+                hasNonSuccessPayment.not()
+            )
             .fetch()
     }
 

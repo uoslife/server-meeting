@@ -11,10 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.match.dto.response.MatchResultResponse
 import uoslife.servermeeting.match.dto.response.MatchedPartnerInformationResponse
@@ -47,9 +44,11 @@ class MatchApi(
     )
     @GetMapping("/me/participations")
     fun getUserMeetingParticipation(
-        @AuthenticationPrincipal userDetails: UserDetails
+        @AuthenticationPrincipal userDetails: UserDetails,
+        @RequestParam season: Int,
     ): ResponseEntity<MeetingParticipationResponse> {
-        val result = matchingService.getUserMeetingParticipation(userDetails.username.toLong())
+        val result =
+            matchingService.getUserMeetingParticipation(userDetails.username.toLong(), season)
         return ResponseEntity.ok(result)
     }
 
@@ -82,11 +81,12 @@ class MatchApi(
     )
     @GetMapping("/{teamType}/result")
     fun getMatchResult(
+        @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
-        @AuthenticationPrincipal userDetails: UserDetails
+        @RequestParam season: Int,
     ): ResponseEntity<MatchResultResponse> {
         return ResponseEntity.ok(
-            matchingService.getMatchResult(userDetails.username.toLong(), teamType)
+            matchingService.getMatchResult(userDetails.username.toLong(), teamType, season)
         )
     }
 
@@ -131,14 +131,16 @@ class MatchApi(
     )
     @GetMapping("/{teamType}/partner")
     fun getMatchedPartnerInformation(
-        @PathVariable teamType: TeamType,
         @AuthenticationPrincipal userDetails: UserDetails,
+        @PathVariable teamType: TeamType,
+        @RequestParam season: Int,
     ): ResponseEntity<MatchedPartnerInformationResponse> {
         return ResponseEntity.status(HttpStatus.OK)
             .body(
                 matchingService.getMatchedPartnerInformation(
                     userDetails.username.toLong(),
-                    teamType
+                    teamType,
+                    season
                 )
             )
     }

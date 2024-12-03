@@ -34,8 +34,8 @@ class MatchingService(
     private val tripleMeetingService: TripleMeetingService,
 ) {
     @Cacheable(value = ["meeting-participation"], key = "#userId", unless = "#result == null")
-    fun getUserMeetingParticipation(userId: Long): MeetingParticipationResponse {
-        val userTeams = userTeamDao.findAllByUserIdWithPaymentStatus(userId)
+    fun getUserMeetingParticipation(userId: Long, season: Int): MeetingParticipationResponse {
+        val userTeams = userTeamDao.findAllByUserIdAndSeasonWithPaymentStatus(userId, season)
 
         return MeetingParticipationResponse(
             single = getParticipationStatus(userTeams.find { it.team.type == SINGLE }),
@@ -48,9 +48,9 @@ class MatchingService(
         key = "#userId + ':' + #teamType",
         unless = "#result == null"
     )
-    fun getMatchResult(userId: Long, teamType: TeamType): MatchResultResponse {
+    fun getMatchResult(userId: Long, teamType: TeamType, season: Int): MatchResultResponse {
         // 미팅 참여 여부 확인
-        val participation = getUserMeetingParticipation(userId)
+        val participation = getUserMeetingParticipation(userId, season)
         val participationStatus =
             when (teamType) {
                 SINGLE -> participation.single
@@ -76,9 +76,10 @@ class MatchingService(
     )
     fun getMatchedPartnerInformation(
         userId: Long,
-        teamType: TeamType
+        teamType: TeamType,
+        season: Int
     ): MatchedPartnerInformationResponse {
-        val matchResult = getMatchResult(userId, teamType)
+        val matchResult = getMatchResult(userId, teamType, season)
         if (!matchResult.isMatched || matchResult.matchId == null) {
             throw MatchNotFoundException()
         }
