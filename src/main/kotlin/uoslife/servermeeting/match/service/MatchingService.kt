@@ -8,7 +8,6 @@ import uoslife.servermeeting.match.dto.response.*
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
 import uoslife.servermeeting.match.exception.UnauthorizedMatchAccessException
-import uoslife.servermeeting.match.exception.UnauthorizedTeamAccessException
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.CompletionStatus
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
@@ -44,11 +43,26 @@ class MatchingService(
         )
     }
 
-    @Cacheable(value = ["match-result"], key = "#meetingTeamId", unless = "#result == null")
-    fun getMatchResult(userId: Long, meetingTeamId: Long): MatchResultResponse {
+    @Cacheable(
+        value = ["match-result"],
+        key = "#userId + ':' + #teamType",
+        unless = "#result == null"
+    )
+    fun getMatchResult(userId: Long, teamType: TeamType): MatchResultResponse {
+        // 미팅 참여 여부 확인
+        val participation = getUserMeetingParticipation(userId)
+        val participationStatus =
+            when (teamType) {
+                SINGLE -> participation.single
+                TRIPLE -> participation.triple
+            }
+        if (!participationStatus.isParticipated) {
+            throw MeetingTeamNotFoundException()
+        }
+        // 매칭 결과 조회
         val result =
-            matchedDao.findMatchResultByUserIdAndTeamId(userId, meetingTeamId)
-                ?: throw UnauthorizedTeamAccessException()
+            matchedDao.findMatchResultByUserIdAndTeamType(userId, teamType)
+                ?: throw MeetingTeamNotFoundException()
 
         return MatchResultResponse(
             matchType = result.teamType,
@@ -59,14 +73,18 @@ class MatchingService(
 
     @Cacheable(
         value = ["partner-info"],
-        key = "#matchId + ':' + #userId",
+        key = "#userId + ':' + #teamType",
         unless = "#result == null"
     )
     fun getMatchedPartnerInformation(
         userId: Long,
-        matchId: Long
+        teamType: TeamType
     ): MeetingTeamInformationGetResponse {
-        val response = getPartnerInformation(userId, matchId)
+        val matchResult = getMatchResult(userId, teamType)
+        if (!matchResult.isMatched || matchResult.matchId == null) {
+            throw MatchNotFoundException()
+        }
+        val response = getPartnerInformation(userId, matchResult.matchId)
         return convertPersistentBagToArrayList(response)
     }
 
