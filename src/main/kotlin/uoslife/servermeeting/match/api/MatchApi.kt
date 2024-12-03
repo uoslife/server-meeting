@@ -20,6 +20,7 @@ import uoslife.servermeeting.match.dto.response.MatchResultResponse
 import uoslife.servermeeting.match.dto.response.MeetingParticipationResponse
 import uoslife.servermeeting.match.service.MatchingService
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
+import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 
 @RestController
 @RequestMapping("/api/match")
@@ -78,13 +79,13 @@ class MatchApi(
                             )]
                 )]
     )
-    @GetMapping("/teams/{teamId}/result")
+    @GetMapping("/{teamType}/result")
     fun getMatchResult(
-        @PathVariable teamId: Long,
+        @PathVariable teamType: TeamType,
         @AuthenticationPrincipal userDetails: UserDetails
     ): ResponseEntity<MatchResultResponse> {
         return ResponseEntity.ok(
-            matchingService.getMatchResult(userDetails.username.toLong(), teamId)
+            matchingService.getMatchResult(userDetails.username.toLong(), teamType)
         )
     }
 
@@ -138,14 +139,17 @@ class MatchApi(
                 ),
             ]
     )
-    @GetMapping("/{matchId}/partner")
+    @GetMapping("/{teamType}/partner")
     fun getMatchedPartnerInformation(
-        @PathVariable matchId: Long,
+        @PathVariable teamType: TeamType,
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<MeetingTeamInformationGetResponse> {
         return ResponseEntity.status(HttpStatus.OK)
             .body(
-                matchingService.getMatchedPartnerInformation(userDetails.username.toLong(), matchId)
+                matchingService.getMatchedPartnerInformation(
+                    userDetails.username.toLong(),
+                    teamType
+                )
             )
     }
 }
