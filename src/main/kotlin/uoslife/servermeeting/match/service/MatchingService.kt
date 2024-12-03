@@ -77,13 +77,14 @@ class MatchingService(
     fun getMatchedPartnerInformation(
         userId: Long,
         teamType: TeamType
-    ): MeetingTeamInformationGetResponse {
+    ): MatchedPartnerInformationResponse {
         val matchResult = getMatchResult(userId, teamType)
         if (!matchResult.isMatched || matchResult.matchId == null) {
             throw MatchNotFoundException()
         }
         val response = getPartnerInformation(userId, matchResult.matchId)
-        return convertPersistentBagToArrayList(response)
+        val convertedResponse = convertPersistentBagToArrayList(response)
+        return MeetingDtoConverter.toMatchedPartnerInformationResponse(convertedResponse)
     }
 
     @Transactional
@@ -201,14 +202,6 @@ class MatchingService(
             meetingTeamUserProfiles =
                 response.meetingTeamUserProfiles?.map { profile ->
                     profile.copy(interest = profile.interest?.let { ArrayList(it) })
-                },
-            preference =
-                response.preference?.let { pref ->
-                    pref.copy(
-                        smoking = pref.smoking?.let { ArrayList(it) },
-                        appearanceType = pref.appearanceType?.let { ArrayList(it) },
-                        eyelidType = pref.eyelidType?.let { ArrayList(it) }
-                    )
                 }
         )
 }

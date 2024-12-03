@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uoslife.servermeeting.global.error.ErrorResponse
 import uoslife.servermeeting.match.dto.response.MatchResultResponse
+import uoslife.servermeeting.match.dto.response.MatchedPartnerInformationResponse
 import uoslife.servermeeting.match.dto.response.MeetingParticipationResponse
 import uoslife.servermeeting.match.service.MatchingService
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
@@ -132,7 +133,7 @@ class MatchApi(
     fun getMatchedPartnerInformation(
         @PathVariable teamType: TeamType,
         @AuthenticationPrincipal userDetails: UserDetails,
-    ): ResponseEntity<MeetingTeamInformationGetResponse> {
+    ): ResponseEntity<MatchedPartnerInformationResponse> {
         return ResponseEntity.status(HttpStatus.OK)
             .body(
                 matchingService.getMatchedPartnerInformation(
