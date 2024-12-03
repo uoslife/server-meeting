@@ -10,6 +10,7 @@ import uoslife.servermeeting.match.entity.QMatch.match
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
+import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 
 @Repository
 @Transactional
@@ -60,6 +61,17 @@ class MatchedDao(private val queryFactory: JPAQueryFactory) {
             .join(match.femaleTeam)
             .fetchJoin()
             .where(match.id.eq(matchId))
+            .fetchOne()
+    }
+
+    fun findMatchResultByUserIdAndTeamType(userId: Long, teamType: TeamType): MatchResultDto? {
+        return queryFactory
+            .select(Projections.constructor(MatchResultDto::class.java, meetingTeam.type, match.id))
+            .from(userTeam)
+            .join(userTeam.team, meetingTeam)
+            .leftJoin(match)
+            .on(meetingTeam.eq(match.maleTeam).or(meetingTeam.eq(match.femaleTeam)))
+            .where(userTeam.user.id.eq(userId), meetingTeam.type.eq(teamType))
             .fetchOne()
     }
 }
