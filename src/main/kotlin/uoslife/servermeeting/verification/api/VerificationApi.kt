@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.auth.dto.response.JwtResponse
 import uoslife.servermeeting.global.auth.service.AuthService
 import uoslife.servermeeting.global.error.ErrorResponse
+import uoslife.servermeeting.global.util.RequestUtils
 import uoslife.servermeeting.user.service.UserService
 import uoslife.servermeeting.verification.dto.request.VerifyEmailRequest
 import uoslife.servermeeting.verification.dto.response.SendVerificationEmailResponse
@@ -26,6 +28,7 @@ class VerificationApi(
     private val emailVerificationService: EmailVerificationService,
     private val userService: UserService,
     private val authService: AuthService,
+    private val requestUtils: RequestUtils,
 ) {
     @Operation(summary = "인증메일 전송", description = "이메일로 인증코드를 전송합니다.")
     @ApiResponses(
@@ -80,9 +83,11 @@ class VerificationApi(
     )
     @PostMapping("/send-email")
     fun sendVerificationEmail(
-        @RequestParam email: String
+        @RequestParam email: String,
+        request: HttpServletRequest
     ): ResponseEntity<SendVerificationEmailResponse> {
-        val response = emailVerificationService.sendVerificationEmail(email)
+        val requestInfo = requestUtils.toRequestInfoDto(request)
+        val response = emailVerificationService.sendVerificationEmail(email, requestInfo)
         return ResponseEntity.ok(response)
     }
 
@@ -180,16 +185,19 @@ class VerificationApi(
     // TODO: Service layer로 이동해야함
     @PostMapping("/verify-email")
     fun verifyEmail(
-        @Valid @RequestBody request: VerifyEmailRequest,
+        @Valid @RequestBody body: VerifyEmailRequest,
+        @PathVariable userId: Long,
+        request: HttpServletRequest,
         response: HttpServletResponse
     ): ResponseEntity<JwtResponse> {
-        emailVerificationService.verifyEmail(request.email, request.code)
+        val requestInfo = requestUtils.toRequestInfoDto(request)
+        emailVerificationService.verifyEmail(body.email, body.code, requestInfo)
 
         val user =
             try {
-                userService.getUserByEmail(request.email)
+                userService.getUserByEmail(body.email)
             } catch (e: Exception) {
-                userService.createUserByEmail(request.email)
+                userService.createUserByEmail(body.email)
             }
 
         val accessToken = authService.issueTokens(user.id!!, response)

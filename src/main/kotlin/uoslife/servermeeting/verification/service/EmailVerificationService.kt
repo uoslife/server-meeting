@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
+import uoslife.servermeeting.global.common.dto.RequestInfoDto
 import uoslife.servermeeting.verification.dto.response.SendVerificationEmailResponse
 import uoslife.servermeeting.verification.exception.*
 import uoslife.servermeeting.verification.util.VerificationConstants
@@ -24,7 +25,10 @@ class EmailVerificationService(
         private val logger = LoggerFactory.getLogger(EmailVerificationService::class.java)
     }
 
-    fun sendVerificationEmail(email: String): SendVerificationEmailResponse {
+    fun sendVerificationEmail(
+        email: String,
+        requestInfo: RequestInfoDto
+    ): SendVerificationEmailResponse {
         // 이메일 형식 검증
         validateEmail(email)
         // 발송 제한 확인
@@ -33,9 +37,9 @@ class EmailVerificationService(
         val asyncResult = asyncEmailService.sendEmailAsync(email)
         asyncResult.whenComplete { _, exception ->
             if (exception != null) {
-                logger.warn("[이메일 전송 실패] EMAIL : $email")
+                logger.warn("[이메일 전송 실패] email: $email, $requestInfo")
             } else {
-                logger.info("[이메일 전송 성공] EMAIL : $email")
+                logger.info("[이메일 전송 성공] email: $email, $requestInfo")
             }
         }
         // 코드 만료 시각 계산
@@ -47,13 +51,13 @@ class EmailVerificationService(
         )
     }
 
-    fun verifyEmail(email: String, code: String) {
+    fun verifyEmail(email: String, code: String, requestInfo: RequestInfoDto) {
         validateVerificationAttempts(email)
         incrementVerificationAttempts(email)
         // Redis에서 인증 코드 조회
         val redisCode = getVerificationCode(email)
         // 인증 코드 검증
-        validateVerificationCode(redisCode, code)
+        validateVerificationCode(redisCode, code, email, requestInfo)
         // 검증 성공한 코드 삭제
         clearVerificationData(email)
     }
@@ -64,10 +68,17 @@ class EmailVerificationService(
         return redisTemplate.opsForValue().get(verificationCodeKey).toString()
     }
 
-    private fun validateVerificationCode(redisCode: String, code: String) {
+    private fun validateVerificationCode(
+        redisCode: String,
+        code: String,
+        email: String,
+        requestInfo: RequestInfoDto
+    ) {
         if (redisCode != code) {
+            logger.warn("[이메일 인증 실패] email: $email, $requestInfo")
             throw EmailVerificationCodeMismatchException()
         }
+        logger.info("[이메일 인증 성공] email: $email")
     }
 
     private fun validateSendCount(email: String) {

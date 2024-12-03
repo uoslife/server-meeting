@@ -120,7 +120,7 @@ class UserService(
 
         deleteRefreshInfo(user, response)
         userRepository.delete(user)
-        logger.info("[유저 삭제 완료] User Email : $deletedEmail")
+        logger.info("[유저 삭제] email: $deletedEmail")
     }
 
     private fun deleteRefreshInfo(user: User, response: HttpServletResponse) {
