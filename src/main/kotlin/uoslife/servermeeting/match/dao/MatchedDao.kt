@@ -10,6 +10,7 @@ import uoslife.servermeeting.match.entity.QMatch.match
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
+import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 
 @Repository
 @Transactional
@@ -32,26 +33,6 @@ class MatchedDao(private val queryFactory: JPAQueryFactory) {
             .fetchOne()
     }
 
-    fun findByTeam(team: MeetingTeam): Match? {
-        return queryFactory
-            .selectFrom(match)
-            .leftJoin(match.maleTeam, meetingTeam)
-            .leftJoin(match.femaleTeam, meetingTeam)
-            .where(match.maleTeam.eq(team).or(match.femaleTeam.eq(team)))
-            .fetchOne()
-    }
-
-    fun findMatchResultByUserIdAndTeamId(userId: Long, teamId: Long): MatchResultDto? {
-        return queryFactory
-            .select(Projections.constructor(MatchResultDto::class.java, meetingTeam.type, match.id))
-            .from(userTeam)
-            .join(userTeam.team, meetingTeam)
-            .leftJoin(match)
-            .on(meetingTeam.eq(match.maleTeam).or(meetingTeam.eq(match.femaleTeam)))
-            .where(userTeam.user.id.eq(userId), userTeam.team.id.eq(teamId))
-            .fetchOne()
-    }
-
     fun findById(matchId: Long): Match? {
         return queryFactory
             .selectFrom(match)
@@ -60,6 +41,17 @@ class MatchedDao(private val queryFactory: JPAQueryFactory) {
             .join(match.femaleTeam)
             .fetchJoin()
             .where(match.id.eq(matchId))
+            .fetchOne()
+    }
+
+    fun findMatchResultByUserIdAndTeamType(userId: Long, teamType: TeamType): MatchResultDto? {
+        return queryFactory
+            .select(Projections.constructor(MatchResultDto::class.java, meetingTeam.type, match.id))
+            .from(userTeam)
+            .join(userTeam.team, meetingTeam)
+            .leftJoin(match)
+            .on(meetingTeam.eq(match.maleTeam).or(meetingTeam.eq(match.femaleTeam)))
+            .where(userTeam.user.id.eq(userId), meetingTeam.type.eq(teamType))
             .fetchOne()
     }
 }

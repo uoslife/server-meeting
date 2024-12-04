@@ -8,7 +8,6 @@ import uoslife.servermeeting.match.dto.response.*
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
 import uoslife.servermeeting.match.exception.UnauthorizedMatchAccessException
-import uoslife.servermeeting.match.exception.UnauthorizedTeamAccessException
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.CompletionStatus
 import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
@@ -35,8 +34,8 @@ class MatchingService(
     private val tripleMeetingService: TripleMeetingService,
 ) {
     @Cacheable(value = ["meeting-participation"], key = "#userId", unless = "#result == null")
-    fun getUserMeetingParticipation(userId: Long): MeetingParticipationResponse {
-        val userTeams = userTeamDao.findAllByUserIdWithPaymentStatus(userId)
+    fun getUserMeetingParticipation(userId: Long, season: Int): MeetingParticipationResponse {
+        val userTeams = userTeamDao.findAllByUserIdAndSeasonWithPaymentStatus(userId, season)
 
         return MeetingParticipationResponse(
             single = getParticipationStatus(userTeams.find { it.team.type == SINGLE }),
@@ -44,11 +43,24 @@ class MatchingService(
         )
     }
 
-    @Cacheable(value = ["match-result"], key = "#meetingTeamId", unless = "#result == null")
-    fun getMatchResult(userId: Long, meetingTeamId: Long): MatchResultResponse {
-        val result =
-            matchedDao.findMatchResultByUserIdAndTeamId(userId, meetingTeamId)
-                ?: throw UnauthorizedTeamAccessException()
+    @Cacheable(
+        value = ["match-result"],
+        key = "#userId + ':' + #teamType",
+        unless = "#result == null"
+    )
+    fun getMatchResult(userId: Long, teamType: TeamType, season: Int): MatchResultResponse {
+        // 미팅 참여 여부 확인
+        val participation = getUserMeetingParticipation(userId, season)
+        val participationStatus =
+            when (teamType) {
+                SINGLE -> participation.single
+                TRIPLE -> participation.triple
+            }
+        if (!participationStatus.isParticipated) {
+            throw MeetingTeamNotFoundException()
+        }
+        // 매칭 결과 조회
+        val result = matchedDao.findMatchResultByUserIdAndTeamType(userId, teamType)!!
 
         return MatchResultResponse(
             matchType = result.teamType,
@@ -59,15 +71,21 @@ class MatchingService(
 
     @Cacheable(
         value = ["partner-info"],
-        key = "#matchId + ':' + #userId",
+        key = "#userId + ':' + #teamType",
         unless = "#result == null"
     )
     fun getMatchedPartnerInformation(
         userId: Long,
-        matchId: Long
-    ): MeetingTeamInformationGetResponse {
-        val response = getPartnerInformation(userId, matchId)
-        return convertPersistentBagToArrayList(response)
+        teamType: TeamType,
+        season: Int
+    ): MatchedPartnerInformationResponse {
+        val matchResult = getMatchResult(userId, teamType, season)
+        if (!matchResult.isMatched || matchResult.matchId == null) {
+            throw MatchNotFoundException()
+        }
+        val response = getPartnerInformation(userId, matchResult.matchId)
+        val convertedResponse = convertPersistentBagToArrayList(response)
+        return MeetingDtoConverter.toMatchedPartnerInformationResponse(convertedResponse)
     }
 
     @Transactional
@@ -185,14 +203,6 @@ class MatchingService(
             meetingTeamUserProfiles =
                 response.meetingTeamUserProfiles?.map { profile ->
                     profile.copy(interest = profile.interest?.let { ArrayList(it) })
-                },
-            preference =
-                response.preference?.let { pref ->
-                    pref.copy(
-                        smoking = pref.smoking?.let { ArrayList(it) },
-                        appearanceType = pref.appearanceType?.let { ArrayList(it) },
-                        eyelidType = pref.eyelidType?.let { ArrayList(it) }
-                    )
                 }
         )
 }
