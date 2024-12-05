@@ -77,7 +77,6 @@ data class UserCardProfile(
     @Schema(description = "외모", example = "NORMAL") val appearanceType: AppearanceType?,
     @Schema(description = "쌍커풀", example = "INNER") val eyelidType: EyelidType?,
     @Schema(description = "흡연 여부", example = "TRUE") val smoking: SmokingType?,
-    @Schema(description = "관심사", example = "[{ \"name\": \"여행\" }, { \"name\": \"맛집 탐방하기\"}]")
-    val interest: List<String>?,
+    @Schema(description = "관심사", example = "[\"여행\", \"맛집 탐방\"]") val interest: List<String>?,
     @field:NotNull @Schema(description = "카카오톡 ID", example = "kakaoId") val kakaoTalkId: String,
 )
