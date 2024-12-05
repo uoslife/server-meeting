@@ -32,7 +32,6 @@ class MatchingService(
     @Cacheable(
         value = ["meeting-participation"],
         key = "#userId + ':' + #season",
-        unless = "#result == null"
     )
     fun getUserMeetingParticipation(userId: Long, season: Int): MeetingParticipationResponse {
         return matchedDao.findUserParticipation(userId, season)
@@ -41,7 +40,6 @@ class MatchingService(
     @Cacheable(
         value = ["match-info"],
         key = "#userId + ':' + #teamType + ':' + #season",
-        unless = "#result == null"
     )
     fun getMatchInfo(userId: Long, teamType: TeamType, season: Int): MatchInfoResponse {
         val userTeam =
