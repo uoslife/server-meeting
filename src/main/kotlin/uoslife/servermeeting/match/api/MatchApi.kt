@@ -59,7 +59,7 @@ class MatchApi(
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "신청 내역 또는 성공 내역 없음",
+                    description = "잘못된 요청",
                     content =
                         [
                             Content(
@@ -68,14 +68,17 @@ class MatchApi(
                                     [
                                         ExampleObject(
                                             name = "Meeting Team Not Found",
+                                            description = "신청 내역 없음",
                                             value =
                                                 "{\"message\": \"Meeting Team is not Found.\", \"status\": 400, \"code\": \"M06\"}"
                                         ),
                                         ExampleObject(
-                                            name = "Match Not Found",
+                                            name = "Payment Not Found",
+                                            description = "결제 정보 없음",
                                             value =
-                                                "{\"message\": \"Match is not Found.\", \"status\": 400, \"code\": \"MT01\"}"
-                                        )]
+                                                "{\"message\": \"Payment is not Found.\", \"status\": 400, \"code\": \"P01\"}"
+                                        ),
+                                    ]
                             )]
                 ),
             ]
