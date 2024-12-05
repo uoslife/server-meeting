@@ -23,18 +23,16 @@ class CacheConfig(private val redisConnectionFactory: RedisConnectionFactory) {
     @Bean
     fun cacheManager(): CacheManager {
         val objectMapper =
-            ObjectMapper()
-                .registerModule(KotlinModule.Builder().build()) // Kotlin 지원 모듈 추가
-                .apply {
-                    configure(MapperFeature.USE_STD_BEAN_NAMING, true)
-                    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    activateDefaultTyping(
-                        BasicPolymorphicTypeValidator.builder()
-                            .allowIfBaseType(Any::class.java)
-                            .build(),
-                        ObjectMapper.DefaultTyping.EVERYTHING
-                    )
-                }
+            ObjectMapper().registerModule(KotlinModule.Builder().build()).apply {
+                configure(MapperFeature.USE_STD_BEAN_NAMING, true)
+                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                activateDefaultTyping(
+                    BasicPolymorphicTypeValidator.builder()
+                        .allowIfBaseType(Any::class.java)
+                        .build(),
+                    ObjectMapper.DefaultTyping.EVERYTHING
+                )
+            }
         val defaultConfig =
             RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofHours(24))
@@ -51,9 +49,8 @@ class CacheConfig(private val redisConnectionFactory: RedisConnectionFactory) {
 
         val configurations =
             mapOf(
-                "user-participation" to defaultConfig.entryTtl(Duration.ofDays(2)),
-                "match-result" to defaultConfig.entryTtl(Duration.ofDays(2)),
-                "partner-info" to defaultConfig.entryTtl(Duration.ofDays(2))
+                "meeting-participation" to defaultConfig.entryTtl(Duration.ofDays(2)),
+                "match-info" to defaultConfig.entryTtl(Duration.ofDays(2))
             )
 
         return RedisCacheManager.builder(redisConnectionFactory)

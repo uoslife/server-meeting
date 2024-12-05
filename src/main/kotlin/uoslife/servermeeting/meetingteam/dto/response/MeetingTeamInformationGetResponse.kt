@@ -23,7 +23,7 @@ data class MeetingTeamInformationGetResponse(
             teamType = teamType,
             teamName = teamName,
             gender = gender,
-            leaderProfile = meetingTeamUserProfiles,
+            userProfiles = meetingTeamUserProfiles,
             course = course
         )
     }
