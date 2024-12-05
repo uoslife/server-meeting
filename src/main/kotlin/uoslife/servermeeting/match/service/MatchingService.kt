@@ -17,6 +17,8 @@ import uoslife.servermeeting.meetingteam.exception.GenderNotUpdatedException
 import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
 import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
 import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
+import uoslife.servermeeting.payment.entity.enums.PaymentStatus
+import uoslife.servermeeting.payment.exception.PaymentNotFoundException
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.exception.UserNotFoundException
@@ -46,6 +48,14 @@ class MatchingService(
             userTeamDao.findUserWithTeamTypeAndSeason(userId, teamType, season)
                 ?: throw MeetingTeamNotFoundException()
         val meetingTeam = userTeam.team
+
+        val hasInvalidPayment =
+            meetingTeam.payments?.any { payment -> payment.status != PaymentStatus.SUCCESS }
+                ?: false
+        if (hasInvalidPayment) {
+            throw PaymentNotFoundException()
+        }
+
         try {
             val match = getMatchByGender(userTeam.user, meetingTeam)
             val opponentTeam = getOpponentTeamByGender(userTeam.user, match)

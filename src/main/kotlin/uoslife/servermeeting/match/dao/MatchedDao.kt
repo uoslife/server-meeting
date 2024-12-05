@@ -10,7 +10,6 @@ import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
-import uoslife.servermeeting.payment.entity.QPayment
 import uoslife.servermeeting.payment.entity.enums.PaymentStatus
 
 @Repository
@@ -35,25 +34,30 @@ class MatchedDao(private val queryFactory: JPAQueryFactory) {
     }
 
     fun findUserParticipation(userId: Long, season: Int): MeetingParticipationResponse {
-        val result =
+        val teams =
             queryFactory
-                .select(userTeam.team.id, userTeam.team.type)
-                .from(userTeam)
+                .selectFrom(userTeam)
                 .join(userTeam.team)
-                .join(QPayment.payment)
-                .on(QPayment.payment.meetingTeam.eq(userTeam.team))
-                .where(
-                    userTeam.user.id.eq(userId),
-                    userTeam.team.season.eq(season),
-                    QPayment.payment.status.eq(PaymentStatus.SUCCESS)
-                )
+                .fetchJoin() // team을 미리 로딩
+                .leftJoin(userTeam.team.payments)
+                .fetchJoin() // payments도 미리 로딩
+                .where(userTeam.user.id.eq(userId), userTeam.team.season.eq(season))
                 .fetch()
 
-        val participations = result.groupBy { it.get(userTeam.team.type) }
+        val participations =
+            teams
+                .groupBy { it.team.type }
+                .mapValues { (_, userTeams) ->
+                    userTeams.all { userTeam ->
+                        val payments = userTeam.team.payments
+                        payments?.isNotEmpty() == true &&
+                            payments.all { it.status == PaymentStatus.SUCCESS }
+                    }
+                }
 
         return MeetingParticipationResponse(
-            single = participations[TeamType.SINGLE]?.isNotEmpty() ?: false,
-            triple = participations[TeamType.TRIPLE]?.isNotEmpty() ?: false,
+            single = participations[TeamType.SINGLE] ?: false,
+            triple = participations[TeamType.TRIPLE] ?: false,
         )
     }
 }
