@@ -140,47 +140,7 @@ class VerificationApi(
                                         )]
                             )]
                 ),
-                ApiResponse(
-                    responseCode = "401",
-                    description = "인증 오류",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            name = "Token Not Found",
-                                            value =
-                                                "{\"message\": \"Token not found\", \"status\": 401, \"code\": \"J001\"}"
-                                        ),
-                                        ExampleObject(
-                                            name = "Token Expired",
-                                            value =
-                                                "{\"message\": \"Token has expired\", \"status\": 401, \"code\": \"J002\"}"
-                                        ),
-                                        ExampleObject(
-                                            name = "Invalid Token Format",
-                                            value =
-                                                "{\"message\": \"Invalid token format\", \"status\": 401, \"code\": \"J003\"}"
-                                        ),
-                                        ExampleObject(
-                                            name = "Invalid Token Signature",
-                                            value =
-                                                "{\"message\": \"Invalid token signature\", \"status\": 401, \"code\": \"J004\"}"
-                                        ),
-                                        ExampleObject(
-                                            name = "Refresh Token Not Found",
-                                            value =
-                                                "{\"message\": \"Refresh token not found\", \"status\": 401, \"code\": \"J005\"}"
-                                        ),
-                                        ExampleObject(
-                                            name = "Refresh Token Expired",
-                                            value =
-                                                "{\"message\": \"Refresh token has expired\", \"status\": 401, \"code\": \"J006\"}"
-                                        )]
-                            )]
-                )]
+            ]
     )
     // TODO: Service layer로 이동해야함
     @PostMapping("/verify-email")
@@ -192,12 +152,7 @@ class VerificationApi(
         val requestInfo = requestUtils.toRequestInfoDto(request)
         emailVerificationService.verifyEmail(body.email, body.code, requestInfo)
 
-        val user =
-            try {
-                userService.getUserByEmail(body.email)
-            } catch (e: Exception) {
-                userService.createUserByEmail(body.email)
-            }
+        val user = userService.getOrCreateUser(body.email)
 
         val accessToken = authService.issueTokens(user.id!!, response)
         return ResponseEntity.ok(accessToken)
