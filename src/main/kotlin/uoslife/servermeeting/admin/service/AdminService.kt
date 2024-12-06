@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import uoslife.servermeeting.global.common.dto.RequestInfoDto
 import uoslife.servermeeting.match.service.MatchingService
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
-import uoslife.servermeeting.global.common.dto.RequestInfoDto
 import uoslife.servermeeting.payment.dto.response.PaymentResponseDto
 import uoslife.servermeeting.payment.service.PaymentService
 import uoslife.servermeeting.user.service.UserService
