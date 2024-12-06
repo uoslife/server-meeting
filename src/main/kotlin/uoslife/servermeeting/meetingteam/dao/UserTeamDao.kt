@@ -1,14 +1,18 @@
 package uoslife.servermeeting.meetingteam.dao
 
+import com.querydsl.core.types.Projections
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Repository
+import uoslife.servermeeting.meetingteam.dto.ParticipantInfo
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.payment.entity.QPayment.payment
+import uoslife.servermeeting.payment.entity.enums.PaymentStatus
 import uoslife.servermeeting.user.entity.QUser.user
 import uoslife.servermeeting.user.entity.QUserInformation.userInformation
 import uoslife.servermeeting.user.entity.User
@@ -107,5 +111,26 @@ class UserTeamDao(
             )
             .fetchJoin()
             .fetchOne()
+    }
+
+    fun findAllParticipantsBySeasonAndType(season: Int): List<ParticipantInfo> {
+        return queryFactory
+            .select(
+                Projections.constructor(
+                    ParticipantInfo::class.java,
+                    userTeam.user.id,
+                    userTeam.team.type,
+                )
+            )
+            .from(userTeam)
+            .join(userTeam.team, meetingTeam)
+            .leftJoin(payment)
+            .on(payment.meetingTeam.eq(meetingTeam))
+            .where(
+                meetingTeam.season.eq(season),
+            )
+            .groupBy(userTeam.user.id, userTeam.team.type)
+            .having(payment.status.eq(PaymentStatus.SUCCESS).count().eq(payment.count()))
+            .fetch()
     }
 }
