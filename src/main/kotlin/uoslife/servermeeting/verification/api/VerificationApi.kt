@@ -21,7 +21,7 @@ import uoslife.servermeeting.verification.dto.request.VerifyEmailRequest
 import uoslife.servermeeting.verification.dto.response.SendVerificationEmailResponse
 import uoslife.servermeeting.verification.service.EmailVerificationService
 
-@Tag(name = "Verification", description = "Verification API")
+@Tag(name = "Verification", description = "이메일 인증 API")
 @RestController
 @RequestMapping("/api/verification")
 class VerificationApi(

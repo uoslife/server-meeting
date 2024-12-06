@@ -1,15 +1,16 @@
 package uoslife.servermeeting.match.dao
 
-import com.querydsl.core.types.Projections
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Repository
-import uoslife.servermeeting.match.dto.MatchResultDto
+import uoslife.servermeeting.match.dto.response.MeetingParticipationResponse
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.match.entity.QMatch.match
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
+import uoslife.servermeeting.meetingteam.entity.enums.TeamType
+import uoslife.servermeeting.payment.entity.enums.PaymentStatus
 
 @Repository
 @Transactional
@@ -32,34 +33,31 @@ class MatchedDao(private val queryFactory: JPAQueryFactory) {
             .fetchOne()
     }
 
-    fun findByTeam(team: MeetingTeam): Match? {
-        return queryFactory
-            .selectFrom(match)
-            .leftJoin(match.maleTeam, meetingTeam)
-            .leftJoin(match.femaleTeam, meetingTeam)
-            .where(match.maleTeam.eq(team).or(match.femaleTeam.eq(team)))
-            .fetchOne()
-    }
+    fun findUserParticipation(userId: Long, season: Int): MeetingParticipationResponse {
+        val teams =
+            queryFactory
+                .selectFrom(userTeam)
+                .join(userTeam.team)
+                .fetchJoin() // team을 미리 로딩
+                .leftJoin(userTeam.team.payments)
+                .fetchJoin() // payments도 미리 로딩
+                .where(userTeam.user.id.eq(userId), userTeam.team.season.eq(season))
+                .fetch()
 
-    fun findMatchResultByUserIdAndTeamId(userId: Long, teamId: Long): MatchResultDto? {
-        return queryFactory
-            .select(Projections.constructor(MatchResultDto::class.java, meetingTeam.type, match.id))
-            .from(userTeam)
-            .join(userTeam.team, meetingTeam)
-            .leftJoin(match)
-            .on(meetingTeam.eq(match.maleTeam).or(meetingTeam.eq(match.femaleTeam)))
-            .where(userTeam.user.id.eq(userId), userTeam.team.id.eq(teamId))
-            .fetchOne()
-    }
+        val participations =
+            teams
+                .groupBy { it.team.type }
+                .mapValues { (_, userTeams) ->
+                    userTeams.all { userTeam ->
+                        val payments = userTeam.team.payments
+                        payments?.isNotEmpty() == true &&
+                            payments.all { it.status == PaymentStatus.SUCCESS }
+                    }
+                }
 
-    fun findById(matchId: Long): Match? {
-        return queryFactory
-            .selectFrom(match)
-            .join(match.maleTeam)
-            .fetchJoin()
-            .join(match.femaleTeam)
-            .fetchJoin()
-            .where(match.id.eq(matchId))
-            .fetchOne()
+        return MeetingParticipationResponse(
+            single = participations[TeamType.SINGLE] ?: false,
+            triple = participations[TeamType.TRIPLE] ?: false,
+        )
     }
 }

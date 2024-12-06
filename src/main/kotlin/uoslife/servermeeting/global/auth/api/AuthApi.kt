@@ -20,7 +20,7 @@ import uoslife.servermeeting.global.auth.service.AuthService
 import uoslife.servermeeting.global.auth.util.CookieUtils
 import uoslife.servermeeting.global.error.ErrorResponse
 
-@Tag(name = "Auth", description = "Auth API")
+@Tag(name = "Auth", description = "인증 API")
 @RestController
 @RequestMapping("/api/auth")
 class AuthApi(

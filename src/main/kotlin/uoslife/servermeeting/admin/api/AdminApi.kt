@@ -161,4 +161,11 @@ class AdminApi(
         val requestInfo = requestUtils.toRequestInfoDto(request)
         return ResponseEntity.status(HttpStatus.OK).body(adminService.refundPayment(requestInfo))
     }
+
+    @Operation(summary = "매칭 결과 캐시 웜업 API", description = "결제 완료된 매칭 데이터를 캐시에 저장합니다")
+    @PostMapping("/cache/warmup")
+    fun triggerCacheWarmup(@RequestParam season: Int): ResponseEntity<Unit> {
+        adminService.warmUpCacheAsync(season)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
 }

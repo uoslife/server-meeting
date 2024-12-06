@@ -7,21 +7,18 @@ import uoslife.servermeeting.match.dao.MatchedDao
 import uoslife.servermeeting.match.dto.response.*
 import uoslife.servermeeting.match.entity.Match
 import uoslife.servermeeting.match.exception.MatchNotFoundException
-import uoslife.servermeeting.match.exception.UnauthorizedMatchAccessException
-import uoslife.servermeeting.match.exception.UnauthorizedTeamAccessException
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.dto.request.CompletionStatus
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
-import uoslife.servermeeting.meetingteam.entity.UserTeam
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.SINGLE
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType.TRIPLE
 import uoslife.servermeeting.meetingteam.exception.GenderNotUpdatedException
 import uoslife.servermeeting.meetingteam.exception.MeetingTeamNotFoundException
-import uoslife.servermeeting.meetingteam.exception.OnlyTeamLeaderCanGetMatchException
 import uoslife.servermeeting.meetingteam.service.impl.SingleMeetingService
 import uoslife.servermeeting.meetingteam.service.impl.TripleMeetingService
+import uoslife.servermeeting.payment.entity.enums.PaymentStatus
+import uoslife.servermeeting.payment.exception.PaymentNotFoundException
 import uoslife.servermeeting.user.entity.User
 import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.exception.UserNotFoundException
@@ -34,57 +31,41 @@ class MatchingService(
     private val singleMeetingService: SingleMeetingService,
     private val tripleMeetingService: TripleMeetingService,
 ) {
-    @Cacheable(value = ["meeting-participation"], key = "#userId", unless = "#result == null")
-    fun getUserMeetingParticipation(userId: Long): MeetingParticipationResponse {
-        val userTeams = userTeamDao.findAllByUserIdWithPaymentStatus(userId)
-
-        return MeetingParticipationResponse(
-            single = getParticipationStatus(userTeams.find { it.team.type == SINGLE }),
-            triple = getParticipationStatus(userTeams.find { it.team.type == TRIPLE })
-        )
-    }
-
-    @Cacheable(value = ["match-result"], key = "#meetingTeamId", unless = "#result == null")
-    fun getMatchResult(userId: Long, meetingTeamId: Long): MatchResultResponse {
-        val result =
-            matchedDao.findMatchResultByUserIdAndTeamId(userId, meetingTeamId)
-                ?: throw UnauthorizedTeamAccessException()
-
-        return MatchResultResponse(
-            matchType = result.teamType,
-            isMatched = result.matchId != null,
-            matchId = result.matchId
-        )
+    @Cacheable(
+        value = ["meeting-participation"],
+        key = "#season + ':' + #userId",
+    )
+    fun getUserMeetingParticipation(userId: Long, season: Int): MeetingParticipationResponse {
+        return matchedDao.findUserParticipation(userId, season)
     }
 
     @Cacheable(
-        value = ["partner-info"],
-        key = "#matchId + ':' + #userId",
-        unless = "#result == null"
+        value = ["match-info"],
+        key = "#season + ':' + #teamType + ':' + #userId",
     )
-    fun getMatchedPartnerInformation(
-        userId: Long,
-        matchId: Long
-    ): MeetingTeamInformationGetResponse {
-        val response = getPartnerInformation(userId, matchId)
-        return convertPersistentBagToArrayList(response)
-    }
-
-    @Transactional
-    fun getMatchedMeetingTeamByType(userId: Long, teamType: TeamType): MatchInformationResponse {
+    fun getMatchInfo(userId: Long, teamType: TeamType, season: Int): MatchInfoResponse {
         val userTeam =
-            userTeamDao.findUserWithMeetingTeam(userId, teamType) ?: throw UserNotFoundException()
-        val meetingTeam = userTeam.team ?: throw MeetingTeamNotFoundException()
+            userTeamDao.findUserWithTeamTypeAndSeason(userId, teamType, season)
+                ?: throw MeetingTeamNotFoundException()
+        val meetingTeam = userTeam.team
 
-        if (!userTeam.isLeader) throw OnlyTeamLeaderCanGetMatchException()
+        val hasInvalidPayment =
+            meetingTeam.payments?.any { payment -> payment.status != PaymentStatus.SUCCESS }
+                ?: false
+        if (hasInvalidPayment) {
+            throw PaymentNotFoundException()
+        }
 
-        val match = getMatchByGender(userTeam.user, meetingTeam)
-        val opponentTeam = getOpponentTeamByGender(userTeam.user, match)
-        val opponentUser = getOpponentLeaderUser(opponentTeam)
-
-        return MatchInformationResponse(
-            getOpponentUserInformationByTeamType(meetingTeam, opponentUser)
-        )
+        try {
+            val match = getMatchByGender(userTeam.user, meetingTeam)
+            val opponentTeam = getOpponentTeamByGender(userTeam.user, match)
+            val opponentUser = getOpponentLeaderUser(opponentTeam)
+            return MatchInfoResponse.toMatchInfoResponse(
+                getOpponentUserInformationByTeamType(meetingTeam, opponentUser)
+            )
+        } catch (e: MatchNotFoundException) {
+            return MatchInfoResponse(false, null)
+        }
     }
 
     private fun getOpponentLeaderUser(opponentTeam: MeetingTeam): User {
@@ -136,63 +117,4 @@ class MatchingService(
             }
         return meetingTeamInformationGetResponse.toMatchedMeetingTeamInformationGetResponse()
     }
-
-    private fun getParticipationStatus(userTeam: UserTeam?): ParticipationStatus {
-        if (userTeam == null) {
-            return ParticipationStatus(false, null)
-        }
-
-        return ParticipationStatus(isParticipated = true, meetingTeamId = userTeam.team.id)
-    }
-
-    private fun getPartnerTeam(userGender: GenderType, match: Match): MeetingTeam {
-        return when (userGender) {
-            GenderType.MALE -> match.femaleTeam
-            GenderType.FEMALE -> match.maleTeam
-        }
-    }
-
-    private fun getPartnerInformation(
-        userId: Long,
-        matchId: Long
-    ): MeetingTeamInformationGetResponse {
-        val match = matchedDao.findById(matchId) ?: throw MatchNotFoundException()
-        val userTeam =
-            userTeamDao.findUserWithMeetingTeamByMatchId(userId, matchId)
-                ?: throw UnauthorizedMatchAccessException()
-        val partnerTeam = getPartnerTeam(userTeam.team.gender, match)
-
-        return when (partnerTeam.type) {
-            SINGLE -> getPartnerSingleTeamInfo(partnerTeam)
-            TRIPLE -> getPartnerTripleTeamInfo(partnerTeam)
-        }
-    }
-
-    private fun getPartnerSingleTeamInfo(partnerTeam: MeetingTeam) =
-        singleMeetingService.getMeetingTeamInformation(
-            partnerTeam.userTeams.first().user.id!!,
-            CompletionStatus.COMPLETED
-        )
-
-    private fun getPartnerTripleTeamInfo(partnerTeam: MeetingTeam) =
-        tripleMeetingService.getMeetingTeamInformation(
-            partnerTeam.userTeams.first { it.isLeader }.user.id!!,
-            CompletionStatus.COMPLETED
-        )
-
-    private fun convertPersistentBagToArrayList(response: MeetingTeamInformationGetResponse) =
-        response.copy(
-            meetingTeamUserProfiles =
-                response.meetingTeamUserProfiles?.map { profile ->
-                    profile.copy(interest = profile.interest?.let { ArrayList(it) })
-                },
-            preference =
-                response.preference?.let { pref ->
-                    pref.copy(
-                        smoking = pref.smoking?.let { ArrayList(it) },
-                        appearanceType = pref.appearanceType?.let { ArrayList(it) },
-                        eyelidType = pref.eyelidType?.let { ArrayList(it) }
-                    )
-                }
-        )
 }
