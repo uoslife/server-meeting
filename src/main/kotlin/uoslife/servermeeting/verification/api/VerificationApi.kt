@@ -152,12 +152,7 @@ class VerificationApi(
         val requestInfo = requestUtils.toRequestInfoDto(request)
         emailVerificationService.verifyEmail(body.email, body.code, requestInfo)
 
-        val user =
-            try {
-                userService.getUserByEmail(body.email)
-            } catch (e: Exception) {
-                userService.createUserByEmail(body.email)
-            }
+        val user = userService.getOrCreateUser(body.email)
 
         val accessToken = authService.issueTokens(user.id!!, response)
         return ResponseEntity.ok(accessToken)
