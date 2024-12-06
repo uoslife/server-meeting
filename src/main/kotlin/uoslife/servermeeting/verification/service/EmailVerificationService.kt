@@ -65,7 +65,9 @@ class EmailVerificationService(
     private fun getVerificationCode(email: String): String {
         val verificationCodeKey =
             VerificationUtils.generateRedisKey(VerificationConstants.CODE_PREFIX, email)
-        return redisTemplate.opsForValue().get(verificationCodeKey).toString()
+        val code = redisTemplate.opsForValue().get(verificationCodeKey)
+        code ?: throw EmailVerificationCodeExpiredException()
+        return code.toString()
     }
 
     private fun validateVerificationCode(
