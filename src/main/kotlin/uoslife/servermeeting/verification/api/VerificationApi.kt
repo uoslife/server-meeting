@@ -186,7 +186,6 @@ class VerificationApi(
     @PostMapping("/verify-email")
     fun verifyEmail(
         @Valid @RequestBody body: VerifyEmailRequest,
-        @PathVariable userId: Long,
         request: HttpServletRequest,
         response: HttpServletResponse
     ): ResponseEntity<JwtResponse> {
