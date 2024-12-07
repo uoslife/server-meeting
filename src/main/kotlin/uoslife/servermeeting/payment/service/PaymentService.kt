@@ -22,7 +22,7 @@ interface PaymentService {
         userId: Long,
         teamType: TeamType
     ): PaymentResponseDto.PaymentRefundResponse
-    fun refundPayment(): PaymentResponseDto.NotMatchedPaymentRefundResponse
+    fun refundUnmatchedPayment(): PaymentResponseDto.NotMatchedPaymentRefundResponse
     fun verifyPayment(userId: Long, teamType: TeamType): PaymentResponseDto.PaymentRequestResponse
     fun deleteUserPayment(user: User)
     fun synchronizePayment(paymentWebhookResponse: PaymentResponseDto.PaymentWebhookResponse)
