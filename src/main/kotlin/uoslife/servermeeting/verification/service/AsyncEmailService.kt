@@ -66,6 +66,6 @@ class AsyncEmailService(
                         .withBody(Body().withHtml(Content(emailBody)))
                 )
                 .withSource(emailFrom)
-        sesClient.sendEmail(request)
+        //        sesClient.sendEmail(request)
     }
 }
