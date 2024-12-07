@@ -7,17 +7,13 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import uoslife.servermeeting.global.error.ErrorResponse
-import uoslife.servermeeting.match.dto.response.MatchResultResponse
-import uoslife.servermeeting.match.dto.response.MatchedPartnerInformationResponse
-import uoslife.servermeeting.match.dto.response.MeetingParticipationResponse
+import uoslife.servermeeting.match.dto.response.*
 import uoslife.servermeeting.match.service.MatchingService
-import uoslife.servermeeting.meetingteam.dto.response.MeetingTeamInformationGetResponse
 import uoslife.servermeeting.meetingteam.entity.enums.TeamType
 
 @RestController
@@ -52,19 +48,18 @@ class MatchApi(
         return ResponseEntity.ok(result)
     }
 
-    @Operation(summary = "매칭 결과 조회", description = "특정 매칭의 성공 여부를 조회합니다.")
+    @Operation(summary = "매칭 정보 조회", description = "매칭 결과와 매칭 상대의 정보를 조회합니다.")
     @ApiResponses(
         value =
             [
                 ApiResponse(
                     responseCode = "200",
-                    description = "매칭 결과 정보 반환",
-                    content =
-                        [Content(schema = Schema(implementation = MatchResultResponse::class))]
+                    description = "매칭 결과 반환",
+                    content = [Content(schema = Schema(implementation = MatchInfoResponse::class))]
                 ),
                 ApiResponse(
                     responseCode = "400",
-                    description = "해당 타입의 미팅 신청 내역 없음",
+                    description = "잘못된 요청",
                     content =
                         [
                             Content(
@@ -73,75 +68,29 @@ class MatchApi(
                                     [
                                         ExampleObject(
                                             name = "Meeting Team Not Found",
-                                            value =
-                                                "{\"message\": \"Meeting Team is not Found.\", \"status\": 400, \"code\": \"M06\"}"
-                                        )]
-                            )]
-                )]
-    )
-    @GetMapping("/{teamType}/result")
-    fun getMatchResult(
-        @AuthenticationPrincipal userDetails: UserDetails,
-        @PathVariable teamType: TeamType,
-        @RequestParam season: Int,
-    ): ResponseEntity<MatchResultResponse> {
-        return ResponseEntity.ok(
-            matchingService.getMatchResult(userDetails.username.toLong(), teamType, season)
-        )
-    }
-
-    @Operation(summary = "매칭된 상대방 정보 조회", description = "매칭된 상대 팀의 상세 정보를 조회합니다.")
-    @ApiResponses(
-        value =
-            [
-                ApiResponse(
-                    responseCode = "200",
-                    description = "매칭된 상대방 정보 반환",
-                    content =
-                        [
-                            Content(
-                                schema =
-                                    Schema(
-                                        implementation = MeetingTeamInformationGetResponse::class
-                                    )
-                            )]
-                ),
-                ApiResponse(
-                    responseCode = "400",
-                    description = "신청 내역 또는 성공 내역 없음",
-                    content =
-                        [
-                            Content(
-                                schema = Schema(implementation = ErrorResponse::class),
-                                examples =
-                                    [
-                                        ExampleObject(
-                                            name = "Meeting Team Not Found",
+                                            description = "신청 내역 없음",
                                             value =
                                                 "{\"message\": \"Meeting Team is not Found.\", \"status\": 400, \"code\": \"M06\"}"
                                         ),
                                         ExampleObject(
-                                            name = "Match Not Found",
+                                            name = "Payment Not Found",
+                                            description = "결제 정보 없음",
                                             value =
-                                                "{\"message\": \"Match is not Found.\", \"status\": 400, \"code\": \"MT01\"}"
-                                        )]
+                                                "{\"message\": \"Payment is not Found.\", \"status\": 400, \"code\": \"P01\"}"
+                                        ),
+                                    ]
                             )]
                 ),
             ]
     )
-    @GetMapping("/{teamType}/partner")
-    fun getMatchedPartnerInformation(
+    @GetMapping("/{teamType}/info")
+    fun getMatchInformation(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable teamType: TeamType,
         @RequestParam season: Int,
-    ): ResponseEntity<MatchedPartnerInformationResponse> {
-        return ResponseEntity.status(HttpStatus.OK)
-            .body(
-                matchingService.getMatchedPartnerInformation(
-                    userDetails.username.toLong(),
-                    teamType,
-                    season
-                )
-            )
+    ): ResponseEntity<MatchInfoResponse> {
+        return ResponseEntity.ok(
+            matchingService.getMatchInfo(userDetails.username.toLong(), teamType, season)
+        )
     }
 }

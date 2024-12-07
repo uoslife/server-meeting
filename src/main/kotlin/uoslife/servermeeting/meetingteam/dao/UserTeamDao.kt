@@ -1,11 +1,11 @@
 package uoslife.servermeeting.meetingteam.dao
 
-import com.querydsl.jpa.JPAExpressions
+import com.querydsl.core.types.Projections
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Repository
-import uoslife.servermeeting.match.entity.QMatch.match
+import uoslife.servermeeting.meetingteam.dto.ParticipantInfo
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.QMeetingTeam.meetingTeam
 import uoslife.servermeeting.meetingteam.entity.QUserTeam.userTeam
@@ -98,36 +98,39 @@ class UserTeamDao(
             .fetch()
     }
 
-    fun findAllByUserIdAndSeasonWithPaymentStatus(userId: Long, season: Int): List<UserTeam> {
-        val hasNonSuccessPayment =
-            JPAExpressions.selectOne()
-                .from(payment)
-                .where(
-                    payment.meetingTeam.eq(meetingTeam),
-                    payment.status.ne(PaymentStatus.SUCCESS)
-                )
-                .exists()
-
+    fun findUserWithTeamTypeAndSeason(userId: Long, teamType: TeamType, season: Int): UserTeam? {
         return queryFactory
             .selectFrom(userTeam)
             .join(userTeam.team, meetingTeam)
-            .fetchJoin()
+            .join(userTeam.user, user)
             .where(
-                userTeam.user.id.eq(userId),
-                meetingTeam.season.eq(season),
-                hasNonSuccessPayment.not()
+                user.id
+                    .eq(userId)
+                    .and(meetingTeam.type.eq(teamType))
+                    .and(meetingTeam.season.eq(season))
             )
-            .fetch()
+            .fetchJoin()
+            .fetchOne()
     }
 
-    fun findUserWithMeetingTeamByMatchId(userId: Long, matchId: Long): UserTeam? {
+    fun findAllParticipantsBySeasonAndType(season: Int): List<ParticipantInfo> {
         return queryFactory
-            .selectFrom(userTeam)
+            .select(
+                Projections.constructor(
+                    ParticipantInfo::class.java,
+                    userTeam.user.id,
+                    userTeam.team.type,
+                )
+            )
+            .from(userTeam)
             .join(userTeam.team, meetingTeam)
-            .fetchJoin()
-            .leftJoin(match)
-            .on(meetingTeam.eq(match.maleTeam).or(meetingTeam.eq(match.femaleTeam)))
-            .where(userTeam.user.id.eq(userId), match.id.eq(matchId))
-            .fetchOne()
+            .leftJoin(payment)
+            .on(payment.meetingTeam.eq(meetingTeam))
+            .where(
+                meetingTeam.season.eq(season),
+            )
+            .groupBy(userTeam.user.id, userTeam.team.type)
+            .having(payment.status.eq(PaymentStatus.SUCCESS).count().eq(payment.count()))
+            .fetch()
     }
 }

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,6 +18,7 @@ import uoslife.servermeeting.admin.dto.request.ResetEmailRequest
 import uoslife.servermeeting.admin.service.AdminService
 import uoslife.servermeeting.global.config.SwaggerConfig
 import uoslife.servermeeting.global.error.ErrorResponse
+import uoslife.servermeeting.global.util.RequestUtils
 import uoslife.servermeeting.payment.dto.response.PaymentResponseDto
 
 @RestController
@@ -50,7 +52,10 @@ import uoslife.servermeeting.payment.dto.response.PaymentResponseDto
                         )]
             )]
 )
-class AdminApi(private val adminService: AdminService) {
+class AdminApi(
+    private val adminService: AdminService,
+    private val requestUtils: RequestUtils,
+) {
     @Operation(summary = "이메일 발송 횟수 초기화", description = "특정 이메일의 일일 발송 횟수를 초기화합니다.")
     @ApiResponses(
         value =
@@ -63,8 +68,12 @@ class AdminApi(private val adminService: AdminService) {
             ]
     )
     @PostMapping("/verification/send-email/reset")
-    fun resetEmailSendCount(@RequestBody request: ResetEmailRequest): ResponseEntity<Unit> {
-        adminService.resetEmailSendCount(request.email)
+    fun resetEmailSendCount(
+        request: HttpServletRequest,
+        @RequestBody body: ResetEmailRequest
+    ): ResponseEntity<Unit> {
+        val requestInfo = requestUtils.toRequestInfoDto(request)
+        adminService.resetEmailSendCount(body.email, requestInfo)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
@@ -95,10 +104,12 @@ class AdminApi(private val adminService: AdminService) {
     )
     @DeleteMapping("/user")
     fun deleteUser(
-        @RequestBody request: DeleteUserRequest,
+        @RequestBody body: DeleteUserRequest,
+        request: HttpServletRequest,
         response: HttpServletResponse
     ): ResponseEntity<Unit> {
-        adminService.deleteUserById(request.userId, response)
+        val requestInfo = requestUtils.toRequestInfoDto(request)
+        adminService.deleteUserById(body.userId, response, requestInfo)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
@@ -144,7 +155,17 @@ class AdminApi(private val adminService: AdminService) {
             ]
     )
     @PostMapping("/refund/match")
-    fun refundPayment(): ResponseEntity<PaymentResponseDto.NotMatchedPaymentRefundResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.refundPayment())
+    fun refundPayment(
+        request: HttpServletRequest
+    ): ResponseEntity<PaymentResponseDto.NotMatchedPaymentRefundResponse> {
+        val requestInfo = requestUtils.toRequestInfoDto(request)
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.refundPayment(requestInfo))
+    }
+
+    @Operation(summary = "매칭 결과 캐시 웜업 API", description = "결제 완료된 매칭 데이터를 캐시에 저장합니다")
+    @PostMapping("/cache/warmup")
+    fun triggerCacheWarmup(@RequestParam season: Int): ResponseEntity<Unit> {
+        adminService.warmUpCacheAsync(season)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }

@@ -12,11 +12,13 @@ import uoslife.servermeeting.global.auth.exception.*
 import uoslife.servermeeting.global.auth.security.JwtTokenProvider
 import uoslife.servermeeting.global.auth.security.SecurityConstants
 import uoslife.servermeeting.global.auth.util.CookieUtils
+import uoslife.servermeeting.global.util.RequestUtils
 
 @Service
 class AuthService(
     private val jwtTokenProvider: JwtTokenProvider,
     private val cookieUtils: CookieUtils,
+    private val requestUtils: RequestUtils,
     @Value("\${jwt.refresh.expiration}") private val refreshTokenExpiration: Long,
 ) {
     companion object {
@@ -43,15 +45,19 @@ class AuthService(
     }
 
     fun reissueTokens(request: HttpServletRequest, response: HttpServletResponse): JwtResponse {
+        val requestInfo = requestUtils.toRequestInfoDto(request)
         val refreshToken =
             cookieUtils.getRefreshTokenFromCookie(request)
-                ?: throw JwtRefreshTokenNotFoundException()
-
+                ?: run {
+                    logger.warn("[재발급 실패(토큰없음)] $requestInfo")
+                    throw JwtRefreshTokenNotFoundException()
+                }
         try {
             val userId = jwtTokenProvider.getUserIdFromRefreshToken(refreshToken)
 
             val storedToken = jwtTokenProvider.getStoredRefreshToken(userId)
             if (storedToken != refreshToken) {
+                logger.warn("[재발급 실패(재사용)] $requestInfo")
                 throw JwtRefreshTokenReusedException()
             }
 
@@ -61,26 +67,30 @@ class AuthService(
             jwtTokenProvider.saveRefreshToken(userId, newRefreshToken)
 
             cookieUtils.addRefreshTokenCookie(response, newRefreshToken, refreshTokenExpiration)
-            logger.info("[토큰 재발급 성공] USER ID: $userId")
+            logger.info("[재발급 성공] userId: $userId")
             return JwtResponse(newAccessToken)
         } catch (e: ExpiredJwtException) {
+            logger.warn("[재발급 실패(만료)] $requestInfo")
             throw JwtRefreshTokenExpiredException()
         } catch (e: JwtException) {
+            logger.warn("[재발급 실패(서명)] $requestInfo")
             throw JwtTokenInvalidSignatureException()
         }
     }
 
     fun logout(request: HttpServletRequest, response: HttpServletResponse) {
+        val requestInfo = requestUtils.toRequestInfoDto(request)
+
         val refreshToken = cookieUtils.getRefreshTokenFromCookie(request)
         if (refreshToken != null) {
             try {
                 val userId = jwtTokenProvider.getUserIdFromRefreshToken(refreshToken)
                 jwtTokenProvider.deleteRefreshToken(userId)
             } catch (e: JwtException) {
-                logger.warn("[로그아웃 요청] 유효하지 않은 리프레시 토큰으로 로그아웃 시도")
+                logger.warn("[로그아웃 요청] 유효하지 않은 리프레시 토큰 사용 $requestInfo")
             }
         } else {
-            logger.warn("[로그아웃 요청] 리프레시 토큰 없이 로그아웃 시도")
+            logger.warn("[로그아웃 요청] 리프레시 토큰 없음 $requestInfo")
         }
         cookieUtils.deleteRefreshTokenCookie(response)
     }

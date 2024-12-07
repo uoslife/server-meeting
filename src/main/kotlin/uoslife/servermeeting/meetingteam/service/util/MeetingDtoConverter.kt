@@ -49,7 +49,7 @@ class MeetingDtoConverter {
                     appearanceType = userInfo.appearanceType,
                     eyelidType = userInfo.eyelidType,
                     smoking = userInfo.smoking,
-                    interest = userInfo.interest,
+                    interest = userInfo.interest?.toList(),
                     kakaoTalkId = userTeam.user.kakaoTalkId!!
                 )
             } catch (e: NullPointerException) {
