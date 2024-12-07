@@ -55,17 +55,22 @@ class EmailVerificationService(
         validateVerificationAttempts(email)
         incrementVerificationAttempts(email)
         // Redis에서 인증 코드 조회
-        val redisCode = getVerificationCode(email)
+        val redisCode = getVerificationCode(email, requestInfo)
         // 인증 코드 검증
         validateVerificationCode(redisCode, code, email, requestInfo)
         // 검증 성공한 코드 삭제
         clearVerificationData(email)
     }
 
-    private fun getVerificationCode(email: String): String {
+    private fun getVerificationCode(email: String, requestInfo: RequestInfoDto): String {
         val verificationCodeKey =
             VerificationUtils.generateRedisKey(VerificationConstants.CODE_PREFIX, email)
-        return redisTemplate.opsForValue().get(verificationCodeKey).toString()
+        val code = redisTemplate.opsForValue().get(verificationCodeKey)
+        if (code == null) {
+            logger.warn("[이메일 인증 실패(만료)] email: $email, $requestInfo")
+            throw EmailVerificationCodeExpiredException()
+        }
+        return code.toString()
     }
 
     private fun validateVerificationCode(
@@ -75,7 +80,7 @@ class EmailVerificationService(
         requestInfo: RequestInfoDto
     ) {
         if (redisCode != code) {
-            logger.warn("[이메일 인증 실패] email: $email, $requestInfo")
+            logger.warn("[이메일 인증 실패(불일치)] email: $email, $requestInfo")
             throw EmailVerificationCodeMismatchException()
         }
         logger.info("[이메일 인증 성공] email: $email")

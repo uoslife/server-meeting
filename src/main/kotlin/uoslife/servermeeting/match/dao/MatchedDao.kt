@@ -50,8 +50,7 @@ class MatchedDao(private val queryFactory: JPAQueryFactory) {
                 .mapValues { (_, userTeams) ->
                     userTeams.all { userTeam ->
                         val payments = userTeam.team.payments
-                        payments?.isNotEmpty() == true &&
-                            payments.all { it.status == PaymentStatus.SUCCESS }
+                        payments?.any { it.status == PaymentStatus.SUCCESS } ?: false
                     }
                 }
 

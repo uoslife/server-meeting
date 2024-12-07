@@ -245,4 +245,13 @@ class UserService(
         }
         return TeamBranch.JOINED
     }
+
+    @Transactional
+    fun getOrCreateUser(email: String): User {
+        return try {
+            getUserByEmail(email)
+        } catch (e: UserNotFoundException) {
+            createUserByEmail(email)
+        }
+    }
 }

@@ -49,10 +49,10 @@ class MatchingService(
                 ?: throw MeetingTeamNotFoundException()
         val meetingTeam = userTeam.team
 
-        val hasInvalidPayment =
-            meetingTeam.payments?.any { payment -> payment.status != PaymentStatus.SUCCESS }
+        val hasValidPayment =
+            meetingTeam.payments?.any { payment -> payment.status == PaymentStatus.SUCCESS }
                 ?: false
-        if (hasInvalidPayment) {
+        if (!hasValidPayment) {
             throw PaymentNotFoundException()
         }
 

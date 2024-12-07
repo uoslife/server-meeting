@@ -137,6 +137,7 @@ enum class ErrorCode(val code: String, val message: String, var status: Int) {
         HttpStatus.TOO_MANY_REQUESTS.value()
     ),
     EMAIL_SEND_FAILED("E06", "Failed to send email.", HttpStatus.INTERNAL_SERVER_ERROR.value()),
+    EMAIL_VERIFICATION_CODE_EXPIRED("E06", "인증 코드가 만료되었습니다.", HttpStatus.BAD_REQUEST.value()),
 
     // JWT
     JWT_TOKEN_NOT_FOUND("J001", "Token not found", HttpStatus.UNAUTHORIZED.value()),
