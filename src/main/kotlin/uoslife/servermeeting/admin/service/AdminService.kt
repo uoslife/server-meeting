@@ -12,6 +12,7 @@ import uoslife.servermeeting.match.service.MatchingService
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.payment.dto.response.PaymentResponseDto
 import uoslife.servermeeting.payment.service.PaymentService
+import uoslife.servermeeting.user.repository.UserRepository
 import uoslife.servermeeting.user.service.UserService
 import uoslife.servermeeting.verification.util.VerificationConstants
 import uoslife.servermeeting.verification.util.VerificationUtils
@@ -23,6 +24,7 @@ class AdminService(
     @Qualifier("PortOneService") private val paymentService: PaymentService,
     private val matchingService: MatchingService,
     private val userTeamDao: UserTeamDao,
+    private val userRepository: UserRepository,
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(AdminService::class.java)
@@ -54,14 +56,40 @@ class AdminService(
     @Async
     fun warmUpCacheAsync(season: Int) {
         logger.info("[캐시 웜업 시작]")
-        val participants = userTeamDao.findAllParticipantsBySeasonAndType(season)
-        participants.forEach { participant ->
-            try {
-                matchingService.getMatchInfo(participant.userId, participant.teamType, season)
-            } catch (e: Exception) {
-                logger.info("[캐시 웜업 실패] userId: ${participant.userId} message: ${e.message}")
+
+        try {
+            logger.info("[미팅 참여 정보 캐시 웜업 시작]")
+            val allUsers = userRepository.findAll()
+            allUsers.forEach { user ->
+                user.id?.let { userId ->
+                    try {
+                        matchingService.getUserMeetingParticipation(userId, season)
+                    } catch (e: Exception) {
+                        logger.info("[미팅 참여 정보 캐시 웜업 실패] userId: $userId message: ${e.message}")
+                    }
+                }
             }
+            logger.info("[미팅 참여 정보 캐시 웜업 완료] 대상 인원: ${allUsers.size}")
+        } catch (e: Exception) {
+            logger.error("[미팅 참여 정보 캐시 웜업 전체 실패] message: ${e.message}")
         }
-        logger.info("[캐시 웜업 성공] 대상 인원: ${participants.size}")
+
+        try {
+            logger.info("[매칭 결과 캐시 웜업 시작]")
+            val participants = userTeamDao.findAllParticipantsBySeasonAndType(season)
+            participants.forEach { participant ->
+                try {
+                    matchingService.getMatchInfo(participant.userId, participant.teamType, season)
+                } catch (e: Exception) {
+                    logger.info(
+                        "[매칭 결과 캐시 웜업 실패] userId: ${participant.userId} message: ${e.message}"
+                    )
+                }
+            }
+            logger.info("[매칭 결과 캐시 웜업 완료] 대상 인원: ${participants.size}")
+        } catch (e: Exception) {
+            logger.error("[매칭 결과 캐시 웜업 전체 실패] message: ${e.message}")
+        }
+        logger.info("[캐시 웜업 완료]")
     }
 }
