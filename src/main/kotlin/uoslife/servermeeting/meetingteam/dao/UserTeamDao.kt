@@ -124,13 +124,14 @@ class UserTeamDao(
             )
             .from(userTeam)
             .join(userTeam.team, meetingTeam)
-            .leftJoin(payment)
+            .join(payment)
             .on(payment.meetingTeam.eq(meetingTeam))
             .where(
                 meetingTeam.season.eq(season),
+                payment.meetingTeam.type.eq(userTeam.team.type),
+                payment.status.eq(PaymentStatus.SUCCESS)
             )
             .groupBy(userTeam.user.id, userTeam.team.type)
-            .having(payment.status.eq(PaymentStatus.SUCCESS).count().eq(payment.count()))
             .fetch()
     }
 }
