@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import uoslife.servermeeting.global.auth.exception.ExternalApiFailedException
-import uoslife.servermeeting.meetingteam.dao.MeetingTeamDao
+import uoslife.servermeeting.match.dao.MatchedDao
 import uoslife.servermeeting.meetingteam.dao.UserTeamDao
 import uoslife.servermeeting.meetingteam.entity.MeetingTeam
 import uoslife.servermeeting.meetingteam.entity.UserTeam
@@ -24,8 +24,8 @@ import uoslife.servermeeting.payment.entity.enums.PaymentStatus
 import uoslife.servermeeting.payment.exception.*
 import uoslife.servermeeting.payment.repository.PaymentRepository
 import uoslife.servermeeting.payment.service.PaymentService
-import uoslife.servermeeting.user.dao.UserDao
 import uoslife.servermeeting.user.entity.User
+import uoslife.servermeeting.user.entity.enums.GenderType
 import uoslife.servermeeting.user.exception.UserNotFoundException
 import uoslife.servermeeting.user.repository.UserRepository
 
@@ -33,14 +33,13 @@ import uoslife.servermeeting.user.repository.UserRepository
 @Qualifier("PortOneService")
 class PortOneService(
     private val userRepository: UserRepository,
-    private val userDao: UserDao,
     private val userTeamDao: UserTeamDao,
     private val paymentDao: PaymentDao,
-    private val meetingTeamDao: MeetingTeamDao,
     private val paymentRepository: PaymentRepository,
     private val validator: Validator,
     private val userTeamRepository: UserTeamRepository,
     private val portOneAPIService: PortOneAPIService,
+    private val matchedDao: MatchedDao,
     @Value("\${portone.api.price.single}") private val singlePrice: Int,
     @Value("\${portone.api.price.triple}") private val triplePrice: Int,
 ) : PaymentService {
@@ -284,27 +283,46 @@ class PortOneService(
     }
 
     @Transactional
-    override fun refundPayment(): PaymentResponseDto.NotMatchedPaymentRefundResponse {
-        val userList =
-            meetingTeamDao
-                .findUserIdWithMaleMeetingTeam()
-                .plus(meetingTeamDao.findUserIdWithFeMaleMeetingTeam())
-        val paymentList = userDao.findNotMatchedPayment(userList)
-        logger.info("Total payment count: " + paymentList.size)
+    override fun refundUnmatchedPayment(): PaymentResponseDto.NotMatchedPaymentRefundResponse {
+        val successPayments = paymentRepository.findByStatus(PaymentStatus.SUCCESS)
+
+        val unMatchedPayments = mutableListOf<Payment>()
+        successPayments.forEach { payment ->
+            if (!isMatchedPayment(payment)) {
+                unMatchedPayments.add(payment)
+            }
+        }
+        logger.info("Total unmatched payment count: " + unMatchedPayments.size)
 
         val refundFailedList: MutableList<String> = mutableListOf()
-        paymentList.forEach { payment ->
+        unMatchedPayments.forEach { payment ->
             try {
-                portOneAPIService.refundPayment(payment.impUid, payment.price)
-                updatePaymentStatus(payment, PaymentStatus.REFUND, payment.impUid!!)
+                val refundPayment = portOneAPIService.refundPayment(payment.impUid, payment.price)
+                if (refundPayment.code == 0) {
+                    updatePaymentStatus(payment, PaymentStatus.REFUND, payment.impUid!!)
+                } else {
+                    updatePaymentStatus(payment, PaymentStatus.REFUND_FAILED, payment.impUid!!)
+                    refundFailedList.add(payment.impUid.toString())
+                }
             } catch (e: ExternalApiFailedException) {
-                logger.info(
-                    "[환불 실패] payment_id: ${payment.id}, impUid: ${payment.impUid}, marchantUid: ${payment.merchantUid}"
-                )
-                refundFailedList.add(payment.id.toString())
-                payment.status = PaymentStatus.REFUND_FAILED
+                updatePaymentStatus(payment, PaymentStatus.REFUND_FAILED, payment.impUid!!)
+                refundFailedList.add(payment.impUid.toString())
             }
         }
         return PaymentResponseDto.NotMatchedPaymentRefundResponse(refundFailedList)
+    }
+
+    private fun isMatchedPayment(payment: Payment): Boolean {
+        val meetingTeam = payment.meetingTeam ?: throw MeetingTeamNotFoundException()
+        val matched =
+            when (meetingTeam.gender) {
+                GenderType.MALE -> {
+                    matchedDao.findMatchByMaleTeamWithFemaleTeam(meetingTeam)
+                }
+                GenderType.FEMALE -> {
+                    matchedDao.findMatchByFeMaleTeamWithMaleTeam(meetingTeam)
+                }
+            }
+        return matched != null
     }
 }

@@ -48,7 +48,7 @@ class AdminService(
     fun refundPayment(
         requestInfo: RequestInfoDto
     ): PaymentResponseDto.NotMatchedPaymentRefundResponse {
-        val result = paymentService.refundPayment()
+        val result = paymentService.refundUnmatchedPayment()
         logger.info("[ADMIN-매칭 실패 유저 환불] $requestInfo")
         return result
     }

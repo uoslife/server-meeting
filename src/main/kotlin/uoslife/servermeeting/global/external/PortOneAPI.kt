@@ -16,7 +16,6 @@ interface PaymentClient {
     fun getAccessToken(
         @RequestBody request: PortOneRequestDto.AccessTokenRequest
     ): PortOneResponseDto.AccessTokenResponse
-
     @GetMapping("/payments/{impUid}", consumes = ["application/json"])
     fun checkPayment(
         @RequestHeader("Authorization") accessToken: String,
